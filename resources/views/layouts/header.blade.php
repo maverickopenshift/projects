@@ -2,7 +2,9 @@
 <header class="main-header">
 
     <!-- Logo -->
-    <a href="index2.html" class="logo"><b>{{env('APP_NAME')}}</b></a>
+    {{-- <a href="{!! url('/') !!}" class="logo">
+      <img src="images/logo-2.png" title="{{env('APP_NAME')}}" />
+    </a> --}}
 
     <!-- Header Navbar -->
     <nav class="navbar navbar-static-top" role="navigation">

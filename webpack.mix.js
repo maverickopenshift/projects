@@ -16,12 +16,14 @@ let mix = require('laravel-mix');
         .copyDirectory('node_modules/ionicons/dist/fonts','public/fonts')
         .copy('node_modules/admin-lte/plugins/iCheck/square/blue.png','public/css/blue.png')
         .copy('node_modules/admin-lte/plugins/iCheck/square/blue@2x.png','public/css/blue@2x.png')
+        .copy('resources/assets/images','public/images')
         //.sass('app.scss')
         .styles([
             'public/css/app.css',
             'node_modules/admin-lte/bootstrap/css/bootstrap.css',
             'node_modules/datatables.net-bs/css/dataTables.bootstrap.css',
             'node_modules/datatables.net-buttons-bs/css/buttons.bootstrap.css',
+            'resources/assets/css/bootstrap-tagsinput.css',
             'node_modules/datatables.net-fixedcolumns-bs/css/fixedColumns.bootstrap.css',
             'node_modules/datatables.net-fixedheader-bs/css/fixedHeader.bootstrap.css',
             'node_modules/datatables.net-responsive-bs/css/responsive.bootstrap.css',
@@ -30,10 +32,10 @@ let mix = require('laravel-mix');
             'node_modules/ionicons/dist/css/ionicons.css',
             'node_modules/admin-lte/plugins/datepicker/datepicker3.css',
             'node_modules/admin-lte/plugins/daterangepicker/daterangepicker.css',
-            'node_modules/admin-lte/dist/css/AdminLTE.css',
-            'node_modules/admin-lte/dist/css/skins/skin-red-light.css',
             'node_modules/summernote/dist/summernote.css',
             'node_modules/admin-lte/plugins/select2/select2.css',
+            'node_modules/admin-lte/dist/css/AdminLTE.css',
+            'node_modules/admin-lte/dist/css/skins/skin-red-light.css',
             'resources/assets/css/custom.css'
         ], 'public/css/all.css', './')
         .styles([
@@ -45,7 +47,7 @@ let mix = require('laravel-mix');
             'node_modules/admin-lte/plugins/iCheck/square/blue.css',
             'resources/assets/css/login.css'
         ], 'public/css/login.css', './')
-        .scripts([   
+        .scripts([
             'node_modules/jquery/dist/jquery.js',
             'node_modules/admin-lte/bootstrap/js/bootstrap.js',
             'node_modules/datatables.net/js/jquery.dataTables.js',
@@ -70,14 +72,15 @@ let mix = require('laravel-mix');
             'node_modules/admin-lte/plugins/daterangepicker/daterangepicker.js',
             'node_modules/admin-lte/plugins/select2/select2.full.js',
             'node_modules/admin-lte/plugins/select2/i18n/id.js',
+            'resources/assets/js/bootstrap-tagsinput.js',
             'node_modules/admin-lte/dist/js/app.js',
            // 'public/js/app.js',
             'resources/assets/js/custom.js',
         ], 'public/js/all.js', './')
-        .scripts([   
+        .scripts([
             'node_modules/jquery/dist/jquery.js',
             'node_modules/admin-lte/bootstrap/js/bootstrap.js',
-            'node_modules/admin-lte/plugins/iCheck/icheck.js',           
+            'node_modules/admin-lte/plugins/iCheck/icheck.js',
         ], 'public/js/login.js', './');
         if (mix.inProduction()) {
 		    mix.version();

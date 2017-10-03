@@ -233,6 +233,7 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Laratrust'   => Laratrust\LaratrustFacade::class,
         'Module' => Nwidart\Modules\Facades\Module::class,
+        'Helper' => App\Helpers\Helpers::class,
 
     ],
 

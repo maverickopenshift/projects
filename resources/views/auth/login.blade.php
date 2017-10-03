@@ -22,17 +22,12 @@
       ]); ?>
   </script>
 </head>
-<body class="hold-transition login-page" style="background-image:url('img/bg_chatbot.jpg');height: auto">
+<body class="hold-transition login-page">
 <div class="login-box">
   <!-- /.login-logo -->
-    <div class="login-box-body" style="background: none">
-        <div class="login-logo">
-        <!-- <img src="img/logo_nestle.png"> -->
-        </div>
-    </div>
     <div class="login-box-body" style="border-radius: 10px;">
       <div class="login-logo">
-        <b>Dashboard</b>SRM
+          <img src="images/logo.png" alt="Consys">
       </div>
 
     <form action="{{ url('/login') }}" method="post">
@@ -44,7 +39,8 @@
       </div>
       @endif
       <div class="form-group {{ $errors->has('login') ? ' has-error' : '' }}">
-        <input type="text" class="form-control" name="login" placeholder="Email or Username" value="{{ old('login') }}" required autofocus>
+        <label>User ID</label>
+        <input type="text" class="form-control" name="login" value="{{ old('login') }}" required autofocus>
         @if ($errors->has('login'))
             <span class="help-block">
                 <strong>{{ $errors->first('login') }}</strong>
@@ -52,7 +48,8 @@
         @endif
       </div>
       <div class="form-group {{ $errors->has('password') ? ' has-error' : '' }}">
-        <input type="password" name="password" class="form-control" placeholder="Password" required>
+        <label>Password</label>
+        <input type="password" name="password" class="form-control" required>
         @if ($errors->has('password'))
             <span class="help-block">
                 <strong>{{ $errors->first('password') }}</strong>
@@ -61,15 +58,16 @@
       </div>
       <div class="row">
         <!-- /.col -->
-        <div class="col-xs-8">
-            <div class="checkbox">
+        <div class="col-xs-12">
+            <div class="text-center">
                 <label>
+                  <a href="#">Create User ID</a>
                     <!-- <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : ''}}> Remember Me -->
                 </label>
             </div>
         </div>
-        <div class="col-xs-4">
-          <button type="submit" class="btn btn-warning btn-block btn-flat">Sign In</button>
+        <div class="col-xs-12">
+          <button type="submit" class="btn btn-danger btn-block btn-flat">LOGIN</button>
         </div>
         <!-- /.col -->
       </div>

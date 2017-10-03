@@ -1,8 +1,8 @@
 {
-    "/css/blue.png": "/css/blue.png?id=9d528941958eae5a4817",
-    "/css/blue@2x.png": "/css/blue@2x.png?id=3cbc597340b998eb0d7e",
-    "/css/all.css": "/css/all.css?id=1e7e78a2e459568c4528",
-    "/css/login.css": "/css/login.css?id=e59078b9069323914140",
-    "/js/all.js": "/js/all.js?id=6b5107a1a575cc4eb7c2",
-    "/js/login.js": "/js/login.js?id=98bd649d9b560540491e"
+    "/css/blue.png": "/css/blue.png",
+    "/css/blue@2x.png": "/css/blue@2x.png",
+    "/css/all.css": "/css/all.css",
+    "/css/login.css": "/css/login.css",
+    "/js/all.js": "/js/all.js",
+    "/js/login.js": "/js/login.js"
 }

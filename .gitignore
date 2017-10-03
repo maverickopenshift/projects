@@ -3,6 +3,7 @@
 /public/js
 /public/fonts
 /public/images
+public/mix-manifest.json
 /vendor
 /.idea
 /.vagrant

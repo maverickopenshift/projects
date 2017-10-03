@@ -6,20 +6,62 @@
 
         <!-- Sidebar Menu -->
         <ul class="sidebar-menu">
-            <li class="active">
-                <a href="#">
+          <li>
+              <a href="{{url('/')}}">
+                  <img src="{{url('/images/logo.png')}}" alt="Consys">
+              </a>
+          </li>
+            <li class="treeview {{Request::is("documents")?'active':''}}">
+                <a href="{{route('doc')}}"> <img src="{{url('/images/icon-dashboard.png')}}" title="Dashboard" />
                     <span>Dashboard</span></a>
             </li>
+            <li>
+                <a href="#"> <img src="{{url('/images/icon-search.png')}}" title="Search" />
+                    <span>Search</span></a>
+            </li>
+            <li class="treeview {{Request::is("documents/create/*")?'active':''}}">
+              <a href="#"><img src="{{url('/images/icon-entry-new.png')}}" title="Entry Dokumen Baru" />
+                <span>Entry Dokumen Baru</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <ul class="treeview-menu  {{Request::is("documents/create/*")?'menu-open':''}}">
+                <li class="{{Request::is("documents/create/kontrak")?'active':''}}">
+                  <a href="{{route('doc.create',['type'=>'kontrak'])}}">Kontrak</a></li>
+                <li class="{{Request::is("documents/create/mou")?'active':''}}">
+                  <a href="{{route('doc.create',['type'=>'mou'])}}">MoU</a></li>
+                <li class="{{Request::is("documents/create/nda")?'active':''}}">
+                  <a href="{{route('doc.create',['type'=>'nda'])}}">NDA</a></li>
+                <li class="{{Request::is("documents/create/nota_kesepakatan")?'active':''}}">
+                  <a href="{{route('doc.create',['type'=>'nota_kesepakatan'])}}">Nota Kesepakatan</a></li>
+                <li class="{{Request::is("documents/create/berita_acara")?'active':''}}">
+                  <a href="{{route('doc.create',['type'=>'berita_acara'])}}">Berita Acara</a></li>
+                <li class="{{Request::is("documents/create/settlemet_agreement")?'active':''}}">
+                  <a href="{{route('doc.create',['type'=>'settlemet_agreement'])}}">Settlement Agreement</a></li>
+                <li class="{{Request::is("documents/create/engagement_letter")?'active':''}}">
+                  <a href="{{route('doc.create',['type'=>'engagement_letter'])}}">Engagement Letter</a></li>
+              </ul>
+            </li>
+
+            <li>
+                <a href="#"> <img src="{{url('/images/icon-edit.png')}}" title="Perubahan Kontrak" />
+                    <span>Perubahan Kontrak</span></a>
+            </li>
+            <li>
+                <a href="#"> <img src="{{url('/images/icon-entry.png')}}" title="Entry Document Perijinan" />
+                    <span>Entry Document Perijinan</span></a>
+            </li>
+
             <li class="treeview">
-              <a href="#"><span>Entry Dokumen</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <a href="#"><img src="{{url('/images/icon-documents.png')}}" title="My Documents" />
+                <span>My Documents</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
-                <li><a href="#">Kontrak</a></li>
-                <li><a href="#">MoU</a></li>
-                <li><a href="#">NDA</a></li>
-                <li><a href="#">Nota Kesepakatan</a></li>
-                <li><a href="#">Berita Acara</a></li>
-                <li><a href="#">Settlement Agreement</a></li>
-                <li><a href="#">Engagement Letter</a></li>
+                <li><a href="#">Archive</a></li>
+              </ul>
+            </li>
+            <li class="treeview">
+              <a href="#"><img src="{{url('/images/icon-users.png')}}" title="Management User" />
+                <span>Management User</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <ul class="treeview-menu">
+                <li><a href="#">UBIS / AP</a></li>
+                <li><a href="#">Kategori Kontrak</a></li>
               </ul>
             </li>
         </ul><!-- /.sidebar-menu -->

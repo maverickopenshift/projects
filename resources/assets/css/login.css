@@ -1,0 +1,14 @@
+body.login-page, body.register-page{
+  background : #ffffff url(../images/bg.jpg)  no-repeat center center;
+}
+.login-box,.register-box{
+  margin: 0;
+  position: absolute;
+  right: 30px;
+  width: 330px;
+  top:20%;
+}
+.login-box .form-control:focus,
+.register-box .form-control:focus{
+  border-color:red;
+}

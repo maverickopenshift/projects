@@ -18189,3 +18189,111 @@ table.text-center th {
 .select2-container--classic.select2-container--open .select2-dropdown {
   border-color: #5897fb; }
 
+<<<<<<< HEAD
+=======
+.bootstrap-tagsinput {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  display: inline-block;
+  padding: 4px 6px;
+  color: #555;
+  vertical-align: middle;
+  border-radius: 4px;
+  max-width: 100%;
+  line-height: 22px;
+  cursor: text;
+}
+.bootstrap-tagsinput input {
+  border: none;
+  box-shadow: none;
+  outline: none;
+  background-color: transparent;
+  padding: 0 6px;
+  margin: 0;
+  width: auto;
+  max-width: inherit;
+}
+.bootstrap-tagsinput.form-control input::-moz-placeholder {
+  color: #777;
+  opacity: 1;
+}
+.bootstrap-tagsinput.form-control input:-ms-input-placeholder {
+  color: #777;
+}
+.bootstrap-tagsinput.form-control input::-webkit-input-placeholder {
+  color: #777;
+}
+.bootstrap-tagsinput input:focus {
+  border: none;
+  box-shadow: none;
+}
+.bootstrap-tagsinput .tag {
+  margin-right: 2px;
+  color: white;
+}
+.bootstrap-tagsinput .tag [data-role="remove"] {
+  margin-left: 8px;
+  cursor: pointer;
+}
+.bootstrap-tagsinput .tag [data-role="remove"]:after {
+  content: "x";
+  padding: 0px 2px;
+}
+.bootstrap-tagsinput .tag [data-role="remove"]:hover {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+.bootstrap-tagsinput .tag [data-role="remove"]:hover:active {
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+
+.skin-red-light .wrapper, .skin-red-light .main-sidebar, .skin-red-light .left-side{
+ background-color: #CACCCB;
+}
+.main-sidebar, .left-side{
+  z-index: 1030;
+  padding-top: 0px;
+}
+.skin-red-light .main-header .logo{
+  /*background-color: #CACCCB;*/
+}
+.skin-red-light .main-header .logo img{
+    height: 100%;
+    padding-top: 3px;
+    padding-bottom: 4px;
+}
+.skin-red-light .sidebar-menu > li:hover > a, .skin-red-light .sidebar-menu > li.active > a,
+.skin-red-light .sidebar-menu > li > .treeview-menu{
+  background-color: #DADCDB;
+}
+.skin-red-light.sidebar-collapse
+.main-header .navbar{
+  margin-left: 0px;
+}
+.sidebar-menu > li > a{
+  padding: 5px;
+}
+.sidebar-menu .treeview-menu > li > a {
+    padding: 5px 5px 5px 40px;
+}
+.text-red{
+  color : #dd4b39;
+}
+.border-red{
+  border : 1px solid #dd4b39;
+}
+.border-bottom-red{
+  border-bottom: 1px solid #dd4b39 !important;
+}
+.bootstrap-tagsinput{
+  width: 100%;
+  border-radius: 0px;
+  padding: 6px 12px;
+  border:1px solid #d2d6de;
+  box-shadow: none;
+}
+/*.bootstrap-tagsinput>input{
+  width: auto;
+  d
+}*/
+>>>>>>> documents

@@ -39,7 +39,7 @@ class Documents extends Migration
             $table->bigInteger('id_doc_cat')->unsigned();
             $table->bigInteger('id_doc_type')->unsigned();
             $table->string('doc_title');
-            $table->string('doc_number');
+            $table->string('doc_number')->unique()->index();
             $table->string('doc_mitra')->nullable();
             $table->longText('doc_desc')->nullable();
             $table->date('doc_startdate')->nullable();
@@ -57,8 +57,8 @@ class Documents extends Migration
             $table->string('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            
-            
+
+
             $table->foreign('id_roles')->references('id')->on('roles');
             $table->foreign('id_doc_cat')->references('id')->on('doc_category');
             $table->foreign('id_doc_type')->references('id')->on('doc_type');

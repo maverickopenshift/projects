@@ -14,6 +14,7 @@ let mix = require('laravel-mix');
     mix.copyDirectory('node_modules/summernote/dist/font','public/fonts')
         .copyDirectory('node_modules/font-awesome/fonts','public/fonts')
         .copyDirectory('node_modules/ionicons/dist/fonts','public/fonts')
+        .copyDirectory('node_modules/admin-lte/bootstrap/fonts','public/fonts')
         .copy('node_modules/admin-lte/plugins/iCheck/square/blue.png','public/css/blue.png')
         .copy('node_modules/admin-lte/plugins/iCheck/square/blue@2x.png','public/css/blue@2x.png')
         .copy('resources/assets/images','public/images')

@@ -1,5 +1,13 @@
+html {
+  background: url(../images/bg.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
 body.login-page, body.register-page{
-  background : #ffffff url(../images/bg.jpg)  no-repeat center center;
+  background: transparent;
+  /*background : #ffffff url(../images/bg.jpg)  no-repeat center center;*/
 }
 .login-box,.register-box{
   margin: 0;
@@ -7,6 +15,10 @@ body.login-page, body.register-page{
   right: 30px;
   width: 330px;
   top:20%;
+}
+.register-box{
+  top:10%;
+  padding-bottom: 5%;
 }
 .login-box .form-control:focus,
 .register-box .form-control:focus{

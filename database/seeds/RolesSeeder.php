@@ -13,39 +13,44 @@ class RolesSeeder extends Seeder
     public function run()
     {
       $admin = new Role;
-      $admin->name = 'directorat';
-      $admin->display_name = 'Direktorat';
-      $admin->description = 'Direktorat';
+      $admin->name = 'vendor';
+      $admin->display_name = 'Supplier';
+      $admin->description = 'Supplier';
       $admin->save();
-      
-      $admin = new Role;
-      $admin->name = 'dws';
-      $admin->display_name = 'DWS';
-      $admin->description = 'DWS';
-      $admin->save();
-      
-      $admin = new Role;
-      $admin->name = 'telin';
-      $admin->display_name = 'Telin';
-      $admin->description = 'Telin';
-      $admin->save();
-      
-      $admin = new Role;
-      $admin->name = 'mitratel';
-      $admin->display_name = 'Mitratel';
-      $admin->description = 'Mitratel';
-      $admin->save();
-      
-      $admin = new Role;
-      $admin->name = 'telkom_infra';
-      $admin->display_name = 'Telkom Infra';
-      $admin->description = 'Telkom Infra';
-      $admin->save();
-      
-      $admin = new Role;
-      $admin->name = 'sso_finance';
-      $admin->display_name = 'SSO Finance';
-      $admin->description = 'SSO Finance';
-      $admin->save();
+      // $admin = new Role;
+      // $admin->name = 'directorat';
+      // $admin->display_name = 'Direktorat';
+      // $admin->description = 'Direktorat';
+      // $admin->save();
+      //
+      // $admin = new Role;
+      // $admin->name = 'dws';
+      // $admin->display_name = 'DWS';
+      // $admin->description = 'DWS';
+      // $admin->save();
+      //
+      // $admin = new Role;
+      // $admin->name = 'telin';
+      // $admin->display_name = 'Telin';
+      // $admin->description = 'Telin';
+      // $admin->save();
+      //
+      // $admin = new Role;
+      // $admin->name = 'mitratel';
+      // $admin->display_name = 'Mitratel';
+      // $admin->description = 'Mitratel';
+      // $admin->save();
+      //
+      // $admin = new Role;
+      // $admin->name = 'telkom_infra';
+      // $admin->display_name = 'Telkom Infra';
+      // $admin->description = 'Telkom Infra';
+      // $admin->save();
+      //
+      // $admin = new Role;
+      // $admin->name = 'sso_finance';
+      // $admin->display_name = 'SSO Finance';
+      // $admin->description = 'SSO Finance';
+      // $admin->save();
     }
 }

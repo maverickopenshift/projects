@@ -76,6 +76,7 @@
           <div class="row">
             <div class="col-sm-6">
               <div  class="form-horizontal">
+                @if ($doc_type->name=='kontrak' || $doc_type->name=='nota_kesepakatan' || $doc_type->name=='engagement_letter' || $doc_type->name=='engagement_letter')    
                 <div class="form-group">
                   <label for="doc_startdate" class="col-sm-4 control-label">Tanggal Berlaku</label>
                   <div class="col-sm-8">
@@ -98,6 +99,7 @@
                     </div>
                   </div>
                 </div>
+                @endif
                 <div class="form-group">
                   <label for="doc_keywords" class="col-sm-4 control-label">Keywords</label>
                   <div class="col-sm-8">

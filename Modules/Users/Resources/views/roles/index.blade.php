@@ -6,7 +6,7 @@
       <h3 class="box-title">
         <div class="btn-group" role="group" aria-label="...">
           <button type="button" class="btn btn-default" data-toggle="modal" data-target="#form-modal" data-title="Add">
-              <i class="glyphicon glyphicon-plus"></i> Add Permission
+              <i class="glyphicon glyphicon-plus"></i> Add Roles
           </button>
         </div>
       </h3>
@@ -35,6 +35,7 @@
                 <th width="">Description</th>
                 {{-- <th width="">Created At</th>
                 <th width="">Updated At</th> --}}
+                <th width="">Permissions</th>
                 <th width="">Action</th>
             </tr>
             </thead>
@@ -42,7 +43,7 @@
     </div>
 <!-- /.box-body -->
 </div>
-@include('users::permissions._form_modal')
+@include('users::roles._form_modal')
 @endsection
 @push('scripts')
   <script src="/vendor/datatables/buttons.server-side.js"></script>
@@ -60,7 +61,7 @@
         autoWidth : false,
         order : [[ 1, 'desc' ]],
         pageLength: 50,
-        ajax: '{!! route('users.permissions.data') !!}',
+        ajax: '{!! route('users.roles.data') !!}',
         columns: [
             {data : 'DT_Row_Index',orderable:false,searchable:false},
             { data: 'name', name: 'name' },
@@ -68,6 +69,7 @@
             { data: 'description', name: 'description' },
             // { data: 'created_at', name: 'created_at' },
             // { data: 'updated_at', name: 'updated_at' },
+            {data: 'permission_name', name: 'permissions.name'},
             { data: 'action', name: 'action',orderable:false,searchable:false }
         ]
     });

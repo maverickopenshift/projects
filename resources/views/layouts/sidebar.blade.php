@@ -56,12 +56,13 @@
                 <li><a href="#">Archive</a></li>
               </ul>
             </li>
-            <li class="treeview">
+            <li class="treeview {{Request::is("users/*") || Request::is("users")?'active':''}}">
               <a href="#"><img src="{{url('/images/icon-users.png')}}" title="Management User" />
                 <span>Management User</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
-                <li><a href="#">UBIS / AP</a></li>
-                <li><a href="#">Kategori Kontrak</a></li>
+                <li class="{{Request::is("users")?'active':''}}" ><a href="{{route('users')}}">Users</a></li>
+                <li class="{{Request::is("users/roles")?'active':''}}" ><a href="{{route('users.roles')}}">Roles</a></li>
+                <li class="{{Request::is("users/permissions")?'active':''}}"><a href="{{route('users.permissions')}}">Permissions</a></li>
               </ul>
             </li>
         </ul><!-- /.sidebar-menu -->

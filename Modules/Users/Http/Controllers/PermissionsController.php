@@ -55,7 +55,7 @@ class PermissionsController extends Controller
     public function update(Request $request)
   	{
           $rules = array (
-              'display_name' => 'required|unique:permissions,display_name|max:250|min:3',
+              'display_name' => 'required|unique:permissions,display_name,'.$request->id.'|max:250|min:3',
               'description' => 'required|min:5',
           );
           $validator = Validator::make($request->all(), $rules);

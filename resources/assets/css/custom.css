@@ -73,3 +73,9 @@
 }.top55{
   margin-top: 55px;
 }
+.skin-red-light .content-header {
+  background-color: #898A8B;
+  margin-left: -1px;
+  color: white;
+  padding: 12px 15px;
+}

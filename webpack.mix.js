@@ -49,7 +49,7 @@ let mix = require('laravel-mix');
             'resources/assets/css/login.css'
         ], 'public/css/login.css', './')
         .scripts([
-            'node_modules/jquery/dist/jquery.js',
+            'node_modules/admin-lte/plugins/jQuery/jquery-2.2.3.min.js',
             'node_modules/admin-lte/bootstrap/js/bootstrap.js',
             'node_modules/datatables.net/js/jquery.dataTables.js',
             'node_modules/datatables.net-bs/js/dataTables.bootstrap.js',
@@ -79,7 +79,7 @@ let mix = require('laravel-mix');
             'resources/assets/js/custom.js',
         ], 'public/js/all.js', './')
         .scripts([
-            'node_modules/jquery/dist/jquery.js',
+            'node_modules/admin-lte/plugins/jQuery/jquery-2.2.3.min.js',
             'node_modules/admin-lte/bootstrap/js/bootstrap.js',
             'node_modules/admin-lte/plugins/iCheck/icheck.js',
         ], 'public/js/login.js', './');

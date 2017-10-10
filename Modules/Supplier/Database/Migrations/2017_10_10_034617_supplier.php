@@ -100,6 +100,18 @@ class Supplier extends Migration
       {
         $table->bigInteger('id_supplier')->nullable()->unsigned()->after('id');
         $table->foreign('id_supplier')->references('id')->on('supplier');
+        $table->string('doc_po')->nullable();
+        $table->longText('doc_data')->nullable();
+      });
+      Schema::table('users', function($table)
+      {
+        $table->longText('data')->nullable();
+        $table->boolean('confirmed')->default(0);
+        $table->string('confirmation_code')->nullable();
+        $table->boolean('actived')->default(0);
+        $table->string('email')->nullable()->change();
+        $table->string('name')->nullable()->change();
+        $table->string('phone')->nullable()->change();
       });
     }
 

@@ -67,7 +67,7 @@
                 //data = JSON.parse(data);
                 modal.find('.modal-body input#id').val(data.id)
                 modal.find('.modal-body input#display_name').val(data.display_name)
-                modal.find('.modal-body input#description').val(data.display_name)
+                modal.find('.modal-body input#description').val(data.description)
                 modal.find('form').attr('action','{!! route('users.permissions.update') !!}')
             }
             else{

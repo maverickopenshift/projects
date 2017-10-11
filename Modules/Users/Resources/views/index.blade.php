@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="box">
+<div class="box box-danger">
     <div class="box-header with-border">
       <h3 class="box-title">
           <div class="btn-group" role="group" aria-label="...">
@@ -30,20 +30,21 @@
             <thead>
             <tr>
                 <th width="20">No.</th>
-                <th width="">Name</th>
-                <th width="">Username</th>
-                <th width="">Email</th>
-                <th width="">Phone</th>
-                <th width="">Created At</th>
-                <th width="">Updated At</th>
-                <th width="">Roles</th>
-                <th width="">Action</th>
+                <th width="100">Name</th>
+                <th width="100">Username</th>
+                <th width="150">Email</th>
+                <th width="100">Phone</th>
+                <th width="100">Created At</th>
+                <th width="100">Updated At</th>
+                <th width="250">Roles</th>
+                <th width="100">Action</th>
             </tr>
             </thead>
         </table>
     </div>
 <!-- /.box-body -->
 </div>
+@include('users::_form_modal')
 @endsection
 @push('scripts')
 <script>
@@ -57,7 +58,12 @@ $(function() {
       }).DataTable({
       processing: true,
       serverSide: true,
-      autoWidth : false,
+      // autoWidth : true,
+      scrollX   : true,
+      fixedColumns:   {
+            leftColumns: 2,
+            rightColumns:1
+      },
       order : [[ 4, 'desc' ]],
       pageLength: 50,
       ajax: '{!! route('users.data') !!}',
@@ -76,4 +82,3 @@ $(function() {
 });
 </script>
 @endpush
-

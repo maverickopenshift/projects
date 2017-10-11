@@ -3,12 +3,13 @@
 namespace Modules\Users\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+
 use App\User;
 use App\Role;
 use Datatables;
 use Validator;
+use Response;
 
 class UsersController extends Controller
 {
@@ -42,7 +43,7 @@ class UsersController extends Controller
             ->addColumn('role_name', function (User $user) {
                 return $user->roles->map(function ($role) {
                     return $role->display_name;
-                })->implode(',');
+                })->implode(' , ');
             })
             ->filterColumn('updated_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(c_others.updated_at,'%Y/%m/%d') like ?", ["%$keyword%"]);
@@ -63,5 +64,68 @@ class UsersController extends Controller
                 return;
             })
             ->make(true);
+    }
+    public function update(Request $request)
+    {
+          $rules = array (
+              'name' => 'required|max:250|min:3',
+              'username' => 'required|unique:users,username,'.$request->id.'|max:250|min:3',
+              'email' => 'required|unique:users,email,'.$request->id.'|max:250|min:5',
+              'phone' => 'required|max:15|min:5',
+              // 'password' => 'required|confirmed|max:50|min:5',
+          );
+          $validator = Validator::make($request->all(), $rules);
+          if ($validator->fails ())
+              return Response::json (array(
+                  'errors' => $validator->getMessageBag()->toArray()
+              ));
+          else {
+              $roles = $request->roles;
+              $data = User::where('id','=',$request->id)->first();
+              $data->name = $request->name;
+              $data->username = $request->username;
+              $data->email = $request->email;
+              $data->phone = $request->phone;
+              $data->save();
+              //if(count($roles)>0){
+                $data->roles()->sync($roles);
+              //}
+              // else{
+              //   $data->roles()->sync([]);
+              // }
+              return response()->json($data);
+          }
+    }
+    public function add(Request $request)
+    {
+        $rules = array (
+            'name' => 'required|max:250|min:3',
+            'username' => 'required|unique:users,username|max:250|min:3',
+            'email' => 'required|unique:users,email|max:250|min:5',
+            'phone' => 'required|max:15|min:5',
+            'password' => 'required|confirmed|max:50|min:5',
+        );
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails ())
+            return Response::json (array(
+                'errors' => $validator->getMessageBag()->toArray()
+            ));
+        else {
+            $data = new User();
+            $data->name = $request->name;
+            $data->username = $request->username;
+            $data->phone = $request->phone;
+            $data->email = $request->email;
+            $data->password = bcrypt($request->password);
+            $roles = $request->roles;
+            $data->save ();
+            $data->attachRoles($roles);
+            return response()->json($data);
+        }
+    }
+    public function delete(Request $request)
+    {
+          $data = User::where('id','=',$request->id)->delete();
+          return response()->json($data);
     }
 }

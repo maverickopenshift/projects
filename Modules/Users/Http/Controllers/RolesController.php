@@ -38,7 +38,7 @@ class RolesController extends Controller
             ->addColumn('permission_name', function(Role $role){
                 return $role->permissions->map(function($permission){
                     return $permission->display_name;
-                })->implode(' , ');   
+                })->implode(' , ');
 
             })
             ->filterColumn('updated_at', function ($query, $keyword) {
@@ -79,9 +79,9 @@ class RolesController extends Controller
               $data->description = $request->description;
               $data->name = str_slug($data->display_name);
               $data->save();
-              if(count($perm)>0){
+              //if(count($perm)>0){
                 $data->permissions()->sync($perm);
-              }
+              //}
               return response()->json($data);
           }
   	}

@@ -1,0 +1,7 @@
+<?php
+
+Route::group(['middleware' => 'web', 'prefix' => 'usersupplier', 'namespace' => 'Modules\UserSupplier\Http\Controllers'], function()
+{
+    Route::get('/', 'UserSupplierController@index')->name('usersupplier');
+    Route::get('/register', 'RegisterController@index')->name('usersupplier.register');
+});

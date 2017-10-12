@@ -46,10 +46,10 @@ class UsersController extends Controller
                 })->implode(' , ');
             })
             ->filterColumn('updated_at', function ($query, $keyword) {
-                $query->whereRaw("DATE_FORMAT(c_others.updated_at,'%Y/%m/%d') like ?", ["%$keyword%"]);
+                $query->whereRaw("DATE_FORMAT(updated_at,'%Y/%m/%d') like ?", ["%$keyword%"]);
             })
             ->filterColumn('created_at', function ($query, $keyword) {
-                $query->whereRaw("DATE_FORMAT(c_others.created_at,'%Y/%m/%d') like ?", ["%$keyword%"]);
+                $query->whereRaw("DATE_FORMAT(created_at,'%Y/%m/%d') like ?", ["%$keyword%"]);
             })
             ->editColumn('updated_at', function ($data) {
                 if($data->updated_at){

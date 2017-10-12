@@ -21,14 +21,14 @@
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <i class="fa fa-user"></i>
                         <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                        <span class="hidden-xs">{{ ucfirst('aryapujianto') }}</span>
+                        <span class="hidden-xs">{{ Auth::user()->username }}</span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- The user image in the menu -->
                         <li class="user-header">
                             <p>
-                                Arya Pujianto
-                                <small>aryapujianto@inarts.co.id</small>
+                                {{ Auth::user()->name }}
+                                <small>{{ Auth::user()->email }}</small>
                             </p>
                         </li>
                         <!-- Menu Footer-->

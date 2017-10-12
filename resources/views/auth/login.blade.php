@@ -61,7 +61,7 @@
         <div class="col-xs-12">
             <div class="text-center">
                 <label>
-                  <a href="{{route('supplier.register')}}">Create User ID</a>
+                  <a href="{{route('usersupplier.register')}}">Create User ID</a>
                     <!-- <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : ''}}> Remember Me -->
                 </label>
             </div>

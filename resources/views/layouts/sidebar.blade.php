@@ -65,6 +65,14 @@
                 <li class="{{Request::is("users/permissions")?'active':''}}"><a href="{{route('users.permissions')}}">Permissions</a></li>
               </ul>
             </li>
+            <li class="treeview {{Request::is("supplier/*") || Request::is("supplier")?'active':''}}">
+              <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management Supplier" />
+                <span>Management Supplier</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <ul class="treeview-menu">
+                <li class="{{Request::is("supplier")?'active':''}}" ><a href="{{route('supplier')}}">Supplier</a></li>
+                <li class="{{Request::is("supplier/klasifikasiusaha")?'active':''}}" ><a href="{{route('supplier.klasifikasi')}}">Klasifikasi Usaha</a></li>
+              </ul>
+            </li>
         </ul><!-- /.sidebar-menu -->
     </section>
     <!-- /.sidebar -->

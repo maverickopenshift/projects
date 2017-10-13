@@ -14,8 +14,9 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
             // etc...
         ]
     ]);
-    
+
     Route::get('/klasifikasiusaha', 'KlasifikasiUsahaController@index')->name('supplier.klasifikasi');
+    Route::get('/klasifikasiusaha/getselect', 'KlasifikasiUsahaController@getSelect')->name('supplier.klasifikasi.getselect');
     Route::get('/klasifikasiusaha/data', 'KlasifikasiUsahaController@data')->name('supplier.klasifikasi.data');
     Route::post('/klasifikasiusaha/update', 'KlasifikasiUsahaController@update')->name('supplier.klasifikasi.update');
     Route::post('/klasifikasiusaha/add', 'KlasifikasiUsahaController@add')->name('supplier.klasifikasi.add');

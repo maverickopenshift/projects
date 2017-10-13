@@ -13,7 +13,7 @@ class BadanUsaha extends Migration
      */
     public function up()
     {
-      Schema::create('klasifikasi_usaha', function (Blueprint $table) {
+      Schema::create('badan_usaha', function (Blueprint $table) {
         $table->bigIncrements('id');
         $table->longText('text');
         $table->timestamps();

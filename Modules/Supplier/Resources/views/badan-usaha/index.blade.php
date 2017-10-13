@@ -40,7 +40,7 @@
     </div>
 <!-- /.box-body -->
 </div>
-@include('supplier::klasifikasi-usaha._form_modal')
+@include('supplier::badan-usaha._form_modal')
 @endsection
 @push('scripts')
   <script src="/vendor/datatables/buttons.server-side.js"></script>

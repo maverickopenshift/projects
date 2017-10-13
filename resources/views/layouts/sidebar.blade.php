@@ -71,6 +71,7 @@
               <ul class="treeview-menu">
                 <li class="{{Request::is("supplier")?'active':''}}" ><a href="{{route('supplier')}}">Supplier</a></li>
                 <li class="{{Request::is("supplier/klasifikasiusaha")?'active':''}}" ><a href="{{route('supplier.klasifikasi')}}">Klasifikasi Usaha</a></li>
+                <li class="{{Request::is("supplier/badanusaha")?'active':''}}" ><a href="{{route('supplier.badanusaha')}}">Badan Usaha</a></li>
               </ul>
             </li>
         </ul><!-- /.sidebar-menu -->

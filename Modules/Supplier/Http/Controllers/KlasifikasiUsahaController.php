@@ -95,4 +95,15 @@ class KlasifikasiUsahaController extends Controller
           $data = KlasifikasiUsaha::where('id','=',$request->id)->delete();
           return response()->json($data);
     }
+
+    public function getSelect(Request $request){
+        $search = trim($request->q);
+
+        if (empty($search)) {
+            return \Response::json([]);
+        }
+        $data =  KlasifikasiUsaha::select(['text as value','text as data'])->where('text',"like",'%'.$search.'%')->limit(30)->get();
+        $data = ['suggestions'=>$data];
+        return \Response::json($data);
+    }
 }

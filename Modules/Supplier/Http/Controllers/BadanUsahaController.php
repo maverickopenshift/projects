@@ -59,7 +59,7 @@ class BadanUsahaController extends Controller
   public function update(Request $request)
   {
         $rules = array (
-            'text' => 'required|unique:badan_usaha,text,'.$request->id.'|min:3',
+            'text' => 'required|unique:badan_usaha,text,'.$request->id.'|min:2',
         );
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails ())
@@ -76,7 +76,7 @@ class BadanUsahaController extends Controller
   public function add(Request $request)
   {
       $rules = array (
-          'text' => 'required|unique:badan_usaha,text|min:3',
+          'text' => 'required|unique:badan_usaha,text|min:2',
       );
       $validator = Validator::make($request->all(), $rules);
       if ($validator->fails ())

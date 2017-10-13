@@ -2,6 +2,7 @@
 namespace App\Helpers;
 use Modules\Documents\Entities\DocCategory;
 use Modules\Documents\Entities\DocType;
+use Modules\Supplier\Entities\BadanUsaha;
 use App\Role;
 
 class Helpers
@@ -33,6 +34,21 @@ class Helpers
           $selected = 'selected="selected"';
         }
         $select .= '<option value="'.$dt['name'].'" '.$selected.'>'.$dt['title'].'</option>';
+      }
+      $select .= '</select>';
+      return $select;
+    }
+    public static function select_badan_usaha($val=null,$name='bdn_usaha')
+    {
+      $ubis = BadanUsaha::get();
+      $select  = '<select class="form-control" id="'.$name.'" name="'.$name.'" required>';
+      //$select .= '<option value="">Pilih UBIS/AP</option>';
+      foreach ($ubis as $dt) {
+        $selected = '';
+        if($val==$dt['id']){
+          $selected = 'selected="selected"';
+        }
+        $select .= '<option value="'.$dt['id'].'" '.$selected.'>'.$dt['text'].'</option>';
       }
       $select .= '</select>';
       return $select;

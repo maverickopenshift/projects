@@ -21,11 +21,22 @@
           <div class="form-group {{ $errors->has('nm_vendor') ? ' has-error' : '' }}">
             <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Nama Perusahaan</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" name="nm_vendor" value="{{ old('nm_vendor') }}">
+              <input type="text" class="form-control" name="nm_vendor" value="{{ old('nm_vendor') }}"  placeholder="Masukan Nama Perusahaan">
               @if ($errors->has('nm_vendor'))
                   <span class="help-block">
                       <strong>{{ $errors->first('nm_vendor') }}</strong>
                   </span>
+              @endif
+            </div>
+          </div>
+          <div class="form-group {{ $errors->has('nm_vendor_uq') ? ' has-error' : '' }}">
+            <label for="nm_vendor" class="col-sm-2 control-label">Inisial Perusahaan</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="nm_vendor_uq" value="{{ old('nm_vendor_uq') }}" placeholder="Isikan 3 Digit Inisial Perusahaan">
+              @if ($errors->has('nm_vendor_uq'))
+                  <div class="help-block">
+                      <strong>{{ $errors->first('nm_vendor_uq') }}</strong>
+                  </div>
               @endif
             </div>
           </div>
@@ -49,7 +60,7 @@
               <div class="input-group bottom15">
                 <input type="text" class="form-control klasifikasi_usaha" name="klasifikasi_usaha[]">
                 <div class="input-group-btn">
-                  <button type="button" class="btn btn-default add-klasifikasi"><i class="glyphicon glyphicon-plus"></i></button>
+                  <button type="button" class="btn btn-default add-klasifikasi_usaha"><i class="glyphicon glyphicon-plus"></i></button>
                 </div>
               </div>
               @if ($errors->has('klasifikasi_usaha'))
@@ -59,137 +70,71 @@
               @endif
             </div>
           </div>
-          {{-- <div class="form-group {{ $errors->has('pengalaman_kerja') ? ' has-error' : '' }}">
+          <div class="form-group {{ $errors->has('pengalaman_kerja') ? ' has-error' : '' }}">
             <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Pengalaman Kerja</label>
             <div class="col-sm-10">
-              <div class="input-group bottom15">
-                <input type="text" class="form-control klasifikasi_usaha" name="pengalaman_kerja[]">
-                <div class="input-group-btn">
-                  <button type="button" class="btn btn-default add-klasifikasi"><i class="glyphicon glyphicon-plus"></i></button>
-                </div>
-              </div>
-              @if ($errors->has('klasifikasi_usaha'))
+              <textarea class="form-control" rows="4" name="pengalaman_kerja"  placeholder="Masukan Pengalaman Kerja"></textarea>
+              @if ($errors->has('pengalaman_kerja'))
                   <span class="help-block">
-                      <strong>{{ $errors->first('klasifikasi_usaha') }}</strong>
+                      <strong>{{ $errors->first('pengalaman_kerja') }}</strong>
                   </span>
               @endif
             </div>
-          </div> --}}
+          </div>
       </div>
     </div>
 <!-- /.box-body -->
 </div>
 @push('scripts')
 <script>
+var urlKlasifikasi = '{!!route('supplier.klasifikasi.getselect')!!}';
 $(function() {
-  // autocomp();
-  // $(document).on('click','.add-klasifikasi',function(){
-  //   var _this = $(this);
-  //   var content = _this.parent().parent();
-  //   var btnDelete = content.find('.delete-klasifikasi');
-  //   if(btnDelete.length==0){
-  //     content.find('.input-group-btn').append('<button type="button" class="btn btn-default delete-klasifikasi"><i class="glyphicon glyphicon-trash"></i></button>');
-  //   }
-  //   content.after(create_klasifikasi());
-  //   autocomp();
-  // });
-  // $(document).on('click','.delete-klasifikasi',function(){
-  //   var _this = $(this);
-  //   var content = _this.parent().parent();
-  //   content.remove();
-  //   var klasifikasiUsaha = $('.klasifikasi_usaha');
-  //   if(klasifikasiUsaha.length==1){
-  //     klasifikasiUsaha.parent().find('.delete-klasifikasi').remove();
-  //   }
-  // });
-  var app = {
-    type : false,
-    attr : false,
-    name : false,
-    input_autocomplete : false,
-    url_autocomplete : false,
-    init : function () {
-      app.autocomplete();
-      app.add_field();
-      app.delete_field();
-    },
-    create_content : function () {
-      var content = $(this.attr),btnDelete;
-      //console.log(content.length)
-      if(content.length>0){
-        btnDelete = '<button type="button" class="btn btn-default delete-'+this.type+'"><i class="glyphicon glyphicon-trash"></i></button>'
-      }
-      return '<div class="input-group bottom15">\
-            <input type="text" class="form-control '+this.attr+'" name="'+this.name+'">\
-            <div class="input-group-btn">\
-              <button type="button" class="btn btn-default add-'+this.type+'"><i class="glyphicon glyphicon-plus"></i></button>\
-              '+btnDelete+'\
-            </div>\
-          </div>';
-    },
-    add_field : function() {
-      $(document).on('click','.add-'+this.type,function(){
-        var _this = $(this);
-        var content = _this.parent().parent();
-        var btnDelete = content.find('.delete-'+this.type);
-        if(btnDelete.length==0){
-          content.find('.input-group-btn').append('<button type="button" class="btn btn-default delete-'+this.type+'"><i class="glyphicon glyphicon-trash"></i></button>');
-        }
-        console.log(btnDelete.length);
-        content.after(app.create_content());
-        if(this.input_autocomplete){
-          app.autocomplete();
-        }
-      });
-    },
-    autocomplete : function () {
-      $(this.attr).autocomplete({
-        serviceUrl: this.url_autocomplete,
-        onSelect: function (suggestion) {
-          // var _this = $(this);
-          // _this.parent().removeClass('input-groups').addClass('input-group').find('.input-group-btn').removeClass('hide');
-          // console.log($(this));
-        },
-        dataType: 'json',
-        paramName:'q',
-      });
-    },
-    delete_field : function () {
-      $(document).on('click','.delete-'+this.type,function(){
-        var _this = $(this);
-        var content = _this.parent().parent();
-        content.remove();
-        var klasifikasiUsaha = $(this.attr);
-        if(klasifikasiUsaha.length==1){
-          klasifikasiUsaha.parent().find('.delete-'+this.type).remove();
-        }
-      });
-    }
-  };
-  app.type = 'klasifikasi';
-  app.attr = '.klasifikasi_usaha';
-  app.name = 'klasifikasi_usaha[]';
-  app.input_autocomplete = true;
-  app.url_autocomplete = '{!!route('supplier.klasifikasi.getselect')!!}';
-  app.init();
+  autocomp('klasifikasi_usaha',urlKlasifikasi);
+  add_select('klasifikasi_usaha');
+  delete_select('klasifikasi_usaha');
 });
-function content_klasifikasi(){
-  var content = $('.klasifikasi_usaha'),btnDelete;
+function add_select(attr) {
+  $(document).on('click','.add-'+attr,function(){
+    var _this = $(this);
+    var content = _this.parent().parent();
+    var btnDelete = content.find('.delete-'+attr);
+    if(btnDelete.length==0){
+      content.find('.input-group-btn').append('<button type="button" class="btn btn-default delete-'+attr+'"><i class="glyphicon glyphicon-trash"></i></button>');
+    }
+    content.after(create_content(attr));
+    if(attr=='klasifikasi_usaha'){
+      autocomp(attr,urlKlasifikasi);
+    }
+  });
+}
+function delete_select(attr) {
+  $(document).on('click','.delete-'+attr,function(){
+    var _this = $(this);
+    var content = _this.parent().parent();
+    content.remove();
+    var attrNya = $('.'+attr);
+    if(attrNya.length==1){
+      attrNya.parent().find('.delete-'+attr).remove();
+    }
+  });
+}
+function create_content(attr){
+  var content = $('.'+attr),btnDelete;
   //console.log(content.length)
   if(content.length>0){
-    btnDelete = '<button type="button" class="btn btn-default delete-klasifikasi"><i class="glyphicon glyphicon-trash"></i></button>'
+    btnDelete = '<button type="button" class="btn btn-default delete-'+attr+'"><i class="glyphicon glyphicon-trash"></i></button>'
   }
   return '<div class="input-group bottom15">\
-        <input type="text" class="form-control klasifikasi_usaha" name="klasifikasi_usaha[]">\
+        <input type="text" class="form-control '+attr+'" name="'+attr+'[]">\
         <div class="input-group-btn">\
-          <button type="button" class="btn btn-default add-klasifikasi"><i class="glyphicon glyphicon-plus"></i></button>\
+          <button type="button" class="btn btn-default add-'+attr+'"><i class="glyphicon glyphicon-plus"></i></button>\
           '+btnDelete+'\
         </div>\
       </div>';
 }
-function autocomp() {
-  $('.klasifikasi_usaha').autocomplete({
-    serviceUrl: '{!!route('supplier.klasifikasi.getselect')!!}',
+function autocomp(attr,url) {
+  $('.'+attr).autocomplete({
+    serviceUrl: url,
     onSelect: function (suggestion) {
       // var _this = $(this);
       // _this.parent().removeClass('input-groups').addClass('input-group').find('.input-group-btn').removeClass('hide');

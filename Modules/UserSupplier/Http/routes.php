@@ -4,4 +4,5 @@ Route::group(['middleware' => 'web', 'prefix' => 'usersupplier', 'namespace' => 
 {
     Route::get('/', 'UserSupplierController@index')->name('usersupplier');
     Route::get('/register', 'RegisterController@index')->name('usersupplier.register');
+    Route::post('/register/add', 'RegisterController@add')->name('usersupplier.add');
 });

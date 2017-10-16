@@ -3,8 +3,11 @@
 namespace Modules\UserSupplier\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+
+use App\User;
+use Validator;
+use Response;
 
 class RegisterController extends Controller
 {
@@ -31,9 +34,37 @@ class RegisterController extends Controller
      * @param  Request $request
      * @return Response
      */
-    public function store(Request $request)
-    {
-    }
+     public function add(Request $request)
+     {
+       $rules = array (
+           'bdn_usaha' => 'required',
+           'nm_vendor' => 'required|min:5',
+           'nm_vendor_uq' => 'required|max:3|min:3',
+           'password' => 'required|min:8',
+           'phone' => 'required|max:12',
+           'email' => 'required|unique:users,email',
+       );
+       $validator = Validator::make($request->all(), $rules);
+       if ($validator->fails ())
+           return Response::json (array(
+               'errors' => $validator->getMessageBag()->toArray()
+           ));
+       else {
+             $inisial = $request->nm_vendor_uq;
+             $bdn_usaha = $request->bdn_usaha;
+             $gabung = $bdn_usaha." - ".$inisial;
+
+             $data = new User();
+            //  $data->data = $request->bdn_usaha;
+             $data->name = $request->nm_vendor;
+             $data->data = $gabung;
+             $data->password = $request->password;
+             $data->phone = $request->phone;
+             $data->email = $request->email;
+             $data->save ();
+             return view('usersupplier::register');
+           }
+     }
 
     /**
      * Show the specified resource.

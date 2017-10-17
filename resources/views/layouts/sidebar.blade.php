@@ -75,7 +75,7 @@
               </ul>
             </li>
             <li>
-                <a href="#"> <img src="{{asset('/images/icon-user.png')}}" title="Perubahan Kontrak" />
+                <a href="{{route('profile')}}"> <img src="{{asset('/images/icon-user.png')}}" title="Perubahan Kontrak" />
                     <span>User Profile</span></a>
             </li>
             <li>

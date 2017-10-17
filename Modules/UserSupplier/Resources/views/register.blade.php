@@ -1,3 +1,36 @@
+<script src="{{ mix('js/all.js') }}"></script>
+<script>
+// function us(){
+//   var usernm = ""
+// }
+function add(){
+  var bdn_usaha = $("#bdn_usaha").val();
+  var nm_vendor = $("#nm_vendor").val();
+  var nm_vendor_uq = $("#nm_vendor_uq").val();
+  var password = $("#password").val();
+  var phone = $("#phone").val();
+  var email = $("#email").val();
+  var username = $("#username").val();
+
+  // var data = $("#form-me").serialize();
+  $.ajax({
+      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+      url: "{{ route('usersupplier.add') }}",
+      type: 'post',
+      data: { 'bdn_usaha': bdn_usaha, 'nm_vendor': nm_vendor, 'nm_vendor_uq': nm_vendor_uq, 'password': password, 'phone': phone, 'email': email, 'username': username  }, // Remember that you need to have your csrf token included
+      dataType: 'json',
+      success: function( _response ){
+        document.getElementById("form-me").reset();
+        $('#form-modal').modal('show');
+      }
+
+  });
+  }
+
+  function reload(){
+    location.reload();
+  }
+</script>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -22,54 +55,87 @@
       <div class="register-logo">
         <img src="{{asset('images/logo.png')}}" alt="Consys">
       </div>
-      <form id="form-me" action="{!! route('usersupplier.add') !!}" method="post">
+      <form id="form-me" onsubmit="add(); return false;"  method="post">
+
           {{ csrf_field() }}
+          <?php
+           $users = \DB::table('users')
+           ->select(DB::raw('count(id) as jum'))
+           ->where('username', 'like', '%VR%')->get();
+
+           foreach ($users as $usr) {
+            $jml= $usr->jum; //hasil query
+            $tot= $jml+1;
+            $us= "VR00".$tot;
+          }
+           ?>
+          <input type="hidden" class="form-control" name="username" id="username" value="<?php echo $us; ?>" required>
           <div class="form-group">
             <div class="error-global"></div>
             <label>Badan Usaha</label>
-            <select class="form-control" name="bdn_usaha">
+            <select class="form-control" name="bdn_usaha" id="bdn_usaha">
               <option value="PT">PT</option>
               <option value="CV">CV</option>
             </select>
             <div class="error-bdn_usaha"></div>
           </div>
+
           <div class="form-group">
             <label>Nama Perusahaan</label>
-            <input type="text" class="form-control" name="nm_vendor" required>
+            <input type="text" class="form-control" name="nm_vendor" id="nm_vendor" required>
             <div class="error-nm_vendor"></div>
           </div>
+
           <div class="form-group">
             <label>Inisial Perusahaan</label>
-            <input type="text" class="form-control" name="nm_vendor_uq" required placeholder="Isi 3 digit inisial Perusahaan">
+            <input type="text" class="form-control" name="nm_vendor_uq" id="nm_vendor_uq" required placeholder="Isi 3 digit inisial Perusahaan">
             <div class="error-nm_vendor_uq"></div>
           </div>
+
           <div class="form-group">
             <label>Password</label>
-            <input type="password" class="form-control" name="password" required>
+            <input type="password" class="form-control" name="password" id="password" required>
             <div class="error-password"></div>
           </div>
 
           <div class="form-group">
             <label>No Tlp Flexi</label>
-            <input type="text" class="form-control" name="phone" required>
+            <input type="text" class="form-control" name="phone" id="phone" required>
             <div class="error-phone"></div>
           </div>
+
           <div class="form-group">
             <label>E-Mail Address</label>
-            <input type="text" class="form-control" name="email" required>
+            <input type="text" class="form-control" name="email" id="email" required>
             <div class="error-email"></div>
           </div>
+
           <div class="form-group text-center"><label>Sudah punya akun? <a href="{{url('/login')}}">Login</a></label></div>
           <div class="form-group"> <small>Konfirmasi email dan password akan dikirim melalu email</small></div>
-          <div class="form-group"> <button type="submit" class="btn btn-danger btn-block btn-flat btn-save">Simpan</button></div>
+          <div class="form-group"> <button type="submit" class="btn btn-danger btn-block btn-flat" id="bnt_simpan">Simpan</button></div>
       </form>
     </div>
   </div>
 </div>
+<div class="modal fade" role="dialog" id="form-modal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+              <h4 class="modal-title">Success</h4>
+            </div>
+            <div class="modal-body">
+              <p>Data berhasil tersimpan</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="reload(); return false;">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
 </body>
     <!-- /.login-box -->
 
-    <!-- <script>
+  <!--  <script>
       $(function () {
         $('input').iCheck({
           checkboxClass: 'icheckbox_square-blue',
@@ -77,69 +143,5 @@
           increaseArea: '20%' // optional
         });
       });
-    </script> -->
-    @push('scripts')
-    <script>
-        $(function() {
-          $(document).on('submit','#form-me',function (event) {
-              event.preventDefault();
-              var formMe = $(this)
-              var attErrorBdn_usaha     = formMe.find('.error-bdn_usaha')
-              var attErrorNm_vendor     = formMe.find('.error-nm_vendor')
-              var attErrorNm_vendor_uq  = formMe.find('.error-nm_vendor_uq')
-              var attErrorPassword      = formMe.find('.error-password')
-              var attErrorPhone         = formMe.find('.error-phone')
-              var attErrorEmail         = formMe.find('.error-email')
-              attErrorBdn_usaha.html('')
-              attErrorNm_vendor.html('')
-              attErrorNm_vendor_uq.html('')
-              attErrorPassword.html('')
-              attErrorPhone.html('')
-              attErrorEmail.html('')
-              var btnSave = formMe.find('.btn-save')
-              btnSave.button('loading')
-              $.ajax({
-                  url: formMe.attr('action'),
-                  type: 'post',
-                  data: formMe.serialize(), // Remember that you need to have your csrf token included
-                  dataType: 'json',
-                  success: function( _response ){
-                      // Handle your response..
-                      console.log(_response)
-                      if(_response.errors){
-                          if(_response.errors.bdn_usaha){
-                              attErrorBdn_usaha.html('<span class="text-danger">'+_response.errors.bdn_usaha+'</span>');
-                          }
-                          if(_response.errors.nm_vendor){
-                              attErrorNm_vendor.html('<span class="text-danger">'+_response.errors.nm_vendor+'</span>');
-                          }
-                          if(_response.errors.nm_vendor_uq){
-                              attErrorNm_vendor_uq.html('<span class="text-danger">'+_response.errors.nm_vendor_uq+'</span>');
-                          }
-                          if(_response.errors.password){
-                              attErrorPassword.html('<span class="text-danger">'+_response.errors.password+'</span>');
-                          }
-                          if(_response.errors.phone){
-                              attErrorPhone.html('<span class="text-danger">'+_response.errors.phone+'</span>');
-                          }
-                          if(_response.errors.email){
-                              attErrorEmail.html('<span class="text-danger">'+_response.errors.email+'</span>');
-                          }
-                      }
-                      else{
-                      alertBS('Data successfully added','success')
-                    }
-                    btnSave.button('reset')
-                  },
-                  error: function( _response ){
-                      // Handle error
-                      btnSave.button('reset')
-                      alertBS('Something wrong, please try again','danger')
-                  }
-              });
-          })
-          });
-      </script>
-      @endpush
-  </body>
+    </script>-->
 </html>

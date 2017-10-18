@@ -48,7 +48,7 @@ class Helpers
         if($val==$dt['id']){
           $selected = 'selected="selected"';
         }
-        $select .= '<option value="'.$dt['id'].'" '.$selected.'>'.$dt['text'].'</option>';
+        $select .= '<option value="'.$dt['text'].'" '.$selected.'>'.$dt['text'].'</option>';
       }
       $select .= '</select>';
       return $select;

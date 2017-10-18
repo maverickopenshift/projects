@@ -41,10 +41,7 @@
           <div class="form-group">
             <div class="error-global"></div>
             <label>Badan Usaha</label>
-            <select class="form-control" name="bdn_usaha" id="bdn_usaha">
-              <option value="PT">PT</option>
-              <option value="CV">CV</option>
-            </select>
+              {!!Helper::select_badan_usaha(old('bdn_usaha'))!!}
             <div class="error-bdn_usaha"></div>
           </div>
 

@@ -27,32 +27,41 @@
                 <div class="form-group">
                   <label for="doc_title" class="col-sm-4 control-label">User ID</label>
                   <div class="col-sm-8">
-                    <input type="text" class="form-control" id="doc_title" name="doc_title" placeholder="Masukan Data" value="{{$data['username']}}">
+                    <input type="hidden" class="form-control" id="id" disabled="true" name="doc_title" value="{{$data['id']}}">
+                    <input type="text" class="form-control" id="user_id" disabled="true" name="user_id" placeholder="Masukan Data" value="{{$data['username']}}">
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="doc_number" class="col-sm-4 control-label">Nomer Flexi</label>
                   <div class="col-sm-8">
-                    <input type="text" class="form-control" id="doc_number" value="{{$data['phone']}}" name="doc_number" placeholder="Masukan Data">
+                    <input type="text" class="form-control" id="phone" value="{{$data['phone']}}" name="phone" placeholder="Masukan Data">
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="id_roles" class="col-sm-4 control-label">Password Lama</label>
                   <div class="col-sm-8">
-                    <input type="password" class="form-control" id="doc_mitra" name="doc_mitra" placeholder="Masukan Data" value="">
+                    <input type="password" class="form-control" id="pwd_lama" name="pwd_lama" placeholder="Masukan Data" value="i">
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="doc_mitra" class="col-sm-4 control-label">Password Baru</label>
                   <div class="col-sm-8">
-                    <input type="password" class="form-control" id="doc_mitra" name="doc_mitra" placeholder="Masukan Data" value="">
+                    <input type="password" class="form-control" id="pwd_baru" name="pwd_baru"  value="">
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="doc_mitra" class="col-sm-4 control-label">Konfirmasi Password Baru</label>
                   <div class="col-sm-8">
-                    <input type="password" class="form-control" id="doc_mitra" name="doc_mitra" placeholder="Masukan Data">
+                    <input type="password" class="form-control" id="konf_pwd_baru" name="konf_pwd_baru" >
                   </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-sm-12">
+                    <div class="pull-right">
+                      <button type="submit" class="btn btn-success">Simpan</button>
+                    </div>
+                </div>
+                </div>
                 </div>
               </div>
             </div>

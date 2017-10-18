@@ -22,18 +22,33 @@ class RegisterController extends Controller
 
      public function add(Request $request)
      {
-         $inisial = $request->nm_vendor_uq;
+         $rules = array (
+             'bdn_usaha'            => 'required',
+             'company_name'         => 'required|min:5|unique:users,name',
+             'initial_company_name' => 'required|size:3',
+             'password'             => 'required|min:6',
+             'phone'                => 'required|regex:/[0-9]/',
+             'email'                => 'required|email|unique:users,email',
+         );
+         $validator = Validator::make($request->all(), $rules);
+         if ($validator->fails ())
+             return Response::json (array(
+                 'errors' => $validator->getMessageBag()->toArray()
+             ));
+         else {
+         $inisial = $request->initial_company_name;
          $bdn_usaha = $request->bdn_usaha;
          $gabung = $bdn_usaha." - ".$inisial;
 
          $data = new User();
-         $data->name = $request->nm_vendor;
+         $data->name = $request->company_name;
          $data->data = $gabung;
          $data->password = bcrypt($request->password);
          $data->phone = $request->phone;
          $data->email = $request->email;
          $data->username = $request->username;
          $data->save ();
+       }
 
         //  Mail::send('usersupplier.notifemail', ['username' => $request->username], function($message)
         //  {

@@ -8,4 +8,5 @@ Route::group(['middleware' => 'web', 'prefix' => 'usersupplier', 'namespace' => 
     Route::get('/NotifEmail', 'RegisterController@NotifEmail')->name('usersupplier.notifemail');
 
     Route::get('/profileVendor', 'ProfileController@index')->name('profile');
+    Route::post('/update', 'ProfileController@update')->name('profile.update');
 });

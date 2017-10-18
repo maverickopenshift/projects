@@ -3,10 +3,12 @@
 namespace Modules\UserSupplier\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 
 use App\User;
+use Datatables;
+use Validator;
+use Response;
 
 class ProfileController extends Controller
 {
@@ -17,13 +19,36 @@ class ProfileController extends Controller
     public function index()
     {
 
-        $tbUser = User::where('name','=','Vendor 1')->first();
+        $tbUser = User::where('id','=','3')->first();
         if(!$tbUser){
           abort(404);
         }
         $data['data'] = $tbUser;
         $data['page_title'] = 'Profile User';
         return view('usersupplier::profile.index')->with($data);
+    }
+
+    public function update(Request $request)
+    {
+              $rules = array (
+                  'phone'         => 'required|regex:/[0-9]/',
+                  'Password'      => 'required',
+                  'new_password'      => 'required|min:6',
+                  'password_confirmation' => 'required|min:6|same:new_password',
+              );
+              $validator = Validator::make($request->all(), $rules);
+              if ($validator->fails ())
+                  return Response::json (array(
+                      'errors' => $validator->getMessageBag()->toArray()
+                  ));
+              else {
+                $data = User::where('id','=',$request->id)->first();
+                $data->phone = $request->phone;
+                $data->password = bcrypt($request->new_password);
+                $data->save();
+                return response()->json($data);
+              }
+
     }
 
     /**
@@ -67,9 +92,6 @@ class ProfileController extends Controller
      * @param  Request $request
      * @return Response
      */
-    public function update(Request $request)
-    {
-    }
 
     /**
      * Remove the specified resource from storage.

@@ -1,36 +1,4 @@
-<script src="{{ mix('js/all.js') }}"></script>
-<script>
-// function us(){
-//   var usernm = ""
-// }
-function add(){
-  var bdn_usaha = $("#bdn_usaha").val();
-  var nm_vendor = $("#nm_vendor").val();
-  var nm_vendor_uq = $("#nm_vendor_uq").val();
-  var password = $("#password").val();
-  var phone = $("#phone").val();
-  var email = $("#email").val();
-  var username = $("#username").val();
 
-  // var data = $("#form-me").serialize();
-  $.ajax({
-      headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-      url: "{{ route('usersupplier.add') }}",
-      type: 'post',
-      data: { 'bdn_usaha': bdn_usaha, 'nm_vendor': nm_vendor, 'nm_vendor_uq': nm_vendor_uq, 'password': password, 'phone': phone, 'email': email, 'username': username  }, // Remember that you need to have your csrf token included
-      dataType: 'json',
-      success: function( _response ){
-        document.getElementById("form-me").reset();
-        $('#form-modal').modal('show');
-      }
-
-  });
-  }
-
-  function reload(){
-    location.reload();
-  }
-</script>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -55,7 +23,7 @@ function add(){
       <div class="register-logo">
         <img src="{{asset('images/logo.png')}}" alt="Consys">
       </div>
-      <form id="form-me" onsubmit="add(); return false;"  method="post">
+      <form id="form-me" action="#"  method="post">
 
           {{ csrf_field() }}
           <?php
@@ -82,13 +50,13 @@ function add(){
 
           <div class="form-group">
             <label>Nama Perusahaan</label>
-            <input type="text" class="form-control" name="nm_vendor" id="nm_vendor" required>
+            <input type="text" class="form-control" name="company_name" id="company_name" required>
             <div class="error-nm_vendor"></div>
           </div>
 
           <div class="form-group">
             <label>Inisial Perusahaan</label>
-            <input type="text" class="form-control" name="nm_vendor_uq" id="nm_vendor_uq" required placeholder="Isi 3 digit inisial Perusahaan">
+            <input type="text" class="form-control" name="initial_company_name" id="initial_company_name" required placeholder="Isi 3 digit inisial Perusahaan">
             <div class="error-nm_vendor_uq"></div>
           </div>
 
@@ -134,14 +102,70 @@ function add(){
 </div>
 </body>
     <!-- /.login-box -->
+    <script src="{{ mix('js/all.js') }}"></script>
+    <script>
+        $(function() {
+            var formModal = $('#form-modal');
+            $(document).on('submit','#form-me',function (event) {
+              event.preventDefault();
+              var formMe = $(this)
+              var attErrorBdn_usaha = formMe.find('.error-bdn_usaha')
+              var attErrorNm_vendor = formMe.find('.error-nm_vendor')
+              var attErrorNm_vendor_uq = formMe.find('.error-nm_vendor_uq')
+              var attErrorPassword = formMe.find('.error-password')
+              var attErrorPhone = formMe.find('.error-phone')
+              var attErrorEmail = formMe.find('.error-email')
+              attErrorBdn_usaha.html('')
+              attErrorNm_vendor.html('')
+              attErrorNm_vendor_uq.html('')
+              attErrorPassword.html('')
+              attErrorPhone.html('')
+              attErrorEmail.html('')
+              // var btnSave = formMe.find('.btn-save')
+              // btnSave.button('loading')
+              $.ajax({
+                  headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                  url: "{{ route('usersupplier.add') }}",
+                  type: 'post',
+                  data: formMe.serialize(), // Remember that you need to have your csrf token included
+                  dataType: 'json',
+                  success: function( _response ){
+                      // Handle your response..
+                      console.log(_response)
+                      if(_response.errors){
+                          if(_response.errors.bdn_usaha){
+                              attErrorBdn_usaha.html('<span class="text-danger">'+_response.errors.bdn_usaha+'</span>');
+                          }
+                          if(_response.errors.company_name){
+                              attErrorNm_vendor.html('<span class="text-danger">'+_response.errors.company_name+'</span>');
+                          }
+                          if(_response.errors.initial_company_name){
+                              attErrorNm_vendor_uq.html('<span class="text-danger">'+_response.errors.initial_company_name+'</span>');
+                          }
+                          if(_response.errors.password){
+                              attErrorPassword.html('<span class="text-danger">'+_response.errors.password+'</span>');
+                          }
+                          if(_response.errors.phone){
+                              attErrorPhone.html('<span class="text-danger">'+_response.errors.phone+'</span>');
+                          }
+                          if(_response.errors.email){
+                              attErrorEmail.html('<span class="text-danger">'+_response.errors.email+'</span>');
+                          }
+                      }
+                      else{
+                          document.getElementById("form-me").reset();
+                          $('#form-modal').modal('show')
+                      }
+                  },
+                  error: function( _response ){
+                    alert("error1");
+                  }
+              });
+              })
+            });
 
-  <!--  <script>
-      $(function () {
-        $('input').iCheck({
-          checkboxClass: 'icheckbox_square-blue',
-          radioClass: 'iradio_square-blue',
-          increaseArea: '20%' // optional
-        });
-      });
-    </script>-->
+              function reload(){
+                location.reload();
+              }
+        </script>
 </html>

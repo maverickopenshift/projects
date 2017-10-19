@@ -9,4 +9,8 @@ Route::group(['middleware' => 'web', 'prefix' => 'usersupplier', 'namespace' => 
 
     Route::get('/profileVendor', 'ProfileController@index')->name('profile');
     Route::post('/update', 'ProfileController@update')->name('profile.update');
+
+    Route::get('/dataSupplier', 'DataSupplierController@index')->name('supplier.list');
+    Route::get('/kelengkapanData', 'DataSupplierController@tambah')->name('supplier.tambah');
+    Route::get('/tambah', 'DataSupplierController@add')->name('supplier.insert');
 });

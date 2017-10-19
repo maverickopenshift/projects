@@ -79,7 +79,7 @@
                     <span>User Profile</span></a>
             </li>
             <li>
-                <a href="#"> <img src="{{asset('/images/icon-entry.png')}}" title="Perubahan Kontrak" />
+                <a href="{{route('supplier.list')}}"> <img src="{{asset('/images/icon-entry.png')}}" title="Perubahan Kontrak" />
                     <span>Data Suplier Telkom</span></a>
             </li>
             <li>

@@ -18,6 +18,7 @@ class DataSupplierController extends Controller
      */
     public function index()
     {
+      
       $data['page_title'] = 'Data Supplier';
       return view("usersupplier::dataSupplier.index")->with($data);
     }
@@ -34,9 +35,11 @@ class DataSupplierController extends Controller
 
      public function add(Request $request)
      {
+          $id_usr = auth()->user()->id;
+          $usr_nm = auth()->user()->username;
           $data = new supplier();
-          $data->id_user = "35";
-          $data->kd_vendor = "VR0044";
+          $data->id_user = $id_usr;
+          $data->kd_vendor = $usr_nm;
 
           $data->bdn_usaha = $request->bdn_usaha;
           $data->nm_vendor = $request->nm_vendor;

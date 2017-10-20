@@ -48,6 +48,7 @@ class RegisterController extends Controller
          $data->email = $request->email;
          $data->username = $request->username;
          $data->save ();
+
        }
 
         //  Mail::send('usersupplier.notifemail', ['username' => $request->username], function($message)

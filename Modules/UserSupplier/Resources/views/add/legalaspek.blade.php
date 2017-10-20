@@ -177,13 +177,13 @@
               <label for="siup_kualifikasi" class="col-sm-2 control-label"><span class="text-red">*</span> Kualifikasi SIUP</label>
               <div class="col-sm-10">
                 <label class="radio-inline">
-                  <input class="check-me" type="radio" name="siup_kualifikasi" {{old('siup_kualifikasi')=='1'?'checked':''}}> Besar
+                  <input class="check-me" type="radio" name="siup_kualifikasi" value="1"> Besar
                 </label>
                 <label class="radio-inline">
-                  <input class="check-me" type="radio" name="siup_kualifikasi" {{old('siup_kualifikasi')=='2'?'checked':''}}> Menengah
+                  <input class="check-me" type="radio" name="siup_kualifikasi" value="2"> Menengah
                 </label>
                 <label class="radio-inline">
-                  <input class="check-me" type="radio" name="siup_kualifikasi" {{old('siup_kualifikasi')=='3'?'checked':''}}> Kecil
+                  <input class="check-me" type="radio" name="siup_kualifikasi" value="3"> Kecil
                 </label>
                 @if ($errors->has('siup_kualifikasi'))
                     <span class="help-block">
@@ -376,19 +376,91 @@
         <hr  />
       </div>
 
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="form-horizontal">
+            <div class="form-group">
+              <label class="col-sm-2 control-label"><span class="text-red">*</span> Legal Dokumen</label>
+              <div class="col-sm-5">
+                <input type="text" class="form-control" name="dokumen[]" value="">
+              </div>
+              <div class="col-sm-2">
+                <input type="file" name="dokumen[]">
+              </div>
+              <div class="col-sm-3">
+                <button type="button" class="btn btn-default"><i class="glyphicon glyphicon-plus"></i></button>
+              </div>
+              <div class="col-sm-10">
+                <hr  />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
 
     </div>
 <!-- /.box-body -->
 </div>
 @push('scripts')
 <script>
-$(function(){
-  $('input').iCheck('uncheck');
-  $('input').iCheck({
-    checkboxClass: 'icheckbox_square-blue',
-    radioClass: 'iradio_square-blue',
-    increaseArea: '20%' // optional
-  });
+var urlKlasifikasi = '{!!route('supplier.klasifikasi.getselect')!!}';
+$(function() {
+  autocomp('klasifikasi_usaha',urlKlasifikasi);
+  add_select('klasifikasi_usaha');
+  delete_select('klasifikasi_usaha');
 });
+function add_select(attr) {
+  $(document).on('click','.add-'+attr,function(){
+    var _this = $(this);
+    var content = _this.parent().parent();
+    var btnDelete = content.find('.delete-'+attr);
+    if(btnDelete.length==0){
+      content.find('.input-group-btn').append('<button type="button" class="btn btn-default delete-'+attr+'"><i class="glyphicon glyphicon-trash"></i></button>');
+    }
+    content.after(create_content(attr));
+    if(attr=='klasifikasi_usaha'){
+      autocomp(attr,urlKlasifikasi);
+    }
+  });
+}
+function delete_select(attr) {
+  $(document).on('click','.delete-'+attr,function(){
+    var _this = $(this);
+    var content = _this.parent().parent();
+    content.remove();
+    var attrNya = $('.'+attr);
+    if(attrNya.length==1){
+      attrNya.parent().find('.delete-'+attr).remove();
+    }
+  });
+}
+function create_content(attr){
+  var content = $('.'+attr),btnDelete;
+  //console.log(content.length)
+  if(content.length>0){
+    btnDelete = '<button type="button" class="btn btn-default delete-'+attr+'"><i class="glyphicon glyphicon-trash"></i></button>'
+  }
+  return '<div class="input-group bottom15">\
+        <input type="text" class="form-control '+attr+'" name="'+attr+'[]">\
+        <div class="input-group-btn">\
+          <button type="button" class="btn btn-default add-'+attr+'"><i class="glyphicon glyphicon-plus"></i></button>\
+          '+btnDelete+'\
+        </div>\
+      </div>';
+}
+function autocomp(attr,url) {
+  $('.'+attr).autocomplete({
+    serviceUrl: url,
+    onSelect: function (suggestion) {
+      // var _this = $(this);
+      // _this.parent().removeClass('input-groups').addClass('input-group').find('.input-group-btn').removeClass('hide');
+      // console.log($(this));
+    },
+    dataType: 'json',
+    paramName:'q',
+  });
+}
 </script>
 @endpush

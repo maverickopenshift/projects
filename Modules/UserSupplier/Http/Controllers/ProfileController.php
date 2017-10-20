@@ -18,8 +18,9 @@ class ProfileController extends Controller
      */
     public function index()
     {
+      $id_session=auth()->user()->id;
 
-        $tbUser = User::where('id','=','3')->first();
+        $tbUser = User::where('id','=',$id_session)->first();
         if(!$tbUser){
           abort(404);
         }

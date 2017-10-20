@@ -53,7 +53,7 @@
           <div class="form-group {{ $errors->has('bank_kota') ? ' has-error' : '' }}">
             <label for="bank_kota" class="col-sm-2 control-label">Kota</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" name="bank_cabang" value="{{ old('bank_kota') }}" placeholder="Masukan Kota Bank">
+              <input type="text" class="form-control" name="bank_kota" value="{{ old('bank_kota') }}" placeholder="Masukan Kota Bank">
               @if ($errors->has('bank_kota'))
                   <div class="help-block">
                       <strong>{{ $errors->first('bank_kota') }}</strong>

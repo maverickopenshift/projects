@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-  <form action="#" method="post" id="form-me">
+  <form action="#" method="get" id="form-me">
     {{ csrf_field() }}
     @if ($errors->has('error'))
     <div class="alert alert-danger alert-dismissible">
@@ -85,6 +85,21 @@
         <!-- /.tab-content -->
       </div>
   </form>
+  <div class="modal fade" role="dialog" id="form-modal">
+      <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Success</h4>
+              </div>
+              <div class="modal-body">
+                <p>Data berhasil tersimpan</p>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal" onclick="reload(); return false;">Close</button>
+              </div>
+          </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+  </div>
 @endsection
 @push('scripts')
 <script>
@@ -96,42 +111,25 @@ $(function () {
    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
   });
 
+var formModal = $('#form-modal');
 
   $(document).on('submit','#form-me',function (event) {
     event.preventDefault();
     var formMe = $(this)
+    var isi = formMe.serialize();
     $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        url: "{{ route('profile.update') }}",
-        type: 'post',
+        url: "{{url('usersupplier/tambah')}}",
+        type: 'get',
         data: formMe.serialize(), // Remember that you need to have your csrf token included
         dataType: 'json',
         success: function( _response ){
-            // Handle your response..
-            console.log(_response)
-            if(_response.errors){
-                if(_response.errors.phone){
-                    attErrorPhone.html('<span class="text-danger">'+_response.errors.phone+'</span>');
-                }
-                if(_response.errors.Password){
-                    attErrorPassword.html('<span class="text-danger">'+_response.errors.Password+'</span>');
-                }
-                if(_response.errors.new_password){
-                    attErrorPassword_Baru.html('<span class="text-danger">'+_response.errors.new_password+'</span>');
-                }
-                if(_response.errors.password_confirmation){
-                    attErrorKonfirmasi_Password.html('<span class="text-danger">'+_response.errors.password_confirmation+'</span>');
-                }
-                if(_response.errors.password_confirmation){
-                    attErrorKonfirmasi_Password.html('<span class="text-danger">'+_response.errors.password_confirmation+'</span>');
-                }
-            }
-            else{
+
                 $('#form-modal').modal('show')
-            }
         },
         error: function( _response ){
           alert("error1");
+          // console.log(isi);
         }
     });
     })

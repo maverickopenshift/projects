@@ -100,7 +100,7 @@
             <div class="form-group {{ $errors->has('akte_akhir_notaris') ? ' has-error' : '' }}">
               <label for="akte_akhir_notaris" class="col-sm-5 control-label"><span class="text-red">*</span> Notaris</label>
               <div class="col-sm-7">
-                <input type="text" class="form-control" name="akte_awal_notaris" value="{{ old('akte_akhir_notaris') }}">
+                <input type="text" class="form-control" name="akte_akhir_notaris" value="{{ old('akte_akhir_notaris') }}">
                 @if ($errors->has('akte_akhir_notaris'))
                     <span class="help-block">
                         <strong>{{ $errors->first('akte_akhir_notaris') }}</strong>
@@ -199,17 +199,17 @@
       <div class="row">
         <div class="col-sm-12">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('pajak') ? ' has-error' : '' }}">
-              <label for="pajak" class="col-sm-2 control-label"><span class="text-red">*</span> Perusahaan Kena Pajak</label>
+            <div class="form-group {{ $errors->has('pkp') ? ' has-error' : '' }}">
+              <label for="pkp" class="col-sm-2 control-label"><span class="text-red">*</span> Perusahaan Kena Pajak</label>
               <div class="col-sm-10">
-                <select class="form-control" name="pajak">
-                  <option value="1" {{ old('pajak')=='1'?"selected='selected'":"" }}>Ya</option>
-                  <option value="0" {{ old('pajak')!='1'?"selected='selected'":"" }}>Tidak</option>
+                <select class="form-control" name="pkp">
+                  <option value="1" {{ old('pkp')=='1'?"selected='selected'":"" }}>Ya</option>
+                  <option value="0" {{ old('pkp')!='1'?"selected='selected'":"" }}>Tidak</option>
                 </select>
                 <small> Jika Ya Maka NPWP Wajib Diisi </small>
-                @if ($errors->has('pajak'))
+                @if ($errors->has('pkp'))
                     <span class="help-block">
-                        <strong>{{ $errors->first('pajak') }}</strong>
+                        <strong>{{ $errors->first('pkp') }}</strong>
                     </span>
                 @endif
               </div>
@@ -221,13 +221,13 @@
       <div class="row">
         <div class="col-sm-4">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('npwp') ? ' has-error' : '' }}">
-              <label for="npwp" class="col-sm-5 control-label"><span class="text-red">*</span> No NPWP</label>
+            <div class="form-group {{ $errors->has('npwp_no') ? ' has-error' : '' }}">
+              <label for="npwp_no" class="col-sm-5 control-label"><span class="text-red">*</span> No NPWP</label>
               <div class="col-sm-7">
-                <input type="text" class="form-control" name="npwp" value="{{ old('npwp') }}">
-                @if ($errors->has('npwp'))
+                <input type="text" class="form-control" name="npwp_no" value="{{ old('npwp_no') }}">
+                @if ($errors->has('npwp_no'))
                     <span class="help-block">
-                        <strong>{{ $errors->first('npwp') }}</strong>
+                        <strong>{{ $errors->first('npwp_no') }}</strong>
                     </span>
                 @endif
               </div>
@@ -236,18 +236,18 @@
         </div>
         <div class="col-sm-4">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('npwp_awal_tg') ? ' has-error' : '' }}">
-              <label for="npwp_awal_tg" class="col-sm-5 control-label"><span class="text-red">*</span> Tgl Terbit</label>
+            <div class="form-group {{ $errors->has('npwp_tg') ? ' has-error' : '' }}">
+              <label for="npwp_tg" class="col-sm-5 control-label"><span class="text-red">*</span> Tgl Terbit</label>
               <div class="col-sm-7">
                 <div class="input-group date" data-provide="datepicker">
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
                     </div>
-                    <input type="text" class="form-control" name="npwp_awal_tg" value="{{ old('npwp_awal_tg') }}">
+                    <input type="text" class="form-control" name="npwp_tg" value="{{ old('npwp_tg') }}">
                 </div>
-                @if ($errors->has('npwp_awal_tg'))
+                @if ($errors->has('npwp_tg'))
                     <span class="help-block">
-                        <strong>{{ $errors->first('npwp_awal_tg') }}</strong>
+                        <strong>{{ $errors->first('npwp_tg') }}</strong>
                     </span>
                 @endif
               </div>
@@ -259,13 +259,13 @@
       <div class="row">
         <div class="col-sm-4">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('tdp') ? ' has-error' : '' }}">
-              <label for="tdp" class="col-sm-5 control-label"><span class="text-red">*</span> No TDP (Pemda)</label>
+            <div class="form-group {{ $errors->has('tdp_no') ? ' has-error' : '' }}">
+              <label for="tdp_no" class="col-sm-5 control-label"><span class="text-red">*</span> No TDP (Pemda)</label>
               <div class="col-sm-7">
-                <input type="text" class="form-control" name="tdp" value="{{ old('tdp') }}">
-                @if ($errors->has('tdp'))
+                <input type="text" class="form-control" name="tdp_no" value="{{ old('tdp_no') }}">
+                @if ($errors->has('tdp_no'))
                     <span class="help-block">
-                        <strong>{{ $errors->first('tdp') }}</strong>
+                        <strong>{{ $errors->first('tdp_no') }}</strong>
                     </span>
                 @endif
               </div>
@@ -274,18 +274,18 @@
         </div>
         <div class="col-sm-4">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('tdp_awal_tg') ? ' has-error' : '' }}">
-              <label for="tdp_awal_tg" class="col-sm-5 control-label"><span class="text-red">*</span> Tgl Terbit</label>
+            <div class="form-group {{ $errors->has('tdp_tg_terbit') ? ' has-error' : '' }}">
+              <label for="tdp_tg_terbit" class="col-sm-5 control-label"><span class="text-red">*</span> Tgl Terbit</label>
               <div class="col-sm-7">
                 <div class="input-group date" data-provide="datepicker">
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
                     </div>
-                    <input type="text" class="form-control" name="tdp_awal_tg" value="{{ old('tdp_awal_tg') }}">
+                    <input type="text" class="form-control" name="tdp_tg_terbit" value="{{ old('tdp_tg_terbit') }}">
                 </div>
-                @if ($errors->has('tdp_awal_tg'))
+                @if ($errors->has('tdp_tg_terbit'))
                     <span class="help-block">
-                        <strong>{{ $errors->first('tdp_awal_tg') }}</strong>
+                        <strong>{{ $errors->first('tdp_tg_terbit') }}</strong>
                     </span>
                 @endif
               </div>
@@ -294,18 +294,18 @@
         </div>
         <div class="col-sm-4">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('tdp_akhir_tg') ? ' has-error' : '' }}">
-              <label for="tdp_akhir_tg" class="col-sm-5 control-label"><span class="text-red">*</span> Tgl Expired</label>
+            <div class="form-group {{ $errors->has('tdp_tg_expired') ? ' has-error' : '' }}">
+              <label for="tdp_tg_expired" class="col-sm-5 control-label"><span class="text-red">*</span> Tgl Expired</label>
               <div class="col-sm-7">
                 <div class="input-group date" data-provide="datepicker">
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
                     </div>
-                    <input type="text" class="form-control" name="tdp_akhir_tg" value="{{ old('tdp_akhir_tg') }}">
+                    <input type="text" class="form-control" name="tdp_tg_expired" value="{{ old('tdp_tg_expired') }}">
                 </div>
-                @if ($errors->has('tdp_akhir_tg'))
+                @if ($errors->has('tdp_tg_expired'))
                     <span class="help-block">
-                        <strong>{{ $errors->first('tdp_akhir_tg') }}</strong>
+                        <strong>{{ $errors->first('tdp_tg_expired') }}</strong>
                     </span>
                 @endif
               </div>
@@ -317,13 +317,13 @@
       <div class="row">
         <div class="col-sm-4">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('idp') ? ' has-error' : '' }}">
-              <label for="idp" class="col-sm-5 control-label"><span class="text-red">*</span> No IDP/SITU (Pemda)</label>
+            <div class="form-group {{ $errors->has('idp_no') ? ' has-error' : '' }}">
+              <label for="idp_no" class="col-sm-5 control-label"><span class="text-red">*</span> No IDP/SITU (Pemda)</label>
               <div class="col-sm-7">
-                <input type="text" class="form-control" name="idp" value="{{ old('idp') }}">
-                @if ($errors->has('idp'))
+                <input type="text" class="form-control" name="idp_no" value="{{ old('idp_no') }}">
+                @if ($errors->has('idp_no'))
                     <span class="help-block">
-                        <strong>{{ $errors->first('idp') }}</strong>
+                        <strong>{{ $errors->first('idp_no') }}</strong>
                     </span>
                 @endif
               </div>
@@ -332,18 +332,18 @@
         </div>
         <div class="col-sm-4">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('idp_awal_tg') ? ' has-error' : '' }}">
-              <label for="idp_awal_tg" class="col-sm-5 control-label"><span class="text-red">*</span> Tgl Terbit</label>
+            <div class="form-group {{ $errors->has('idp_tg_terbit') ? ' has-error' : '' }}">
+              <label for="idp_tg_terbit" class="col-sm-5 control-label"><span class="text-red">*</span> Tgl Terbit</label>
               <div class="col-sm-7">
                 <div class="input-group date" data-provide="datepicker">
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
                     </div>
-                    <input type="text" class="form-control" name="idp_awal_tg" value="{{ old('idp_awal_tg') }}">
+                    <input type="text" class="form-control" name="idp_tg_terbit" value="{{ old('idp_tg_terbit') }}">
                 </div>
-                @if ($errors->has('idp_awal_tg'))
+                @if ($errors->has('idp_tg_terbit'))
                     <span class="help-block">
-                        <strong>{{ $errors->first('idp_awal_tg') }}</strong>
+                        <strong>{{ $errors->first('idp_tg_terbit') }}</strong>
                     </span>
                 @endif
               </div>
@@ -352,18 +352,18 @@
         </div>
         <div class="col-sm-4">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('idp_akhir_tg') ? ' has-error' : '' }}">
-              <label for="idp_akhir_tg" class="col-sm-5 control-label"><span class="text-red">*</span> Tgl Expired</label>
+            <div class="form-group {{ $errors->has('idp_tg_expired') ? ' has-error' : '' }}">
+              <label for="idp_tg_expired" class="col-sm-5 control-label"><span class="text-red">*</span> Tgl Expired</label>
               <div class="col-sm-7">
                 <div class="input-group date" data-provide="datepicker">
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
                     </div>
-                    <input type="text" class="form-control" name="idp_akhir_tg" value="{{ old('idp_akhir_tg') }}">
+                    <input type="text" class="form-control" name="idp_tg_expired" value="{{ old('idp_tg_expired') }}">
                 </div>
-                @if ($errors->has('idp_akhir_tg'))
+                @if ($errors->has('idp_tg_expired'))
                     <span class="help-block">
-                        <strong>{{ $errors->first('idp_akhir_tg') }}</strong>
+                        <strong>{{ $errors->first('idp_tg_expired') }}</strong>
                     </span>
                 @endif
               </div>
@@ -376,7 +376,7 @@
         <hr  />
       </div>
 
-      
+
     </div>
 <!-- /.box-body -->
 </div>

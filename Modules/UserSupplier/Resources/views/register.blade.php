@@ -64,7 +64,7 @@
           </div>
 
           <div class="form-group">
-            <label>No Tlp Flexi</label>
+            <label>No Telepon</label>
             <input type="text" class="form-control" name="phone" id="phone" required>
             <div class="error-phone"></div>
           </div>

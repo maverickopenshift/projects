@@ -6,7 +6,7 @@
       <h3 class="box-title">
           <div class="btn-group" role="group" aria-label="...">
             <a href="{{route('supplier.tambah')}}" class="btn btn-default">
-                <i class="glyphicon glyphicon-plus"></i> Add Supplier
+                <i class="glyphicon glyphicon-plus"></i> Tambah Kelengkapan Data
             </a>
           </div>
       </h3>
@@ -41,3 +41,35 @@
 <!-- /.box-body -->
 </div>
 @endsection
+@push('scripts')
+<script>
+var datatablesMe;
+$(function() {
+  datatablesMe = $('#datatables').on('xhr.dt', function ( e, settings, json, xhr ) {
+      // console.log(JSON.stringify(xhr));
+      if(xhr.responseText=='Unauthorized.'){
+        location.reload();
+      }
+      }).DataTable({
+      processing: true,
+      serverSide: true,
+      // scrollX   : true,
+      autoWidth : false,
+      fixedColumns:   {
+            leftColumns: 2,
+            rightColumns:1
+      },
+      order : [[ 4, 'desc' ]],
+      pageLength: 50,
+      ajax: '{!! route('supplier.isi') !!}',
+      columns: [
+          {data : 'DT_Row_Index',orderable:false,searchable:false},
+          { data: 'nm_vendor', name: 'nm_vendor' },
+          { data: 'alamat', name: 'alamat' },
+          { data: 'telepon', name: 'telepon' },
+          { data: 'created_at', name: 'created_at' },
+      ]
+  });
+});
+</script>
+@endpush

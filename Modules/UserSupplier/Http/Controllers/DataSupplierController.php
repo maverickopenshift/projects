@@ -18,9 +18,26 @@ class DataSupplierController extends Controller
      */
     public function index()
     {
-      
+
       $data['page_title'] = 'Data Supplier';
       return view("usersupplier::dataSupplier.index")->with($data);
+    }
+
+    public function data()
+    {
+      $sql = supplier::get();
+      return Datatables::of($sql)
+          ->addIndexColumn()
+          ->filterColumn('created_at', function ($query, $keyword) {
+              $query->whereRaw("DATE_FORMAT(c_others.created_at,'%Y/%m/%d') like ?", ["%$keyword%"]);
+          })
+          ->editColumn('created_at', function ($data) {
+              if($data->updated_at){
+                  return $data->updated_at->format('d-m-Y H:i');
+              }
+              return;
+          })
+          ->make(true);
     }
 
     /**

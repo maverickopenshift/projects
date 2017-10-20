@@ -135,5 +135,9 @@ var formModal = $('#form-modal');
     })
 });
 
+function reload(){
+  document.location="{{url('usersupplier/dataSupplier')}}";
+}
+
 </script>
 @endpush

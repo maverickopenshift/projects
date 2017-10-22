@@ -53,4 +53,14 @@ $(function(e){
     //$(this).find(".date").datepicker('destroy');
     //$(this).find(".date").datepicker(datepicker_ops);
   });
+  $(document).on('click', '.click-upload', function(event) {
+    /* Act on the event */
+    var $this = $(this);
+    var $file = $this.parent().parent().find('input[type="file"]');
+    var $file_txt = $this.parent().parent().find('input[type="text"]');
+    $file.click();
+    $file.change(function(){
+      $file_txt.val($(this).val());
+    }); 
+  });
 });

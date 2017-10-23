@@ -9,9 +9,11 @@ use App\User;
 use App\Role;
 use App\Helpers\Helpers;
 use Modules\Supplier\Entities\Supplier;
+use Modules\Supplier\Entities\SupplierMetadata;
 use Datatables;
 use Validator;
 use Response;
+use DB;
 
 
 class SupplierController extends Controller
@@ -31,20 +33,13 @@ class SupplierController extends Controller
         return Datatables::of($sql)
             ->addIndexColumn()
             ->addColumn('action', function ($data) {
-              $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
-              $roles = htmlspecialchars(json_encode($data->roles), ENT_QUOTES, 'UTF-8');
                             return '
                             <div class="btn-group">
-                            <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'">
+                            <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal"  data-title="Edit"  data-id="'.$data->id.'">
             <i class="glyphicon glyphicon-edit"></i> Edit
             </button><button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-toggle="modal" data-target="#modal-delete">
             <i class="glyphicon glyphicon-trash"></i> Delete
             </button></div>';
-            })
-            ->addColumn('role_name', function (User $user) {
-                return $user->roles->map(function ($role) {
-                    return $role->display_name;
-                })->implode(' , ');
             })
             ->filterColumn('updated_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(c_others.updated_at,'%Y/%m/%d') like ?", ["%$keyword%"]);
@@ -68,6 +63,7 @@ class SupplierController extends Controller
     }
     public function create()
     {
+        //dd(Supplier::gen_userid());
         $data['page_title'] = 'Add Supplier';
         return view('supplier::create')->with($data);
     }
@@ -130,7 +126,6 @@ class SupplierController extends Controller
           'legal_dokumen.*.file' => 'required|mimes:pdf', 
           'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i', 
           'sertifikat_dokumen.*.file' => 'required|mimes:pdf', 
-          // 'password' => 'required|confirmed|max:50|min:5',
       );
       $validator = Validator::make($request->all(), $rules,Helpers::error_submit_supplier());
       if ($validator->fails ()){
@@ -139,8 +134,148 @@ class SupplierController extends Controller
                     ->withErrors($validator);
       }
       else {
-        return redirect()->back()
-                    ->withInput($request->input());
+        $kd_vendor = $this->generate_id();
+        $user = new User();
+        $user->name = $request->nm_vendor;
+        $user->username = $kd_vendor;
+        $user->phone = $request->telepon;
+        $user->email = $request->email;
+        $user->confirmed = 1;
+        $user->actived = 1;
+        $user->password = bcrypt($request->password);
+        $user->save();
+        $user->attachRole('vendor');
+        
+        $data = new Supplier();
+        $data->bdn_usaha = $request->bdn_usaha;
+        $data->id_user = $user->id;
+        $data->nm_vendor = $request->nm_vendor;
+        $data->nm_vendor_uq = $request->nm_vendor_uq;
+        $data->prinsipal_st = $request->prinsipal_st;
+        $data->alamat = $request->alamat;
+        $data->kota = $request->kota;
+        $data->kd_pos = $request->kd_pos;
+        $data->telepon = $request->telepon;
+        $data->fax = $request->fax;
+        $data->email = $request->email;
+        $data->web_site = $request->web_site;
+        $data->induk_perus = $request->induk_perus;
+        $data->asset = $request->asset;
+        $data->bank_nama = $request->bank_nama;
+        $data->bank_cabang = $request->bank_cabang;
+        $data->bank_norek = $request->bank_norek;
+        $data->akte_awal_no = $request->akte_awal_no;
+        $data->akte_awal_tg = $request->akte_awal_tg;
+        $data->akte_awal_notaris = $request->akte_awal_notaris;
+        $data->akte_akhir_no = $request->akte_akhir_no;
+        $data->akte_akhir_tg = $request->akte_akhir_tg;
+        $data->akte_akhir_notaris = $request->akte_akhir_notaris;
+        $data->siup_no = $request->siup_no;
+        $data->siup_tg_terbit = $request->siup_tg_terbit;
+        $data->siup_tg_expired = $request->siup_tg_expired;
+        $data->siup_kualifikasi = $request->siup_kualifikasi;
+        $data->pkp = $request->pkp;
+        $data->npwp_no = $request->npwp_no;
+        $data->npwp_tg = $request->npwp_tg;
+        $data->tdp_no = $request->tdp_no;
+        $data->tdp_tg_terbit = $request->tdp_tg_terbit;
+        $data->tdp_tg_expired = $request->tdp_tg_expired;
+        $data->idp_no = $request->idp_no;
+        $data->idp_tg_terbit = $request->idp_tg_terbit;
+        $data->idp_tg_expired = $request->idp_tg_expired;
+        $data->iujk_no = $request->iujk_no;
+        $data->iujk_tg_terbit = $request->iujk_tg_terbit;
+        $data->iujk_tg_expired = $request->iujk_tg_expired;
+        $data->cp1_nama = $request->cp1_nama;
+        $data->cp1_telp = $request->cp1_telp;
+        $data->cp1_email = $request->cp1_email;
+        $data->jml_peg_domestik = $request->jml_peg_domestik;
+        $data->jml_peg_asing = $request->jml_peg_asing;
+        $data->approval_at = DB::raw('now()');
+        $data->vendor_status = 1;
+        $data->created_by = \Auth::user()->username;
+        $data->kd_vendor = $kd_vendor;
+        $data->save();
+        
+        $mt_data = new SupplierMetadata();
+        $mt_data->id_object    = $data->id;
+        $mt_data->object_type  = 'vendor';
+        $mt_data->object_key   = 'pengalaman_kerja';
+        $mt_data->object_value = $request->pengalaman_kerja;
+        $mt_data->save();
+        
+        $mt_data = new SupplierMetadata();
+        $mt_data->id_object    = $data->id;
+        $mt_data->object_type  = 'vendor';
+        $mt_data->object_key   = 'bank_kota';
+        $mt_data->object_value = $request->bank_kota;
+        $mt_data->save();
+        
+        $mt_data = new SupplierMetadata();
+        $mt_data->id_object    = $data->id;
+        $mt_data->object_type  = 'vendor';
+        $mt_data->object_key   = 'nm_direktur_utama';
+        $mt_data->object_value = $request->nm_direktur_utama;
+        $mt_data->save();
+        
+        $mt_data = new SupplierMetadata();
+        $mt_data->id_object    = $data->id;
+        $mt_data->object_type  = 'vendor';
+        $mt_data->object_key   = 'nm_komisaris_utama';
+        $mt_data->object_value = $request->nm_komisaris_utama;
+        $mt_data->save();
+        
+        foreach($request->klasifikasi_usaha as $k){
+          $mt_data = new SupplierMetadata();
+          $mt_data->id_object    = $data->id;
+          $mt_data->object_type  = 'vendor';
+          $mt_data->object_key   = 'klasifikasi_usaha';
+          $mt_data->object_value = $k;
+          $mt_data->save();
+        };
+        foreach($request->anak_perusahaan as $a){
+          $mt_data = new SupplierMetadata();
+          $mt_data->id_object    = $data->id;
+          $mt_data->object_type  = 'vendor';
+          $mt_data->object_key   = 'anak_perusahaan';
+          $mt_data->object_value = $a;
+          $mt_data->save();
+        };
+        foreach($request->legal_dokumen as $l => $val){
+          $fileName   = $kd_vendor.'_'.str_slug($val['name']).'_'.time().'.pdf';
+          $val['file']->storeAs('supplier/legal_dokumen', $fileName);
+          
+          $mt_data = new SupplierMetadata();
+          $mt_data->id_object    = $data->id;
+          $mt_data->object_type  = 'vendor';
+          $mt_data->object_key   = 'legal_dokumen';
+          $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
+          $mt_data->save();
+        };
+        foreach($request->sertifikat_dokumen as $l => $val){
+          $fileName   = $kd_vendor.'_'.str_slug($val['name']).'_'.time().'.pdf';
+          $val['file']->storeAs('supplier/sertifikat_dokumen', $fileName);
+          
+          $mt_data = new SupplierMetadata();
+          $mt_data->id_object    = $data->id;
+          $mt_data->object_type  = 'vendor';
+          $mt_data->object_key   = 'sertifikat_dokumen';
+          $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
+          $mt_data->save();
+        };
+        return redirect()->back()->withInput($request->input());
+      }
+    }
+    
+    private function generate_id(){
+      $sup = new Supplier();
+      $id = $sup->gen_userid();
+      $count=Supplier::where('kd_vendor',$id)->count();
+      if($count>0){
+        return $this->generate_id();
+      }
+      else{
+        return $id;
       }
     }
 }

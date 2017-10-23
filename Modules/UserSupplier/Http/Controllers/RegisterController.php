@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
 use App\User;
+use Mail;
 use Validator;
 use Response;
 
@@ -47,14 +48,26 @@ class RegisterController extends Controller
          $data->phone = $request->phone;
          $data->email = $request->email;
          $data->username = $request->username;
-         $data->save ();
+        //  $data->save ();
 
+         $data2 = array(
+           'username'=>$request->username,
+           'email'=>$request->email,
+           'nama'=>$request->company_name
+         );
+         $us=$data2['username'];
+
+         Mail::send('usersupplier::notifEmail', ['data2' => $data2] , function($message) use($data2)
+         {
+
+
+           $message->to($data2['email'], 'Annisa Dwu')->subject('Welcome!');
+           $message->from('inartdemo@gmail.com','Do Not Reply');
+
+         });
        }
 
-        //  Mail::send('usersupplier.notifemail', ['username' => $request->username], function($message)
-        //  {
-        //    $message->to('$request->email','$request->nm_vendor')->subject('Welcome!');
-        //  });
+
          return response()->json($data);
      }
 

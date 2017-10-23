@@ -23,7 +23,7 @@
       <div class="register-logo">
         <img src="{{asset('images/logo.png')}}" alt="Consys">
       </div>
-      <form id="form-me" action="#"  method="post">
+      <form id="form-me" action="#"  method="get">
 
           {{ csrf_field() }}
           <?php
@@ -123,7 +123,7 @@
               $.ajax({
                   headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                   url: "{{ route('usersupplier.add') }}",
-                  type: 'post',
+                  type: 'get',
                   data: formMe.serialize(), // Remember that you need to have your csrf token included
                   dataType: 'json',
                   success: function( _response ){

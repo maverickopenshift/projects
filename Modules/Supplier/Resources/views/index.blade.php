@@ -30,13 +30,14 @@
             <thead>
             <tr>
                 <th width="20">No.</th>
-                <th width="100">Name</th>
-                <th width="100">Username</th>
+                <th width="100">Supplier</th>
+                <th width="200">Alamat</th>
+                <th width="150">Kota</th>
+                <th width="100">Telepon</th>
+                <th width="100">Fax</th>
                 <th width="150">Email</th>
-                <th width="100">Phone</th>
                 <th width="100">Created At</th>
                 <th width="100">Updated At</th>
-                <th width="250">Roles</th>
                 <th width="100">Action</th>
             </tr>
             </thead>
@@ -68,13 +69,14 @@ $(function() {
       ajax: '{!! route('supplier.data') !!}',
       columns: [
           {data : 'DT_Row_Index',orderable:false,searchable:false},
-          { data: 'name', name: 'name' },
-          { data: 'username', name: 'username' },
+          { data: 'nm_vendor', name: 'nm_vendor' },
+          { data: 'alamat', name: 'alamat' },
+          { data: 'kota', name: 'kota' },
+          { data: 'telepon', name: 'telepon' },
+          { data: 'fax', name: 'fax' },
           { data: 'email', name: 'email' },
-          { data: 'phone', name: 'phone' },
           { data: 'created_at', name: 'created_at' },
           { data: 'updated_at', name: 'updated_at' },
-          {data: 'role_name', name: 'roles.name'},
           { data: 'action', name: 'action',orderable:false,searchable:false }
       ]
   });

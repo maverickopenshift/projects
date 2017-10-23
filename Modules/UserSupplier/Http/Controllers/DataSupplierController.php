@@ -18,14 +18,14 @@ class DataSupplierController extends Controller
      */
     public function index()
     {
-
       $data['page_title'] = 'Data Supplier';
       return view("usersupplier::dataSupplier.index")->with($data);
     }
 
     public function data()
     {
-      $sql = supplier::get();
+      $id_session=auth()->user()->id;
+      $sql = supplier::where('id_user','=',$id_session)->get();
       return Datatables::of($sql)
           ->addIndexColumn()
           ->filterColumn('created_at', function ($query, $keyword) {
@@ -52,6 +52,20 @@ class DataSupplierController extends Controller
 
      public function add(Request $request)
      {
+       $rules = array (
+           'bdn_usaha'            => 'required',
+           'company_name'         => 'required|min:5|unique:users,name',
+           'initial_company_name' => 'required|size:3',
+           'password'             => 'required|min:6',
+           'phone'                => 'required|regex:/[0-9]/',
+           'email'                => 'required|email|unique:users,email',
+       );
+       $validator = Validator::make($request->all(), $rules);
+       if ($validator->fails ())
+           return Response::json (array(
+               'errors' => $validator->getMessageBag()->toArray()
+           ));
+       else {
           $id_usr = auth()->user()->id;
           $usr_nm = auth()->user()->username;
           $data = new supplier();
@@ -103,7 +117,8 @@ class DataSupplierController extends Controller
           $data->jml_peg_domestik = $request->jum_dom;
           $data->jml_peg_asing = $request->jum_as;
           $data->save();
-          return response()->json($data);
+        }
+        return response()->json($data);
 
 }
 }

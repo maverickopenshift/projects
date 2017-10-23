@@ -21,7 +21,7 @@
           <div class="form-group {{ $errors->has('nm_vendor') ? ' has-error' : '' }}">
             <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Nama Perusahaan</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" name="nm_vendor" value="{{ old('nm_vendor') }}"  placeholder="Masukan Nama Perusahaan">
+              <input type="text" class="form-control" name="nm_vendor" value="{{ old('nm_vendor') }}"  placeholder="Masukan Nama Perusahaan" autocomplete="off">
               @if ($errors->has('nm_vendor'))
                   <span class="help-block">
                       <strong>{{ $errors->first('nm_vendor') }}</strong>
@@ -32,7 +32,7 @@
           <div class="form-group {{ $errors->has('nm_vendor_uq') ? ' has-error' : '' }}">
             <label for="nm_vendor" class="col-sm-2 control-label">Inisial Perusahaan</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" name="nm_vendor_uq" value="{{ old('nm_vendor_uq') }}" placeholder="Isikan 3 Digit Inisial Perusahaan">
+              <input type="text" class="form-control" name="nm_vendor_uq" value="{{ old('nm_vendor_uq') }}" placeholder="Isikan 3 Digit Inisial Perusahaan" autocomplete="off">
               @if ($errors->has('nm_vendor_uq'))
                   <div class="help-block">
                       <strong>{{ $errors->first('nm_vendor_uq') }}</strong>
@@ -54,26 +54,45 @@
               @endif
             </div>
           </div>
-          <div class="form-group {{ $errors->has('klasifikasi_usaha') ? ' has-error' : '' }}">
+          <div class="form-group {{ $errors->has('klasifikasi_usaha.*') ? ' has-error' : '' }}">
             <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Klasifikasi Usaha</label>
             <div class="col-sm-10">
-              <div class="input-group bottom15">
-                <input type="text" class="form-control klasifikasi_usaha" name="klasifikasi_usaha[]">
-                <div class="input-group-btn">
-                  <button type="button" class="btn btn-default add-klasifikasi_usaha"><i class="glyphicon glyphicon-plus"></i></button>
+              @if(count(old('klasifikasi_usaha'))>0)
+                @foreach (old('klasifikasi_usaha') as $key => $value)
+                  <div class="input-group bottom15 ">
+                    <input type="text" class="form-control klasifikasi_usaha" name="klasifikasi_usaha[]" value="{{$value}}" autocomplete="off">
+                    <div class="input-group-btn">
+                      <button type="button" class="btn btn-default add-klasifikasi_usaha"><i class="glyphicon glyphicon-plus"></i></button>
+                      @if(count(old('klasifikasi_usaha'))>1)
+                        <button type="button" class="btn btn-default delete-klasifikasi_usaha"><i class="glyphicon glyphicon-trash"></i></button>
+                      @endif
+                    </div>
+                  </div>
+                  @if ($errors->has('klasifikasi_usaha.'.$key))
+                      <span class="help-block">
+                          <strong>{{ $errors->first('klasifikasi_usaha.'.$key) }}</strong>
+                      </span>
+                  @endif
+                @endforeach
+              @else
+                <div class="input-group bottom15">
+                  <input type="text" class="form-control klasifikasi_usaha" name="klasifikasi_usaha[]" autocomplete="off">
+                  <div class="input-group-btn">
+                    <button type="button" class="btn btn-default add-klasifikasi_usaha"><i class="glyphicon glyphicon-plus"></i></button>
+                  </div>
                 </div>
-              </div>
-              @if ($errors->has('klasifikasi_usaha'))
-                  <span class="help-block">
-                      <strong>{{ $errors->first('klasifikasi_usaha') }}</strong>
-                  </span>
+                @if ($errors->has('klasifikasi_usaha'))
+                    <span class="help-block">
+                        <strong>{{ $errors->first('klasifikasi_usaha') }}</strong>
+                    </span>
+                @endif
               @endif
             </div>
           </div>
           <div class="form-group {{ $errors->has('pengalaman_kerja') ? ' has-error' : '' }}">
             <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Pengalaman Kerja</label>
             <div class="col-sm-10">
-              <textarea class="form-control" rows="4" name="pengalaman_kerja"  placeholder="Masukan Pengalaman Kerja"></textarea>
+              <textarea class="form-control" rows="4" name="pengalaman_kerja"  placeholder="Masukan Pengalaman Kerja">{{ old('pengalaman_kerja') }}</textarea>
               @if ($errors->has('pengalaman_kerja'))
                   <span class="help-block">
                       <strong>{{ $errors->first('pengalaman_kerja') }}</strong>
@@ -125,7 +144,7 @@ function create_content(attr){
     btnDelete = '<button type="button" class="btn btn-default delete-'+attr+'"><i class="glyphicon glyphicon-trash"></i></button>'
   }
   return '<div class="input-group bottom15">\
-        <input type="text" class="form-control '+attr+'" name="'+attr+'[]">\
+        <input type="text" class="form-control '+attr+'" name="'+attr+'[]"  autocomplete="off">\
         <div class="input-group-btn">\
           <button type="button" class="btn btn-default add-'+attr+'"><i class="glyphicon glyphicon-plus"></i></button>\
           '+btnDelete+'\

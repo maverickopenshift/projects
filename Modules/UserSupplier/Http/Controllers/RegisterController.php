@@ -5,8 +5,9 @@ namespace Modules\UserSupplier\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 
+use Modules\Supplier\Entities\Supplier;
 use App\User;
-use App\supplier;
+// use App\supplier;
 use Mail;
 use Validator;
 use Response;
@@ -38,7 +39,7 @@ class RegisterController extends Controller
                  'errors' => $validator->getMessageBag()->toArray()
              ));
          else {
-          //  dd($request);
+         $kd_vendor = $this->generate_id();
          $inisial = $request->initial_company_name;
          $bdn_usaha = $request->bdn_usaha;
          $gabung = $bdn_usaha." - ".$inisial;
@@ -49,20 +50,9 @@ class RegisterController extends Controller
          $data->password = bcrypt($request->password);
          $data->phone = $request->phone;
          $data->email = $request->email;
-         $data->username = $request->username;
+         $data->username = $kd_vendor;
          $data->save ();
 
-//SAVE KE SUPPLIER
-        $users = \DB::table('users')
-        ->select('id')
-        ->where('username', '=', $request->username)->first();
-
-        foreach ($users as $key) {
-          $data = new supplier();
-          $data->id_user = $value;
-          $data->kd_vendor = $request->username;
-          $data->save ();
-        }
 //EMAIL
         $data2 = array(
           'username'=>$request->username,
@@ -73,18 +63,24 @@ class RegisterController extends Controller
 
         Mail::send('usersupplier::notifEmail', ['data2' => $data2] , function($message) use($data2)
         {
-
-
           $message->to($data2['email'], 'Annisa Dwu')->subject('Welcome!');
           $message->from('inartdemo@gmail.com','Do Not Reply');
-
         });
 
-
        }
-
-
          return response()->json($data);
+     }
+
+     private function generate_id(){
+       $sup = new Supplier();
+       $id = $sup->gen_userid();
+       $count=Supplier::where('kd_vendor',$id)->count();
+       if($count>0){
+         return $this->generate_id();
+       }
+       else{
+         return $id;
+       }
      }
 
 

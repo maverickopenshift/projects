@@ -381,7 +381,71 @@
         <hr  />
       </div>
 
-      
+      <div class="form-group {{ $errors->has('legal_dokumen.*') ? ' has-error' : '' }}">
+        <label for="legal_dokumen" class="col-sm-2 control-label"><span class="text-red">*</span> Legal Dokumen</label>
+        <div class="col-sm-10">
+          @if(count(old('legal_dokumen'))>0)
+            @php
+              $i=1;
+            @endphp
+            @foreach (old('legal_dokumen') as $k => $d)
+              <div class="row row-legal-dokumen bottom15">
+                  <div class="col-sm-4">
+                      <input type="text" class="form-control" name="legal_dokumen[]" placeholder="Nama Dokumen" value="{{$d['name']}}" autocomplete="off">
+                      @if ($errors->has('legal_dokumen.'.($k)))
+                          <span class="help-block">
+                              <strong>{{ $errors->first('legal_dokumen.'.($k)) }}</strong>
+                          </span>
+                      @endif
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="input-group">
+                      <input type="file" class="hide" name="legal_dokumen[][file]">
+                      <input class="form-control" type="text" disabled>
+                      <span class="input-group-btn">
+                        <button class="btn btn-default click-upload" type="button">Browse</button>
+                      </span>
+                    </div>
+                    @if ($errors->has('legal_dokumen.'.($k).'.file'))
+                        <span class="help-block">
+                            <strong>{{ $errors->first('legal_dokumen.'.($k).'.file') }}</strong>
+                        </span>
+                    @endif
+                  </div>
+                  <div class="col-sm-4 attr-btn">
+                      @if(count(old('legal_dokumen'))>1)
+                        <button style="margin-right:15px;" type="button" class="btn btn-default delete-legal-dokumen"><i class="glyphicon glyphicon-remove"></i></button>
+                      @endif
+                      @if(count(old('legal_dokumen'))==$i )
+                        <button type="button" class="btn btn-danger add-legal-dokumen"><i class="glyphicon glyphicon-plus"></i></button>
+                      @endif
+                  </div>
+              </div>
+              @php
+                $i++;
+              @endphp
+            @endforeach
+          @else
+            <div class="row row-legal-dokumen bottom15">
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="legal_dokumen[]" placeholder="Nama Dokumen" autocomplete="off">
+                </div>
+                <div class="col-sm-4">
+                  <div class="input-group">
+                    <input type="file" class="hide" name="legal_dokumen[][file]">
+                    <input class="form-control" type="text" disabled>
+                    <span class="input-group-btn">
+                      <button class="btn btn-default click-upload" type="button">Browse</button>
+                    </span>
+                  </div>
+                </div>
+                <div class="col-sm-4 attr-btn">
+                    <button type="button" class="btn btn-danger add-legal-dokumen"><i class="glyphicon glyphicon-plus"></i></button>
+                </div>
+            </div>
+          @endif
+        </div>
+      </div>
 
 
       <div class="form-group">
@@ -446,7 +510,71 @@
           </div>
         </div>
       </div>
-
+      <div class="form-group {{ $errors->has('sertifikat_dokumen.*') ? ' has-error' : '' }}">
+        <label for="sertifikat-dokumen" class="col-sm-2 control-label"></label>
+        <div class="col-sm-10">
+          @if(count(old('sertifikat_dokumen'))>0)
+            @php
+              $i=1;
+            @endphp
+            @foreach (old('sertifikat_dokumen') as $k => $d)
+              <div class="row row-sertifikat-dokumen bottom15">
+                  <div class="col-sm-4">
+                      <input type="text" class="form-control" name="sertifikat_dokumen[]" placeholder="Nama Dokumen" value="{{$d['name']}}" autocomplete="off">
+                      @if ($errors->has('sertifikat_dokumen.'.($k)))
+                          <span class="help-block">
+                              <strong>{{ $errors->first('sertifikat_dokumen.'.($k)) }}</strong>
+                          </span>
+                      @endif
+                  </div>
+                  <div class="col-sm-4">
+                    <div class="input-group">
+                      <input type="file" class="hide" name="sertifikat_dokumen[][file]">
+                      <input class="form-control" type="text" disabled>
+                      <span class="input-group-btn">
+                        <button class="btn btn-default click-upload" type="button">Browse</button>
+                      </span>
+                    </div>
+                    @if ($errors->has('sertifikat_dokumen.'.($k).'.file'))
+                        <span class="help-block">
+                            <strong>{{ $errors->first('sertifikat_dokumen.'.($k).'.file') }}</strong>
+                        </span>
+                    @endif
+                  </div>
+                  <div class="col-sm-4 attr-btn">
+                      @if(count(old('sertifikat_dokumen'))>1)
+                        <button style="margin-right:15px;" type="button" class="btn btn-default delete-sertifikat-dokumen"><i class="glyphicon glyphicon-remove"></i></button>
+                      @endif
+                      @if(count(old('sertifikat_dokumen'))==$i )
+                        <button type="button" class="btn btn-danger add-sertifikat-dokumen"><i class="glyphicon glyphicon-plus"></i></button>
+                      @endif
+                  </div>
+              </div>
+              @php
+                $i++;
+              @endphp
+            @endforeach
+          @else
+            <div class="row row-sertifikat-dokumen bottom15">
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" name="sertifikat_dokumen[]" placeholder="Nama Dokumen" autocomplete="off">
+                </div>
+                <div class="col-sm-4">
+                  <div class="input-group">
+                    <input type="file" class="hide" name="sertifikat_dokumen[][file]" autocomplete="off">
+                    <input class="form-control" type="text" disabled>
+                    <span class="input-group-btn">
+                      <button class="btn btn-default click-upload" type="button">Browse</button>
+                    </span>
+                  </div>
+                </div>
+                <div class="col-sm-4 attr-btn">
+                    <button type="button" class="btn btn-danger add-sertifikat-dokumen"><i class="glyphicon glyphicon-plus"></i></button>
+                </div>
+            </div>
+          @endif
+        </div>
+      </div>
     </div>
 <!-- /.box-body -->
 </div>

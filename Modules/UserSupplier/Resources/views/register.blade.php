@@ -26,18 +26,8 @@
       <form id="form-me" action="#"  method="get">
 
           {{ csrf_field() }}
-          <?php
-           $users = \DB::table('users')
-           ->select(DB::raw('count(id) as jum'))
-           ->where('username', 'like', '%VR%')->get();
 
-           foreach ($users as $usr) {
-            $jml= $usr->jum; //hasil query
-            $tot= $jml+1;
-            $us= "VR00".$tot;
-          }
-           ?>
-          <input type="hidden" class="form-control" name="username" id="username" value="<?php echo $us; ?>" required>
+          
           <div class="form-group">
             <div class="error-global"></div>
             <label>Badan Usaha</label>
@@ -155,7 +145,7 @@
                       }
                   },
                   error: function( _response ){
-                    alert("error1");
+                    alert("Ada kesalahan pada pengisian data.");
                   }
               });
               })

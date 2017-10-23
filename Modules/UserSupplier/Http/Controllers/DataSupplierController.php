@@ -121,7 +121,6 @@ class DataSupplierController extends Controller
                      ->withErrors($validator);
        }
        else {
-         dd($request);
           $id_usr = auth()->user()->id;
           $usr_nm = auth()->user()->username;
           $data = new supplier();
@@ -176,6 +175,14 @@ class DataSupplierController extends Controller
           $data->jml_peg_domestik = $request->jum_dom;
           $data->jml_peg_asing = $request->jum_as;
           $data->save();
+
+          foreach ($request->anak_perusahaan as $key => $value) {
+            $data = new supplier_metadata();
+            $data->object_value=$value;
+
+            $data->save();
+
+          }
 
 
         }

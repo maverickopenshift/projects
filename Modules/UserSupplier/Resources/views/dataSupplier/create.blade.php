@@ -1,6 +1,10 @@
+
 @extends('layouts.app')
 
 @section('content')
+
+@foreach ($data as $datas)
+
   <form action="{{ route('supplier.insert') }}" method="post" enctype="multipart/form-data">
     {{ csrf_field() }}
     <div class="nav-tabs-custom">
@@ -97,6 +101,7 @@
         <!-- /.tab-content -->
       </div>
   </form>
+@endforeach
 @endsection
 @push('scripts')
 <script>

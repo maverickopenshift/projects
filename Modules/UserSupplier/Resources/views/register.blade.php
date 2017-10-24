@@ -27,7 +27,7 @@
 
           {{ csrf_field() }}
 
-          
+
           <div class="form-group">
             <div class="error-global"></div>
             <label>Badan Usaha</label>
@@ -67,7 +67,7 @@
 
           <div class="form-group text-center"><label>Sudah punya akun? <a href="{{url('/login')}}">Login</a></label></div>
           <div class="form-group"> <small>Konfirmasi email dan password akan dikirim melalu email</small></div>
-          <div class="form-group"> <button type="submit" class="btn btn-danger btn-block btn-flat" id="bnt_simpan">Simpan</button></div>
+          <div class="form-group"> <button type="submit" class="btn btn-danger btn-block btn-flat btn-save" data-loading-text="Please wait..." autocomplete="off" id="bnt_simpan">Simpan</button></div>
       </form>
     </div>
   </div>
@@ -79,7 +79,7 @@
               <h4 class="modal-title">Success</h4>
             </div>
             <div class="modal-body">
-              <p>Data berhasil tersimpan</p>
+              <p>Data berhasil tersimpan. <br><br> Silahkan Cek email anda untuk info Username</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal" onclick="reload(); return false;">Close</button>
@@ -108,14 +108,17 @@
               attErrorPassword.html('')
               attErrorPhone.html('')
               attErrorEmail.html('')
-              // var btnSave = formMe.find('.btn-save')
-              // btnSave.button('loading')
+              var btnSave = formMe.find('.btn-save')
+
               $.ajax({
                   headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
                   url: "{{ route('usersupplier.add') }}",
                   type: 'get',
                   data: formMe.serialize(), // Remember that you need to have your csrf token included
                   dataType: 'json',
+                  beforeSend: function() {
+                    btnSave.button('loading')
+                  },
                   success: function( _response ){
                       // Handle your response..
                       console.log(_response)

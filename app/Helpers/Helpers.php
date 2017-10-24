@@ -53,7 +53,7 @@ class Helpers
       $select .= '</select>';
       return $select;
     }
-    
+
     public static function error_submit_supplier(){
       return [
               'nm_vendor.max' => 'Nama Perusahaan maksimal 500 karakter',

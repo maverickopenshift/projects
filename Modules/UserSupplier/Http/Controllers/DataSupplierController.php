@@ -22,6 +22,9 @@ class DataSupplierController extends Controller
      */
     public function index()
     {
+      $username=auth()->user()->username;
+      $sql = supplier::where('kd_vendor','=',$username)->get();
+      $data['data'] = $sql;
       $data['page_title'] = 'Data Supplier';
       return view("usersupplier::dataSupplier.index")->with($data);
     }
@@ -50,6 +53,9 @@ class DataSupplierController extends Controller
      */
      public function tambah()
      {
+       $username=auth()->user()->username;
+       $sql = User::where('username','=',$username)->get();
+       $data['data'] = $sql;
          $data['page_title'] = 'Kelengkapan Data Supplier';
          return view('usersupplier::dataSupplier.create')->with($data);
      }
@@ -110,7 +116,7 @@ class DataSupplierController extends Controller
            'legal_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
            'legal_dokumen.*.file' => 'required|mimes:pdf',
            'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-           'sertifikat_dokumen.*.file' => 'required|mimes:pdf', 
+           'sertifikat_dokumen.*.file' => 'required|mimes:pdf',
 
        );
 
@@ -177,6 +183,10 @@ class DataSupplierController extends Controller
           $data->cp1_email = $request->alamat_email;
           $data->jml_peg_domestik = $request->jum_dom;
           $data->jml_peg_asing = $request->jum_as;
+          $data->approval_at = DB::raw('now()');
+          $data->vendor_status = 1;
+          $data->created_by = \Auth::user()->username;
+          $data->kd_vendor = $kd_vendor;
           $data->save();
 
           $mt_data = new SupplierMetadata();
@@ -222,6 +232,29 @@ class DataSupplierController extends Controller
             $mt_data->object_type  = 'vendor';
             $mt_data->object_key   = 'anak_perusahaan';
             $mt_data->object_value = $a;
+            $mt_data->save();
+          };
+
+          foreach($request->legal_dokumen as $l => $val){
+            $fileName   = $kd_vendor.'_'.str_slug($val['name']).'_'.time().'.pdf';
+            $val['file']->storeAs('supplier/legal_dokumen', $fileName);
+
+            $mt_data = new SupplierMetadata();
+            $mt_data->id_object    = $data->id;
+            $mt_data->object_type  = 'vendor';
+            $mt_data->object_key   = 'legal_dokumen';
+            $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
+            $mt_data->save();
+          };
+          foreach($request->sertifikat_dokumen as $l => $val){
+            $fileName   = $kd_vendor.'_'.str_slug($val['name']).'_'.time().'.pdf';
+            $val['file']->storeAs('supplier/sertifikat_dokumen', $fileName);
+
+            $mt_data = new SupplierMetadata();
+            $mt_data->id_object    = $data->id;
+            $mt_data->object_type  = 'vendor';
+            $mt_data->object_key   = 'sertifikat_dokumen';
+            $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
             $mt_data->save();
           };
 

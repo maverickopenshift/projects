@@ -40,7 +40,7 @@
         <div class="form-group {{ $errors->has('telepn') ? ' has-error' : '' }} {{ $errors->has('fax') ? ' has-error' : '' }}">
           <label class="col-sm-2 control-label"><span class="text-red">*</span> Telepon - Faximili</label>
           <div class="col-sm-5">
-            <input type="text" class="form-control" name="telepon" value="{{ old('telepon') }}" placeholder="Masukan Telepon" autocomplete="off">
+            <input type="text" class="form-control" name="telepon" value="{{$datas['phone']}}" placeholder="Masukan Telepon" autocomplete="off">
             @if ($errors->has('telepon'))
                 <div class="help-block">
                     <strong>{{ $errors->first('telepon') }}</strong>
@@ -59,7 +59,7 @@
         <div class="form-group {{ $errors->has('email') ? ' has-error' : '' }}">
           <label for="email" class="col-sm-2 control-label"><span class="text-red">*</span> Email Address</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" name="email" value="{{ old('email') }}"  placeholder="Masukan Email Address" autocomplete="off">
+            <input type="text" class="form-control" name="email" value="{{$datas['email']}}"  placeholder="Masukan Email Address" autocomplete="off">
             @if ($errors->has('email'))
                 <span class="help-block">
                     <strong>{{ $errors->first('email') }}</strong>

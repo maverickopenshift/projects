@@ -1,14 +1,37 @@
 @extends('layouts.app')
 
 @section('content')
+<div class="info-box">
+  <span class="info-box-icon bg-aqua"><i class="fa fa-alert"></i></span>
+  <div class="info-box-content">
+      <br>
+    <span class="info-box-text">{{ $notif}}</i></span>
+  </div>
+</div>
+<!-- <div class="box box-success">
+    <div class="box-header with-border">
+      <h3 class="box-title">Notification</h3>
+
+      <div class="box-tools pull-right">
+        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+        </button>
+      </div>
+    </div> -->
+    <!-- /.box-header -->
+    <!-- <div class="box-body">
+
+      {{ $notif}}
+    </div> -->
+<!-- /.box-body -->
+<!-- </div> -->
 <div class="box box-danger">
     <div class="box-header with-border">
       <h3 class="box-title">
-          <div class="btn-group" role="group" aria-label="...">
-            <a href="{{route('supplier.tambah')}}" class="btn btn-default">
-                <i class="glyphicon glyphicon-plus"></i> Tambah Kelengkapan Data
-            </a>
-          </div>
+        <div class="btn-group" role="group" aria-label="...">
+          <a href="{{route('supplier.tambah')}}" class="btn btn-default">
+              <i class="glyphicon glyphicon-list-alt"></i> Isi Kelengkapan Data
+          </a>
+        </div>
       </h3>
 
       <div class="box-tools pull-right">
@@ -33,13 +56,14 @@
                 <th width="100">Name Mitra Telkom</th>
                 <th width="100">Alamat Perusahaan</th>
                 <th width="150">Media Komunikasi</th>
-                <th width="100">Klarisifikasi Usaha (KADIN)</th>
+                <th width="100">Created At</th>
             </tr>
             </thead>
         </table>
     </div>
 <!-- /.box-body -->
 </div>
+
 @endsection
 @push('scripts')
 <script>

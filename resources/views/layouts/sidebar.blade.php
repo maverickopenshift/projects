@@ -65,11 +65,11 @@
                 @permission('lihat-user')
                   <li class="{{Request::is("users")?'active':''}}" ><a href="{{route('users')}}">Users</a></li>
                 @endpermission
-                
+
                 @permission('lihat-role')
                 <li class="{{Request::is("users/roles")?'active':''}}" ><a href="{{route('users.roles')}}">Roles</a></li>
                 @endpermission
-                
+
                 @permission('lihat-permission')
                 <li class="{{Request::is("users/permissions")?'active':''}}"><a href="{{route('users.permissions')}}">Permissions</a></li>
                 @endpermission
@@ -82,32 +82,26 @@
                 @permission('lihat-supplier')
                   <li class="{{Request::is("supplier")?'active':''}}" ><a href="{{route('supplier')}}">Supplier</a></li>
                 @endpermission
-                
+
                 @permission('lihat-klasifikasi-usaha')
                   <li class="{{Request::is("supplier/klasifikasiusaha")?'active':''}}" ><a href="{{route('supplier.klasifikasi')}}">Klasifikasi Usaha</a></li>
                 @endpermission
-                
+
                 @permission('lihat-badan-usaha')
                 <li class="{{Request::is("supplier/badanusaha")?'active':''}}" ><a href="{{route('supplier.badanusaha')}}">Badan Usaha</a></li>
                 @endpermission
               </ul>
             </li>
+
             @role('vendor')
-            <li>
-                <a href="{{route('profile')}}"> <img src="{{asset('/images/icon-user.png')}}" title="Perubahan Kontrak" />
-                    <span>User Profile</span></a>
-            </li>
-            <li>
-                <a href="{{route('supplier.list')}}"> <img src="{{asset('/images/icon-entry.png')}}" title="Perubahan Kontrak" />
-                    <span>Data Suplier Telkom</span></a>
-            </li>
-            <li>
-                <a href="#"> <img src="{{asset('/images/icon-edit.png')}}" title="Perubahan Kontrak" />
-                    <span>Performansi Supplier</span></a>
-            </li>
-            <li>
-                <a href="#"> <img src="{{asset('/images/icon-logout.png')}}" title="Perubahan Kontrak" />
-                    <span>Logout</span></a>
+            <li class="treeview {{Request::is("supplierUser/*") || Request::is("supplierUser")?'active':''}}">
+              <a href="#"><img src="{{asset('/images/icon-user.png')}}" title="Management Supplier" />
+                <span>User Profile</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <ul class="treeview-menu">
+                <li class="{{Request::is("supplierUser")?'active':''}}" ><a href="{{route('profile')}}">Change Password</a></li>
+                <li class="{{Request::is("supplierUser/dataSupplier")?'active':''}}" ><a href="{{route('supplier.list')}}">Kelengkapan Data</a></li>
+              </ul>
+
             </li>
             @endrole
         </ul><!-- /.sidebar-menu -->

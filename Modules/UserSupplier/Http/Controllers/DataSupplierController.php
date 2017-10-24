@@ -175,7 +175,7 @@ class DataSupplierController extends Controller
            'kd_pos'            => 'required|digits_between:3,20',
            'telepon'           => 'required|digits_between:7,20',
            'fax'               => 'required|digits_between:7,20',
-           'email'             => 'required|max:50|min:4|email',
+          //  'email'             => 'required|max:50|min:4|email',
            'web_site'          => 'sometimes|nullable|url',
            'induk_perus'       => 'sometimes|nullable|min:3|regex:/^[a-z0-9 .\-]+$/i',
            'anak_perusahaan.*' => 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -232,6 +232,7 @@ class DataSupplierController extends Controller
 
           $id_usr = auth()->user()->id;
           $usr_nm = auth()->user()->username;
+          $email = auth()->user()->email;
           $data = new supplier();
           $data->id_user = $id_usr;
           $data->kd_vendor = $usr_nm;
@@ -246,7 +247,7 @@ class DataSupplierController extends Controller
           $data->negara = $request->negara;
           $data->telepon = $request->telepon;
           $data->fax = $request->fax;
-          $data->email = $request->email;
+          $data->email = $email;
           $data->web_site = $request->web_site;
           $data->induk_perus = $request->induk_perus;
 
@@ -465,8 +466,6 @@ class DataSupplierController extends Controller
             'kd_pos'            => 'required|digits_between:3,20',
             'telepon'           => 'required|digits_between:7,20',
             'fax'               => 'required|digits_between:7,20',
-            // 'email'             => 'required|max:50|min:4|email',
-            // 'password'          => 'required|max:50|min:6|confirmed',
             'web_site'          => 'sometimes|nullable|url',
             'induk_perus'       => 'sometimes|nullable|min:3|regex:/^[a-z0-9 .\-]+$/i',
             'anak_perusahaan.*' => 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -584,6 +583,11 @@ class DataSupplierController extends Controller
                       ->withErrors($validator);
         }
         else {
+          $user = User::where('username','=',$kd_vendor)->first();
+          $user->name = $request->nm_vendor;
+          $user->phone = $request->telepon;
+          $user->save();
+
           $data = Supplier::where('kd_vendor','=',$kd_vendor)->first();
           $data->bdn_usaha = $request->bdn_usaha;
           $data->nm_vendor = $request->nm_vendor;
@@ -634,7 +638,113 @@ class DataSupplierController extends Controller
           $data->vendor_status = 0;
           $data->created_by = \Auth::user()->username;
           $data->save();
-          return redirect()->back()->withInput($request->input());
+
+          $mt_data = SupplierMetadata::where([
+            ['id_object','=',$data->id],
+            ['object_type','=','vendor'],
+            ['object_key','=','pengalaman_kerja']
+            ])->first();
+          $mt_data->object_value = $request->pengalaman_kerja;
+          $mt_data->save();
+          $data->pengalaman_kerja = $request->pengalaman_kerja;
+
+          $mt_data = SupplierMetadata::where([
+            ['id_object','=',$data->id],
+            ['object_type','=','vendor'],
+            ['object_key','=','bank_kota']
+            ])->first();
+          $mt_data->object_value = $request->bank_kota;
+          $mt_data->save();
+          $data->bank_kota = $request->bank_kota;
+
+          $mt_data = SupplierMetadata::where([
+            ['id_object','=',$data->id],
+            ['object_type','=','vendor'],
+            ['object_key','=','nm_direktur_utama']
+            ])->first();
+          $mt_data->object_value = $request->nm_direktur_utama;
+          $mt_data->save();
+          $data->nm_direktur_utama = $request->nm_direktur_utama;
+
+          $mt_data = SupplierMetadata::where([
+            ['id_object','=',$data->id],
+            ['object_type','=','vendor'],
+            ['object_key','=','nm_komisaris_utama']
+            ])->first();
+          $mt_data->object_value = $request->nm_komisaris_utama;
+          $mt_data->save();
+          $data->nm_komisaris_utama = $request->nm_komisaris_utama;
+
+          SupplierMetadata::where([
+            ['id_object','=',$data->id],
+            ['object_type','=','vendor'],
+            ['object_key','=','klasifikasi_usaha']
+            ])->delete();
+
+          foreach($request->klasifikasi_usaha as $k){
+            $mt_data = new SupplierMetadata();
+            $mt_data->id_object    = $data->id;
+            $mt_data->object_type  = 'vendor';
+            $mt_data->object_key   = 'klasifikasi_usaha';
+            $mt_data->object_value = $k;
+            $mt_data->save();
+          };
+          $data->klasifikasi_usaha = $request->klasifikasi_usaha;
+
+          SupplierMetadata::where([
+            ['id_object','=',$data->id],
+            ['object_type','=','vendor'],
+            ['object_key','=','anak_perusahaan']
+            ])->delete();
+
+          foreach($request->anak_perusahaan as $k){
+            $mt_data = new SupplierMetadata();
+            $mt_data->id_object    = $data->id;
+            $mt_data->object_type  = 'vendor';
+            $mt_data->object_key   = 'anak_perusahaan';
+            $mt_data->object_value = $k;
+            $mt_data->save();
+          };
+          $data->anak_perusahaan = $request->anak_perusahaan;
+
+          SupplierMetadata::where([
+            ['id_object','=',$data->id],
+            ['object_type','=','vendor'],
+            ['object_key','=','legal_dokumen']
+            ])->delete();
+
+            foreach($request->legal_dokumen as $l => $val){
+              $fileName   = $kd_vendor.'_'.str_slug($val['name']).'_'.time().'.pdf';
+              $val['file']->storeAs('supplier/legal_dokumen', $fileName);
+
+              $mt_data = new SupplierMetadata();
+              $mt_data->id_object    = $data->id;
+              $mt_data->object_type  = 'vendor';
+              $mt_data->object_key   = 'legal_dokumen';
+              $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
+              $mt_data->save();
+            };
+          $data->legal_dokumen = $request->legal_dokumen;
+
+          SupplierMetadata::where([
+            ['id_object','=',$data->id],
+            ['object_type','=','vendor'],
+            ['object_key','=','legal_dokumen']
+            ])->delete();
+
+            foreach($request->sertifikat_dokumen as $l => $val){
+              $fileName   = $kd_vendor.'_'.str_slug($val['name']).'_'.time().'.pdf';
+              $val['file']->storeAs('supplier/sertifikat_dokumen', $fileName);
+
+              $mt_data = new SupplierMetadata();
+              $mt_data->id_object    = $data->id;
+              $mt_data->object_type  = 'vendor';
+              $mt_data->object_key   = 'sertifikat_dokumen';
+              $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
+              $mt_data->save();
+            };
+          $data->sertifikat_dokumen = $request->sertifikat_dokumen;
+            return redirect()->back()->withData($data)->with('message', 'Data berhasil disimpan!');
         }
       }
 }

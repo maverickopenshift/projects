@@ -1,7 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="box box-success">
+<div class="info-box">
+  <span class="info-box-icon bg-aqua"><i class="fa fa-alert"></i></span>
+  <div class="info-box-content">
+      <br>
+    <span class="info-box-text">{{ $notif}}</i></span>
+  </div>
+</div>
+<!-- <div class="box box-success">
     <div class="box-header with-border">
       <h3 class="box-title">Notification</h3>
 
@@ -9,14 +16,14 @@
         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
         </button>
       </div>
-    </div>
+    </div> -->
     <!-- /.box-header -->
-    <div class="box-body">
+    <!-- <div class="box-body">
 
       {{ $notif}}
-    </div>
+    </div> -->
 <!-- /.box-body -->
-</div>
+<!-- </div> -->
 <div class="box box-danger">
     <div class="box-header with-border">
       <h3 class="box-title">

@@ -151,6 +151,7 @@ class DataSupplierController extends Controller
                 $sql->sertifikat_dokumen = $sertifikat_dokumen;
 
                 $data['data'] = $sql;
+                // dd($sql);
               }else{
                 $data['action_url'] = route('supplier.insert');
                 $data['action_type'] = "tambah";
@@ -368,7 +369,7 @@ class DataSupplierController extends Controller
           // }
 
         }
-            return view("usersupplier::dataSupplier.index");
+            return redirect('usersupplier/dataSupplier');
 
       }
 
@@ -707,43 +708,6 @@ class DataSupplierController extends Controller
           };
           $data->anak_perusahaan = $request->anak_perusahaan;
 
-          SupplierMetadata::where([
-            ['id_object','=',$data->id],
-            ['object_type','=','vendor'],
-            ['object_key','=','legal_dokumen']
-            ])->delete();
-
-            foreach($request->legal_dokumen as $l => $val){
-              $fileName   = $kd_vendor.'_'.str_slug($val['name']).'_'.time().'.pdf';
-              $val['file']->storeAs('supplier/legal_dokumen', $fileName);
-
-              $mt_data = new SupplierMetadata();
-              $mt_data->id_object    = $data->id;
-              $mt_data->object_type  = 'vendor';
-              $mt_data->object_key   = 'legal_dokumen';
-              $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
-              $mt_data->save();
-            };
-          $data->legal_dokumen = $request->legal_dokumen;
-
-          SupplierMetadata::where([
-            ['id_object','=',$data->id],
-            ['object_type','=','vendor'],
-            ['object_key','=','legal_dokumen']
-            ])->delete();
-
-            foreach($request->sertifikat_dokumen as $l => $val){
-              $fileName   = $kd_vendor.'_'.str_slug($val['name']).'_'.time().'.pdf';
-              $val['file']->storeAs('supplier/sertifikat_dokumen', $fileName);
-
-              $mt_data = new SupplierMetadata();
-              $mt_data->id_object    = $data->id;
-              $mt_data->object_type  = 'vendor';
-              $mt_data->object_key   = 'sertifikat_dokumen';
-              $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
-              $mt_data->save();
-            };
-          $data->sertifikat_dokumen = $request->sertifikat_dokumen;
             return redirect()->back()->withData($data)->with('message', 'Data berhasil disimpan!');
         }
       }

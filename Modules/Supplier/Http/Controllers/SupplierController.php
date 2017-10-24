@@ -61,7 +61,7 @@ class SupplierController extends Controller
             })
             ->make(true);
     }
-<<<<<<< HEAD
+
     public function create()
     {
         //dd(Supplier::gen_userid());
@@ -496,8 +496,3 @@ class SupplierController extends Controller
         return redirect()->back()->withInput($request->input());
       }
     }
-
-=======
-    
->>>>>>> e7e4ea1793a05d2c5ec8f57c99bf0ccc2a953f47
-}

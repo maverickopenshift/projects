@@ -94,9 +94,7 @@
               @endif
             </div>
           </div>
-          <div class="form-group text-center top55">
-            <button type="submit" class="btn btn-success btn-lg">SIMPAN</button>
-          </div>
+          @include('supplier::partials.buttons')
       </div>
     </div>
 <!-- /.box-body -->

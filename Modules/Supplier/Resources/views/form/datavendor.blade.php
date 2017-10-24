@@ -157,6 +157,7 @@
             @endif
           </div>
         </div>
+        @include('supplier::partials.buttons')
       </div>
     </div>
 <!-- /.box-body -->

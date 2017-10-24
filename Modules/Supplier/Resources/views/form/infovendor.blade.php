@@ -1,7 +1,10 @@
 <div class="box">
     <div class="box-header with-border">
       <h3 class="box-title">
-          Informasi Vendor
+          Informasi Vendor 
+          @if($action_type=='edit')
+            (<span class="text-info" style="font-weight:bold;font-size:20px;"> {{Helper::prop_exists($supplier,'kd_vendor')}}</span>)
+          @endif
       </h3>
     </div>
     <!-- /.box-header -->
@@ -100,6 +103,7 @@
               @endif
             </div>
           </div>
+          @include('supplier::partials.buttons')
       </div>
     </div>
 <!-- /.box-body -->

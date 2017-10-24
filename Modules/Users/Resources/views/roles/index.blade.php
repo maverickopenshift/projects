@@ -35,7 +35,7 @@
                 <th width="">Description</th>
                 {{-- <th width="">Created At</th>
                 <th width="">Updated At</th> --}}
-                <th width="">Permissions</th>
+                <th width="500">Permissions</th>
                 <th width="">Action</th>
             </tr>
             </thead>

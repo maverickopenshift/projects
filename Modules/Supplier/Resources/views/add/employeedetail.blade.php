@@ -10,7 +10,7 @@
           <div class="form-group {{ $errors->has('nm_direktur_utama') ? ' has-error' : '' }}">
             <label for="nm_direktur_utama" class="col-sm-2 control-label"><span class="text-red">*</span> Nama Direktur Utama</label>
             <div class="col-sm-10">
-                <input type="text" name="nm_direktur_utama" value="{{old('nm_direktur_utama')}}" class="form-control" placeholder="" autocomplete="off">
+                <input type="text" name="nm_direktur_utama" value="{{old('nm_direktur_utama',Helper::prop_exists($supplier,'nm_direktur_utama'))}}" class="form-control" placeholder="" autocomplete="off">
               @if ($errors->has('nm_direktur_utama'))
                   <span class="help-block">
                       <strong>{{ $errors->first('nm_direktur_utama') }}</strong>
@@ -21,7 +21,7 @@
           <div class="form-group {{ $errors->has('nm_komisaris_utama') ? ' has-error' : '' }}">
             <label for="nm_komisaris_utama" class="col-sm-2 control-label"><span class="text-red">*</span> Nama Komisaris Utama</label>
             <div class="col-sm-10">
-                <input type="text" name="nm_komisaris_utama" value="{{old('nm_komisaris_utama')}}" class="form-control" placeholder="" autocomplete="off">
+                <input type="text" name="nm_komisaris_utama" value="{{old('nm_komisaris_utama',Helper::prop_exists($supplier,'nm_komisaris_utama'))}}" class="form-control" placeholder="" autocomplete="off">
               @if ($errors->has('nm_komisaris_utama'))
                   <span class="help-block">
                       <strong>{{ $errors->first('nm_komisaris_utama') }}</strong>
@@ -39,7 +39,7 @@
           <div class="form-group {{ $errors->has('cp1_nama') ? ' has-error' : '' }}">
             <label for="cp1_nama" class="col-sm-2 control-label">Nama</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" name="cp1_nama" value="{{ old('cp1_nama') }}" placeholder="" autocomplete="off">
+              <input type="text" class="form-control" name="cp1_nama" value="{{ old('cp1_nama',Helper::prop_exists($supplier,'cp1_nama')) }}" placeholder="" autocomplete="off">
               @if ($errors->has('cp1_nama'))
                   <div class="help-block">
                       <strong>{{ $errors->first('cp1_nama') }}</strong>
@@ -50,7 +50,7 @@
           <div class="form-group {{ $errors->has('cp1_telp') ? ' has-error' : '' }}">
             <label for="cp1_telp" class="col-sm-2 control-label">No Telepon</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" name="cp1_telp" value="{{ old('cp1_telp') }}" placeholder="" autocomplete="off">
+              <input type="text" class="form-control" name="cp1_telp" value="{{ old('cp1_telp',Helper::prop_exists($supplier,'cp1_telp')) }}" placeholder="" autocomplete="off">
               @if ($errors->has('cp1_telp'))
                   <div class="help-block">
                       <strong>{{ $errors->first('cp1_telp') }}</strong>
@@ -61,7 +61,7 @@
           <div class="form-group {{ $errors->has('cp1_email') ? ' has-error' : '' }}">
             <label for="cp1_email" class="col-sm-2 control-label">Alamat Email</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" name="cp1_email" value="{{ old('cp1_email') }}" placeholder="" autocomplete="off">
+              <input type="text" class="form-control" name="cp1_email" value="{{ old('cp1_email',Helper::prop_exists($supplier,'cp1_email')) }}" placeholder="" autocomplete="off">
               @if ($errors->has('cp1_email'))
                   <div class="help-block">
                       <strong>{{ $errors->first('cp1_email') }}</strong>
@@ -75,7 +75,7 @@
           <div class="form-group {{ $errors->has('jml_peg_domestik') ? ' has-error' : '' }}">
             <label for="jml_peg_domestik" class="col-sm-2 control-label"><span class="text-red">*</span> Jumlah Pegawai Domestik</label>
             <div class="col-sm-10">
-                <input type="text" name="jml_peg_domestik" value="{{old('jml_peg_domestik')}}" class="form-control" placeholder="" autocomplete="off">
+                <input type="text" name="jml_peg_domestik" value="{{old('jml_peg_domestik',Helper::prop_exists($supplier,'jml_peg_domestik'))}}" class="form-control" placeholder="" autocomplete="off">
               @if ($errors->has('jml_peg_domestik'))
                   <span class="help-block">
                       <strong>{{ $errors->first('jml_peg_domestik') }}</strong>
@@ -86,7 +86,7 @@
           <div class="form-group {{ $errors->has('jml_peg_asing') ? ' has-error' : '' }}">
             <label for="jml_peg_asing" class="col-sm-2 control-label"><span class="text-red">*</span> Jumlah Pegawai Asing</label>
             <div class="col-sm-10">
-                <input type="text" name="jml_peg_asing" value="{{old('jml_peg_asing')}}" class="form-control" placeholder="" autocomplete="off">
+                <input type="text" name="jml_peg_asing" value="{{old('jml_peg_asing',Helper::prop_exists($supplier,'jml_peg_asing'))}}" class="form-control" placeholder="" autocomplete="off">
               @if ($errors->has('jml_peg_asing'))
                   <span class="help-block">
                       <strong>{{ $errors->first('jml_peg_asing') }}</strong>

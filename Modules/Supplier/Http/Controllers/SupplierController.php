@@ -35,9 +35,9 @@ class SupplierController extends Controller
             ->addColumn('action', function ($data) {
                             return '
                             <div class="btn-group">
-                            <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal"  data-title="Edit"  data-id="'.$data->id.'">
+                            <a href="'.route('supplier.edit',['id'=>$data->id]).'" class="btn btn-primary btn-xs">
             <i class="glyphicon glyphicon-edit"></i> Edit
-            </button><button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-toggle="modal" data-target="#modal-delete">
+            </a><button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-toggle="modal" data-target="#modal-delete">
             <i class="glyphicon glyphicon-trash"></i> Delete
             </button></div>';
             })
@@ -64,8 +64,10 @@ class SupplierController extends Controller
     public function create()
     {
         //dd(Supplier::gen_userid());
-        $data['page_title'] = 'Add Supplier';
-        return view('supplier::create')->with($data);
+        $supplier = [];
+        $page_title = 'Add Supplier';
+        $action_type = 'add';
+        return view('supplier::create')->with(compact('supplier','page_title','action_type'));
     }
     
     public function store(Request $request)
@@ -278,4 +280,193 @@ class SupplierController extends Controller
         return $id;
       }
     }
+    public function edit(Request $request)
+    {
+        $id = $request->id;
+        $supplier = Supplier::where('id',$id)->first();
+        if(!$supplier){
+          abort(500);
+        }
+        
+        $dt_klasifikasi = SupplierMetadata::select('object_value')->where([
+          ['id_object','=',$id],
+          ['object_key','=','klasifikasi_usaha']
+        ])->get();
+        foreach($dt_klasifikasi as $dt_klasifikasi){
+          $klasifikasi[] = $dt_klasifikasi->object_value;
+        }
+        $supplier->klasifikasi_usaha = $klasifikasi;
+        
+        
+        $dt_anak_perus = SupplierMetadata::select('object_value')->where([
+          ['id_object','=',$id],
+          ['object_key','=','anak_perusahaan']
+        ])->get();
+        foreach($dt_anak_perus as $dt_anak_perus){
+          $anak_perus[] = $dt_anak_perus->object_value;
+        }
+        $supplier->anak_perusahaan = $anak_perus;
+        
+        $dt_meta = SupplierMetadata::select('object_value','object_key')->where([
+          ['id_object','=',$id],
+          // ['object_key','IN','"bank_kota","pengalaman_kerja","nm_direktur_utama","nm_komisaris_utama"']
+        ])
+        ->whereIn('object_key',["bank_kota","pengalaman_kerja","nm_direktur_utama","nm_komisaris_utama"])
+        ->get();
+        //dd($dt_meta);
+        foreach($dt_meta as $dt){
+          if($dt->object_key=='bank_kota'){
+            $supplier->bank_kota = $dt->object_value;
+          }
+          if($dt->object_key=='pengalaman_kerja'){
+            $supplier->pengalaman_kerja = $dt->object_value;
+          }
+          if($dt->object_key=='nm_direktur_utama'){
+            $supplier->nm_direktur_utama = $dt->object_value;
+          }
+          if($dt->object_key=='nm_komisaris_utama'){
+            $supplier->nm_komisaris_utama = $dt->object_value;
+          }
+        }
+        
+        $dt_legal_dokumen = SupplierMetadata::select('object_value')->where([
+          ['id_object','=',$id],
+          ['object_key','=','legal_dokumen']
+        ])->get();
+        
+        foreach($dt_legal_dokumen as $k=>$dt_legal_dokumen){
+          $d = json_decode($dt_legal_dokumen->object_value);
+          $legal_dokumen[$k]['name'] = $d->name;
+          $legal_dokumen[$k]['file'] = $d->file;
+        }
+        $supplier->legal_dokumen = $legal_dokumen;
+        
+        $dt_sertifikat_dokumen = SupplierMetadata::select('object_value')->where([
+          ['id_object','=',$id],
+          ['object_key','=','sertifikat_dokumen']
+        ])->get();
+        foreach($dt_sertifikat_dokumen as $k=>$dt_sertifikat_dokumen){
+          $d = json_decode($dt_sertifikat_dokumen->object_value);
+          $sertifikat_dokumen[$k]['name'] = $d->name;
+          $sertifikat_dokumen[$k]['file'] = $d->file;
+          $sertifikat_dokumen[$k]['file_old'] = $d->file;
+        }
+        $supplier->sertifikat_dokumen = $sertifikat_dokumen;
+        //dd($supplier);
+        //$data = $sup;
+        $page_title = 'Edit Supplier';
+        $action_type = 'edit';
+        return view('supplier::create')->with(compact('supplier','page_title','action_type','id'));
+    }
+    public function update(Request $request)
+    {
+      dd($request->legal_dokumen);
+      $id = $request->id;
+      $rules = array (
+          'bdn_usaha'         => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
+          'nm_vendor'         => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'nm_vendor_uq'      => 'max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'prinsipal_st'      => 'required|boolean',
+          'klasifikasi_usaha.*' => 'required|regex:/^[a-z0-9 .\-]+$/i',
+          'pengalaman_kerja'  => 'required|min:30|regex:/^[a-z0-9 .\-]+$/i',
+          'alamat'            => 'required|max:1000|min:10|regex:/^[a-z0-9 .\-]+$/i',
+          'kota'              => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'kd_pos'            => 'required|digits_between:3,20',
+          'telepon'           => 'required|digits_between:7,20',
+          'fax'               => 'required|digits_between:7,20',
+          'email'             => 'required|max:50|min:4|email',
+          'password'          => 'required|max:50|min:6|confirmed',
+          'web_site'          => 'sometimes|nullable|url',
+          'induk_perus'       => 'sometimes|nullable|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'anak_perusahaan.*' => 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'asset'             => 'required|max:500|min:3|digits_between:3,50',
+          'bank_nama'         => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'bank_cabang'       => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'bank_norek'        => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'bank_kota'         => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'akte_awal_no'      => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'akte_awal_tg'      => 'required|date_format:"Y-m-d"',
+          'akte_awal_notaris' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'akte_akhir_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'akte_akhir_tg'     => 'required|date_format:"Y-m-d"',
+          'akte_akhir_notaris'=> 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'siup_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'siup_tg_terbit'     => 'required|date_format:"Y-m-d"',
+          'siup_tg_expired'     => 'required|date_format:"Y-m-d"',
+          'siup_kualifikasi'     => 'required|in:"1","2","3"',
+          'pkp'      => 'required|boolean',
+          'npwp_no'     => 'required_if:pkp,"1"|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'npwp_tg'     => 'required_if:pkp,"1"|nullable|date_format:"Y-m-d"',
+          'tdp_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'tdp_tg_terbit'     => 'required|date_format:"Y-m-d"',
+          'tdp_tg_expired'     => 'required|date_format:"Y-m-d"',
+          'idp_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'idp_tg_terbit'     => 'required|date_format:"Y-m-d"',
+          'idp_tg_expired'     => 'required|date_format:"Y-m-d"',
+          'iujk_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'iujk_tg_terbit'     => 'required|date_format:"Y-m-d"',
+          'iujk_tg_expired'     => 'required|date_format:"Y-m-d"',
+          'nm_direktur_utama'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'nm_komisaris_utama'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'cp1_nama'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'cp1_telp'     => 'required|digits_between:7,20',
+          'cp1_email'     => 'required|max:50|min:4|email',
+          'jml_peg_domestik'     => 'required|integer',
+          'jml_peg_asing'     => 'required|integer',
+          'legal_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+      );
+      $check_new_legal_dok = false;
+      foreach($request->legal_dokumen as $l => $v){
+        if(isset($v['file'])){
+          $check_new_legal_dok = true;
+        }
+        if(isset($v['file']) && empty($v['name'])){
+          $check_new_legal_dok = true;
+        }
+      }
+      if($check_new_legal_dok) {
+          $rules['legal_dokumen.*.file'] = 'required|mimes:pdf';
+      }
+      
+      $check_new_sertifikat_dok = false;
+      foreach($request->sertifikat_dokumen as $l => $v){
+        if(isset($v['file'])){
+          $check_new_sertifikat_dok = true;
+        }
+        if(isset($v['file']) && empty($v['name'])){
+          $check_new_sertifikat_dok = true;
+        }
+      }
+      if($check_new_sertifikat_dok) {
+          $rules['sertifikat_dokumen.*.file'] = 'required|mimes:pdf';
+      }
+      $validator = Validator::make($request->all(), $rules,Helpers::error_submit_supplier());
+      
+    //  if(SupplierMetadata::count_meta($id,'legal_dokumen')==count($request->legal_dokumen)){
+        // foreach($request->legal_dokumen as $l => $v){
+        //   $legal_dokumen[$k]['name'] = $v['name'];
+        //   $legal_dokumen[$k]['file'] = $v['file_old'];
+        // }
+        // $request->legal_dokumen = $legal_dokumen;
+    //  }
+      
+      //if(SupplierMetadata::count_meta($id,'sertifikat_dokumen')==count($request->sertifikat_dokumen)){
+        // foreach($request->sertifikat_dokumen as $l => $v){
+        //   $sertifikat_dokumen[$k]['name'] = $v['name'];
+        //   $sertifikat_dokumen[$k]['file'] = $v['file_old'];
+        // }
+        // $request->sertifikat_dokumen = $sertifikat_dokumen;
+    //  }
+      //dd(count($request->legal_dokumen));
+      if ($validator->fails ()){
+        return redirect()->back()
+                    ->withInput($request->input())
+                    ->withErrors($validator);
+      }
+      else {
+        return redirect()->back()->withInput($request->input());
+      }
+    }
+    
 }

@@ -12,7 +12,7 @@
             <div class="form-group {{ $errors->has('akte_awal_no') ? ' has-error' : '' }}">
               <label for="akte_awal_no" class="col-sm-5 control-label"><span class="text-red">*</span> No Akte Pendirian</label>
               <div class="col-sm-7">
-                <input type="text" class="form-control" name="akte_awal_no" value="{{ old('akte_awal_no') }}" autocomplete="off">
+                <input type="text" class="form-control" name="akte_awal_no" value="{{ old('akte_awal_no',Helper::prop_exists($data,'akte_awal_no')) }}" autocomplete="off">
                 @if ($errors->has('akte_awal_no'))
                     <span class="help-block">
                         <strong>{{ $errors->first('akte_awal_no') }}</strong>
@@ -31,7 +31,7 @@
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
                     </div>
-                    <input type="text" class="form-control" name="akte_awal_tg" value="{{ old('akte_awal_tg') }}" autocomplete="off">
+                    <input type="text" class="form-control" name="akte_awal_tg" value="{{ old('akte_awal_tg',Helper::prop_exists($data,'akte_awal_tg')) }}" autocomplete="off">
                 </div>
                 @if ($errors->has('akte_awal_tg'))
                     <span class="help-block">
@@ -47,7 +47,7 @@
             <div class="form-group {{ $errors->has('akte_awal_notaris') ? ' has-error' : '' }}">
               <label for="akte_awal_notaris" class="col-sm-4 control-label"><span class="text-red">*</span> Notaris</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" name="akte_awal_notaris" value="{{ old('akte_awal_notaris') }}" autocomplete="off">
+                <input type="text" class="form-control" name="akte_awal_notaris" value="{{ old('akte_awal_notaris',Helper::prop_exists($data,'akte_awal_notaris')) }}" autocomplete="off">
                 @if ($errors->has('akte_awal_notaris'))
                     <span class="help-block">
                         <strong>{{ $errors->first('akte_awal_notaris') }}</strong>
@@ -65,7 +65,7 @@
             <div class="form-group {{ $errors->has('akte_akhir_no') ? ' has-error' : '' }}">
               <label for="akte_akhir_no" class="col-sm-5 control-label"><span class="text-red">*</span> No Akte Perubahan</label>
               <div class="col-sm-7">
-                <input type="text" class="form-control" name="akte_akhir_no" value="{{ old('akte_akhir_no') }}" autocomplete="off">
+                <input type="text" class="form-control" name="akte_akhir_no" value="{{ old('akte_akhir_no',Helper::prop_exists($data,'akte_akhir_no')) }}" autocomplete="off">
                 @if ($errors->has('akte_akhir_no'))
                     <span class="help-block">
                         <strong>{{ $errors->first('akte_akhir_no') }}</strong>
@@ -84,7 +84,7 @@
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
                     </div>
-                    <input type="text" class="form-control" name="akte_akhir_tg" value="{{ old('akte_akhir_tg') }}" autocomplete="off">
+                    <input type="text" class="form-control" name="akte_akhir_tg" value="{{ old('akte_akhir_tg',Helper::prop_exists($data,'akte_akhir_tg')) }}" autocomplete="off">
                 </div>
                 @if ($errors->has('akte_akhir_tg'))
                     <span class="help-block">
@@ -100,7 +100,7 @@
             <div class="form-group {{ $errors->has('akte_akhir_notaris') ? ' has-error' : '' }}">
               <label for="akte_akhir_notaris" class="col-sm-4 control-label"><span class="text-red">*</span> Notaris</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" name="akte_akhir_notaris" value="{{ old('akte_akhir_notaris') }}" autocomplete="off">
+                <input type="text" class="form-control" name="akte_akhir_notaris" value="{{ old('akte_akhir_notaris',Helper::prop_exists($data,'akte_akhir_notaris')) }}" autocomplete="off">
                 @if ($errors->has('akte_akhir_notaris'))
                     <span class="help-block">
                         <strong>{{ $errors->first('akte_akhir_notaris') }}</strong>
@@ -118,7 +118,7 @@
             <div class="form-group {{ $errors->has('siup_no') ? ' has-error' : '' }}">
               <label for="siup_no" class="col-sm-5 control-label"><span class="text-red">*</span> No SIUP</label>
               <div class="col-sm-7">
-                <input type="text" class="form-control" name="siup_no" value="{{ old('siup_no') }}" autocomplete="off">
+                <input type="text" class="form-control" name="siup_no" value="{{ old('siup_tg_terbit',Helper::prop_exists($data,'siup_no')) }}" autocomplete="off">
                 @if ($errors->has('siup_no'))
                     <span class="help-block">
                         <strong>{{ $errors->first('siup_no') }}</strong>
@@ -137,7 +137,7 @@
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
                     </div>
-                    <input type="text" class="form-control" name="siup_tg_terbit" value="{{ old('siup_tg_terbit') }}" autocomplete="off">
+                    <input type="text" class="form-control" name="siup_tg_terbit" value="{{ old('siup_tg_expired',Helper::prop_exists($data,'siup_tg_terbit')) }}" autocomplete="off">
                 </div>
                 @if ($errors->has('siup_tg_terbit'))
                     <span class="help-block">
@@ -157,7 +157,7 @@
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
                     </div>
-                    <input type="text" class="form-control" name="siup_tg_expired" value="{{ old('siup_tg_expired') }}" autocomplete="off">
+                    <input type="text" class="form-control" name="siup_tg_expired" value="{{ old('siup_tg_expired',Helper::prop_exists($data,'siup_tg_expired')) }}" autocomplete="off">
                 </div>
                 @if ($errors->has('siup_tg_expired'))
                     <span class="help-block">
@@ -177,13 +177,13 @@
               <label for="siup_kualifikasi" class="col-sm-2 control-label"><span class="text-red">*</span> Kualifikasi SIUP</label>
               <div class="col-sm-10">
                 <label class="radio-inline" style="padding-left:7px">
-                  <input class="check-me" type="radio" value="1" name="siup_kualifikasi" {{!old('siup_kualifikasi')?'checked':''}} {{old('siup_kualifikasi')=='1'?'checked':''}}> Besar
+                  <input class="check-me" type="radio" value="1" name="siup_kualifikasi" {{!old('siup_kualifikasi',Helper::prop_exists($data,'siup_kualifikasi'))?'checked':''}} {{old('siup_kualifikasi',Helper::prop_exists($data,'siup_kualifikasi'))=='1'?'checked':''}}> Besar
                 </label>
                 <label class="radio-inline">
-                  <input class="check-me" type="radio" value="2" name="siup_kualifikasi" {{old('siup_kualifikasi')=='2'?'checked':''}}> Menengah
+                  <input class="check-me" type="radio" value="2" name="siup_kualifikasi" {{old('siup_kualifikasi',Helper::prop_exists($data,'siup_kualifikasi'))=='2'?'checked':''}}> Menengah
                 </label>
                 <label class="radio-inline">
-                  <input class="check-me" type="radio" value="3" name="siup_kualifikasi" {{old('siup_kualifikasi')=='3'?'checked':''}}> Kecil
+                  <input class="check-me" type="radio" value="3" name="siup_kualifikasi" {{old('siup_kualifikasi',Helper::prop_exists($data,'siup_kualifikasi'))=='3'?'checked':''}}> Kecil
                 </label>
                 @if ($errors->has('siup_kualifikasi'))
                     <span class="help-block">
@@ -203,8 +203,8 @@
               <label for="pkp" class="col-sm-5 control-label"><span class="text-red">*</span> Perusahaan Kena Pajak</label>
               <div class="col-sm-7">
                 <select class="form-control" name="pkp">
-                  <option value="1" {{ old('pkp')=='1'?"selected='selected'":"" }}>Ya</option>
-                  <option value="0" {{ old('pkp')=='0'?"selected='selected'":"" }}>Tidak</option>
+                  <option value="1" {{ old('pkp',Helper::prop_exists($data,'pkp'))=='1'?"selected='selected'":"" }}>Ya</option>
+                  <option value="0" {{ old('pkp',Helper::prop_exists($data,'pkp'))=='0'?"selected='selected'":"" }}>Tidak</option>
                 </select>
                 @if ($errors->has('pkp'))
                     <span class="help-block">
@@ -227,7 +227,7 @@
             <div class="form-group {{ $errors->has('npwp_no') ? ' has-error' : '' }}">
               <label for="npwp_no" class="col-sm-5 control-label"><span class="text-red">*</span> No NPWP</label>
               <div class="col-sm-7">
-                <input type="text" class="form-control" name="npwp_no" value="{{ old('npwp_no') }}" autocomplete="off">
+                <input type="text" class="form-control" name="npwp_no" value="{{ old('npwp_no',Helper::prop_exists($data,'npwp_no')) }}" autocomplete="off">
                 @if ($errors->has('npwp_no'))
                     <span class="help-block">
                         <strong>{{ $errors->first('npwp_no') }}</strong>
@@ -246,7 +246,7 @@
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
                     </div>
-                    <input type="text" class="form-control" name="npwp_tg" value="{{ old('npwp_tg') }}" autocomplete="off">
+                    <input type="text" class="form-control" name="npwp_tg" value="{{ old('npwp_tg',Helper::prop_exists($data,'npwp_tg')) }}" autocomplete="off">
                 </div>
                 @if ($errors->has('npwp_tg'))
                     <span class="help-block">
@@ -266,7 +266,7 @@
             <div class="form-group {{ $errors->has('tdp_no') ? ' has-error' : '' }}">
               <label for="tdp_no" class="col-sm-5 control-label"><span class="text-red">*</span> No TDP (Pemda)</label>
               <div class="col-sm-7">
-                <input type="text" class="form-control" name="tdp_no" value="{{ old('tdp_no') }}" autocomplete="off">
+                <input type="text" class="form-control" name="tdp_no" value="{{ old('tdp_no',Helper::prop_exists($data,'tdp_no')) }}" autocomplete="off">
                 @if ($errors->has('tdp_no'))
                     <span class="help-block">
                         <strong>{{ $errors->first('tdp_no') }}</strong>
@@ -285,7 +285,7 @@
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
                     </div>
-                    <input type="text" class="form-control" name="tdp_tg_terbit" value="{{ old('tdp_tg_terbit') }}" autocomplete="off">
+                    <input type="text" class="form-control" name="tdp_tg_terbit" value="{{ old('tdp_tg_terbit',Helper::prop_exists($data,'tdp_tg_terbit')) }}" autocomplete="off">
                 </div>
                 @if ($errors->has('tdp_tg_terbit'))
                     <span class="help-block">
@@ -305,7 +305,7 @@
                       <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                       </div>
-                      <input type="text" class="form-control" name="tdp_tg_expired" value="{{ old('tdp_tg_expired') }}" autocomplete="off">
+                      <input type="text" class="form-control" name="tdp_tg_expired" value="{{ old('tdp_tg_expired',Helper::prop_exists($data,'tdp_tg_expired')) }}" autocomplete="off">
                   </div>
                   @if ($errors->has('tdp_tg_expired'))
                       <span class="help-block">
@@ -324,7 +324,7 @@
             <div class="form-group {{ $errors->has('idp_no') ? ' has-error' : '' }}">
               <label for="idp_no" class="col-sm-5 control-label"><span class="text-red">*</span> No IDP/SITU (Pemda)</label>
               <div class="col-sm-7">
-                <input type="text" class="form-control" name="idp_no" value="{{ old('idp_no') }}" autocomplete="off">
+                <input type="text" class="form-control" name="idp_no" value="{{ old('idp_no',Helper::prop_exists($data,'idp_no')) }}" autocomplete="off">
                 @if ($errors->has('idp_no'))
                     <span class="help-block">
                         <strong>{{ $errors->first('idp_no') }}</strong>
@@ -343,7 +343,7 @@
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
                     </div>
-                    <input type="text" class="form-control" name="idp_tg_terbit" value="{{ old('idp_tg_terbit') }}" autocomplete="off">
+                    <input type="text" class="form-control" name="idp_tg_terbit" value="{{ old('idp_tg_terbit',Helper::prop_exists($data,'idp_tg_terbit')) }}" autocomplete="off">
                 </div>
                 @if ($errors->has('idp_tg_terbit'))
                     <span class="help-block">
@@ -363,7 +363,7 @@
                       <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                       </div>
-                      <input type="text" class="form-control" name="idp_tg_expired" value="{{ old('idp_tg_expired') }}" autocomplete="off">
+                      <input type="text" class="form-control" name="idp_tg_expired" value="{{ old('idp_tg_expired',Helper::prop_exists($data,'idp_tg_expired')) }}" autocomplete="off">
                   </div>
                   @if ($errors->has('idp_tg_expired'))
                       <span class="help-block">
@@ -380,71 +380,8 @@
         <div class="clearfix"></div>
         <hr  />
       </div>
-      <div class="form-group {{ $errors->has('legal_dokumen.*') ? ' has-error' : '' }}">
-        <label for="legal_dokumen" class="col-sm-2 control-label"><span class="text-red">*</span> Legal Dokumen</label>
-        <div class="col-sm-10">
-          @if(count(old('legal_dokumen'))>0)
-            @php
-              $i=1;
-            @endphp
-            @foreach (old('legal_dokumen') as $k => $d)
-              <div class="row row-legal-dokumen bottom15">
-                  <div class="col-sm-4">
-                      <input type="text" class="form-control" name="legal_dokumen[][name]" placeholder="Nama Dokumen" value="{{$d['name']}}" autocomplete="off">
-                      @if ($errors->has('legal_dokumen.'.($k).'.name'))
-                          <span class="help-block">
-                              <strong>{{ $errors->first('legal_dokumen.'.($k).'.name') }}</strong>
-                          </span>
-                      @endif
-                  </div>
-                  <div class="col-sm-4">
-                    <div class="input-group">
-                      <input type="file" class="hide" name="legal_dokumen[][file]">
-                      <input class="form-control" type="text" disabled>
-                      <span class="input-group-btn">
-                        <button class="btn btn-default click-upload" type="button">Browse</button>
-                      </span>
-                    </div>
-                    @if ($errors->has('legal_dokumen.'.($k).'.file'))
-                        <span class="help-block">
-                            <strong>{{ $errors->first('legal_dokumen.'.($k).'.file') }}</strong>
-                        </span>
-                    @endif
-                  </div>
-                  <div class="col-sm-4 attr-btn">
-                      @if(count(old('legal_dokumen'))>1)
-                        <button style="margin-right:15px;" type="button" class="btn btn-default delete-legal-dokumen"><i class="glyphicon glyphicon-remove"></i></button>
-                      @endif
-                      @if(count(old('legal_dokumen'))==$i )
-                        <button type="button" class="btn btn-danger add-legal-dokumen"><i class="glyphicon glyphicon-plus"></i></button>
-                      @endif
-                  </div>
-              </div>
-              @php
-                $i++;
-              @endphp
-            @endforeach
-          @else
-            <div class="row row-legal-dokumen bottom15">
-                <div class="col-sm-4">
-                    <input type="text" class="form-control" name="legal_dokumen[][name]" placeholder="Nama Dokumen" autocomplete="off">
-                </div>
-                <div class="col-sm-4">
-                  <div class="input-group">
-                    <input type="file" class="hide" name="legal_dokumen[][file]">
-                    <input class="form-control" type="text" disabled>
-                    <span class="input-group-btn">
-                      <button class="btn btn-default click-upload" type="button">Browse</button>
-                    </span>
-                  </div>
-                </div>
-                <div class="col-sm-4 attr-btn">
-                    <button type="button" class="btn btn-danger add-legal-dokumen"><i class="glyphicon glyphicon-plus"></i></button>
-                </div>
-            </div>
-          @endif
-        </div>
-      </div>
+      @include('usersupplier::add.__part-legal-dokumen')
+
 
       <div class="form-group">
         <div class="clearfix"></div>
@@ -457,7 +394,7 @@
             <div class="form-group {{ $errors->has('iujk_no') ? ' has-error' : '' }}">
               <label for="iujk_no" class="col-sm-5 control-label"><span class="text-red">*</span> Sertifikat Keahlian</label>
               <div class="col-sm-7">
-                <input type="text" class="form-control" placeholder="No. Sertifikat" name="iujk_no" value="{{ old('iujk_no') }}" autocomplete="off">
+                <input type="text" class="form-control" placeholder="No. Sertifikat" name="iujk_no" value="{{ old('iujk_no',Helper::prop_exists($data,'iujk_no')) }}" autocomplete="off">
                 @if ($errors->has('iujk_no'))
                     <span class="help-block">
                         <strong>{{ $errors->first('iujk_no') }}</strong>
@@ -476,7 +413,7 @@
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
                     </div>
-                    <input type="text" class="form-control" name="iujk_tg_terbit" value="{{ old('iujk_tg_terbit') }}" autocomplete="off">
+                    <input type="text" class="form-control" name="iujk_tg_terbit" value="{{ old('iujk_tg_terbit',Helper::prop_exists($data,'iujk_tg_terbit')) }}" autocomplete="off">
                 </div>
                 @if ($errors->has('iujk_tg_terbit'))
                     <span class="help-block">
@@ -496,7 +433,7 @@
                       <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                       </div>
-                      <input type="text" class="form-control" name="iujk_tg_expired" value="{{ old('iujk_tg_expired') }}" autocomplete="off">
+                      <input type="text" class="form-control" name="iujk_tg_expired" value="{{ old('iujk_tg_expired',Helper::prop_exists($data,'iujk_tg_expired')) }}" autocomplete="off">
                   </div>
                   @if ($errors->has('iujk_tg_expired'))
                       <span class="help-block">
@@ -508,71 +445,7 @@
           </div>
         </div>
       </div>
-      <div class="form-group {{ $errors->has('sertifikat_dokumen.*') ? ' has-error' : '' }}">
-        <label for="sertifikat-dokumen" class="col-sm-2 control-label"></label>
-        <div class="col-sm-10">
-          @if(count(old('sertifikat_dokumen'))>0)
-            @php
-              $i=1;
-            @endphp
-            @foreach (old('sertifikat_dokumen') as $k => $d)
-              <div class="row row-sertifikat-dokumen bottom15">
-                  <div class="col-sm-4">
-                      <input type="text" class="form-control" name="sertifikat_dokumen[][name]" placeholder="Nama Dokumen" value="{{$d['name']}}" autocomplete="off">
-                      @if ($errors->has('sertifikat_dokumen.'.($k).'.name'))
-                          <span class="help-block">
-                              <strong>{{ $errors->first('sertifikat_dokumen.'.($k).'.name') }}</strong>
-                          </span>
-                      @endif
-                  </div>
-                  <div class="col-sm-4">
-                    <div class="input-group">
-                      <input type="file" class="hide" name="sertifikat_dokumen[][file]">
-                      <input class="form-control" type="text" disabled>
-                      <span class="input-group-btn">
-                        <button class="btn btn-default click-upload" type="button">Browse</button>
-                      </span>
-                    </div>
-                    @if ($errors->has('sertifikat_dokumen.'.($k).'.file'))
-                        <span class="help-block">
-                            <strong>{{ $errors->first('sertifikat_dokumen.'.($k).'.file') }}</strong>
-                        </span>
-                    @endif
-                  </div>
-                  <div class="col-sm-4 attr-btn">
-                      @if(count(old('sertifikat_dokumen'))>1)
-                        <button style="margin-right:15px;" type="button" class="btn btn-default delete-sertifikat-dokumen"><i class="glyphicon glyphicon-remove"></i></button>
-                      @endif
-                      @if(count(old('sertifikat_dokumen'))==$i )
-                        <button type="button" class="btn btn-danger add-sertifikat-dokumen"><i class="glyphicon glyphicon-plus"></i></button>
-                      @endif
-                  </div>
-              </div>
-              @php
-                $i++;
-              @endphp
-            @endforeach
-          @else
-            <div class="row row-sertifikat-dokumen bottom15">
-                <div class="col-sm-4">
-                    <input type="text" class="form-control" name="sertifikat_dokumen[][name]" placeholder="Nama Dokumen" autocomplete="off">
-                </div>
-                <div class="col-sm-4">
-                  <div class="input-group">
-                    <input type="file" class="hide" name="sertifikat_dokumen[][file]" autocomplete="off">
-                    <input class="form-control" type="text" disabled>
-                    <span class="input-group-btn">
-                      <button class="btn btn-default click-upload" type="button">Browse</button>
-                    </span>
-                  </div>
-                </div>
-                <div class="col-sm-4 attr-btn">
-                    <button type="button" class="btn btn-danger add-sertifikat-dokumen"><i class="glyphicon glyphicon-plus"></i></button>
-                </div>
-            </div>
-          @endif
-        </div>
-      </div>
+      @include('usersupplier::add.__part-sertifikat-dokumen')
     </div>
 <!-- /.box-body -->
 </div>

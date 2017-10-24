@@ -69,7 +69,7 @@ class SupplierController extends Controller
         $action_type = 'add';
         return view('supplier::create')->with(compact('supplier','page_title','action_type'));
     }
-    
+
     public function store(Request $request)
     {
       //dd($request->all());
@@ -124,10 +124,10 @@ class SupplierController extends Controller
           'cp1_email'     => 'required|max:50|min:4|email',
           'jml_peg_domestik'     => 'required|integer',
           'jml_peg_asing'     => 'required|integer',
-          'legal_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i', 
-          'legal_dokumen.*.file' => 'required|mimes:pdf', 
-          'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i', 
-          'sertifikat_dokumen.*.file' => 'required|mimes:pdf', 
+          'legal_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'legal_dokumen.*.file' => 'required|mimes:pdf',
+          'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+          'sertifikat_dokumen.*.file' => 'required|mimes:pdf',
       );
       $validator = Validator::make($request->all(), $rules,Helpers::error_submit_supplier());
       if ($validator->fails ()){
@@ -147,7 +147,7 @@ class SupplierController extends Controller
         $user->password = bcrypt($request->password);
         $user->save();
         $user->attachRole('vendor');
-        
+
         $data = new Supplier();
         $data->bdn_usaha = $request->bdn_usaha;
         $data->id_user = $user->id;
@@ -198,35 +198,35 @@ class SupplierController extends Controller
         $data->created_by = \Auth::user()->username;
         $data->kd_vendor = $kd_vendor;
         $data->save();
-        
+
         $mt_data = new SupplierMetadata();
         $mt_data->id_object    = $data->id;
         $mt_data->object_type  = 'vendor';
         $mt_data->object_key   = 'pengalaman_kerja';
         $mt_data->object_value = $request->pengalaman_kerja;
         $mt_data->save();
-        
+
         $mt_data = new SupplierMetadata();
         $mt_data->id_object    = $data->id;
         $mt_data->object_type  = 'vendor';
         $mt_data->object_key   = 'bank_kota';
         $mt_data->object_value = $request->bank_kota;
         $mt_data->save();
-        
+
         $mt_data = new SupplierMetadata();
         $mt_data->id_object    = $data->id;
         $mt_data->object_type  = 'vendor';
         $mt_data->object_key   = 'nm_direktur_utama';
         $mt_data->object_value = $request->nm_direktur_utama;
         $mt_data->save();
-        
+
         $mt_data = new SupplierMetadata();
         $mt_data->id_object    = $data->id;
         $mt_data->object_type  = 'vendor';
         $mt_data->object_key   = 'nm_komisaris_utama';
         $mt_data->object_value = $request->nm_komisaris_utama;
         $mt_data->save();
-        
+
         foreach($request->klasifikasi_usaha as $k){
           $mt_data = new SupplierMetadata();
           $mt_data->id_object    = $data->id;
@@ -246,7 +246,7 @@ class SupplierController extends Controller
         foreach($request->legal_dokumen as $l => $val){
           $fileName   = $kd_vendor.'_'.str_slug($val['name']).'_'.time().'.pdf';
           $val['file']->storeAs('supplier/legal_dokumen', $fileName);
-          
+
           $mt_data = new SupplierMetadata();
           $mt_data->id_object    = $data->id;
           $mt_data->object_type  = 'vendor';
@@ -257,7 +257,7 @@ class SupplierController extends Controller
         foreach($request->sertifikat_dokumen as $l => $val){
           $fileName   = $kd_vendor.'_'.str_slug($val['name']).'_'.time().'.pdf';
           $val['file']->storeAs('supplier/sertifikat_dokumen', $fileName);
-          
+
           $mt_data = new SupplierMetadata();
           $mt_data->id_object    = $data->id;
           $mt_data->object_type  = 'vendor';
@@ -268,7 +268,7 @@ class SupplierController extends Controller
         return redirect()->back()->withInput($request->input());
       }
     }
-    
+
     private function generate_id(){
       $sup = new Supplier();
       $id = $sup->gen_userid();
@@ -296,8 +296,8 @@ class SupplierController extends Controller
           $klasifikasi[] = $dt_klasifikasi->object_value;
         }
         $supplier->klasifikasi_usaha = $klasifikasi;
-        
-        
+
+
         $dt_anak_perus = SupplierMetadata::select('object_value')->where([
           ['id_object','=',$id],
           ['object_key','=','anak_perusahaan']
@@ -306,7 +306,7 @@ class SupplierController extends Controller
           $anak_perus[] = $dt_anak_perus->object_value;
         }
         $supplier->anak_perusahaan = $anak_perus;
-        
+
         $dt_meta = SupplierMetadata::select('object_value','object_key')->where([
           ['id_object','=',$id],
           // ['object_key','IN','"bank_kota","pengalaman_kerja","nm_direktur_utama","nm_komisaris_utama"']
@@ -328,19 +328,19 @@ class SupplierController extends Controller
             $supplier->nm_komisaris_utama = $dt->object_value;
           }
         }
-        
+
         $dt_legal_dokumen = SupplierMetadata::select('object_value')->where([
           ['id_object','=',$id],
           ['object_key','=','legal_dokumen']
         ])->get();
-        
+
         foreach($dt_legal_dokumen as $k=>$dt_legal_dokumen){
           $d = json_decode($dt_legal_dokumen->object_value);
           $legal_dokumen[$k]['name'] = $d->name;
           $legal_dokumen[$k]['file'] = $d->file;
         }
         $supplier->legal_dokumen = $legal_dokumen;
-        
+
         $dt_sertifikat_dokumen = SupplierMetadata::select('object_value')->where([
           ['id_object','=',$id],
           ['object_key','=','sertifikat_dokumen']
@@ -428,7 +428,7 @@ class SupplierController extends Controller
           else{
             $legal_dokumen[$l]['file'] = '';
           }
-          
+
         }
         if(isset($v['file'])){
           $check_new_legal_dok = true;
@@ -455,7 +455,7 @@ class SupplierController extends Controller
           else{
             $sertifikat_dokumen[$l]['file'] = '';
           }
-          
+
         }
         if(isset($v['file'])){
           $check_new_sertifikat_dok = true;
@@ -477,7 +477,7 @@ class SupplierController extends Controller
         // }
         // $request->legal_dokumen = $legal_dokumen;
     //  }
-      
+
       //if(SupplierMetadata::count_meta($id,'sertifikat_dokumen')==count($request->sertifikat_dokumen)){
         // foreach($request->sertifikat_dokumen as $l => $v){
         //   $sertifikat_dokumen[$k]['name'] = $v['name'];
@@ -495,5 +495,5 @@ class SupplierController extends Controller
         return redirect()->back()->withInput($request->input());
       }
     }
-    
+
 }

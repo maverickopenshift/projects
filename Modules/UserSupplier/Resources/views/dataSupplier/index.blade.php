@@ -20,23 +20,11 @@
 <div class="box box-danger">
     <div class="box-header with-border">
       <h3 class="box-title">
-
-        @if ($tombol == "1")
-
-        <div class="btn-group" role="group" aria-label="...">
-          <a href="{{route('usersupplier.update')}}" class="btn btn-default">
-               Update Kelengkapan Data
-          </a>
-        </div>
-
-        @else
         <div class="btn-group" role="group" aria-label="...">
           <a href="{{route('supplier.tambah')}}" class="btn btn-default">
-              <i class="glyphicon glyphicon-plus"></i> Tambah Kelengkapan Data
+              <i class="glyphicon glyphicon-list-alt"></i> Isi Kelengkapan Data
           </a>
         </div>
-        @endif
-
       </h3>
 
       <div class="box-tools pull-right">

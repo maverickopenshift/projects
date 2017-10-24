@@ -24,6 +24,7 @@ Route::group(['middleware' => 'web', 'prefix' => 'usersupplier', 'namespace' => 
   ->name('supplier.tambah');
   Route::post('/tambah', ['middleware' => ['role:vendor'],'uses' => 'DataSupplierController@add'])
   ->name('supplier.insert');
-  Route::get('/update', ['middleware' => ['role:vendor'],'uses' => 'DataSupplierController@update'])
+
+  Route::post('/updatedata', ['middleware' => ['role:vendor'],'uses' => 'DataSupplierController@update'])
   ->name('usersupplier.update');
 });

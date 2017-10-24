@@ -380,7 +380,6 @@
         <div class="clearfix"></div>
         <hr  />
       </div>
-
       <div class="form-group {{ $errors->has('legal_dokumen.*') ? ' has-error' : '' }}">
         <label for="legal_dokumen" class="col-sm-2 control-label"><span class="text-red">*</span> Legal Dokumen</label>
         <div class="col-sm-10">
@@ -391,10 +390,10 @@
             @foreach (old('legal_dokumen') as $k => $d)
               <div class="row row-legal-dokumen bottom15">
                   <div class="col-sm-4">
-                      <input type="text" class="form-control" name="legal_dokumen[]" placeholder="Nama Dokumen" value="{{$d['name']}}" autocomplete="off">
-                      @if ($errors->has('legal_dokumen.'.($k)))
+                      <input type="text" class="form-control" name="legal_dokumen[][name]" placeholder="Nama Dokumen" value="{{$d['name']}}" autocomplete="off">
+                      @if ($errors->has('legal_dokumen.'.($k).'.name'))
                           <span class="help-block">
-                              <strong>{{ $errors->first('legal_dokumen.'.($k)) }}</strong>
+                              <strong>{{ $errors->first('legal_dokumen.'.($k).'.name') }}</strong>
                           </span>
                       @endif
                   </div>
@@ -428,7 +427,7 @@
           @else
             <div class="row row-legal-dokumen bottom15">
                 <div class="col-sm-4">
-                    <input type="text" class="form-control" name="legal_dokumen[]" placeholder="Nama Dokumen" autocomplete="off">
+                    <input type="text" class="form-control" name="legal_dokumen[][name]" placeholder="Nama Dokumen" autocomplete="off">
                 </div>
                 <div class="col-sm-4">
                   <div class="input-group">
@@ -446,7 +445,6 @@
           @endif
         </div>
       </div>
-
 
       <div class="form-group">
         <div class="clearfix"></div>
@@ -520,10 +518,10 @@
             @foreach (old('sertifikat_dokumen') as $k => $d)
               <div class="row row-sertifikat-dokumen bottom15">
                   <div class="col-sm-4">
-                      <input type="text" class="form-control" name="sertifikat_dokumen[]" placeholder="Nama Dokumen" value="{{$d['name']}}" autocomplete="off">
-                      @if ($errors->has('sertifikat_dokumen.'.($k)))
+                      <input type="text" class="form-control" name="sertifikat_dokumen[][name]" placeholder="Nama Dokumen" value="{{$d['name']}}" autocomplete="off">
+                      @if ($errors->has('sertifikat_dokumen.'.($k).'.name'))
                           <span class="help-block">
-                              <strong>{{ $errors->first('sertifikat_dokumen.'.($k)) }}</strong>
+                              <strong>{{ $errors->first('sertifikat_dokumen.'.($k).'.name') }}</strong>
                           </span>
                       @endif
                   </div>
@@ -557,7 +555,7 @@
           @else
             <div class="row row-sertifikat-dokumen bottom15">
                 <div class="col-sm-4">
-                    <input type="text" class="form-control" name="sertifikat_dokumen[]" placeholder="Nama Dokumen" autocomplete="off">
+                    <input type="text" class="form-control" name="sertifikat_dokumen[][name]" placeholder="Nama Dokumen" autocomplete="off">
                 </div>
                 <div class="col-sm-4">
                   <div class="input-group">

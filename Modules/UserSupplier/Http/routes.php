@@ -13,5 +13,5 @@ Route::group(['middleware' => 'web', 'prefix' => 'usersupplier', 'namespace' => 
     Route::get('/dataSupplier', 'DataSupplierController@index')->name('supplier.list');
     Route::get('/dataSupplier/data', 'DataSupplierController@data')->name('supplier.isi');
     Route::get('/kelengkapanData', 'DataSupplierController@tambah')->name('supplier.tambah');
-    Route::get('/tambah', 'DataSupplierController@add')->name('supplier.insert');
+    Route::post('/tambah', 'DataSupplierController@add')->name('supplier.insert');
 });

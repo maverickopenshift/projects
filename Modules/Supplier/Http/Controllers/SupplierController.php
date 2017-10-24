@@ -62,4 +62,9 @@ class SupplierController extends Controller
             })
             ->make(true);
     }
+<<<<<<< HEAD
 }
+=======
+    
+}
+>>>>>>> supplier progress 4

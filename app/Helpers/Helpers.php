@@ -53,6 +53,7 @@ class Helpers
       $select .= '</select>';
       return $select;
     }
+<<<<<<< HEAD
 
     public static function error_submit_supplier(){
       return [
@@ -64,6 +65,8 @@ class Helpers
               'klasifikasi_usaha.*.regex' => 'Klasifikasi usaha harus huruf dan angka',
             ];
     }
+=======
+>>>>>>> supplier progress 4
     
     public static function prop_exists($obj,$string,$type='string'){
       if(isset($obj->{$string})){

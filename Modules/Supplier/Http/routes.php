@@ -17,12 +17,21 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
     Route::delete('/badanusaha/delete', ['middleware' => ['permission:lihat-badan-usaha'],'uses' => 'BadanUsahaController@delete'])->name('supplier.badanusaha.delete');
 
 
+<<<<<<< HEAD
     Route::get('/', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@index'])->name('supplier');
     Route::get('/data', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@data'])->name('supplier.data');
     Route::post('/store', ['middleware' => ['permission:tambah-supplier'],'uses' => 'SupplierAddController@store'])->name('supplier.store');
     Route::get('/create', ['middleware' => ['permission:tambah-supplier'],'uses' => 'SupplierAddController@index'])->name('supplier.create');
     Route::get('/{id}/edit', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@index'])->name('supplier.edit');
     Route::post('/update', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@update'])->name('supplier.update');
+=======
+    Route::get('/', 'SupplierController@index')->name('supplier');
+    Route::get('/data', 'SupplierController@data')->name('supplier.data');
+    Route::post('/store', 'SupplierAddController@store')->name('supplier.store');
+    Route::get('/create', 'SupplierAddController@index')->name('supplier.create');
+    Route::get('/{id}/edit', 'SupplierEditController@index')->name('supplier.edit');
+    Route::post('/update', 'SupplierEditController@update')->name('supplier.update');
+>>>>>>> supplier progress 4
     Route::get('/legal-dokumen/{filename}', function ($filename){
         $path = storage_path('app/supplier/legal_dokumen/' . $filename);
 

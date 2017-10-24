@@ -21,7 +21,14 @@
           <div class="form-group {{ $errors->has('nm_vendor') ? ' has-error' : '' }}">
             <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Nama Perusahaan</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" name="nm_vendor" value="{{$datas['name']}}"  placeholder="Masukan Nama Perusahaan" autocomplete="off">
+              @if(!Request::is('update'))
+              <input type="text" class="form-control" name="nm_vendor" value="{{$old['nm_vendor']}}"  placeholder="Masukan Nama Perusahaan" autocomplete="off">
+              @else
+              <input type="text" class="form-control" name="nm_vendor" value="{{$old['name']}}"  placeholder="Masukan Nama Perusahaan" autocomplete="off">
+              @endif
+
+              <!--<input type="text" class="form-control" name="nm_vendor" value="{{$old['nm_vendor']}}"  placeholder="Masukan Nama Perusahaan" autocomplete="off">
+-->
               @if ($errors->has('nm_vendor'))
                   <span class="help-block">
                       <strong>{{ $errors->first('nm_vendor') }}</strong>

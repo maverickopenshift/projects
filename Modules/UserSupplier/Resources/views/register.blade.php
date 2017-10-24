@@ -108,7 +108,6 @@
               attErrorPassword.html('')
               attErrorPhone.html('')
               attErrorEmail.html('')
-              var btnSave = formMe.find('.btn-save')
 
               $.ajax({
                   headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
@@ -116,9 +115,7 @@
                   type: 'get',
                   data: formMe.serialize(), // Remember that you need to have your csrf token included
                   dataType: 'json',
-                  beforeSend: function() {
-                    btnSave.button('loading')
-                  },
+
                   success: function( _response ){
                       // Handle your response..
                       console.log(_response)

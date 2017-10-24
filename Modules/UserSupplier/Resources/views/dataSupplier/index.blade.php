@@ -13,24 +13,30 @@
     <!-- /.box-header -->
     <div class="box-body">
 
-      @if (empty($data['id']))
-        Mohon lengkapi data vendor.
-      @elseif($data[kd_vendor] = '0')
-        Data belum Disetujui oleh Admin
-        @else
-        Data Sudah Disetujui
-      @endif
+      {{ $notif}}
     </div>
 <!-- /.box-body -->
 </div>
 <div class="box box-danger">
     <div class="box-header with-border">
       <h3 class="box-title">
-          <div class="btn-group" role="group" aria-label="...">
-            <a href="{{route('supplier.tambah')}}" class="btn btn-default">
-                <i class="glyphicon glyphicon-plus"></i> Tambah Kelengkapan Data
-            </a>
-          </div>
+
+        @if ($tombol == "1")
+
+        <div class="btn-group" role="group" aria-label="...">
+          <a href="{{route('usersupplier.update')}}" class="btn btn-default">
+               Update Kelengkapan Data
+          </a>
+        </div>
+
+        @else
+        <div class="btn-group" role="group" aria-label="...">
+          <a href="{{route('supplier.tambah')}}" class="btn btn-default">
+              <i class="glyphicon glyphicon-plus"></i> Tambah Kelengkapan Data
+          </a>
+        </div>
+        @endif
+
       </h3>
 
       <div class="box-tools pull-right">
@@ -55,13 +61,14 @@
                 <th width="100">Name Mitra Telkom</th>
                 <th width="100">Alamat Perusahaan</th>
                 <th width="150">Media Komunikasi</th>
-                <th width="100">Klarisifikasi Usaha (KADIN)</th>
+                <th width="100">Created At</th>
             </tr>
             </thead>
         </table>
     </div>
 <!-- /.box-body -->
 </div>
+
 @endsection
 @push('scripts')
 <script>

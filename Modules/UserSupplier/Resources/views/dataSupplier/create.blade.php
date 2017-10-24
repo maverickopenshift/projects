@@ -3,7 +3,7 @@
 
 @section('content')
 
-@foreach ($data as $datas)
+@foreach ($data as $old)
 
   <form action="{{ route('supplier.insert') }}" method="post" enctype="multipart/form-data">
     {{ csrf_field() }}

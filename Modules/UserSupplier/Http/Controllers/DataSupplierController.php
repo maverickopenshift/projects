@@ -24,8 +24,32 @@ class DataSupplierController extends Controller
     {
       $username=auth()->user()->username;
       $sql = supplier::where('kd_vendor','=',$username)->get();
+
+
+      if(isset($sql)){
+        $notif = "Mohon lengkapi data vendor.";
+        $tombol = "0";
+      }else{
+      $notif="a";
+      $tombol="b";
+    }
+      // else{
+      //     foreach ($data as $datas){
+      //       if($datas['kd_vendor'] == '0'){
+      //         $notif = "Data belum Disetujui oleh Admin";
+      //         $tombol = "";
+      //       }if($datas['kd_vendor'] == $username){
+      //         $tombol = "1";
+      //       }else{
+      //         $notif="Data Sudah Disetujui";
+      //         $tombol = "";
+      //       }
+      //     }
+      //   }
       $data['data'] = $sql;
       $data['page_title'] = 'Data Supplier';
+        $data['notif']=$notif;
+        $data['tombol']=$tombol;
       return view("usersupplier::dataSupplier.index")->with($data);
     }
 
@@ -183,10 +207,9 @@ class DataSupplierController extends Controller
           $data->cp1_email = $request->alamat_email;
           $data->jml_peg_domestik = $request->jum_dom;
           $data->jml_peg_asing = $request->jum_as;
-          $data->approval_at = DB::raw('now()');
+          $data->approval_at = \DB::raw('now()');
           $data->vendor_status = 1;
           $data->created_by = \Auth::user()->username;
-          $data->kd_vendor = $kd_vendor;
           $data->save();
 
           $mt_data = new SupplierMetadata();
@@ -236,7 +259,7 @@ class DataSupplierController extends Controller
           };
 
           foreach($request->legal_dokumen as $l => $val){
-            $fileName   = $kd_vendor.'_'.str_slug($val['name']).'_'.time().'.pdf';
+            $fileName   = $usr_nm.'_'.str_slug($val['name']).'_'.time().'.pdf';
             $val['file']->storeAs('supplier/legal_dokumen', $fileName);
 
             $mt_data = new SupplierMetadata();
@@ -247,7 +270,7 @@ class DataSupplierController extends Controller
             $mt_data->save();
           };
           foreach($request->sertifikat_dokumen as $l => $val){
-            $fileName   = $kd_vendor.'_'.str_slug($val['name']).'_'.time().'.pdf';
+            $fileName   = $usr_nm.'_'.str_slug($val['name']).'_'.time().'.pdf';
             $val['file']->storeAs('supplier/sertifikat_dokumen', $fileName);
 
             $mt_data = new SupplierMetadata();
@@ -268,7 +291,16 @@ class DataSupplierController extends Controller
           // }
 
         }
-            // return view("usersupplier::dataSupplier.index");
+            return view("usersupplier::dataSupplier.index");
 
+      }
+
+      public function update()
+      {
+        $id_user=auth()->user()->id;
+        $sql = supplier::where('id_user','=',$id_user)->get();
+        $data['data'] = $sql;
+          $data['page_title'] = 'Update Kelengkapan Data Supplier';
+          return view('usersupplier::dataSupplier.create')->with($data);
       }
 }

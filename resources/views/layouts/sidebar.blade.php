@@ -93,7 +93,7 @@
               </ul>
             </li>
 
-  @role('vendor')
+            @role('vendor')
             <li class="treeview {{Request::is("supplierUser/*") || Request::is("supplierUser")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-user.png')}}" title="Management Supplier" />
                 <span>User Profile</span> <i class="fa fa-angle-left pull-right"></i></a>

@@ -67,7 +67,7 @@ class RegisterController extends Controller
 
         Mail::send('usersupplier::notifEmail', ['data2' => $data2] , function($message) use($data2)
         {
-          $message->to($data2['email'], 'Annisa Dwu')->subject('Welcome!');
+          $message->to($data2['email'], $data2['nama'])->subject('Welcome!');
           $message->from('inartdemo@gmail.com','Do Not Reply');
         });
 

@@ -63,4 +63,8 @@ class Helpers
       }
       return false;
     }
+    
+    public static function set_filename($kd_vendor,$name){
+      return $kd_vendor.'_'.str_slug($name).'_'.time().'_'.str_random(5).'.pdf';
+    }
 }

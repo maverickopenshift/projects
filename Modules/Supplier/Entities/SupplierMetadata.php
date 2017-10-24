@@ -17,4 +17,18 @@ class SupplierMetadata extends Model
           ['object_key','=',$key]
           ])->count();
     }
+    
+    public static function get_legal_dokumen($id){
+      return self::select(['id','object_value'])->where([
+        ['id_object','=',$id],
+        ['object_key','=','legal_dokumen']
+      ])->get();
+    }
+    
+    public static function get_sertifikat_dokumen($id){
+      return self::select(['id','object_value'])->where([
+        ['id_object','=',$id],
+        ['object_key','=','sertifikat_dokumen']
+      ])->get();
+    }
 }

@@ -19,11 +19,8 @@
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-        @if (session('status'))
-            <div class="alert alert-success">
-                {{ session('status') }}
-            </div>
-        @endif
+      
+        @include('supplier::partials.alert-message')
 
         <div id="alertBS"></div>
         <table class="table table-condensed table-striped" id="datatables">
@@ -31,6 +28,7 @@
             <tr>
                 <th width="20">No.</th>
                 <th width="100">Supplier</th>
+                <th width="100">ID</th>
                 <th width="200">Alamat</th>
                 <th width="150">Kota</th>
                 <th width="100">Telepon</th>
@@ -61,15 +59,16 @@ $(function() {
       // autoWidth : true,
       scrollX   : true,
       fixedColumns:   {
-            leftColumns: 2,
+            leftColumns: 3,
             rightColumns:1
       },
-      order : [[ 4, 'desc' ]],
+      order : [[ 8, 'desc' ]],
       pageLength: 50,
       ajax: '{!! route('supplier.data') !!}',
       columns: [
           {data : 'DT_Row_Index',orderable:false,searchable:false},
           { data: 'nm_vendor', name: 'nm_vendor' },
+          { data: 'kd_vendor', name: 'kd_vendor' },
           { data: 'alamat', name: 'alamat' },
           { data: 'kota', name: 'kota' },
           { data: 'telepon', name: 'telepon' },

@@ -63,27 +63,24 @@ class SupplierEditController extends Controller
         }
       }
       
-      $dt_legal_dokumen = SupplierMetadata::select('object_value')->where([
-        ['id_object','=',$id],
-        ['object_key','=','legal_dokumen']
-      ])->get();
-      
+      $dt_legal_dokumen = SupplierMetadata::get_legal_dokumen($id);
       foreach($dt_legal_dokumen as $k=>$dt_legal_dokumen){
         $d = json_decode($dt_legal_dokumen->object_value);
         $legal_dokumen[$k]['name'] = $d->name;
         $legal_dokumen[$k]['file'] = $d->file;
       }
       $supplier->legal_dokumen = $legal_dokumen;
+      // foreach($dt_legal_dokumen as $k=>$dt_legal_dokumen){
+      //   $d = json_decode($dt_legal_dokumen->object_value);
+      //   $file_old_ld[$k]['file'] = $d->file;
+      // }
+      // $supplier->file_old_ld = $file_old_ld;
       
-      $dt_sertifikat_dokumen = SupplierMetadata::select('object_value')->where([
-        ['id_object','=',$id],
-        ['object_key','=','sertifikat_dokumen']
-      ])->get();
+      $dt_sertifikat_dokumen = SupplierMetadata::get_sertifikat_dokumen($id);
       foreach($dt_sertifikat_dokumen as $k=>$dt_sertifikat_dokumen){
         $d = json_decode($dt_sertifikat_dokumen->object_value);
         $sertifikat_dokumen[$k]['name'] = $d->name;
         $sertifikat_dokumen[$k]['file'] = $d->file;
-        $sertifikat_dokumen[$k]['file_old'] = $d->file;
       }
       $supplier->sertifikat_dokumen = $sertifikat_dokumen;
       //dd($supplier);
@@ -149,6 +146,7 @@ class SupplierEditController extends Controller
         'legal_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
     );
+    //dd($request->input());
     $check_new_legal_dok = false;
     foreach($request->legal_dokumen as $l => $v){
       $legal_dokumen[$l]['name'] = $v['name'];
@@ -175,7 +173,7 @@ class SupplierEditController extends Controller
     if($check_new_legal_dok) {
         $rules['legal_dokumen.*.file'] = 'required|mimes:pdf';
     }
-    //dd($request->input());
+    
     $check_new_sertifikat_dok = false;
     foreach($request->sertifikat_dokumen as $l => $v){
       $sertifikat_dokumen[$l]['name'] = $v['name'];
@@ -203,12 +201,14 @@ class SupplierEditController extends Controller
         $rules['sertifikat_dokumen.*.file'] = 'required|mimes:pdf';
     }
     $validator = Validator::make($request->all(), $rules,CustomErrors::supplier());
+    //dd($request->input());
     if ($validator->fails ()){
       return redirect()->back()
                   ->withInput($request->input())
                   ->withErrors($validator);
     }
     else {
+      
       $id = $request->id;
       
       $data = Supplier::where('id',$id)->first();

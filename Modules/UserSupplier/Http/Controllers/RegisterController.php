@@ -3,8 +3,14 @@
 namespace Modules\UserSupplier\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+
+use Modules\Supplier\Entities\Supplier;
+use App\User;
+// use App\supplier;
+use Mail;
+use Validator;
+use Response;
 
 class RegisterController extends Controller
 {
@@ -17,56 +23,67 @@ class RegisterController extends Controller
         return view('usersupplier::register');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     * @return Response
-     */
-    public function create()
-    {
-        return view('usersupplier::create');
-    }
+     public function add(Request $request)
+     {
+         $rules = array (
+             'bdn_usaha'            => 'required',
+             'company_name'         => 'required|min:5|unique:users,name',
+             'initial_company_name' => 'required|size:3',
+             'password'             => 'required|min:6',
+             'phone'                => 'required|regex:/[0-9]/',
+             'email'                => 'required|email|unique:users,email',
+         );
+         $validator = Validator::make($request->all(), $rules);
+         if ($validator->fails ())
+             return Response::json (array(
+                 'errors' => $validator->getMessageBag()->toArray()
+             ));
+         else {
+         $kd_vendor = $this->generate_id();
+         $inisial = $request->initial_company_name;
+         $bdn_usaha = $request->bdn_usaha;
+         $gabung = $bdn_usaha." - ".$inisial;
 
-    /**
-     * Store a newly created resource in storage.
-     * @param  Request $request
-     * @return Response
-     */
-    public function store(Request $request)
-    {
-    }
+         $data = new User();
+         $data->name = $request->company_name;
+         $data->data = $gabung;
+         $data->password = bcrypt($request->password);
+         $data->phone = $request->phone;
+         $data->email = $request->email;
+         $data->username = $kd_vendor;
+         $data->save ();
 
-    /**
-     * Show the specified resource.
-     * @return Response
-     */
-    public function show()
-    {
-        return view('usersupplier::show');
-    }
+//EMAIL
+        $data2 = array(
+          'username'=>$request->username,
+          'email'=>$request->email,
+          'nama'=>$request->company_name
+        );
+        $us=$data2['username'];
 
-    /**
-     * Show the form for editing the specified resource.
-     * @return Response
-     */
-    public function edit()
-    {
-        return view('usersupplier::edit');
-    }
+        Mail::send('usersupplier::notifEmail', ['data2' => $data2] , function($message) use($data2)
+        {
+          $message->to($data2['email'], 'Annisa Dwu')->subject('Welcome!');
+          $message->from('inartdemo@gmail.com','Do Not Reply');
+        });
 
-    /**
-     * Update the specified resource in storage.
-     * @param  Request $request
-     * @return Response
-     */
-    public function update(Request $request)
-    {
-    }
+       }
+         return response()->json($data);
+     }
 
-    /**
-     * Remove the specified resource from storage.
-     * @return Response
-     */
-    public function destroy()
-    {
-    }
+     private function generate_id(){
+       $sup = new Supplier();
+       $id = $sup->gen_userid();
+       $count=Supplier::where('kd_vendor',$id)->count();
+       if($count>0){
+         return $this->generate_id();
+       }
+       else{
+         return $id;
+       }
+     }
+
+
+
+
 }

@@ -22,3 +22,5 @@ Route::get('/logout', function () {
     Auth::logout();
     return redirect('/login');
 })->name('logout');
+
+Route::get('/basicemail', 'MailController@basic_email')->name('mail');

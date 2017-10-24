@@ -10,7 +10,7 @@
           <div class="form-group {{ $errors->has('bdn_usaha') ? ' has-error' : '' }}">
             <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Badan Usaha</label>
             <div class="col-sm-10">
-              {!!Helper::select_badan_usaha(old('bdn_usaha'))!!}
+                {!!Helper::select_badan_usaha(old('bdn_usaha',Helper::prop_exists($data,'bdn_usaha')))!!}
               @if ($errors->has('bdn_usaha'))
                   <span class="help-block">
                       <strong>{{ $errors->first('bdn_usaha') }}</strong>
@@ -21,7 +21,9 @@
           <div class="form-group {{ $errors->has('nm_vendor') ? ' has-error' : '' }}">
             <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Nama Perusahaan</label>
             <div class="col-sm-10">
-              <input type="text" class="form-control" name="nm_vendor" value="{{ old('nm_vendor') }}"  placeholder="Masukan Nama Perusahaan" autocomplete="off">
+
+              <input type="text" class="form-control" name="nm_vendor" value="{{ old('nm_vendor',Helper::prop_exists($data,'nm_vendor')) }}"  placeholder="Masukan Nama Perusahaan" autocomplete="off">
+
               @if ($errors->has('nm_vendor'))
                   <span class="help-block">
                       <strong>{{ $errors->first('nm_vendor') }}</strong>
@@ -33,8 +35,8 @@
             <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Prinsipal</label>
             <div class="col-sm-10">
               <select class="form-control" name="prinsipal_st">
-                <option value="1" {{ old('prinsipal_st')=='1'?"selected='selected'":"" }}>Ya</option>
-                <option value="0" {{ old('prinsipal_st')!='1'?"selected='selected'":"" }}>Tidak</option>
+                <option value="1" {{ old('prinsipal_st',Helper::prop_exists($data,'prinsipal_st'))=='1'?"selected='selected'":"" }}>Ya</option>
+                <option value="0" {{ old('prinsipal_st',Helper::prop_exists($data,'prinsipal_st'))!='1'?"selected='selected'":"" }}>Tidak</option>
               </select>
               @if ($errors->has('prinsipal_st'))
                   <span class="help-block">
@@ -46,13 +48,13 @@
           <div class="form-group {{ $errors->has('klasifikasi_usaha.*') ? ' has-error' : '' }}">
             <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Klasifikasi Usaha</label>
             <div class="col-sm-10">
-              @if(count(old('klasifikasi_usaha'))>0)
-                @foreach (old('klasifikasi_usaha') as $key => $value)
+              @if(count(old('klasifikasi_usaha',Helper::prop_exists($data,'klasifikasi_usaha','array')))>0)
+                @foreach (old('klasifikasi_usaha',Helper::prop_exists($data,'klasifikasi_usaha','array')) as $key => $value)
                   <div class="input-group bottom15 ">
                     <input type="text" class="form-control klasifikasi_usaha" name="klasifikasi_usaha[]" value="{{$value}}" autocomplete="off">
                     <div class="input-group-btn">
                       <button type="button" class="btn btn-default add-klasifikasi_usaha"><i class="glyphicon glyphicon-plus"></i></button>
-                      @if(count(old('klasifikasi_usaha'))>1)
+                      @if(count(old('klasifikasi_usaha',Helper::prop_exists($data,'klasifikasi_usaha','array')))>1)
                         <button type="button" class="btn btn-default delete-klasifikasi_usaha"><i class="glyphicon glyphicon-trash"></i></button>
                       @endif
                     </div>
@@ -81,7 +83,7 @@
           <div class="form-group {{ $errors->has('pengalaman_kerja') ? ' has-error' : '' }}">
             <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Pengalaman Kerja</label>
             <div class="col-sm-10">
-              <textarea class="form-control" rows="4" name="pengalaman_kerja"  placeholder="Masukan Pengalaman Kerja">{{ old('pengalaman_kerja') }}</textarea>
+              <textarea class="form-control" rows="4" name="pengalaman_kerja"  placeholder="Masukan Pengalaman Kerja">{{ old('pengalaman_kerja',Helper::prop_exists($data,'pengalaman_kerja')) }}</textarea>
               @if ($errors->has('pengalaman_kerja'))
                   <span class="help-block">
                       <strong>{{ $errors->first('pengalaman_kerja') }}</strong>

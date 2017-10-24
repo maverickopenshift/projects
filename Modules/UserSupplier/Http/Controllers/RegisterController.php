@@ -7,6 +7,7 @@ use Illuminate\Routing\Controller;
 
 use Modules\Supplier\Entities\Supplier;
 use App\User;
+use App\Role;
 // use App\supplier;
 use Mail;
 use Validator;
@@ -51,11 +52,14 @@ class RegisterController extends Controller
          $data->phone = $request->phone;
          $data->email = $request->email;
          $data->username = $kd_vendor;
+         $data->confirmed = 1;
+         $data->actived = 1;
          $data->save ();
+         $data->attachRole('vendor');
 
 //EMAIL
         $data2 = array(
-          'username'=>$request->username,
+          'username'=>$kd_vendor,
           'email'=>$request->email,
           'nama'=>$request->company_name
         );
@@ -63,7 +67,7 @@ class RegisterController extends Controller
 
         Mail::send('usersupplier::notifEmail', ['data2' => $data2] , function($message) use($data2)
         {
-          $message->to($data2['email'], 'Annisa Dwu')->subject('Welcome!');
+          $message->to($data2['email'], $data2['nama'])->subject('Welcome!');
           $message->from('inartdemo@gmail.com','Do Not Reply');
         });
 

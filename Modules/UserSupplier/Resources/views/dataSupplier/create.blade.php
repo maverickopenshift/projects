@@ -1,7 +1,10 @@
+
 @extends('layouts.app')
 
 @section('content')
-  <form action="{{ route('supplier.insert') }}" method="post" enctype="multipart/form-data">
+
+
+  <form action="{{ $action_url }}" method="post" enctype="multipart/form-data">
     {{ csrf_field() }}
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">

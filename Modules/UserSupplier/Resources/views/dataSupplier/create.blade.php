@@ -16,12 +16,8 @@
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="tab_1">
-          @if ($errors->any())
-          <div class="alert alert-danger alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            Data yang Anda masukan belum valid, silahkan periksa kembali!
-          </div>
-          @endif
+            @include('usersupplier::partials.alert-errors')
+            @include('usersupplier::partials.alert-message')
             @include('usersupplier::add.infovendor')
             <div class="clearfix"></div>
             <div class="row">
@@ -32,12 +28,8 @@
           </div>
           <!-- /.tab-pane -->
           <div class="tab-pane" id="tab_2">
-          @if ($errors->any())
-          <div class="alert alert-danger alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            Data yang Anda masukan belum valid, silahkan periksa kembali!
-          </div>
-          @endif
+            @include('usersupplier::partials.alert-errors')
+            @include('usersupplier::partials.alert-message')
             @include('usersupplier::add.datavendor')
             <div class="clearfix"></div>
             <div class="row">
@@ -49,12 +41,8 @@
           </div>
           <!-- /.tab-pane -->
           <div class="tab-pane" id="tab_3">
-          @if ($errors->any())
-          <div class="alert alert-danger alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            Data yang Anda masukan belum valid, silahkan periksa kembali!
-          </div>
-          @endif
+            @include('usersupplier::partials.alert-errors')
+            @include('usersupplier::partials.alert-message')
             @include('usersupplier::add.finansial')
             <div class="clearfix"></div>
             <div class="row">
@@ -65,12 +53,8 @@
             </div>
           </div>
           <div class="tab-pane" id="tab_4">
-          @if ($errors->any())
-          <div class="alert alert-danger alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            Data yang Anda masukan belum valid, silahkan periksa kembali!
-          </div>
-          @endif
+            @include('usersupplier::partials.alert-errors')
+            @include('usersupplier::partials.alert-message')
             @include('usersupplier::add.legalaspek')
             <div class="clearfix"></div>
             <div class="row">
@@ -81,12 +65,8 @@
             </div>
           </div>
           <div class="tab-pane" id="tab_5">
-          @if ($errors->any())
-          <div class="alert alert-danger alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            Data yang Anda masukan belum valid, silahkan periksa kembali!
-          </div>
-          @endif
+            @include('usersupplier::partials.alert-errors')
+            @include('usersupplier::partials.alert-message')
             @include('usersupplier::add.employeedetail')
             <div class="clearfix"></div>
             <div class="row">

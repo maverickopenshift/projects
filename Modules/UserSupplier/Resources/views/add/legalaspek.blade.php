@@ -446,6 +446,7 @@
         </div>
       </div>
       @include('usersupplier::add.__part-sertifikat-dokumen')
+      @include('usersupplier::partials.buttons')
     </div>
 <!-- /.box-body -->
 </div>

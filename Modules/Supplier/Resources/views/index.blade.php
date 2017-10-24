@@ -5,9 +5,11 @@
     <div class="box-header with-border">
       <h3 class="box-title">
           <div class="btn-group" role="group" aria-label="...">
-            <a href="{{route('supplier.create')}}" class="btn btn-default">
-                <i class="glyphicon glyphicon-plus"></i> Add Supplier
-            </a>
+            @if(\Auth::user()->hasPermission('tambah-supplier'))
+              <a href="{{route('supplier.create')}}" class="btn btn-default">
+                  <i class="glyphicon glyphicon-plus"></i> Add Supplier
+              </a>
+            @endif
           </div>
       </h3>
 

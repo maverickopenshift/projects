@@ -144,9 +144,9 @@
                           $('#form-modal').modal('show')
                       }
                   },
-                  error: function( _response ){
-                    alert("Ada kesalahan pada pengisian data.");
-                  }
+                  // error: function( _response ){
+                  //   alert("Ada kesalahan pada pengisian data.");
+                  // }
               });
               })
             });

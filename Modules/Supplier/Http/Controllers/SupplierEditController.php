@@ -70,11 +70,11 @@ class SupplierEditController extends Controller
         $legal_dokumen[$k]['file'] = $d->file;
       }
       $supplier->legal_dokumen = $legal_dokumen;
-      // foreach($dt_legal_dokumen as $k=>$dt_legal_dokumen){
-      //   $d = json_decode($dt_legal_dokumen->object_value);
-      //   $file_old_ld[$k]['file'] = $d->file;
-      // }
-      // $supplier->file_old_ld = $file_old_ld;
+      
+      foreach($legal_dokumen as $k=>$v){
+        $file_old_ld[] = $v['file'];
+      }
+      $supplier->file_old_ld = $file_old_ld;
       
       $dt_sertifikat_dokumen = SupplierMetadata::get_sertifikat_dokumen($id);
       foreach($dt_sertifikat_dokumen as $k=>$dt_sertifikat_dokumen){
@@ -98,8 +98,8 @@ class SupplierEditController extends Controller
         'nm_vendor_uq'      => 'max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'prinsipal_st'      => 'required|boolean',
         'klasifikasi_usaha.*' => 'required|regex:/^[a-z0-9 .\-]+$/i',
-        'pengalaman_kerja'  => 'required|min:30|regex:/^[a-z0-9 .\-]+$/i',
-        'alamat'            => 'required|max:1000|min:10|regex:/^[a-z0-9 .\-]+$/i',
+        'pengalaman_kerja'  => 'required|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
+        'alamat'            => 'required|max:1000|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
         'kota'              => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'kd_pos'            => 'required|digits_between:3,20',
         'telepon'           => 'required|digits_between:7,20',
@@ -146,7 +146,7 @@ class SupplierEditController extends Controller
         'legal_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
     );
-    //dd($request->input());
+    
     $check_new_legal_dok = false;
     foreach($request->legal_dokumen as $l => $v){
       $legal_dokumen[$l]['name'] = $v['name'];
@@ -154,13 +154,12 @@ class SupplierEditController extends Controller
         $legal_dokumen[$l]['file'] = $v['file'];
       }
       else{
-        if(isset($request->file_old_ld)){
-          $legal_dokumen[$l]['file'] = $request->file_old_ld[$l];
-        }
-        else{
-          $legal_dokumen[$l]['file'] = '';
-        }
-        
+          if(count($request->legal_dokumen)==count($request->file_old_ld)){
+            $legal_dokumen[$l]['file'] = $request->file_old_ld[$l];
+          }
+          else{
+            $legal_dokumen[$l]['file'] = isset($request->file_old_ld[$l])?$request->file_old_ld[$l]:"";
+          }
       }
       if(isset($v['file'])){
         $check_new_legal_dok = true;
@@ -170,10 +169,16 @@ class SupplierEditController extends Controller
       }
     }
     $request->merge(['legal_dokumen' => $legal_dokumen]);
+    //dd($request->input());
+    foreach($legal_dokumen as $k=>$v){
+      $file_old_ld[] = $v['file'];
+    }
+    $request->merge(['file_old_ld' => $file_old_ld]);
+    //dd($request->input());
     if($check_new_legal_dok) {
         $rules['legal_dokumen.*.file'] = 'required|mimes:pdf';
     }
-    
+    //dd($request['file_old_ld']);
     $check_new_sertifikat_dok = false;
     foreach($request->sertifikat_dokumen as $l => $v){
       $sertifikat_dokumen[$l]['name'] = $v['name'];

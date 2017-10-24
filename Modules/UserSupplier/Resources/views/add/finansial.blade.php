@@ -75,6 +75,7 @@
           <div class="form-group">
             <hr  />
           </div>
+          @include('usersupplier::partials.buttons')
       </div>
     </div>
 <!-- /.box-body -->

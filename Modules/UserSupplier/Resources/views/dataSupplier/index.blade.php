@@ -1,12 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="info-box">
-  <span class="info-box-icon bg-aqua"><i class="fa fa-alert"></i></span>
-  <div class="info-box-content">
-      <br>
-    <span class="info-box-text">{{ $notif}}</i></span>
-  </div>
+<div class="alert alert-info text-center" style="position:relative">
+<strong>
+  <i class="fa fa-info-circle fa-3x pull-left" style="color:rgba(255,255,255,0.7);position: absolute;right: 8px;top: 5px;"></i>{{ $notif}}</strong>
 </div>
 <!-- <div class="box box-success">
     <div class="box-header with-border">
@@ -42,6 +39,7 @@
     </div>
     <!-- /.box-header -->
     <div class="box-body">
+        @include('usersupplier::partials.alert-message')
         @if (session('status'))
             <div class="alert alert-success">
                 {{ session('status') }}

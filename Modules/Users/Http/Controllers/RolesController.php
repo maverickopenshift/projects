@@ -27,13 +27,18 @@ class RolesController extends Controller
             ->addColumn('action', function ($data) {
               $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
               $perm = htmlspecialchars(json_encode($data->permissions), ENT_QUOTES, 'UTF-8');
-                            return '
-                            <div class="btn-group">
-                            <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-permissions="'.$perm.'">
-            <i class="glyphicon glyphicon-edit"></i> Edit
-            </button><button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-toggle="modal" data-target="#modal-delete">
-            <i class="glyphicon glyphicon-trash"></i> Delete
-            </button></div>';
+              $act= '<div class="btn-group">';
+              if(\Auth::user()->hasPermission('ubah-role')){
+                  $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-permissions="'.$perm.'">
+  <i class="glyphicon glyphicon-edit"></i> Edit
+  </button>';
+              }
+              if(\Auth::user()->hasPermission('hapus-role')){
+                $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-toggle="modal" data-target="#modal-delete">
+<i class="glyphicon glyphicon-trash"></i> Delete
+</button>';
+              }
+              return $act.'</div>';
             })
             ->addColumn('permission_name', function(Role $role){
                 return $role->permissions->map(function($permission){

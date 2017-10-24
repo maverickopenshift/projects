@@ -124,6 +124,7 @@
             @endif
           </div>
         </div>
+        @include('usersupplier::partials.buttons')
       </div>
     </div>
 <!-- /.box-body -->

@@ -78,7 +78,7 @@ class RegisterController extends Controller
      private function generate_id(){
        $sup = new Supplier();
        $id = $sup->gen_userid();
-       $count=Supplier::where('kd_vendor',$id)->count();
+       $count=User::where('username',$id)->count();
        if($count>0){
          return $this->generate_id();
        }

@@ -58,6 +58,7 @@
                 <li><a href="#">Archive</a></li>
               </ul>
             </li> --}}
+            @permission('lihat-user|lihat-role|lihat-permission')
             <li class="treeview {{Request::is("users/*") || Request::is("users")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management User" />
                 <span>Management User</span> <i class="fa fa-angle-left pull-right"></i></a>
@@ -75,12 +76,15 @@
                 @endpermission
               </ul>
             </li>
+            @endpermission
+            
+            @permission('lihat-supplier|lihat-klasifikasi-usaha|lihat-badan-usaha')
             <li class="treeview {{Request::is("supplier/*") || Request::is("supplier")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management Supplier" />
                 <span>Management Supplier</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 @permission('lihat-supplier')
-                  <li class="{{Request::is("supplier")?'active':''}}" ><a href="{{route('supplier')}}">Supplier</a></li>
+                  <li class="{{Request::is("supplier/create") || Request::is("supplier/*/edit") || Request::is("supplier")?'active':''}}" ><a href="{{route('supplier')}}">Supplier</a></li>
                 @endpermission
 
                 @permission('lihat-klasifikasi-usaha')
@@ -92,14 +96,15 @@
                 @endpermission
               </ul>
             </li>
+            @endpermission
 
             @role('vendor')
-            <li class="treeview {{Request::is("supplierUser/*") || Request::is("supplierUser")?'active':''}}">
+            <li class="treeview {{Request::is("usersupplier/*") || Request::is("supplierUser")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-user.png')}}" title="Management Supplier" />
                 <span>User Profile</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
-                <li class="{{Request::is("supplierUser")?'active':''}}" ><a href="{{route('profile')}}">Change Password</a></li>
-                <li class="{{Request::is("supplierUser/dataSupplier")?'active':''}}" ><a href="{{route('supplier.list')}}">Kelengkapan Data</a></li>
+                <li class="{{Request::is("usersupplier/profileVendor")?'active':''}}" ><a href="{{route('profile')}}">Ubah Password</a></li>
+                <li class="{{Request::is("usersupplier/dataSupplier")?'active':'' || Request::is("usersupplier/kelengkapanData")?'active':''}}" ><a href="{{route('supplier.list')}}">Kelengkapan Data</a></li>
               </ul>
 
             </li>

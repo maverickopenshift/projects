@@ -5,9 +5,11 @@
     <div class="box-header with-border">
       <h3 class="box-title">
           <div class="btn-group" role="group" aria-label="...">
-            <button type="button" class="btn btn-default" data-toggle="modal" data-target="#form-modal" data-title="Add">
-                <i class="glyphicon glyphicon-plus"></i> Add User
-            </button>
+            @if(\Auth::user()->hasPermission('tambah-user'))
+              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#form-modal" data-title="Add">
+                  <i class="glyphicon glyphicon-plus"></i> Add User
+              </button>
+            @endif
           </div>
       </h3>
 

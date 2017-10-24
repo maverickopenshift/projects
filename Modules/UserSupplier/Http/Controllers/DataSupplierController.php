@@ -156,6 +156,10 @@ class DataSupplierController extends Controller
                 $data['action_url'] = route('supplier.insert');
                 $data['action_type'] = "tambah";
                 $sql = User::where('username','=',$username)->first();
+                $dt = @explode(' - ',$sql->data);
+                $sql->nm_vendor = $sql->name;
+                $sql->nm_vendor_uq = $dt[1];
+                $sql->bdn_usaha = $dt[0];
                 $data['data'] = $sql;
               }
          return view('usersupplier::dataSupplier.create')->with($data);
@@ -170,8 +174,8 @@ class DataSupplierController extends Controller
            'nm_vendor_uq'      => 'max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
            'prinsipal_st'      => 'required|boolean',
            'klasifikasi_usaha.*' => 'required|regex:/^[a-z0-9 .\-]+$/i',
-           'pengalaman_kerja'  => 'required|min:30|regex:/^[a-z0-9 .\-]+$/i',
-           'alamat'            => 'required|max:1000|min:10|regex:/^[a-z0-9 .\-]+$/i',
+           'pengalaman_kerja'  => 'required|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
+           'alamat'            => 'required|max:1000|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
            'kota'              => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
            'kd_pos'            => 'required|digits_between:3,20',
            'telepon'           => 'required|digits_between:7,20',
@@ -240,6 +244,7 @@ class DataSupplierController extends Controller
 
           $data->bdn_usaha = $request->bdn_usaha;
           $data->nm_vendor = $request->nm_vendor;
+          $data->nm_vendor_uq = $request->nm_vendor_uq;
           $data->prinsipal_st = $request->prinsipal_st;
 
           $data->alamat = $request->alamat;
@@ -461,8 +466,8 @@ class DataSupplierController extends Controller
             'nm_vendor_uq'      => 'max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
             'prinsipal_st'      => 'required|boolean',
             'klasifikasi_usaha.*' => 'required|regex:/^[a-z0-9 .\-]+$/i',
-            'pengalaman_kerja'  => 'required|min:30|regex:/^[a-z0-9 .\-]+$/i',
-            'alamat'            => 'required|max:1000|min:10|regex:/^[a-z0-9 .\-]+$/i',
+            'pengalaman_kerja'  => 'required|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
+            'alamat'            => 'required|max:1000|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
             'kota'              => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
             'kd_pos'            => 'required|digits_between:3,20',
             'telepon'           => 'required|digits_between:7,20',
@@ -592,6 +597,7 @@ class DataSupplierController extends Controller
           $data = Supplier::where('kd_vendor','=',$kd_vendor)->first();
           $data->bdn_usaha = $request->bdn_usaha;
           $data->nm_vendor = $request->nm_vendor;
+          $data->nm_vendor_uq = $request->nm_vendor_uq;
           $data->prinsipal_st = $request->prinsipal_st;
 
           $data->alamat = $request->alamat;

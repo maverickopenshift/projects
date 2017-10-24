@@ -31,6 +31,17 @@
               @endif
             </div>
           </div>
+          <div class="form-group {{ $errors->has('nm_vendor_uq') ? ' has-error' : '' }}">
+            <label for="nm_vendor" class="col-sm-2 control-label">Inisial Perusahaan</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="nm_vendor_uq" value="{{ old('nm_vendor_uq',Helper::prop_exists($data,'nm_vendor_uq')) }}" placeholder="Isikan 3 Digit Inisial Perusahaan" autocomplete="off">
+              @if ($errors->has('nm_vendor_uq'))
+                  <div class="help-block">
+                      <strong>{{ $errors->first('nm_vendor_uq') }}</strong>
+                  </div>
+              @endif
+            </div>
+          </div>
           <div class="form-group {{ $errors->has('prinsipal_st') ? ' has-error' : '' }}">
             <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Prinsipal</label>
             <div class="col-sm-10">
@@ -91,6 +102,7 @@
               @endif
             </div>
           </div>
+          @include('usersupplier::partials.buttons')
       </div>
     </div>
 <!-- /.box-body -->

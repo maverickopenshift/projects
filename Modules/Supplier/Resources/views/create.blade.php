@@ -1,7 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-  <form action="{{ route('supplier.store') }}" method="post" enctype="multipart/form-data">
+  
+    
+    @if($action_type=='edit')
+      <form action="{{ route('supplier.update') }}" method="post" enctype="multipart/form-data">
+      <input type="hidden" value="{{$id}}" name="id" />
+    @else
+      <form action="{{ route('supplier.store') }}" method="post" enctype="multipart/form-data">
+    @endif
     {{ csrf_field() }}
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">

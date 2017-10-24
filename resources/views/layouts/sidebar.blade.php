@@ -11,11 +11,13 @@
                   <img src="{{asset('/images/logo.png')}}" alt="Consys">
               </a>
           </li>
+            @permission('manajemen-dashboard')
             <li class="treeview {{Request::is("documents")?'active':''}}">
                 <a href="{{route('doc')}}"> <img src="{{asset('/images/icon-dashboard.png')}}" title="Dashboard" />
                     <span>Dashboard</span></a>
             </li>
-            <li>
+            @endpermission
+            {{-- <li>
                 <a href="#"> <img src="{{asset('/images/icon-search.png')}}" title="Search" />
                     <span>Search</span></a>
             </li>
@@ -38,9 +40,9 @@
                 <li class="{{Request::is("documents/create/engagement_letter")?'active':''}}">
                   <a href="{{route('doc.create',['type'=>'engagement_letter'])}}">Engagement Letter</a></li>
               </ul>
-            </li>
+            </li> --}}
 
-            <li>
+            {{-- <li>
                 <a href="#"> <img src="{{asset('/images/icon-edit.png')}}" title="Perubahan Kontrak" />
                     <span>Perubahan Kontrak</span></a>
             </li>
@@ -55,25 +57,42 @@
               <ul class="treeview-menu">
                 <li><a href="#">Archive</a></li>
               </ul>
-            </li>
+            </li> --}}
             <li class="treeview {{Request::is("users/*") || Request::is("users")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management User" />
                 <span>Management User</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
-                <li class="{{Request::is("users")?'active':''}}" ><a href="{{route('users')}}">Users</a></li>
+                @permission('lihat-user')
+                  <li class="{{Request::is("users")?'active':''}}" ><a href="{{route('users')}}">Users</a></li>
+                @endpermission
+                
+                @permission('lihat-role')
                 <li class="{{Request::is("users/roles")?'active':''}}" ><a href="{{route('users.roles')}}">Roles</a></li>
+                @endpermission
+                
+                @permission('lihat-permission')
                 <li class="{{Request::is("users/permissions")?'active':''}}"><a href="{{route('users.permissions')}}">Permissions</a></li>
+                @endpermission
               </ul>
             </li>
             <li class="treeview {{Request::is("supplier/*") || Request::is("supplier")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management Supplier" />
                 <span>Management Supplier</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
-                <li class="{{Request::is("supplier")?'active':''}}" ><a href="{{route('supplier')}}">Supplier</a></li>
-                <li class="{{Request::is("supplier/klasifikasiusaha")?'active':''}}" ><a href="{{route('supplier.klasifikasi')}}">Klasifikasi Usaha</a></li>
+                @permission('lihat-supplier')
+                  <li class="{{Request::is("supplier")?'active':''}}" ><a href="{{route('supplier')}}">Supplier</a></li>
+                @endpermission
+                
+                @permission('lihat-klasifikasi-usaha')
+                  <li class="{{Request::is("supplier/klasifikasiusaha")?'active':''}}" ><a href="{{route('supplier.klasifikasi')}}">Klasifikasi Usaha</a></li>
+                @endpermission
+                
+                @permission('lihat-badan-usaha')
                 <li class="{{Request::is("supplier/badanusaha")?'active':''}}" ><a href="{{route('supplier.badanusaha')}}">Badan Usaha</a></li>
+                @endpermission
               </ul>
             </li>
+            @role('vendor')
             <li>
                 <a href="{{route('profile')}}"> <img src="{{asset('/images/icon-user.png')}}" title="Perubahan Kontrak" />
                     <span>User Profile</span></a>
@@ -90,6 +109,7 @@
                 <a href="#"> <img src="{{asset('/images/icon-logout.png')}}" title="Perubahan Kontrak" />
                     <span>Logout</span></a>
             </li>
+            @endrole
         </ul><!-- /.sidebar-menu -->
     </section>
     <!-- /.sidebar -->

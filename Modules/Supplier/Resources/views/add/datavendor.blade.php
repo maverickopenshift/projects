@@ -56,17 +56,26 @@
             @endif
           </div>
         </div>
-        <div class="form-group {{ $errors->has('email') ? ' has-error' : '' }}">
-          <label for="email" class="col-sm-2 control-label"><span class="text-red">*</span> Email Address</label>
-          <div class="col-sm-10">
-            <input type="text" class="form-control" name="email" value="{{ old('email',Helper::prop_exists($supplier,'email')) }}"  placeholder="Masukan Email Address" autocomplete="off">
-            @if ($errors->has('email'))
-                <span class="help-block">
-                    <strong>{{ $errors->first('email') }}</strong>
-                </span>
-            @endif
+        @if($action_type=='add')
+          <div class="form-group {{ $errors->has('email') ? ' has-error' : '' }}">
+            <label for="email" class="col-sm-2 control-label"><span class="text-red">*</span> Email Address</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" name="email" value="{{ old('email',Helper::prop_exists($supplier,'email')) }}"  placeholder="Masukan Email Address" autocomplete="off">
+              @if ($errors->has('email'))
+                  <span class="help-block">
+                      <strong>{{ $errors->first('email') }}</strong>
+                  </span>
+              @endif
+            </div>
           </div>
-        </div>
+        @else
+          <div class="form-group">
+            <label for="email" class="col-sm-2 control-label">Email Address</label>
+            <div class="col-sm-10">
+              {{ Helper::prop_exists($supplier,'email') }}
+            </div>
+          </div>
+        @endif
         @if($action_type=='add')
             <div class="form-group {{ $errors->has('password') ? ' has-error' : '' }}">
               <label for="password" class="col-sm-2 control-label"><span class="text-red">*</span> Password</label>

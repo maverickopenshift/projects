@@ -36,7 +36,7 @@ class SupplierController extends Controller
                             return '
                             <div class="btn-group">
                             <a href="'.route('supplier.edit',['id'=>$data->id]).'" class="btn btn-primary btn-xs">
-            <i class="glyphicon glyphicon-edit"></i> Edit
+            <i class="glyphicon glyphicon-list-alt"></i> Lihat
             </a><button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-toggle="modal" data-target="#modal-delete">
             <i class="glyphicon glyphicon-trash"></i> Delete
             </button></div>';
@@ -287,7 +287,7 @@ class SupplierController extends Controller
         if(!$supplier){
           abort(500);
         }
-        
+        $supplier->asset = $supplier->asset+0;
         $dt_klasifikasi = SupplierMetadata::select('object_value')->where([
           ['id_object','=',$id],
           ['object_key','=','klasifikasi_usaha']
@@ -360,7 +360,6 @@ class SupplierController extends Controller
     }
     public function update(Request $request)
     {
-      dd($request->legal_dokumen);
       $id = $request->id;
       $rules = array (
           'bdn_usaha'         => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
@@ -374,8 +373,8 @@ class SupplierController extends Controller
           'kd_pos'            => 'required|digits_between:3,20',
           'telepon'           => 'required|digits_between:7,20',
           'fax'               => 'required|digits_between:7,20',
-          'email'             => 'required|max:50|min:4|email',
-          'password'          => 'required|max:50|min:6|confirmed',
+          // 'email'             => 'required|max:50|min:4|email',
+          // 'password'          => 'required|max:50|min:6|confirmed',
           'web_site'          => 'sometimes|nullable|url',
           'induk_perus'       => 'sometimes|nullable|min:3|regex:/^[a-z0-9 .\-]+$/i',
           'anak_perusahaan.*' => 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -418,6 +417,19 @@ class SupplierController extends Controller
       );
       $check_new_legal_dok = false;
       foreach($request->legal_dokumen as $l => $v){
+        $legal_dokumen[$l]['name'] = $v['name'];
+        if(isset($v['file'])){
+          $legal_dokumen[$l]['file'] = $v['file'];
+        }
+        else{
+          if(isset($request->file_old_ld)){
+            $legal_dokumen[$l]['file'] = $request->file_old_ld[$l];
+          }
+          else{
+            $legal_dokumen[$l]['file'] = '';
+          }
+          
+        }
         if(isset($v['file'])){
           $check_new_legal_dok = true;
         }
@@ -425,12 +437,26 @@ class SupplierController extends Controller
           $check_new_legal_dok = true;
         }
       }
+      $request->merge(['legal_dokumen' => $legal_dokumen]);
       if($check_new_legal_dok) {
           $rules['legal_dokumen.*.file'] = 'required|mimes:pdf';
       }
-      
+      //dd($request->input());
       $check_new_sertifikat_dok = false;
       foreach($request->sertifikat_dokumen as $l => $v){
+        $sertifikat_dokumen[$l]['name'] = $v['name'];
+        if(isset($v['file'])){
+          $sertifikat_dokumen[$l]['file'] = $v['file'];
+        }
+        else{
+          if(isset($request->file_old_sd)){
+            $sertifikat_dokumen[$l]['file'] = $request->file_old_sd[$l];
+          }
+          else{
+            $sertifikat_dokumen[$l]['file'] = '';
+          }
+          
+        }
         if(isset($v['file'])){
           $check_new_sertifikat_dok = true;
         }
@@ -438,11 +464,12 @@ class SupplierController extends Controller
           $check_new_sertifikat_dok = true;
         }
       }
+      $request->merge(['sertifikat_dokumen' => $sertifikat_dokumen]);
       if($check_new_sertifikat_dok) {
           $rules['sertifikat_dokumen.*.file'] = 'required|mimes:pdf';
       }
       $validator = Validator::make($request->all(), $rules,Helpers::error_submit_supplier());
-      
+      //dd($validator->errors());
     //  if(SupplierMetadata::count_meta($id,'legal_dokumen')==count($request->legal_dokumen)){
         // foreach($request->legal_dokumen as $l => $v){
         //   $legal_dokumen[$k]['name'] = $v['name'];
@@ -458,7 +485,7 @@ class SupplierController extends Controller
         // }
         // $request->sertifikat_dokumen = $sertifikat_dokumen;
     //  }
-      //dd(count($request->legal_dokumen));
+      dd($request->input());
       if ($validator->fails ()){
         return redirect()->back()
                     ->withInput($request->input())

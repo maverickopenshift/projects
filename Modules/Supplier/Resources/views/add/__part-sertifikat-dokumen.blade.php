@@ -25,8 +25,8 @@
               </div>
               @if($action_type=='edit')
                 <span class="help-block">
-                  <a target="_blank" href="{{route('supplier.sertifikat.file',['filename'=>$d['file_old']])}}"><i class="glyphicon glyphicon-paperclip"></i> {{$d['file_old']}}</a>
-                  <input type="text" name="sertifikat_dokumen[][file_old]" value="{{$d['file_old']}}" />
+                  <a target="_blank" href="{{route('supplier.sertifikat.file',['filename'=>$d['file']])}}"><i class="glyphicon glyphicon-paperclip"></i> {{$d['file']}}</a>
+                  <input type="hidden" class="hide" name="file_old_sd[]" value="{{$d['file']}}">
                 </span>
               @endif
               @if ($errors->has('sertifikat_dokumen.'.($k).'.file'))

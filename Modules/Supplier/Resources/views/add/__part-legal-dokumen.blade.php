@@ -25,8 +25,8 @@
               </div>
               @if($action_type=='edit')
                 <span class="help-block">
-                  <a target="_blank" href="{{route('supplier.legaldokumen.file',['filename'=>$d['file_old']])}}"><i class="glyphicon glyphicon-paperclip"></i> {{$d['file_old']}}</a>
-                  <input type="text" name="legal_dokumen[][file_old]" value="{{$d['file_old']}}" />
+                  <a target="_blank" href="{{route('supplier.legaldokumen.file',['filename'=>$d['file']])}}"><i class="glyphicon glyphicon-paperclip"></i> {{$d['file']}}</a>
+                  <input type="hidden" class="hide" name="file_old_ld[]" value="{{$d['file']}}">
                 </span>
               @endif
               @if ($errors->has('legal_dokumen.'.($k).'.file'))

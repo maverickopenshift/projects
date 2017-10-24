@@ -20,13 +20,9 @@
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="tab_1">
-          @if ($errors->any())
-          <div class="alert alert-danger alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            Data yang Anda masukan belum valid, silahkan periksa kembali!
-          </div>
-          @endif
-            @include('supplier::add.infovendor')
+          @include('supplier::partials.alert-errors')
+          @include('supplier::partials.alert-message')
+            @include('supplier::form.infovendor')
             <div class="clearfix"></div>
             <div class="row">
               <div class="col-sm-12">
@@ -36,13 +32,9 @@
           </div>
           <!-- /.tab-pane -->
           <div class="tab-pane" id="tab_2">
-          @if ($errors->any())
-          <div class="alert alert-danger alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            Data yang Anda masukan belum valid, silahkan periksa kembali!
-          </div>
-          @endif
-            @include('supplier::add.datavendor')
+            @include('supplier::partials.alert-errors')
+            @include('supplier::partials.alert-message')
+            @include('supplier::form.datavendor')
             <div class="clearfix"></div>
             <div class="row">
               <div class="col-sm-12">
@@ -53,13 +45,9 @@
           </div>
           <!-- /.tab-pane -->
           <div class="tab-pane" id="tab_3">
-          @if ($errors->any())
-          <div class="alert alert-danger alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            Data yang Anda masukan belum valid, silahkan periksa kembali!
-          </div>
-          @endif
-            @include('supplier::add.finansial')
+            @include('supplier::partials.alert-errors')
+            @include('supplier::partials.alert-message')
+            @include('supplier::form.finansial')
             <div class="clearfix"></div>
             <div class="row">
               <div class="col-sm-12">
@@ -69,13 +57,9 @@
             </div>
           </div>
           <div class="tab-pane" id="tab_4">
-          @if ($errors->any())
-          <div class="alert alert-danger alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            Data yang Anda masukan belum valid, silahkan periksa kembali!
-          </div>
-          @endif
-            @include('supplier::add.legalaspek')
+            @include('supplier::partials.alert-errors')
+            @include('supplier::partials.alert-message')
+            @include('supplier::form.legalaspek')
             <div class="clearfix"></div>
             <div class="row">
               <div class="col-sm-12">
@@ -85,13 +69,9 @@
             </div>
           </div>
           <div class="tab-pane" id="tab_5">
-          @if ($errors->any())
-          <div class="alert alert-danger alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-            Data yang Anda masukan belum valid, silahkan periksa kembali!
-          </div>
-          @endif
-            @include('supplier::add.employeedetail')
+            @include('supplier::partials.alert-errors')
+            @include('supplier::partials.alert-message')
+            @include('supplier::form.employeedetail')
             <div class="clearfix"></div>
             <div class="row">
               <div class="col-sm-12">

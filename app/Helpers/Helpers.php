@@ -64,6 +64,7 @@ class Helpers
               'klasifikasi_usaha.*.regex' => 'Klasifikasi usaha harus huruf dan angka',
             ];
     }
+    
     public static function prop_exists($obj,$string,$type='string'){
       if(isset($obj->{$string})){
         return $obj->{$string};

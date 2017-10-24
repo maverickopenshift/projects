@@ -19,10 +19,10 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
 
     Route::get('/', 'SupplierController@index')->name('supplier');
     Route::get('/data', 'SupplierController@data')->name('supplier.data');
-    Route::post('/store', 'SupplierController@store')->name('supplier.store');
-    Route::get('/create', 'SupplierController@create')->name('supplier.create');
-    Route::get('/{id}/edit', 'SupplierController@edit')->name('supplier.edit');
-    Route::post('/update', 'SupplierController@update')->name('supplier.update');
+    Route::post('/store', 'SupplierAddController@store')->name('supplier.store');
+    Route::get('/create', 'SupplierAddController@index')->name('supplier.create');
+    Route::get('/{id}/edit', 'SupplierEditController@index')->name('supplier.edit');
+    Route::post('/update', 'SupplierEditController@update')->name('supplier.update');
     Route::get('/legal-dokumen/{filename}', function ($filename){
         $path = storage_path('app/supplier/legal_dokumen/' . $filename);
 

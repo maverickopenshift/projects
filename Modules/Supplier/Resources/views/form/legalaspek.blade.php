@@ -381,7 +381,7 @@
         <hr  />
       </div>
       
-      @include('supplier::add.__part-legal-dokumen')
+      @include('supplier::form.__part-legal-dokumen')
       
       <div class="form-group">
         <div class="clearfix"></div>
@@ -445,7 +445,8 @@
           </div>
         </div>
       </div>
-      @include('supplier::add.__part-sertifikat-dokumen')
+      @include('supplier::form.__part-sertifikat-dokumen')
+      @include('supplier::partials.buttons')
     </div>
 <!-- /.box-body -->
 </div>

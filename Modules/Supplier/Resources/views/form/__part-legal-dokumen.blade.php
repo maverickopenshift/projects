@@ -16,6 +16,10 @@
                 @endif
             </div>
             <div class="col-sm-4">
+              @php
+                $file_id = old('file_id',Helper::prop_exists($supplier,'file_id','array'));
+              @endphp
+              <input type="hidden" name="file_id[]" value="{{$file_id[$k]}}">
               <div class="input-group">
                 <input type="file" class="hide" name="legal_dokumen[][file]">
                 <input class="form-control" type="text" disabled>
@@ -60,6 +64,7 @@
           </div>
           <div class="col-sm-4">
             <div class="input-group">
+              <input type="hidden" name="file_id[]">
               <input type="file" class="hide" name="legal_dokumen[][file]">
               <input class="form-control" type="text" disabled>
               <span class="input-group-btn">

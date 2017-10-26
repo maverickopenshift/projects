@@ -68,8 +68,10 @@ class SupplierEditController extends Controller
         $d = json_decode($dt_legal_dokumen->object_value);
         $legal_dokumen[$k]['name'] = $d->name;
         $legal_dokumen[$k]['file'] = $d->file;
+        $file_id[$k] = $dt_legal_dokumen->id;
       }
       $supplier->legal_dokumen = $legal_dokumen;
+      $supplier->file_id = $file_id;
       
       foreach($legal_dokumen as $k=>$v){
         $file_old_ld[] = $v['file'];
@@ -81,8 +83,15 @@ class SupplierEditController extends Controller
         $d = json_decode($dt_sertifikat_dokumen->object_value);
         $sertifikat_dokumen[$k]['name'] = $d->name;
         $sertifikat_dokumen[$k]['file'] = $d->file;
+        $file_id_sd[$k] = $dt_sertifikat_dokumen->id;
       }
       $supplier->sertifikat_dokumen = $sertifikat_dokumen;
+      $supplier->file_id_sd = $file_id_sd;
+      
+      foreach($sertifikat_dokumen as $k=>$v){
+        $file_old_sd[] = $v['file'];
+      }
+      $supplier->file_old_sd = $file_old_sd;
       //dd($supplier);
       //$data = $sup;
       $page_title = 'Edit Supplier';
@@ -151,60 +160,63 @@ class SupplierEditController extends Controller
     foreach($request->legal_dokumen as $l => $v){
       $legal_dokumen[$l]['name'] = $v['name'];
       if(isset($v['file'])){
-        $legal_dokumen[$l]['file'] = $v['file'];
+        $filenya = $v['file'];
+        $legal_dokumen[$l]['file'] = $filenya;
       }
       else{
           if(count($request->legal_dokumen)==count($request->file_old_ld)){
-            $legal_dokumen[$l]['file'] = $request->file_old_ld[$l];
+            $filenya = $request->file_old_ld[$l];
+            $legal_dokumen[$l]['file'] = $filenya;
           }
           else{
-            $legal_dokumen[$l]['file'] = isset($request->file_old_ld[$l])?$request->file_old_ld[$l]:"";
+            $filenya = isset($request->file_old_ld[$l])?$request->file_old_ld[$l]:"";
+            $legal_dokumen[$l]['file'] = $filenya;
           }
       }
-      if(isset($v['file'])){
+      if(is_object($filenya) || empty($filenya) || (empty($filenya) && is_object($filenya))){
         $check_new_legal_dok = true;
       }
-      if(isset($v['file']) && empty($v['name'])){
-        $check_new_legal_dok = true;
+      if($check_new_legal_dok) {
+          $rules['legal_dokumen.'.$l.'.file'] = 'required|mimes:pdf';
       }
     }
     $request->merge(['legal_dokumen' => $legal_dokumen]);
     //dd($request->input());
-    foreach($legal_dokumen as $k=>$v){
-      $file_old_ld[] = $v['file'];
-    }
-    $request->merge(['file_old_ld' => $file_old_ld]);
+    // exit;
+    // foreach($file_old_ld as $k=>$v){
+    //   $file_old_ld[] = $v;
+    // }
+    // $request->merge(['file_old_ld' => $file_old_ld]);
     //dd($request->input());
-    if($check_new_legal_dok) {
-        $rules['legal_dokumen.*.file'] = 'required|mimes:pdf';
-    }
+    
     //dd($request['file_old_ld']);
     $check_new_sertifikat_dok = false;
     foreach($request->sertifikat_dokumen as $l => $v){
       $sertifikat_dokumen[$l]['name'] = $v['name'];
       if(isset($v['file'])){
-        $sertifikat_dokumen[$l]['file'] = $v['file'];
+        $filenya = $v['file'];
+        $sertifikat_dokumen[$l]['file'] = $filenya;
       }
       else{
-        if(isset($request->file_old_sd)){
-          $sertifikat_dokumen[$l]['file'] = $request->file_old_sd[$l];
+        if(count($request->sertifikat_dokumen)==count($request->file_old_sd)){
+          $filenya = $request->file_old_sd[$l];
+          $sertifikat_dokumen[$l]['file'] = $filenya;
         }
         else{
-          $sertifikat_dokumen[$l]['file'] = '';
+          $filenya = isset($request->file_old_sd[$l])?$request->file_old_sd[$l]:"";
+          $sertifikat_dokumen[$l]['file'] = $filenya;
         }
         
       }
-      if(isset($v['file'])){
+      if(is_object($filenya) || empty($filenya) || (empty($filenya) && is_object($filenya))){
         $check_new_sertifikat_dok = true;
       }
-      if(isset($v['file']) && empty($v['name'])){
-        $check_new_sertifikat_dok = true;
+      if($check_new_sertifikat_dok) {
+          $rules['sertifikat_dokumen.'.$l.'.file'] = 'required|mimes:pdf';
       }
     }
     $request->merge(['sertifikat_dokumen' => $sertifikat_dokumen]);
-    if($check_new_sertifikat_dok) {
-        $rules['sertifikat_dokumen.*.file'] = 'required|mimes:pdf';
-    }
+    
     $validator = Validator::make($request->all(), $rules,CustomErrors::supplier());
     //dd($request->input());
     if ($validator->fails ()){
@@ -337,7 +349,49 @@ class SupplierEditController extends Controller
         $mt_data->save();
       };
       $data->anak_perusahaan = $request->anak_perusahaan;
-
+      
+      SupplierMetadata::where([
+        ['id_object','=',$data->id],
+        ['object_type','=','vendor'],
+        ['object_key','=','legal_dokumen']
+        ])->delete();
+      foreach($request->legal_dokumen as $l => $val){
+        if(is_object($val['file'])){
+          $fileName   = Helpers::set_filename($data->kd_vendor,$val['name']);
+          $val['file']->storeAs('supplier/legal_dokumen', $fileName);
+        }
+        else{
+          $fileName = $val['file'];
+        }  
+        
+        $mt_data = new SupplierMetadata();
+        $mt_data->id_object    = $data->id;
+        $mt_data->object_type  = 'vendor';
+        $mt_data->object_key   = 'legal_dokumen';
+        $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
+        $mt_data->save();
+      };
+      
+      SupplierMetadata::where([
+        ['id_object','=',$data->id],
+        ['object_type','=','vendor'],
+        ['object_key','=','sertifikat_dokumen']
+        ])->delete();
+      foreach($request->sertifikat_dokumen as $l => $val){
+        if(is_object($val['file'])){
+          $fileName   = Helpers::set_filename($data->kd_vendor,$val['name']);
+          $val['file']->storeAs('supplier/sertifikat_dokumen', $fileName);
+        }
+        else{
+          $fileName = $val['file'];
+        }  
+        $mt_data = new SupplierMetadata();
+        $mt_data->id_object    = $data->id;
+        $mt_data->object_type  = 'vendor';
+        $mt_data->object_key   = 'sertifikat_dokumen';
+        $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
+        $mt_data->save();
+      };
       return redirect()->back()->withData($data)->with('message', 'Data berhasil disimpan!');
     }
   }

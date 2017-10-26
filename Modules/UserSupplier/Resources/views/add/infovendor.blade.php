@@ -102,7 +102,9 @@
               @endif
             </div>
           </div>
-          @include('usersupplier::partials.buttons')
+          @if($action_type=='edit')
+            @include('usersupplier::partials.buttons')
+          @endif
       </div>
     </div>
 <!-- /.box-body -->

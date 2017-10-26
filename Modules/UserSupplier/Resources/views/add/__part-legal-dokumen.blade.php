@@ -1,5 +1,5 @@
 <div class="form-group {{ $errors->has('legal_dokumen.*') ? ' has-error' : '' }}">
-  <label for="legal_dokumen" class="col-sm-2 control-label"><span class="text-red">*</span> Legal Dokumen</label>
+  <label for="legal_dokumen" class="col-sm-2 control-label"> Legal Dokumen</label>
   <div class="col-sm-10">
     @if(count(old('legal_dokumen',Helper::prop_exists($data,'legal_dokumen','array')))>0)
       @php

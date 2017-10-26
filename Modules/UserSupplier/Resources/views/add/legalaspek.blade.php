@@ -202,7 +202,7 @@
             <div class="form-group {{ $errors->has('pkp') ? ' has-error' : '' }}">
               <label for="pkp" class="col-sm-5 control-label"><span class="text-red">*</span> Perusahaan Kena Pajak</label>
               <div class="col-sm-7">
-                <select class="form-control" name="pkp">
+                <select class="form-control" name="pkp" id="pkp">
                   <option value="1" {{ old('pkp',Helper::prop_exists($data,'pkp'))=='1'?"selected='selected'":"" }}>Ya</option>
                   <option value="0" {{ old('pkp',Helper::prop_exists($data,'pkp'))=='0'?"selected='selected'":"" }}>Tidak</option>
                 </select>
@@ -221,7 +221,7 @@
         <div class="col-sm-4"></div>
       </div>
 
-      <div class="row">
+      <div class="row" id="nonpwp" hidden="true">
         <div class="col-sm-5">
           <div class="form-horizontal">
             <div class="form-group {{ $errors->has('npwp_no') ? ' has-error' : '' }}">
@@ -392,7 +392,7 @@
         <div class="col-sm-5">
           <div class="form-horizontal">
             <div class="form-group {{ $errors->has('iujk_no') ? ' has-error' : '' }}">
-              <label for="iujk_no" class="col-sm-5 control-label"><span class="text-red">*</span> Sertifikat Keahlian</label>
+              <label for="iujk_no" class="col-sm-5 control-label">Sertifikat Keahlian</label>
               <div class="col-sm-7">
                 <input type="text" class="form-control" placeholder="No. Sertifikat" name="iujk_no" value="{{ old('iujk_no',Helper::prop_exists($data,'iujk_no')) }}" autocomplete="off">
                 @if ($errors->has('iujk_no'))
@@ -407,7 +407,7 @@
         <div class="col-sm-3">
           <div class="form-horizontal">
             <div class="form-group {{ $errors->has('iujk_tg_terbit') ? ' has-error' : '' }}">
-              <label for="iujk_tg_terbit" class="col-sm-4 control-label"><span class="text-red">*</span> Tgl Terbit</label>
+              <label for="iujk_tg_terbit" class="col-sm-4 control-label">Tgl Terbit</label>
               <div class="col-sm-8">
                 <div class="input-group date" data-provide="datepicker">
                     <div class="input-group-addon">
@@ -427,7 +427,7 @@
         <div class="col-sm-4">
           <div class="form-horizontal">
               <div class="form-group {{ $errors->has('iujk_tg_expired') ? ' has-error' : '' }}">
-                <label for="iujk_tg_expired" class="col-sm-4 control-label"><span class="text-red">*</span> Tgl Expired</label>
+                <label for="iujk_tg_expired" class="col-sm-4 control-label">Tgl Expired</label>
                 <div class="col-sm-8">
                   <div class="input-group date" data-provide="datepicker">
                       <div class="input-group-addon">
@@ -446,7 +446,9 @@
         </div>
       </div>
       @include('usersupplier::add.__part-sertifikat-dokumen')
+      @if($action_type=='edit')
       @include('usersupplier::partials.buttons')
+      @endif
     </div>
 <!-- /.box-body -->
 </div>
@@ -481,7 +483,7 @@ function delete_field_x(attr) {
 function add_field_x(attr) {
   $(document).on('click', '.add-'+attr, function(event) {
     event.preventDefault();
-    /* Act on the event */
+
     var $this = $(this);
     var $clone_btn = $this.clone();
     var $parent = $(this).parent().parent().parent();
@@ -509,5 +511,23 @@ function add_field_x(attr) {
     }
   });
 }
+
+var isi=$("#pkp").val();
+    if(isi == "1"){
+      $("#nonpwp").show();
+    }else{
+      $("#nonpwp").hide();
+    }
+
+$("#pkp").change(function () {
+       var pkp = this.value;
+       if(pkp == "1"){
+         $("#nonpwp").show();
+       }else{
+         $("#nonpwp").hide();
+       }
+   });
+
+
 </script>
 @endpush

@@ -68,10 +68,8 @@ class SupplierEditController extends Controller
         $d = json_decode($dt_legal_dokumen->object_value);
         $legal_dokumen[$k]['name'] = $d->name;
         $legal_dokumen[$k]['file'] = $d->file;
-        $file_id[$k] = $dt_legal_dokumen->id;
       }
       $supplier->legal_dokumen = $legal_dokumen;
-      $supplier->file_id = $file_id;
       
       foreach($legal_dokumen as $k=>$v){
         $file_old_ld[] = $v['file'];
@@ -83,10 +81,8 @@ class SupplierEditController extends Controller
         $d = json_decode($dt_sertifikat_dokumen->object_value);
         $sertifikat_dokumen[$k]['name'] = $d->name;
         $sertifikat_dokumen[$k]['file'] = $d->file;
-        $file_id_sd[$k] = $dt_sertifikat_dokumen->id;
       }
       $supplier->sertifikat_dokumen = $sertifikat_dokumen;
-      $supplier->file_id_sd = $file_id_sd;
       
       foreach($sertifikat_dokumen as $k=>$v){
         $file_old_sd[] = $v['file'];

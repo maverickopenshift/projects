@@ -16,10 +16,6 @@
                 @endif
             </div>
             <div class="col-sm-4">
-              @php
-                $file_id_sd = old('file_id_sd',Helper::prop_exists($supplier,'file_id_sd','array'));
-              @endphp
-              <input type="hidden" name="file_id_sd[]" value="{{$file_id_sd[$k]}}">
               <div class="input-group">
                 <input type="file" class="hide" name="sertifikat_dokumen[][file]">
                 <input class="form-control" type="text" disabled>
@@ -63,7 +59,6 @@
               <input type="text" class="form-control" name="sertifikat_dokumen[][name]" placeholder="Nama Dokumen" autocomplete="off">
           </div>
           <div class="col-sm-4">
-            <input type="hidden" name="file_id_sd[]">
             <div class="input-group">
               <input type="file" class="hide" name="sertifikat_dokumen[][file]" autocomplete="off">
               <input class="form-control" type="text" disabled>

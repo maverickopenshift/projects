@@ -45,7 +45,7 @@ class DataSupplierController extends Controller
 
       $data['data'] = $sql;
       $data['page_title'] = 'Data Supplier';
-        $data['notif']=$notif;
+      $data['notif']=$notif;
 
       return view("usersupplier::dataSupplier.index")->with($data);
     }

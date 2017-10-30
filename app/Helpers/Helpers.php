@@ -62,9 +62,10 @@ class Helpers
               'nm_vendor.regex' => 'Nama Perusahaan harus huruf dan angka',
               'klasifikasi_usaha.*.required' => 'Klasifikasi usaha harus diisi',
               'klasifikasi_usaha.*.regex' => 'Klasifikasi usaha harus huruf dan angka',
+
             ];
     }
-    
+
     public static function prop_exists($obj,$string,$type='string'){
       if(isset($obj->{$string})){
         return $obj->{$string};
@@ -74,7 +75,7 @@ class Helpers
       }
       return false;
     }
-    
+
     public static function set_filename($kd_vendor,$name){
       return $kd_vendor.'_'.str_slug($name).'_'.time().'_'.str_random(5).'.pdf';
     }

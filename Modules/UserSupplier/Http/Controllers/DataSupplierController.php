@@ -151,7 +151,7 @@ class DataSupplierController extends Controller
                   $file_old_sd[] = $v['file'];
                 }
                 $sql->file_old_sd = $file_old_sd;
-                
+
                 $data['data'] = $sql;
                 // dd($sql);
               }else{
@@ -227,7 +227,7 @@ class DataSupplierController extends Controller
 
        );
 
-       $validator = Validator::make($request->all(), $rules,Helpers::error_submit_supplier());
+       $validator = Validator::make($request->all(), $rules,CustomErrors::supplier());
        if ($validator->fails ()){
          return redirect()->back()
                      ->withInput($request->input())

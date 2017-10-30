@@ -32,7 +32,7 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="doc_number" class="col-sm-4 control-label">Nomer Flexi</label>
+                  <label for="doc_number" class="col-sm-4 control-label">Nomer Telepon</label>
                   <div class="col-sm-8">
                     <input type="text" class="form-control" id="phone" value="{{$data['phone']}}" name="phone">
                     <div class="error-phone"></div>

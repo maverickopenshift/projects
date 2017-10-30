@@ -18,6 +18,7 @@ Route::group(['middleware' => 'web', 'prefix' => 'usersupplier', 'namespace' => 
 
   Route::get('/dataSupplier', ['middleware' => ['role:vendor'],'uses' => 'DataSupplierController@index'])
   ->name('supplier.list');
+
   Route::get('/dataSupplier/data', ['middleware' => ['role:vendor'],'uses' => 'DataSupplierController@data'])
   ->name('supplier.isi');
   Route::get('/kelengkapanData', ['middleware' => ['role:vendor'],'uses' => 'DataSupplierController@tambah'])

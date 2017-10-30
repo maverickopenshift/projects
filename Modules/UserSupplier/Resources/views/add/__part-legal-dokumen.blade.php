@@ -24,10 +24,15 @@
                 </span>
               </div>
               @if($action_type=='edit')
-                <span class="help-block">
-                  <a target="_blank" href="{{route('supplier.legaldokumen.file',['filename'=>$d['file']])}}"><i class="glyphicon glyphicon-paperclip"></i> {{$d['file']}}</a>
-                  <input type="hidden" class="hide" name="file_old_ld[]" value="{{$d['file']}}">
-                </span>
+                @php
+                  $old_file = old('file_old_ld',Helper::prop_exists($data,'file_old_ld','array'));
+                @endphp
+                @if(!empty($old_file[$k]))
+                  <span class="help-block">
+                    <a target="_blank" href="{{route('supplier.legaldokumen.file',['filename'=>$old_file[$k]])}}"><i class="glyphicon glyphicon-paperclip"></i> {{$old_file[$k]}}</a>
+                    <input type="hidden" class="hide" name="file_old_ld[]" value="{{$old_file[$k]}}">
+                  </span>
+                @endif
               @endif
               @if ($errors->has('legal_dokumen.'.($k).'.file'))
                   <span class="help-block">

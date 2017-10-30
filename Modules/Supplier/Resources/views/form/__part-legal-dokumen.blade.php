@@ -2,7 +2,7 @@
   <label for="legal_dokumen" class="col-sm-2 control-label"><span class="text-red">*</span> Legal Dokumen</label>
   <div class="col-sm-10">
     @if(count(old('legal_dokumen',Helper::prop_exists($supplier,'legal_dokumen','array')))>0)
-      @php 
+      @php
         $i=1;
       @endphp
       @foreach (old('legal_dokumen',Helper::prop_exists($supplier,'legal_dokumen','array')) as $k => $d)
@@ -49,7 +49,7 @@
                 @endif
             </div>
         </div>
-        @php 
+        @php
           $i++;
         @endphp
       @endforeach

@@ -27,13 +27,43 @@ class Helpers
     {
       $cat = DocCategory::all();
       $select  = '<select class="form-control" id="'.$name.'" name="'.$name.'" required>';
-      $select .= '<option value="">Pilih Kategori</option>';
+      $select .= '<option value="">Pilih Jenis Template</option>';
       foreach ($cat as $dt) {
         $selected = '';
         if($val==$dt['id']){
           $selected = 'selected="selected"';
         }
         $select .= '<option value="'.$dt['name'].'" '.$selected.'>'.$dt['title'].'</option>';
+      }
+      $select .= '</select>';
+      return $select;
+    }
+  public static function select_category2($name='category',$val=null)
+  {
+    $cat = DocCategory::all();
+    $select  = '<select class="form-control" id="'.$name.'" name="'.$name.'">';
+    $select .= '<option value="">Pilih Jenis Template</option>';
+    foreach ($cat as $dt) {
+      $selected = '';
+      if($val==$dt['id']){
+        $selected = 'selected="selected"';
+      }
+      $select .= '<option value="'.$dt['id'].'" '.$selected.'>'.$dt['title'].'</option>';
+    }
+    $select .= '</select>';
+    return $select;
+  }
+    public static function select_type($name='type',$val=null)
+    {
+      $cat = DocType::all();
+      $select  = '<select class="form-control" id="'.$name.'" name="'.$name.'">';
+      $select .= '<option value="">Pilih Type Template</option>';
+      foreach ($cat as $dt) {
+        $selected = '';
+        if($val==$dt['id']){
+          $selected = 'selected="selected"';
+        }
+        $select .= '<option value="'.$dt['id'].'" '.$selected.'>'.$dt['title'].'</option>';
       }
       $select .= '</select>';
       return $select;

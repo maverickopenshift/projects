@@ -17,6 +17,5 @@ class DocumentsDatabaseSeeder extends Seeder
         Model::unguard();
         
         $this->call(DocTypeSeederTableSeeder::class);
-        $this->call(DocCategorySeederTableSeeder::class);
     }
 }

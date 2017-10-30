@@ -17,6 +17,28 @@
                     <span>Dashboard</span></a>
             </li>
             @endpermission
+            
+            <li class="treeview">
+              <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management Kontrak" />
+                <span>Management Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <ul class="treeview-menu">
+                <li class="treeview">
+                  <a href="#"><span>Tambah Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
+                  <ul class="treeview-menu">
+                    <li class="#" ><a href="#">KHS</a></li>
+                    <li class="#" ><a href="#">Turnkey</a></li>
+                    <li class="#" ><a href="#">Surat Pesanan (SP)</a></li>
+                    <li class="#" ><a href="#">Amandemen (SP)</a></li>
+                    <li class="#" ><a href="#">Amandemen Kontrak</a></li>
+                    <li class="#" ><a href="#">Adendum</a></li>
+                    <li class="#" ><a href="#">Side Letter</a></li>
+                    <li class="#" ><a href="#">Surat Pengikatan</a></li>
+                  </ul>
+                </li>
+                <li class="#" ><a href="#">Data Kontrak</a></li>
+                <li class="#" ><a href="#">Template Pasal - Pasal</a></li>
+              </ul>
+            </li>
             {{-- <li>
                 <a href="#"> <img src="{{asset('/images/icon-search.png')}}" title="Search" />
                     <span>Search</span></a>

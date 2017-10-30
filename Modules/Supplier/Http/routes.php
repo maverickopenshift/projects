@@ -1,7 +1,7 @@
 <?php
 Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace' => 'Modules\Supplier\Http\Controllers'], function()
 {
-    
+
     Route::get('/klasifikasiusaha', ['middleware' => ['permission:lihat-klasifikasi-usaha'],'uses' => 'KlasifikasiUsahaController@index'])->name('supplier.klasifikasi');
     Route::get('/klasifikasiusaha/getselect', 'KlasifikasiUsahaController@getSelect')->name('supplier.klasifikasi.getselect');
     Route::get('/klasifikasiusaha/data', ['middleware' => ['permission:lihat-klasifikasi-usaha'],'uses' => 'KlasifikasiUsahaController@data'])->name('supplier.klasifikasi.data');

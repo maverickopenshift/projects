@@ -75,7 +75,9 @@
           <div class="form-group">
             <hr  />
           </div>
-          @include('supplier::partials.buttons')
+          @if($action_type=='edit')
+          @include('usersupplier::partials.buttons')
+          @endif
       </div>
     </div>
 <!-- /.box-body -->

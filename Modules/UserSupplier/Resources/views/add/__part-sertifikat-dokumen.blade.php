@@ -24,10 +24,15 @@
                 </span>
               </div>
               @if($action_type=='edit')
-                <span class="help-block">
-                  <a target="_blank" href="{{route('supplier.sertifikat.file',['filename'=>$d['file']])}}"><i class="glyphicon glyphicon-paperclip"></i> {{$d['file']}}</a>
-                  <input type="hidden" class="hide" name="file_old_sd[]" value="{{$d['file']}}">
-                </span>
+                @php
+                  $old_file_sd = old('file_old_sd',Helper::prop_exists($data,'file_old_sd','array'));
+                @endphp
+                @if(!empty($old_file_sd[$k]))
+                  <span class="help-block">
+                    <a target="_blank" href="{{route('supplier.sertifikat.file',['filename'=>$old_file_sd[$k]])}}"><i class="glyphicon glyphicon-paperclip"></i> {{$old_file_sd[$k]}}</a>
+                    <input type="hidden" class="hide" name="file_old_sd[]" value="{{$old_file_sd[$k]}}">
+                  </span>
+                @endif
               @endif
               @if ($errors->has('sertifikat_dokumen.'.($k).'.file'))
                   <span class="help-block">

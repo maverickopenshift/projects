@@ -126,11 +126,7 @@ class DataSupplierController extends Controller
                   }
                 }
 
-                $dt_legal_dokumen = SupplierMetadata::select('object_value')->where([
-                  ['id_object','=',$id],
-                  ['object_key','=','legal_dokumen']
-                ])->get();
-
+                $dt_legal_dokumen = SupplierMetadata::get_legal_dokumen($id);
                 foreach($dt_legal_dokumen as $k=>$dt_legal_dokumen){
                   $d = json_decode($dt_legal_dokumen->object_value);
                   $legal_dokumen[$k]['name'] = $d->name;
@@ -138,18 +134,24 @@ class DataSupplierController extends Controller
                 }
                 $sql->legal_dokumen = $legal_dokumen;
 
-                $dt_sertifikat_dokumen = SupplierMetadata::select('object_value')->where([
-                  ['id_object','=',$id],
-                  ['object_key','=','sertifikat_dokumen']
-                ])->get();
+                foreach($legal_dokumen as $k=>$v){
+                  $file_old_ld[] = $v['file'];
+                }
+                $sql->file_old_ld = $file_old_ld;
+
+                $dt_sertifikat_dokumen = SupplierMetadata::get_sertifikat_dokumen($id);
                 foreach($dt_sertifikat_dokumen as $k=>$dt_sertifikat_dokumen){
                   $d = json_decode($dt_sertifikat_dokumen->object_value);
                   $sertifikat_dokumen[$k]['name'] = $d->name;
                   $sertifikat_dokumen[$k]['file'] = $d->file;
-                  $sertifikat_dokumen[$k]['file_old'] = $d->file;
                 }
                 $sql->sertifikat_dokumen = $sertifikat_dokumen;
 
+                foreach($sertifikat_dokumen as $k=>$v){
+                  $file_old_sd[] = $v['file'];
+                }
+                $sql->file_old_sd = $file_old_sd;
+                
                 $data['data'] = $sql;
                 // dd($sql);
               }else{
@@ -423,6 +425,7 @@ class DataSupplierController extends Controller
             'jml_peg_asing'     => 'required|integer',
             'legal_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
             'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+
         );
         $check_new_legal_dok = false;
         foreach($request->legal_dokumen as $l => $v){
@@ -449,15 +452,7 @@ class DataSupplierController extends Controller
           }
         }
         $request->merge(['legal_dokumen' => $legal_dokumen]);
-        //dd($request->input());
-        // exit;
-        // foreach($file_old_ld as $k=>$v){
-        //   $file_old_ld[] = $v;
-        // }
-        // $request->merge(['file_old_ld' => $file_old_ld]);
-        //dd($request->input());
 
-        //dd($request['file_old_ld']);
         $check_new_sertifikat_dok = false;
         foreach($request->sertifikat_dokumen as $l => $v){
           $sertifikat_dokumen[$l]['name'] = $v['name'];
@@ -547,7 +542,6 @@ class DataSupplierController extends Controller
           $data->jml_peg_domestik = $request->jml_peg_domestik;
           $data->jml_peg_asing = $request->jml_peg_asing;
           $data->vendor_status = 0;
-          $data->created_by = \Auth::user()->username;
           $data->save();
 
           $mt_data = SupplierMetadata::where([

@@ -133,4 +133,23 @@ class UsersController extends Controller
           $data = User::where('id','=',$request->id)->delete();
           return response()->json($data);
     }
+    public function getSelectUserTelkom(Request $request){
+        $search = trim($request->q);
+
+        // if (empty($search)) {
+        //     return \Response::json([]);
+        // }
+        $data = User::get_user_telkom($search)->paginate(30);
+        return \Response::json($data);
+    }
+    
+    public function getSelectUserVendor(Request $request){
+        $search = trim($request->q);
+
+        // if (empty($search)) {
+        //     return \Response::json([]);
+        // }
+        $data = User::get_user_vendor($search)->paginate(30);
+        return \Response::json($data);
+    }
 }

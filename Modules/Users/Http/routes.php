@@ -7,6 +7,8 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'users', 'namespace' =
     Route::post('/update', 'UsersController@update')->name('users.update');
     Route::post('/add', 'UsersController@add')->name('users.add');
     Route::delete('/delete', 'UsersController@delete')->name('users.delete');
+    Route::get('/get-select-user-telkom', 'UsersController@getSelectUserTelkom')->name('users.get-select-user-telkom');
+    Route::get('/get-select-user-vendor', 'UsersController@getSelectUserVendor')->name('users.get-select-user-vendor');
 
 
     Route::get('/permissions', ['middleware' => ['permission:lihat-permission'],'uses' => 'PermissionsController@index'])

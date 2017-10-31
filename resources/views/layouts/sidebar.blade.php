@@ -20,12 +20,12 @@
             
             <li class="treeview {{Request::is("documents/*") || Request::is("users")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management Kontrak" />
-                <span>Management Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
+                <span>Manajemen Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 <li class="treeview">
                   <a href="#"><span>Tambah Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
                   <ul class="treeview-menu">
-                    <li class="#" ><a href="#">KHS</a></li>
+                    <li class="#" ><a href="{{route('doc.create',['type'=>'khs'])}}">KHS</a></li>
                     <li class="#" ><a href="#">Turnkey</a></li>
                     <li class="#" ><a href="#">Surat Pesanan (SP)</a></li>
                     <li class="#" ><a href="#">Amandemen (SP)</a></li>
@@ -85,7 +85,7 @@
             @permission('lihat-user|lihat-role|lihat-permission')
             <li class="treeview {{Request::is("users/*") || Request::is("users")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management User" />
-                <span>Management User</span> <i class="fa fa-angle-left pull-right"></i></a>
+                <span>Manajemen User</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 @permission('lihat-user')
                   <li class="{{Request::is("users")?'active':''}}" ><a href="{{route('users')}}">Users</a></li>
@@ -105,7 +105,7 @@
             @permission('lihat-supplier|lihat-klasifikasi-usaha|lihat-badan-usaha')
             <li class="treeview {{Request::is("supplier/*") || Request::is("supplier")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management Supplier" />
-                <span>Management Supplier</span> <i class="fa fa-angle-left pull-right"></i></a>
+                <span>Manajemen Supplier</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 @permission('lihat-supplier')
                   <li class="{{Request::is("supplier/create") || Request::is("supplier/*/edit") || Request::is("supplier")?'active':''}}" ><a href="{{route('supplier')}}">Supplier</a></li>

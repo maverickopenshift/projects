@@ -14,6 +14,12 @@
             </div>
           </div>
           <div class="form-group">
+            <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Jenis Kontrak</label>
+            <div class="col-sm-3">
+              {!!Helper::select_jenis($doc_type->name)!!}
+            </div>
+          </div>
+          <div class="form-group">
             <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Kontrak</label>
             <div class="col-sm-3">
               <div class="input-group date" data-provide="datepicker">
@@ -65,6 +71,36 @@
                   <option value="">Pilih Penanggungjawab</option>
               </select>
             </div>
+          </div>
+          <div class="form-group">
+            <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> PO</label>
+            <div class="col-sm-4">
+              <div class="input-group">
+                <input class="form-control no_po" type="text" name="po" placeholder="Masukan No.PO">
+                <span class="input-group-btn">
+                  <button class="btn btn-default cari-po" type="button"><i class="glyphicon glyphicon-search"></i></button>
+                </span>
+              </div>
+            </div>
+            <span class="error error-po text-danger"></span>
+          </div>
+          <div class="parent-potables" style="display:none;">
+            <table class="table table-condensed table-striped" id="potables">
+                <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>No.PO</th>
+                    <th>Kode Item</th>
+                    <th>Item</th>
+                    <th>Qty</th>
+                    <th>Satuan</th>
+                    <th>MTU</th>
+                    <th>Harga</th>
+                    <th>Harga Total</th>
+                    <th>Keterangan</th>
+                </tr>
+                </thead>
+            </table>
           </div>
           {{-- @include('documents::partials.buttons') --}}
       </div>
@@ -184,6 +220,49 @@ $(function() {
           }
           return data.bdn_usaha+'.'+data.name +' - '+  data.username ;
       }
+  });
+  $(document).on('click', '.cari-po', function(event) {
+    event.preventDefault();
+    /* Act on the event */
+    var po = $('.no_po').val(),error_po = $('.error-po');
+    error_po.html('');
+    if(po==""){
+      error_po.html('No.PO harus diisi');
+      return false;
+    }
+    $('.parent-potables').show();
+    $('#potables').DataTable().destroy();
+    $('#potables').on('xhr.dt', function ( e, settings, json, xhr ) {
+        // console.log(JSON.stringify(json));
+        // if(json.recordsTotal==0){
+        //   $('#potables').DataTable().destroy();
+        //   $('.parent-potables').hide();
+        //   error_po.html('Data tidak ditemukan');
+        //   return false;
+        // }
+        if(xhr.responseText=='Unauthorized.'){
+          location.reload();
+        }
+        }).DataTable({
+        processing: true,
+        serverSide: true,
+        autoWidth : false,
+        order : [[ 1, 'desc' ]],
+        pageLength: 10,
+        ajax: '{!! route('doc.get-po') !!}?po='+po,
+        columns: [
+            {data : 'DT_Row_Index',orderable:false,searchable:false},
+            { data: 'no_po', name: 'no_po' },
+            { data: 'kode_item', name: 'kode_item' },
+            { data: 'item', name: 'item' },
+            { data: 'qty', name: 'qty' },
+            { data: 'satuan', name: 'satuan' },
+            { data: 'mtu', name: 'mtu' },
+            { data: 'harga', name: 'harga' },
+            { data: 'harga_total', name: 'harga_total' },
+            { data: 'keterangan', name: 'keterangan' },
+        ]
+    });
   });
 });
 </script>

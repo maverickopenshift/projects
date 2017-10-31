@@ -37,7 +37,26 @@ class Helpers
       }
       $select .= '</select>';
       return $select;
+  }
+  public static function select_jenis($type,$val=null,$name='jenis_kontrak')
+  {
+    $cat = \DB::table('doc_template')
+            ->join('doc_type', 'doc_type.id', '=', 'doc_template.id_doc_type')
+            ->join('doc_category', 'doc_category.id', '=', 'doc_template.id_doc_category')
+            ->select('doc_template.id','doc_category.title')
+            ->where('doc_type.name','=',$type)->get();
+    $select  = '<select class="form-control" id="'.$name.'" name="'.$name.'" required>';
+    $select .= '<option value="">Pilih Jenis Kontrak</option>';
+    foreach ($cat as $dt) {
+      $selected = '';
+      if($val==$dt->id){
+        $selected = 'selected="selected"';
+      }
+      $select .= '<option value="'.$dt->id.'" '.$selected.'>'.$dt->title.'</option>';
     }
+    $select .= '</select>';
+    return $select;
+}
   public static function select_category2($name='category',$val=null)
   {
     $cat = DocCategory::all();

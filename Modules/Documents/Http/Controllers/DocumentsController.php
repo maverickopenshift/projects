@@ -3,8 +3,10 @@
 namespace Modules\Documents\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+
+use Datatables;
+use Response;
 
 class DocumentsController extends Controller
 {
@@ -68,5 +70,16 @@ class DocumentsController extends Controller
      */
     public function destroy()
     {
+    }
+    public function getPo(Request $request){
+      $search = trim($request->po);
+
+      if (empty($search)) {
+          abort(500);
+      }
+      $sql = \DB::table('dummy_po')->where('no_po','=',$search)->get();
+      return Datatables::of($sql)
+          ->addIndexColumn()
+          ->make(true);
     }
 }

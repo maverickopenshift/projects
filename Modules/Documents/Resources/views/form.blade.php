@@ -24,7 +24,7 @@
               </div>
             </div>
           </div>
-          <div class="tab-pane active" id="tab_2">
+          <div class="tab-pane" id="tab_2">
             @include('documents::doc-form.sow-boq')
             <div class="clearfix"></div>
             <div class="row">
@@ -34,7 +34,7 @@
               </div>
             </div>
           </div>
-          <div class="tab-pane active" id="tab_3">
+          <div class="tab-pane" id="tab_3">
             @include('documents::doc-form.latar-belakang')
             <div class="clearfix"></div>
             <div class="row">
@@ -44,7 +44,7 @@
               </div>
             </div>
           </div>
-          <div class="tab-pane active" id="tab_4">
+          <div class="tab-pane" id="tab_4">
             @include('documents::doc-form.pasal-penting')
             <div class="clearfix"></div>
             <div class="row">
@@ -54,7 +54,7 @@
               </div>
             </div>
           </div>
-          <div class="tab-pane active" id="tab_5">
+          <div class="tab-pane" id="tab_5">
             @include('documents::doc-form.jaminan-asuransi')
             <div class="clearfix"></div>
             <div class="row">
@@ -64,7 +64,7 @@
               </div>
             </div>
           </div>
-          <div class="tab-pane active" id="tab_6">
+          <div class="tab-pane" id="tab_6">
             @include('documents::doc-form.dokumen-pendukung')
             <div class="clearfix"></div>
             <div class="row">

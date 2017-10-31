@@ -22,10 +22,10 @@
               <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management Kontrak" />
                 <span>Manajemen Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
-                <li class="treeview">
+                <li class="treeview {{Request::is("documents/create/*")?'active':''}}">
                   <a href="#"><span>Tambah Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
-                  <ul class="treeview-menu">
-                    <li class="#" ><a href="{{route('doc.create',['type'=>'khs'])}}">KHS</a></li>
+                  <ul class="treeview-menu ">
+                    <li class="{{Request::is("documents/create/khs")?'active':''}}" ><a href="{{route('doc.create',['type'=>'khs'])}}">KHS</a></li>
                     <li class="#" ><a href="#">Turnkey</a></li>
                     <li class="#" ><a href="#">Surat Pesanan (SP)</a></li>
                     <li class="#" ><a href="#">Amandemen (SP)</a></li>

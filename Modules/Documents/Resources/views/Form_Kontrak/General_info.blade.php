@@ -96,7 +96,7 @@
           <div class="form-group {{ $errors->has('pic') ? ' has-error' : '' }}">
             <label for="pic" class="col-sm-2 control-label"><span class="text-red">*</span> PIC</label>
             <div class="col-sm-10">
-              <a class="btn btn-app" href="#">+</a>
+              <input type="text" class="form-control" name="pic" value="{{ old('pic') }}" placeholder="Masukan PIC" autocomplete="off">
               @if ($errors->has('pic'))
                   <span class="help-block">
                       <strong>{{ $errors->first('pic') }}</strong>

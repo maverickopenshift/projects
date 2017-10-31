@@ -18,29 +18,19 @@
                 <!-- User Account Menu -->
                 <li class="dropdown user user-menu">
                     <!-- Menu Toggle Button -->
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <a href="{{ route('home.profile') }}" class="btn btn-block btn-danger">
                         <i class="fa fa-user"></i>
                         <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                        <span class="hidden-xs">{{ Auth::user()->username }}</span>
+                        <span class="hidden-xs">{{ Auth::user()->name }}  </span>
+                        <i>{{ Auth::user()->username }}</i>
                     </a>
-                    <ul class="dropdown-menu">
-                        <!-- The user image in the menu -->
-                        <li class="user-header">
-                            <p>
-                                {{ Auth::user()->name }}
-                                <small>{{ Auth::user()->email }}</small>
-                            </p>
-                        </li>
-                        <!-- Menu Footer-->
-                        <li class="user-footer">
-                            <div class="pull-left">
-                                <a href="#" class="btn btn-default btn-flat">Profile</a>
-                            </div>
-                            <div class="pull-right">
-                                <a href="{{ route('logout') }}" class="btn btn-default btn-flat">Sign out</a>
-                            </div>
-                        </li>
-                    </ul>
+                </li>
+                <li class="dropdown user user-menu">
+                    <!-- Menu Toggle Button -->
+                    <a href="{{ route('logout') }}" class="btn btn-block btn-danger">
+                      <i class="fa fa-sign-out"></i>
+                        Sign Out
+                    </a>
                 </li>
             </ul>
         </div>

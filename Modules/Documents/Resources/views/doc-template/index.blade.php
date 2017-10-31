@@ -60,8 +60,8 @@
         ajax: '{!! route('doc.template.data') !!}',
         columns: [
             {data : 'DT_Row_Index',orderable:false,searchable:false},
-            { data: 'type.desc', name: 'type.desc' },
-            { data: 'category.desc', name: 'category.desc' },
+            { data: 'type.title', name: 'type.title' },
+            { data: 'category.title', name: 'category.title' },
             { data: 'created_at', name: 'created_at' },
             { data: 'action', name: 'action',orderable:false,searchable:false }
         ]

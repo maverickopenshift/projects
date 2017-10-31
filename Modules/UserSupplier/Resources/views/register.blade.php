@@ -87,6 +87,16 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
+
+<div class="modal fade" role="dialog" id="form-modal-loading">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+              <p>Loading.....</p>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
 </body>
     <!-- /.login-box -->
     <script src="{{ mix('js/all.js') }}"></script>
@@ -115,33 +125,43 @@
                   type: 'get',
                   data: formMe.serialize(), // Remember that you need to have your csrf token included
                   dataType: 'json',
-
+                  beforeSend: function( _response) {
+                      $('#form-modal-loading').modal('show');
+                  },
                   success: function( _response ){
                       // Handle your response..
                       console.log(_response)
                       if(_response.errors){
                           if(_response.errors.bdn_usaha){
                               attErrorBdn_usaha.html('<span class="text-danger">'+_response.errors.bdn_usaha+'</span>');
+                              $('#form-modal-loading').modal('hide');
                           }
                           if(_response.errors.company_name){
                               attErrorNm_vendor.html('<span class="text-danger">'+_response.errors.company_name+'</span>');
+                              $('#form-modal-loading').modal('hide');
                           }
                           if(_response.errors.initial_company_name){
                               attErrorNm_vendor_uq.html('<span class="text-danger">'+_response.errors.initial_company_name+'</span>');
+                              $('#form-modal-loading').modal('hide');
                           }
                           if(_response.errors.password){
                               attErrorPassword.html('<span class="text-danger">'+_response.errors.password+'</span>');
+                              $('#form-modal-loading').modal('hide');
                           }
                           if(_response.errors.phone){
                               attErrorPhone.html('<span class="text-danger">'+_response.errors.phone+'</span>');
+                              $('#form-modal-loading').modal('hide');
                           }
                           if(_response.errors.email){
                               attErrorEmail.html('<span class="text-danger">'+_response.errors.email+'</span>');
+                              $('#form-modal-loading').modal('hide');
                           }
                       }
                       else{
+                          $('#form-modal-loading').modal('hide');
                           document.getElementById("form-me").reset();
                           $('#form-modal').modal('show')
+
                       }
                   },
                   // error: function( _response ){

@@ -30,8 +30,8 @@ class SupplierEditController extends Controller
         $klasifikasi[] = $dt_klasifikasi->object_value;
       }
       $supplier->klasifikasi_usaha = $klasifikasi;
-      
-      
+
+
       $dt_anak_perus = SupplierMetadata::select('object_value')->where([
         ['id_object','=',$id],
         ['object_key','=','anak_perusahaan']
@@ -40,7 +40,7 @@ class SupplierEditController extends Controller
         $anak_perus[] = $dt_anak_perus->object_value;
       }
       $supplier->anak_perusahaan = $anak_perus;
-      
+
       $dt_meta = SupplierMetadata::select('object_value','object_key')->where([
         ['id_object','=',$id],
         // ['object_key','IN','"bank_kota","pengalaman_kerja","nm_direktur_utama","nm_komisaris_utama"']
@@ -62,7 +62,7 @@ class SupplierEditController extends Controller
           $supplier->nm_komisaris_utama = $dt->object_value;
         }
       }
-      
+
       $dt_legal_dokumen = SupplierMetadata::get_legal_dokumen($id);
       foreach($dt_legal_dokumen as $k=>$dt_legal_dokumen){
         $d = json_decode($dt_legal_dokumen->object_value);
@@ -70,12 +70,12 @@ class SupplierEditController extends Controller
         $legal_dokumen[$k]['file'] = $d->file;
       }
       $supplier->legal_dokumen = $legal_dokumen;
-      
+
       foreach($legal_dokumen as $k=>$v){
         $file_old_ld[] = $v['file'];
       }
       $supplier->file_old_ld = $file_old_ld;
-      
+
       $dt_sertifikat_dokumen = SupplierMetadata::get_sertifikat_dokumen($id);
       foreach($dt_sertifikat_dokumen as $k=>$dt_sertifikat_dokumen){
         $d = json_decode($dt_sertifikat_dokumen->object_value);
@@ -83,7 +83,7 @@ class SupplierEditController extends Controller
         $sertifikat_dokumen[$k]['file'] = $d->file;
       }
       $supplier->sertifikat_dokumen = $sertifikat_dokumen;
-      
+
       foreach($sertifikat_dokumen as $k=>$v){
         $file_old_sd[] = $v['file'];
       }
@@ -151,7 +151,7 @@ class SupplierEditController extends Controller
         'legal_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
     );
-    
+
     $check_new_legal_dok = false;
     foreach($request->legal_dokumen as $l => $v){
       $legal_dokumen[$l]['name'] = $v['name'];
@@ -184,7 +184,7 @@ class SupplierEditController extends Controller
     // }
     // $request->merge(['file_old_ld' => $file_old_ld]);
     //dd($request->input());
-    
+
     //dd($request['file_old_ld']);
     $check_new_sertifikat_dok = false;
     foreach($request->sertifikat_dokumen as $l => $v){
@@ -202,7 +202,7 @@ class SupplierEditController extends Controller
           $filenya = isset($request->file_old_sd[$l])?$request->file_old_sd[$l]:"";
           $sertifikat_dokumen[$l]['file'] = $filenya;
         }
-        
+
       }
       if(is_object($filenya) || empty($filenya) || (empty($filenya) && is_object($filenya))){
         $check_new_sertifikat_dok = true;
@@ -212,7 +212,7 @@ class SupplierEditController extends Controller
       }
     }
     $request->merge(['sertifikat_dokumen' => $sertifikat_dokumen]);
-    
+
     $validator = Validator::make($request->all(), $rules,CustomErrors::supplier());
     //dd($request->input());
     if ($validator->fails ()){
@@ -221,19 +221,19 @@ class SupplierEditController extends Controller
                   ->withErrors($validator);
     }
     else {
-      
+
       $id = $request->id;
-      
+
       $data = Supplier::where('id',$id)->first();
       if(!$data){
         abort(500);
       }
-      
+
       $user = User::where('username',$data->kd_vendor)->first();
       $user->name = $request->nm_vendor;
       $user->phone = $request->telepon;
       $user->save();
-      
+
       $data->bdn_usaha = $request->bdn_usaha;
       $data->nm_vendor = $request->nm_vendor;
       $data->nm_vendor_uq = $request->nm_vendor_uq;
@@ -277,7 +277,7 @@ class SupplierEditController extends Controller
       $data->jml_peg_domestik = $request->jml_peg_domestik;
       $data->jml_peg_asing = $request->jml_peg_asing;
       $data->save();
-      
+
       $mt_data = SupplierMetadata::where([
         ['id_object','=',$data->id],
         ['object_type','=','vendor'],
@@ -286,7 +286,7 @@ class SupplierEditController extends Controller
       $mt_data->object_value = $request->pengalaman_kerja;
       $mt_data->save();
       $data->pengalaman_kerja = $request->pengalaman_kerja;
-      
+
       $mt_data = SupplierMetadata::where([
         ['id_object','=',$data->id],
         ['object_type','=','vendor'],
@@ -295,7 +295,7 @@ class SupplierEditController extends Controller
       $mt_data->object_value = $request->bank_kota;
       $mt_data->save();
       $data->bank_kota = $request->bank_kota;
-      
+
       $mt_data = SupplierMetadata::where([
         ['id_object','=',$data->id],
         ['object_type','=','vendor'],
@@ -304,7 +304,7 @@ class SupplierEditController extends Controller
       $mt_data->object_value = $request->nm_direktur_utama;
       $mt_data->save();
       $data->nm_direktur_utama = $request->nm_direktur_utama;
-      
+
       $mt_data = SupplierMetadata::where([
         ['id_object','=',$data->id],
         ['object_type','=','vendor'],
@@ -313,13 +313,13 @@ class SupplierEditController extends Controller
       $mt_data->object_value = $request->nm_komisaris_utama;
       $mt_data->save();
       $data->nm_komisaris_utama = $request->nm_komisaris_utama;
-      
+
       SupplierMetadata::where([
         ['id_object','=',$data->id],
         ['object_type','=','vendor'],
         ['object_key','=','klasifikasi_usaha']
         ])->delete();
-        
+
       foreach($request->klasifikasi_usaha as $k){
         $mt_data = new SupplierMetadata();
         $mt_data->id_object    = $data->id;
@@ -329,13 +329,13 @@ class SupplierEditController extends Controller
         $mt_data->save();
       };
       $data->klasifikasi_usaha = $request->klasifikasi_usaha;
-      
+
       SupplierMetadata::where([
         ['id_object','=',$data->id],
         ['object_type','=','vendor'],
         ['object_key','=','anak_perusahaan']
         ])->delete();
-        
+
       foreach($request->anak_perusahaan as $k){
         $mt_data = new SupplierMetadata();
         $mt_data->id_object    = $data->id;
@@ -345,7 +345,7 @@ class SupplierEditController extends Controller
         $mt_data->save();
       };
       $data->anak_perusahaan = $request->anak_perusahaan;
-      
+
       SupplierMetadata::where([
         ['id_object','=',$data->id],
         ['object_type','=','vendor'],
@@ -358,8 +358,8 @@ class SupplierEditController extends Controller
         }
         else{
           $fileName = $val['file'];
-        }  
-        
+        }
+
         $mt_data = new SupplierMetadata();
         $mt_data->id_object    = $data->id;
         $mt_data->object_type  = 'vendor';
@@ -367,7 +367,7 @@ class SupplierEditController extends Controller
         $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
         $mt_data->save();
       };
-      
+
       SupplierMetadata::where([
         ['id_object','=',$data->id],
         ['object_type','=','vendor'],
@@ -380,7 +380,7 @@ class SupplierEditController extends Controller
         }
         else{
           $fileName = $val['file'];
-        }  
+        }
         $mt_data = new SupplierMetadata();
         $mt_data->id_object    = $data->id;
         $mt_data->object_type  = 'vendor';
@@ -389,6 +389,32 @@ class SupplierEditController extends Controller
         $mt_data->save();
       };
       return redirect()->back()->withData($data)->with('message', 'Data berhasil disimpan!');
+    }
+  }
+
+
+
+  public function editstatus(Request $request)
+  {
+    $id = $request->id;
+    $rules = array (
+        'status'         => 'required',
+    );
+
+    $validator = Validator::make($request->all(), $rules,CustomErrors::supplier());
+    //dd($request->input());
+    if ($validator->fails ()){
+      return redirect()->back()
+                  ->withInput($request->input())
+                  ->withErrors($validator);
+    }
+    else {
+      $id = $request->id;
+
+      $user = Supplier::where('id',$id)->first();
+      $user->vendor_status = $request->status;
+      $user->save();
+      return redirect()->back()->with('message', 'Data berhasil disimpan!');
     }
   }
 }

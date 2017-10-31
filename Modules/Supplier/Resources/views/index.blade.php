@@ -46,6 +46,7 @@
     </div>
 <!-- /.box-body -->
 </div>
+@include('supplier::form_editstatus')
 @endsection
 @push('scripts')
 <script>
@@ -63,7 +64,7 @@ $(function() {
       scrollX   : true,
       fixedColumns:   {
             leftColumns: 3,
-            rightColumns:1
+            rightColumns:2
       },
       order : [[ 8, 'desc' ]],
       pageLength: 50,

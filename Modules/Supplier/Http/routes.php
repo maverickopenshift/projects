@@ -22,7 +22,9 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
     Route::post('/store', ['middleware' => ['permission:tambah-supplier'],'uses' => 'SupplierAddController@store'])->name('supplier.store');
     Route::get('/create', ['middleware' => ['permission:tambah-supplier'],'uses' => 'SupplierAddController@index'])->name('supplier.create');
     Route::get('/{id}/edit', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@index'])->name('supplier.edit');
+    Route::post('/editstatus', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@editstatus'])->name('supplier.editstatus');
     Route::post('/update', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@update'])->name('supplier.update');
+  
     Route::get('/legal-dokumen/{filename}', function ($filename){
         $path = storage_path('app/supplier/legal_dokumen/' . $filename);
 

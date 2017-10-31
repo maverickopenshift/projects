@@ -18,7 +18,7 @@
             </li>
             @endpermission
             
-            <li class="treeview">
+            <li class="treeview {{Request::is("documents/*") || Request::is("users")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management Kontrak" />
                 <span>Management Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
@@ -36,7 +36,9 @@
                   </ul>
                 </li>
                 <li class="#" ><a href="#">Data Kontrak</a></li>
-                <li class="#" ><a href="#">Template Pasal - Pasal</a></li>
+                @permission('lihat-template-pasal-pasal')
+                  <li class="{{Request::is("documents/doc-template") || Request::is("documents/doc-template/create") || Request::is("documents/doc-template/*/edit")?'active':''}}" ><a href="{{route('doc.template')}}">Template Pasal - Pasal</a></li>
+                @endpermission
               </ul>
             </li>
             {{-- <li>

@@ -9,16 +9,12 @@
       </div>
       <!-- /.box-header -->
       <div class="box-body">
-          @if (session('status'))
-              <div class="alert alert-success">
-                  {{ session('status') }}
-              </div>
-          @endif
+          <div class="alertBS"></div>
           <div class="form-horizontal">
               <div class="form-group">
                 <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Pilih Type Template</label>
                 <div class="col-sm-10">
-                  {!! Helper::select_type() !!}
+                  {!! Helper::select_type('type',Helper::prop_exists($data,'id_doc_type')) !!}
                   <div class="error error-type"></div>
                 </div>
               </div>
@@ -27,7 +23,7 @@
               <div class="form-group">
                 <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Pilih Jenis Template</label>
                 <div class="col-sm-10">
-                  {!! Helper::select_category2() !!}
+                  {!! Helper::select_category2('category',Helper::prop_exists($data,'id_doc_category')) !!}
                   <div class="error error-category"></div>
                 </div>
               </div>
@@ -45,13 +41,25 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                    <td>1</td>
-                    <td><input type="text" class="form-control" name="pasal[]" autocomplete="off"></td>
-                    <td><input type="text" class="form-control" name="judul[]" autocomplete="off"></td>
-                    <td><textarea name="isi[]" class="editor" id="editor1"></textarea></td>
-                    <td class="action"></td>
-                </tr>
+                @if ($data_class=='form-edit')
+                  @foreach ($data_detail as $key => $value)
+                  <tr>
+                      <td>{{$key+1}}</td>
+                      <td><input type="text" class="form-control" value="{{$value['name']}}" name="pasal[]" autocomplete="off"></td>
+                      <td><input type="text" class="form-control" value="{{$value['title']}}" name="judul[]" autocomplete="off"></td>
+                      <td><textarea name="isi[]" class="editor" id="editor{{$key+1}}">{{$value['desc']}}</textarea></td>
+                      <td class="action"></td>
+                  </tr>
+                  @endforeach
+                @else
+                    <tr>
+                        <td>1</td>
+                        <td><input type="text" class="form-control" name="pasal[]" autocomplete="off"></td>
+                        <td><input type="text" class="form-control" name="judul[]" autocomplete="off"></td>
+                        <td><textarea name="isi[]" class="editor" id="editor1"></textarea></td>
+                        <td class="action"></td>
+                    </tr>
+                @endif
               </tbody>
               </table>
           </div>
@@ -65,7 +73,7 @@
 </form>
 @endsection
 @push('scripts')
-  <script src="/js/ckeditor/ckeditor.js"></script>
+  <script src="{{asset('js/ckeditor/ckeditor.js')}}"></script>
   <script>
     $(function(){
         $('.editor').each(function(e){
@@ -118,8 +126,10 @@
         var formMe = $(this)
         var attErrorType = formMe.find('.error-type')
         attErrorType.html('')
+        formMe.find('.alertBS').html('')
         var attErrorCat = formMe.find('.error-category')
         attErrorCat.html('')
+        formMe.find('.error').html('')
         var btnSave = formMe.find('.btn-save')
         btnSave.button('loading')
         $.ajax({
@@ -136,6 +146,9 @@
                     }
                     if(_response.errors.category){
                         attErrorCat.html('<span class="text-danger">'+_response.errors.category+'</span>');
+                    }
+                    if(_response.errors.error){
+                        alertBS2(_response.errors.error,'danger');
                     }
                     var $this = $('.table-me');
                     var row = $this.find('tbody>tr');

@@ -165,12 +165,9 @@
                       }
                     });
                 }
-                // else{
-                //     $('#form-modal').modal('hide')
-                //     alertBS('Data successfully updated','success')
-                //     var table = $('#datatables').dataTable();
-                //         table.fnStandingRedraw();
-                // }
+                else{
+                    window.location = '{!!route('doc.template')!!}';
+                }
                 btnSave.button('reset')
             },
             error: function( _response ){

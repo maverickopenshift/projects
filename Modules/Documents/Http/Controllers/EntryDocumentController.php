@@ -36,7 +36,7 @@ class EntryDocumentController extends Controller
           abort(404);
         }
         $field = Documents::get_fields();
-        $data['page_title'] = 'Entry Dokumen Baru - '.$doc_type['title'];
+        $data['page_title'] = 'Entry Kontrak - '.$doc_type['title'];
         $data['doc_type'] = $doc_type;
         $data['data'] = $this->fields;
         return view('documents::form')->with($data);

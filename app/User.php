@@ -33,4 +33,33 @@ class User extends Authenticatable
     {
         return $this->hasOne('Modules\Supplier\Entities\Supplier','id_user');
     }
+    public static function get_user_telkom($key=null){
+      $data = \DB::table('role_user')
+                ->join('users', 'users.id', '=', 'role_user.user_id')
+                ->join('roles', 'roles.id', '=', 'role_user.role_id')
+                ->select('users.id','users.name','users.username')
+                ->whereNotIn('roles.name',['admin','vendor']);
+      if(!empty($key)){
+        $data->where(function($q) use ($key) {
+            $q->orWhere('users.username', 'like', '%'.$key.'%');
+            $q->orWhere('users.name', 'like', '%'.$key.'%');
+        });
+      }
+      return $data;
+    }
+    public static function get_user_vendor($key=null){
+      $data = \DB::table('role_user')
+                ->join('users', 'users.id', '=', 'role_user.user_id')
+                ->join('roles', 'roles.id', '=', 'role_user.role_id')
+                ->join('supplier', 'supplier.id_user', '=', 'users.id')
+                ->select('users.id','users.name','users.username','supplier.bdn_usaha')
+                ->whereIn('roles.name',['vendor']);
+      if(!empty($key)){
+        $data->where(function($q) use ($key) {
+            $q->orWhere('users.username', 'like', '%'.$key.'%');
+            $q->orWhere('users.name', 'like', '%'.$key.'%');
+        });
+      }
+      return $data;
+    }
 }

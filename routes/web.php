@@ -23,4 +23,5 @@ Route::get('/logout', function () {
     return redirect('/login');
 })->name('logout');
 
-Route::get('/basicemail', 'MailController@basic_email')->name('mail');
+Route::get('/userprofile', 'Profiluser@index')->name('home.profile');
+Route::post('/userprofile/update', 'Profiluser@update')->name('home.profile.update');

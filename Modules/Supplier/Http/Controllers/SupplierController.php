@@ -24,21 +24,39 @@ class SupplierController extends Controller
      */
     public function index()
     {
+      $username=auth()->user()->username;
+      $sql = supplier::where('kd_vendor','=',$username)->first();
+
+      $notif = "Belum Disetujui";
+            if($sql){
+              if($sql->vendor_status  == '1'){
+                $notif="Sudah Disetujui";
+              }
+            }
+
         $data['page_title'] = 'Supplier';
         return view('supplier::index')->with($data);
     }
     public function data()
     {
+
         $sql = Supplier::with('user')->get();
         return Datatables::of($sql)
             ->addIndexColumn()
             ->addColumn('action', function ($data) {
+                $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
+                $roles = htmlspecialchars(json_encode($data->roles), ENT_QUOTES, 'UTF-8');
               $act= '<div class="btn-group">';
               if(\Auth::user()->hasPermission('ubah-supplier')){
-                  $act .='<a href="'.route('supplier.edit',['id'=>$data->id]).'" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-list-alt"></i> Lihat</a>';
+                  $act .='<a href="'.route('supplier.edit',['id'=>$data->id]).'" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-list-alt"></i> Lihat</a> <br>';
+              }
+              if(\Auth::user()->hasPermission('ubah-supplier')){
+                  $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'">
+  <i class="glyphicon glyphicon-edit"></i> Edit Status
+  </button>';
               }
               if(\Auth::user()->hasPermission('hapus-supplier')){
-                $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-toggle="modal" data-target="#modal-delete"><i class="glyphicon glyphicon-trash"></i> Delete</button>';
+                $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-toggle="modal" data-target="#modal-delete"><i class="glyphicon glyphicon-trash"></i> Delete</button> <br>';
               }
               return $act.'</div>';
             })

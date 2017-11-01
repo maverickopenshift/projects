@@ -21,7 +21,7 @@
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-      
+
         @include('supplier::partials.alert-message')
 
         <div id="alertBS"></div>
@@ -38,6 +38,7 @@
                 <th width="150">Email</th>
                 <th width="100">Created At</th>
                 <th width="100">Updated At</th>
+                <th width="100">Status Approval</th>
                 <th width="100">Action</th>
             </tr>
             </thead>
@@ -45,6 +46,7 @@
     </div>
 <!-- /.box-body -->
 </div>
+@include('supplier::form_editstatus')
 @endsection
 @push('scripts')
 <script>
@@ -62,7 +64,7 @@ $(function() {
       scrollX   : true,
       fixedColumns:   {
             leftColumns: 3,
-            rightColumns:1
+            rightColumns:2
       },
       order : [[ 8, 'desc' ]],
       pageLength: 50,
@@ -78,6 +80,7 @@ $(function() {
           { data: 'email', name: 'email' },
           { data: 'created_at', name: 'created_at' },
           { data: 'updated_at', name: 'updated_at' },
+          { data: 'vendor_status', name: 'vendor_status' },
           { data: 'action', name: 'action',orderable:false,searchable:false }
       ]
   });

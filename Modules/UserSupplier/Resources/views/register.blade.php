@@ -23,46 +23,70 @@
       <div class="register-logo">
         <img src="{{asset('images/logo.png')}}" alt="Consys">
       </div>
-      <form id="form-me" action="#"  method="get">
+      <form id="form-me" action="{{ route('usersupplier.add') }}"  method="post">
 
           {{ csrf_field() }}
-
-
-          <div class="form-group">
+          @include('usersupplier::partials.alert-message')
+          @include('usersupplier::partials.alert-errors')
+          <div class="form-group {{ $errors->has('bdn_usaha') ? ' has-error' : '' }}">
             <div class="error-global"></div>
             <label>Badan Usaha</label>
               {!!Helper::select_badan_usaha(old('bdn_usaha'))!!}
-            <div class="error-bdn_usaha"></div>
+              @if ($errors->has('bdn_usaha'))
+                  <span class="help-block">
+                      <strong>{{ $errors->first('bdn_usaha') }}</strong>
+                  </span>
+              @endif
           </div>
 
-          <div class="form-group">
+          <div class="form-group {{ $errors->has('company_name') ? ' has-error' : '' }}">
             <label>Nama Perusahaan</label>
-            <input type="text" class="form-control" name="company_name" id="company_name" required>
-            <div class="error-nm_vendor"></div>
+            <input type="text" class="form-control" name="company_name" id="company_name" >
+            @if ($errors->has('company_name'))
+                <span class="help-block">
+                    <strong>{{ $errors->first('company_name') }}</strong>
+                </span>
+            @endif
           </div>
 
-          <div class="form-group">
+          <div class="form-group {{ $errors->has('initial_company_name') ? ' has-error' : '' }}">
             <label>Inisial Perusahaan</label>
-            <input type="text" class="form-control" name="initial_company_name" id="initial_company_name" required placeholder="Isi 3 digit inisial Perusahaan">
-            <div class="error-nm_vendor_uq"></div>
+            <input type="text" class="form-control" name="initial_company_name" id="initial_company_name"  placeholder="Isi 3 digit inisial Perusahaan">
+            @if ($errors->has('initial_company_name'))
+                <span class="help-block">
+                    <strong>{{ $errors->first('initial_company_name') }}</strong>
+                </span>
+            @endif
           </div>
 
-          <div class="form-group">
+          <div class="form-group {{ $errors->has('password') ? ' has-error' : '' }}">
             <label>Password</label>
-            <input type="password" class="form-control" name="password" id="password" required>
-            <div class="error-password"></div>
+            <input type="password" class="form-control" name="password" id="password" >
+            @if ($errors->has('password'))
+                <span class="help-block">
+                    <strong>{{ $errors->first('password') }}</strong>
+                </span>
+            @endif
           </div>
 
-          <div class="form-group">
+          <div class="form-group {{ $errors->has('phone') ? ' has-error' : '' }}">
             <label>No Telepon</label>
-            <input type="text" class="form-control" name="phone" id="phone" required>
-            <div class="error-phone"></div>
+            <input type="text" class="form-control" name="phone" id="phone" >
+            @if ($errors->has('phone'))
+                <span class="help-block">
+                    <strong>{{ $errors->first('phone') }}</strong>
+                </span>
+            @endif
           </div>
 
-          <div class="form-group">
+          <div class="form-group {{ $errors->has('email') ? ' has-error' : '' }}">
             <label>E-Mail Address</label>
-            <input type="text" class="form-control" name="email" id="email" required>
-            <div class="error-email"></div>
+            <input type="text" class="form-control" name="email" id="email" >
+            @if ($errors->has('email'))
+                <span class="help-block">
+                    <strong>{{ $errors->first('email') }}</strong>
+                </span>
+            @endif
           </div>
 
           <div class="form-group text-center"><label>Sudah punya akun? <a href="{{url('/login')}}">Login</a></label></div>
@@ -87,72 +111,17 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
+
+<div class="modal fade" role="dialog" id="form-modal-loading">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+              <p>Loading.....</p>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
 </body>
     <!-- /.login-box -->
-    <script src="{{ mix('js/all.js') }}"></script>
-    <script>
-        $(function() {
-            var formModal = $('#form-modal');
-            $(document).on('submit','#form-me',function (event) {
-              event.preventDefault();
-              var formMe = $(this)
-              var attErrorBdn_usaha = formMe.find('.error-bdn_usaha')
-              var attErrorNm_vendor = formMe.find('.error-nm_vendor')
-              var attErrorNm_vendor_uq = formMe.find('.error-nm_vendor_uq')
-              var attErrorPassword = formMe.find('.error-password')
-              var attErrorPhone = formMe.find('.error-phone')
-              var attErrorEmail = formMe.find('.error-email')
-              attErrorBdn_usaha.html('')
-              attErrorNm_vendor.html('')
-              attErrorNm_vendor_uq.html('')
-              attErrorPassword.html('')
-              attErrorPhone.html('')
-              attErrorEmail.html('')
 
-              $.ajax({
-                  headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                  url: "{{ route('usersupplier.add') }}",
-                  type: 'get',
-                  data: formMe.serialize(), // Remember that you need to have your csrf token included
-                  dataType: 'json',
-
-                  success: function( _response ){
-                      // Handle your response..
-                      console.log(_response)
-                      if(_response.errors){
-                          if(_response.errors.bdn_usaha){
-                              attErrorBdn_usaha.html('<span class="text-danger">'+_response.errors.bdn_usaha+'</span>');
-                          }
-                          if(_response.errors.company_name){
-                              attErrorNm_vendor.html('<span class="text-danger">'+_response.errors.company_name+'</span>');
-                          }
-                          if(_response.errors.initial_company_name){
-                              attErrorNm_vendor_uq.html('<span class="text-danger">'+_response.errors.initial_company_name+'</span>');
-                          }
-                          if(_response.errors.password){
-                              attErrorPassword.html('<span class="text-danger">'+_response.errors.password+'</span>');
-                          }
-                          if(_response.errors.phone){
-                              attErrorPhone.html('<span class="text-danger">'+_response.errors.phone+'</span>');
-                          }
-                          if(_response.errors.email){
-                              attErrorEmail.html('<span class="text-danger">'+_response.errors.email+'</span>');
-                          }
-                      }
-                      else{
-                          document.getElementById("form-me").reset();
-                          $('#form-modal').modal('show')
-                      }
-                  },
-                  // error: function( _response ){
-                  //   alert("Ada kesalahan pada pengisian data.");
-                  // }
-              });
-              })
-            });
-
-              function reload(){
-                location.reload();
-              }
-        </script>
 </html>

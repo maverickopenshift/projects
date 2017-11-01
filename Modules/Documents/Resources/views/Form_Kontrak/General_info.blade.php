@@ -57,14 +57,13 @@
             </div>
           </div>
           <div class="form-group {{ $errors->has('metode_pengadaan') ? ' has-error' : '' }}">
-            <label for="metode_pengadaan" class="col-sm-2 control-label"><span class="text-red">*</span> Metode Pengadaan</label>
+            <label for="metode_pengadaan" class="col-sm-2 control-label"><span class="text-red">*</span> Cara Pengadaan</label>
             <div class="col-sm-10">
-              <label class="radio-inline" style="padding-left:7px">
-                <input class="check-me" type="radio" value="1" name="metode_pengadaan" {{!old('metode_pengadaan')?'checked':''}} {{old('metode_pengadaan')=='1'?'checked':''}}> PL
-              </label>
-              <label class="radio-inline">
-                <input class="check-me" type="radio" value="2" name="metode_pengadaan" {{old('metode_pengadaan')=='2'?'checked':''}}> TL
-              </label>
+              <select class="form-control">
+                <option value="">Pelelangan</option>
+                <option value="">Pemilihan Langsung</option>
+                <option value="">Penunjukan Langsung</option>
+              </select>
               @if ($errors->has('metode_pengadaan'))
                   <span class="help-block">
                       <strong>{{ $errors->first('metode_pengadaan') }}</strong>
@@ -84,7 +83,7 @@
             </div>
           </div>
           <div class="form-group {{ $errors->has('unit_penanggung_jawab') ? ' has-error' : '' }}">
-            <label for="unit_penanggung_jawab" class="col-sm-2 control-label"><span class="text-red">*</span> Unit Penanggung Jawab</label>
+            <label for="unit_penanggung_jawab" class="col-sm-2 control-label"><span class="text-red">*</span> Unit Penanggungjawab</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="unit_penanggung_jawab" value="{{ old('unit_penanggung_jawab') }}" placeholder="Masukan Penanggung Jawab Kontrak" autocomplete="off">
               @if ($errors->has('unit_penanggung_jawab'))

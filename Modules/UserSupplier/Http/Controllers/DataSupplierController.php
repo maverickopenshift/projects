@@ -13,7 +13,6 @@ use Modules\Supplier\Entities\Supplier;
 use Modules\Supplier\Entities\SupplierMetadata;
 use Datatables;
 use Validator;
-use Response;
 
 class DataSupplierController extends Controller
 {

@@ -25,14 +25,6 @@ class DataSupplierController extends Controller
       $username=auth()->user()->username;
       $sql = supplier::where('kd_vendor','=',$username)->first();
 
-    //   if($sql == 0){
-    //     $notif = "Mohon lengkapi data vendor.";
-    //     $tombol = "0";
-    //   }else{
-    //
-    // }
-    //   else{
-    //       foreach ($data as $datas){
     $notif = "Data belum Disetujui oleh Admin";
             if($sql){
               if($sql->vendor_status  == '1'){

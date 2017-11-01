@@ -43,8 +43,8 @@ class CustomErrors
             'email.email' => 'Email harus format email',
 
             'password.required' => 'Password harus diisi',
-            'password.max' => 'Email maksimal 50 karakter',
-            'password.min' => 'Email minimal 6 karakter',
+            'password.max' => 'Password maksimal 50 karakter',
+            'password.min' => 'Password minimal 6 karakter',
 
             'web_site.url' => 'Format Website salah',
 
@@ -190,6 +190,34 @@ class CustomErrors
             'sertifikat_dokumen.*.file.required' => 'File Sertifikat harus diisi',
             'sertifikat_dokumen.*.file.mimes' => 'File Sertifikat harus format PDF',
 
+          ];
+  }
+
+  public static function profile_user(){
+    return [
+            'nama_user.max' => 'Nama maksimal 500 karakter',
+            'nama_user.min' => 'Nama minimal 3 karakter',
+            'nama_user.required' => 'Nama harus diisi',
+            'nama_user.regex' => 'Nama harus huruf',
+
+            'phone.required' => 'Telepon harus diisi',
+            'nama_user.regex' => 'Telepon harus angka',
+            'phone.digits_between' => 'Telepon harus diantara 7 sampai 20 digit',
+
+            'email.required' => 'Email harus diisi',
+            'email.max' => 'Email maksimal 50 karakter',
+            'email.min' => 'Email minimal 4 karakter',
+            'email.email' => 'Email harus format email',
+
+            'password.required' => 'Password harus diisi',
+            'password.min' => 'Password minimal 6 karakter',
+
+            'new_password.required' => 'Password harus diisi',
+            'new_password.min' => 'Password minimal 6 karakter',
+
+            'password_confirmation.required' => 'Password harus diisi',
+            'password_confirmation.min' => 'Password minimal 6 karakter',
+            'password_confirmation.same' => 'Password Konformasi tidak sama',
           ];
   }
 }

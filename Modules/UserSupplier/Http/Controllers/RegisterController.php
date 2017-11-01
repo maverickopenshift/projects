@@ -8,7 +8,10 @@ use Illuminate\Routing\Controller;
 use Modules\Supplier\Entities\Supplier;
 use App\User;
 use App\Role;
+use Illuminate\Support\Facades\Log;
 // use App\supplier;
+
+use App\Mail\SendEmail;
 use Mail;
 use Validator;
 use Response;
@@ -35,10 +38,11 @@ class RegisterController extends Controller
              'email'                => 'required|email|unique:users,email',
          );
          $validator = Validator::make($request->all(), $rules);
-         if ($validator->fails ())
-             return Response::json (array(
-                 'errors' => $validator->getMessageBag()->toArray()
-             ));
+         if ($validator->fails ()){
+           return redirect()->back()
+                       ->withInput($request->input())
+                       ->withErrors($validator);
+         }
          else {
          $kd_vendor = $this->generate_id();
          $inisial = $request->initial_company_name;
@@ -58,21 +62,24 @@ class RegisterController extends Controller
          $data->attachRole('vendor');
 
 //EMAIL
-        $data2 = array(
-          'username'=>$kd_vendor,
-          'email'=>$request->email,
-          'nama'=>$request->company_name
-        );
-        $us=$data2['username'];
+        // $data2 = array(
+        //   'username'=>$kd_vendor,
+        //   'email'=>$request->email,
+        //   'nama'=>$request->company_name
+        // );
+        // $us=$data2['username'];
 
-        Mail::send('usersupplier::notifEmail', ['data2' => $data2] , function($message) use($data2)
-        {
-          $message->to($data2['email'], $data2['nama'])->subject('Welcome!');
-          $message->from('inartdemo@gmail.com','Do Not Reply');
-        });
+        $sendTo = $request->input('email');
+        $subject = 'Do Not Reply';
+        $mail_message = $kd_vendor;
+
+        Log::info('Start');
+        Mail::to($sendTo)
+            ->queue(new SendEmail($mail_message, $subject));
+        log::info('End');
 
        }
-         return response()->json($data);
+         return redirect()->back()->withData($data)->with('message', 'Data berhasil disimpan!');
      }
 
      private function generate_id(){

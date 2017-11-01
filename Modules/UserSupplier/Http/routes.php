@@ -5,7 +5,7 @@ Route::group(['middleware' => 'web', 'prefix' => 'usersupplier', 'namespace' => 
   Route::get('/', 'UserSupplierController@index')->name('usersupplier');
   Route::get('/register', 'RegisterController@index')->name('usersupplier.register');
 
-  Route::get('/register/add', 'RegisterController@add')  ->name('usersupplier.add');
+  Route::post('/register/add', 'RegisterController@add')  ->name('usersupplier.add');
   Route::get('/NotifEmail', ['middleware' => ['role:vendor'],'uses' => 'RegisterController@NotifEmail'])
   ->name('usersupplier.notifemail');
 

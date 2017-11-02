@@ -27,7 +27,7 @@
                   <ul class="treeview-menu ">
                     <li class="{{Request::is("documents/create/khs")?'active':''}}" ><a href="{{route('doc.create',['type'=>'khs'])}}">KHS</a></li>
                     <li class="{{Request::is("documents/create/turnkey")?'active':''}}" ><a href="{{route('doc.create',['type'=>'turnkey'])}}">Turnkey</a></li>
-                    <li class="#" ><a href="#">Surat Pesanan (SP)</a></li>
+                    <li class="{{Request::is("documents/create/sp")?'active':''}}" ><a href="{{route('doc.create',['type'=>'sp'])}}">Surat Pesanan (SP)</a></li>
                     <li class="#" ><a href="#">Amandemen (SP)</a></li>
                     <li class="#" ><a href="#">Amandemen Kontrak</a></li>
                     <li class="#" ><a href="#">Adendum</a></li>

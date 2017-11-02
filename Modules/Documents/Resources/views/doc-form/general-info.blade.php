@@ -8,34 +8,59 @@
     <div class="box-body">
       <div class="form-horizontal">
           <div class="form-group">
-            <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Judul Kontrak</label>
+            <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Judul {{$doc_type['title']}}</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="nm_vendor" value=""  placeholder="Masukan Judul Kontrak" autocomplete="off">
             </div>
           </div>
           <div class="form-group">
-            <label for="deskripsi_kontrak" class="col-sm-2 control-label"><span class="text-red">*</span> Deskripsi Kontrak</label>
+            <label for="deskripsi_kontrak" class="col-sm-2 control-label"><span class="text-red">*</span> Deskripsi {{$doc_type['title']}}</label>
             <div class="col-sm-10">
               <textarea class="form-control" rows="4" name="deskripsi_kontrak" placeholder="Masukan Deskripsi Kontrak"></textarea>
             </div>
           </div>
           <div class="form-group">
-            <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Jenis Kontrak</label>
+            <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Jenis {{$doc_type['title']}}</label>
             <div class="col-sm-3">
               {!!Helper::select_jenis($doc_type->name)!!}
             </div>
           </div>
-          <div class="form-group">
-            <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Kontrak</label>
-            <div class="col-sm-3">
-              <div class="input-group date" data-provide="datepicker">
-                  <div class="input-group-addon">
-                      <span class="fa fa-calendar"></span>
-                  </div>
-                  <input type="text" class="form-control" name="akte_awal_tg" value="" autocomplete="off">
+          @if($doc_type->name=="sp")
+            <div class="form-group">
+              <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Mulai {{$doc_type['title']}}</label>
+              <div class="col-sm-3">
+                <div class="input-group date" data-provide="datepicker">
+                    <div class="input-group-addon">
+                        <span class="fa fa-calendar"></span>
+                    </div>
+                    <input type="text" class="form-control" name="doc_startdate" value="" autocomplete="off">
+                </div>
               </div>
             </div>
-          </div>
+            <div class="form-group">
+              <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Akhir {{$doc_type['title']}}</label>
+              <div class="col-sm-3">
+                <div class="input-group date" data-provide="datepicker">
+                    <div class="input-group-addon">
+                        <span class="fa fa-calendar"></span>
+                    </div>
+                    <input type="text" class="form-control" name="doc_enddate" value="" autocomplete="off">
+                </div>
+              </div>
+            </div>
+          @else
+            <div class="form-group">
+              <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal {{$doc_type['title']}}</label>
+              <div class="col-sm-3">
+                <div class="input-group date" data-provide="datepicker">
+                    <div class="input-group-addon">
+                        <span class="fa fa-calendar"></span>
+                    </div>
+                    <input type="text" class="form-control" name="akte_awal_tg" value="" autocomplete="off">
+                </div>
+              </div>
+            </div>
+          @endif
           <div class="form-group">
             <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Pihak I</label>
             <div class="col-sm-6">
@@ -74,30 +99,91 @@
               </div>
             </div>
           </div>
-          <div class="form-group">
-            <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Cara Pengadaan</label>
-            <div class="col-sm-3">
-              <select class="form-control" name="prinsipal_st">
-                <option value="1">Pelanggan</option>
-                <option value="0">Pemilihan Langsung</option>
-                <option value="2">Penunjukan Langsung</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Nilai Kontrak</label>
-            <div class="col-sm-3">
-              <div class="input-group">
-                <!-- <span class="input-group-addon" id="asset">Rp.</span> -->
-                <select class="form-control" name="nilai">
-                  <option>Rp.</option>
-                  <option>USD</option>
+          @if($doc_type->name!="sp")
+            <div class="form-group">
+              <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Cara Pengadaan</label>
+              <div class="col-sm-3">
+                <select class="form-control" name="prinsipal_st">
+                  <option value="1">Pelanggan</option>
+                  <option value="0">Pemilihan Langsung</option>
+                  <option value="2">Penunjukan Langsung</option>
                 </select>
               </div>
-              <input type="text" name="asset" class="form-control" autocomplete="off">
             </div>
-          </div>
-
+          @endif
+            <div class="form-group">
+              <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Mata Uang</label>
+              <div class="col-sm-1">
+                <select class="form-control mata-uang" name="doc_mtu">
+                  <option value="RP">Rp.</option>
+                  <option value="USD">USD</option>
+                </select>
+              </div>
+            </div>
+          @if($doc_type->name!="sp")
+            <div class="form-group">
+              <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Nilai Kontrak</label>
+              <div class="col-sm-3">
+                <div class="input-group">
+                  <div class="input-group-addon mtu-set">
+                  </div>
+                  <input type="text" class="form-control" name="doc_value">
+                </div>
+              </div>
+            </div>
+          @endif
+          @if($doc_type->name=="sp")
+            <div class="form-group">
+              <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Nilai SP</label>
+              <div class="col-sm-10">
+                <table class="table table-bordered table-latar">
+                  <thead>
+                  <tr>
+                    <th>Material</th>
+                    <th>Jasa</th>
+                    <th>Total</th>
+                    <th>PPN</th>
+                    <th>Total PPN</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                      <td>
+                        <div class="input-group">
+                          <span class="input-group-addon mtu-set"></span>
+                          <input type="text" class="form-control" name="doc_nilai_material" autocomplete="off">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="input-group">
+                          <span class="input-group-addon mtu-set"></span>
+                          <input type="text" class="form-control" name="doc_nilai_jasa" autocomplete="off">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="input-group">
+                          <span class="input-group-addon mtu-set"></span>
+                          <input type="text" class="form-control" name="doc_nilai_total" autocomplete="off">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="input-group">
+                          <span class="input-group-addon mtu-set"></span>
+                          <input type="text" class="form-control" name="doc_nilai_ppn" autocomplete="off">
+                        </div>
+                      </td>
+                      <td>
+                        <div class="input-group">
+                          <span class="input-group-addon mtu-set"></span>
+                          <input type="text" class="form-control" name="doc_nilai_total_ppn" autocomplete="off">
+                        </div>
+                      </td>
+                    </tr>
+                </tbody>
+                </table>
+              </div>
+            </div>
+          @endif
           <div class="form-group">
             <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Unit Penanggungjawab PIC</label>
             <div class="col-sm-3">
@@ -120,7 +206,7 @@
                 </thead>
             </table>
           </div>
-          @if($doc_type['title']=="Turnkey")
+          @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
           <div class="form-group">
             <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> PO</label>
             <div class="col-sm-4">
@@ -179,6 +265,7 @@
 @push('scripts')
 <script>
 $(function() {
+  $('.mtu-set').text($('.mata-uang').val());
   $(".select-user-telkom").select2({
       placeholder : "Pilih Penanggung....",
       ajax: {
@@ -365,6 +452,11 @@ $('#pictable').on('xhr.dt', function ( e, settings, json, xhr ) {
   // $("#store_id").change(function () {
   //        alert('hai');
   //    });
+});
+$(document).on('change', '.mata-uang', function(event) {
+  event.preventDefault();
+  /* Act on the event */
+  $('.mtu-set').html($(this).val())
 });
 </script>
 @endpush

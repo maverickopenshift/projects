@@ -30,20 +30,24 @@
           </div>
           <div class="form-group">
             <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Mulai</label>
-            <div class="input-group date" data-provide="datepicker">
-                <div class="input-group-addon">
-                    <span class="fa fa-calendar"></span>
-                </div>
-                <input type="text" class="form-control" name="akte_awal_tg" value="{{ old('akte_awal_tg',Helper::prop_exists($data,'akte_awal_tg')) }}" autocomplete="off">
+            <div class="col-sm-3">
+              <div class="input-group date" data-provide="datepicker">
+                  <div class="input-group-addon">
+                      <span class="fa fa-calendar"></span>
+                  </div>
+                  <input type="text" class="form-control" name="akte_awal_tg" value="{{ old('akte_awal_tg',Helper::prop_exists($data,'akte_awal_tg')) }}" autocomplete="off">
+              </div>
             </div>
           </div>
           <div class="form-group">
             <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Akhir</label>
-            <div class="input-group date" data-provide="datepicker">
+            <div class="col-sm-3">
+              <div class="input-group date" data-provide="datepicker">
                 <div class="input-group-addon">
                     <span class="fa fa-calendar"></span>
                 </div>
                 <input type="text" class="form-control" name="akte_awal_tg" value="{{ old('akte_awal_tg',Helper::prop_exists($data,'akte_awal_tg')) }}" autocomplete="off">
+              </div>
             </div>
           </div>
           <div class="form-group">

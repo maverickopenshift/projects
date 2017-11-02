@@ -335,7 +335,6 @@ $(function() {
   });
 
 $("#pic").on("change", function () {
-alert($("#pic").val());
 
 $('.parent-pictable').show();
 $('#pictable').DataTable().destroy();

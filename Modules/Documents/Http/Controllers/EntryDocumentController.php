@@ -38,6 +38,7 @@ class EntryDocumentController extends Controller
         $field = Documents::get_fields();
         $data['page_title'] = 'Entry Kontrak - '.$doc_type['title'];
         $data['doc_type'] = $doc_type;
+        // dd($doc_type);
         $data['data'] = $this->fields;
         return view('documents::form')->with($data);
     }

@@ -82,4 +82,15 @@ class DocumentsController extends Controller
           ->addIndexColumn()
           ->make(true);
     }
+    public function getPic(Request $request){
+      $search = trim($request->pic);
+
+      if (empty($search)) {
+          abort(500);
+      }
+      $sql = \DB::table('dummy_pic')->where('nik','=',$search)->get();
+      return Datatables::of($sql)
+          ->addIndexColumn()
+          ->make(true);
+    }
 }

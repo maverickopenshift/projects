@@ -5,6 +5,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
     Route::get('/', 'DocumentsController@index')->name('doc');
     Route::get('/create/{type}', 'EntryDocumentController@index')->name('doc.create');
     Route::get('/get-po', 'DocumentsController@getPo')->name('doc.get-po');
+    Route::get('/get-pic', 'DocumentsController@getPic')->name('doc.get-pic');
 
     Route::get('/doc-template', ['middleware' => ['permission:lihat-template-pasal-pasal'],'uses' => 'DocTemplateController@index'])->name('doc.template');
     Route::get('/doc-template/data', ['middleware' => ['permission:lihat-template-pasal-pasal'],'uses' => 'DocTemplateController@data'])->name('doc.template.data');

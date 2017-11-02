@@ -17,6 +17,7 @@
               <textarea class="form-control" cols="4" rows="4"></textarea>
             </div>
           </div>
+          @if($doc_type['title']=="KHS")
           <div class="form-group top20">
             <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Daftar Harga Satuan</label>
             <div class="col-sm-10">
@@ -25,6 +26,23 @@
               <span class="error error-boq text-danger"></span>
             </div>
           </div>
+          <div class="parent-datatables" style="display:none;">
+            <table class="table table-condensed table-striped" id="datatables">
+                <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Kode Item</th>
+                    <th>Item</th>
+                    <th>Satuan</th>
+                    <th>MTU</th>
+                    <th width="">Harga</th>
+                    <th width="">Keterangan</th>
+                    <th class="text-right"><button type="button" class="btn btn-success btn-xs" id="addRow"><i class="glyphicon glyphicon-plus"></i> tambah</button></th>
+                </tr>
+                </thead>
+            </table>
+          </div>
+          @endif
           @if($doc_type['title']=="Turnkey")
           <div class="form-group top20">
             <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> BoQ</label>

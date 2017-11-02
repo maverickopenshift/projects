@@ -21,13 +21,13 @@
           <div class="form-group top20">
             <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Daftar Harga Satuan</label>
             <div class="col-sm-10">
-              <input type="file" name="boq_file" class="boq_file hide"/>
-              <button class="btn btn-success upload-boq" type="button">Upload Daftar Harga</button>
-              <span class="error error-boq text-danger"></span>
+              <input type="file" name="daftar_harga" class="daftar_harga hide"/>
+              <button class="btn btn-success upload-daftar_harga" type="button">Upload Daftar Harga</button>
+              <span class="error error-daftar_harga text-danger"></span>
             </div>
           </div>
           <div class="parent-datatables" style="display:none;">
-            <table class="table table-condensed table-striped" id="datatables">
+            <table class="table table-condensed table-striped" id="datatablesHarga">
                 <thead>
                 <tr>
                     <th>No.</th>
@@ -37,7 +37,7 @@
                     <th>MTU</th>
                     <th width="">Harga</th>
                     <th width="">Keterangan</th>
-                    <th class="text-right"><button type="button" class="btn btn-success btn-xs" id="addRow"><i class="glyphicon glyphicon-plus"></i> tambah</button></th>
+                    <th class="text-right"><button type="button" class="btn btn-success btn-xs" id="addRowHarga"><i class="glyphicon glyphicon-plus"></i> tambah</button></th>
                 </tr>
                 </thead>
             </table>
@@ -177,5 +177,20 @@ function handleFileSelect(file) {
     }
   });
 }
+
+$(function() {
+  $('.upload-daftar_harga').on('click', function(event) {
+    /* Act on the event */
+    event.stopPropagation();
+    event.preventDefault();
+    $('.error-daftar_harga').html('');
+    var $file = $('.daftar_harga').click();
+  });
+  $('.daftar_harga').on('change', function(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    handleFileSelect(this.files[0]);
+  });
+});
 </script>
 @endpush

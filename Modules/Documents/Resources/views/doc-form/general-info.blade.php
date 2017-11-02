@@ -1,7 +1,7 @@
 <div class="box">
     <div class="box-header with-border">
       <h3 class="box-title">
-          General Info
+          General Info {{$doc_type['title']}}
       </h3>
     </div>
     <!-- /.box-header -->
@@ -11,6 +11,12 @@
             <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Judul Kontrak</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="nm_vendor" value=""  placeholder="Masukan Judul Kontrak" autocomplete="off">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="deskripsi_kontrak" class="col-sm-2 control-label"><span class="text-red">*</span> Deskripsi Kontrak</label>
+            <div class="col-sm-10">
+              <textarea class="form-control" rows="4" name="deskripsi_kontrak" placeholder="Masukan Deskripsi Kontrak"></textarea>
             </div>
           </div>
           <div class="form-group">
@@ -33,7 +39,13 @@
           <div class="form-group">
             <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Pihak I</label>
             <div class="col-sm-6">
-              <input type="text" class="form-control" name="nm_vendor" value="PT. TELEKOMUNIKASI INDONESIA Tbk"  placeholder="Masukan Judul Kontrak" autocomplete="off" disabled>
+              <input type="text" class="form-control" name="nm_vendor" value="PT. TELEKOMUNIKASI INDONESIA Tbk"  placeholder="Masukan Judul Kontrak" autocomplete="off">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="ttd_pihak1" class="col-sm-2 control-label"><span class="text-red">*</span>Penandatangan Pihak I</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" name="ttd_pihak1" value=""  placeholder="Masukan Nama Penandatanganan Pihak I" autocomplete="off">
             </div>
           </div>
           <div class="form-group">
@@ -42,6 +54,24 @@
               <select class="form-control select-user-vendor" style="width: 100%;" name="store_id" id="store_id">
                   <option value="">Pilih Pihak II</option>
               </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Penandatangan Pihak II</label>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" name="ttd_pihak2" value=""  placeholder="Masukan Nama Penandatanganan Pihak II" autocomplete="off">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Lampiran 1</label>
+            <div class="col-sm-6">
+              <div class="input-group">
+                <input type="file" class="hide" name="legal_dokumen[][file]">
+                <input class="form-control" type="text" disabled>
+                <span class="input-group-btn">
+                  <button class="btn btn-default click-upload" type="button">Browse</button>
+                </span>
+              </div>
             </div>
           </div>
           <div class="form-group">
@@ -58,20 +88,39 @@
             <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Nilai Kontrak</label>
             <div class="col-sm-3">
               <div class="input-group">
-                <span class="input-group-addon" id="asset">Rp.</span>
-                <input type="text" name="asset" class="form-control" autocomplete="off">
+                <!-- <span class="input-group-addon" id="asset">Rp.</span> -->
+                <select class="form-control" name="nilai">
+                  <option>Rp.</option>
+                  <option>USD</option>
+                </select>
               </div>
+              <input type="text" name="asset" class="form-control" autocomplete="off">
             </div>
           </div>
-          
+
           <div class="form-group">
             <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Unit Penanggungjawab PIC</label>
             <div class="col-sm-3">
-              <select class="form-control select-user-telkom" style="width: 100%;" name="store_id" id="store_id">
+              <select class="form-control select-user-telkom" style="width: 100%;" name="pict" id="pict">
                   <option value="">Pilih Penanggungjawab</option>
               </select>
             </div>
           </div>
+          <div class="parent-pictable" style="display:none;">
+            <table class="table table-condensed table-striped" id="pictable">
+                <thead>
+                <tr>
+                    <th>NIK</th>
+                    <th>Nama</th>
+                    <th>Loker</th>
+                    <th>Posisi</th>
+                    <th>No Telepon</th>
+                    <th>Email</th>
+                </tr>
+                </thead>
+            </table>
+          </div>
+          @if($doc_type['title']=="Turnkey")
           <div class="form-group">
             <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> PO</label>
             <div class="col-sm-4">
@@ -85,6 +134,25 @@
             <span class="error error-po text-danger"></span>
           </div>
           <div class="parent-potables" style="display:none;">
+            <table class="table table-condensed" id="potables">
+              <tbody class="col-sm-8">
+              <tr>
+                <td class="col-sm-1">No PO </td>
+                <td class="col-sm-1"> : </td>
+                <td class="col-sm-4">02452332 </td>
+              </tr>
+              <tr>
+                <td>Nama Pembuat</td>
+                <td> : </td>
+                <td>ajsjadhsjad</td>
+              </tr>
+              <tr>
+                <td>Tanggal PO</td>
+                <td> : </td>
+                <td>27 Agustus 2017</td>
+              <tr>
+              </tbody>
+            </table>
             <table class="table table-condensed table-striped" id="potables">
                 <thead>
                 <tr>
@@ -102,6 +170,7 @@
                 </thead>
             </table>
           </div>
+          @endif
           {{-- @include('documents::partials.buttons') --}}
       </div>
     </div>
@@ -154,7 +223,7 @@ $(function() {
       templateResult: function (state) {
           if (state.id === undefined || state.id === "") { return ; }
           var $state = $(
-              '<span>' +  state.name +' <i>('+  state.username + ')</i></span>'
+              '<span id="pic">' +  state.name +' <i>('+  state.username + ')</i></span>'
           );
           return $state;
       },
@@ -264,6 +333,39 @@ $(function() {
         ]
     });
   });
+
+$("#pic").on("change", function () {
+alert($("#pic").val());
+
+$('.parent-pictable').show();
+$('#pictable').DataTable().destroy();
+$('#pictable').on('xhr.dt', function ( e, settings, json, xhr ) {
+    if(xhr.responseText=='Unauthorized.'){
+      location.reload();
+    }
+    }).DataTable({
+    processing: true,
+    serverSide: true,
+    autoWidth : false,
+    order : [[ 1, 'desc' ]],
+    pageLength: 10,
+    ajax: '{!! route('doc.get-pic') !!}?nik=123456',
+    columns: [
+        {data : 'DT_Row_Index',orderable:false,searchable:false},
+        { data: 'nik', name: 'nik' },
+        { data: 'nama', name: 'nama' },
+        { data: 'loker', name: 'loker' },
+        { data: 'posisi', name: 'posisi' },
+        { data: 'phone', name: 'phone' },
+        { data: 'email', name: 'email' },
+    ]
+});
+ });
+
+  //
+  // $("#store_id").change(function () {
+  //        alert('hai');
+  //    });
 });
 </script>
 @endpush

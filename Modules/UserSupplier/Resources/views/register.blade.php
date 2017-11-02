@@ -111,16 +111,6 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
-
-<div class="modal fade" role="dialog" id="form-modal-loading">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-body">
-              <p>Loading.....</p>
-            </div>
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div>
 </body>
     <!-- /.login-box -->
 

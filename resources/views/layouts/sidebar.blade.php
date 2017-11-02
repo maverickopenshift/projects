@@ -17,7 +17,7 @@
                     <span>Dashboard</span></a>
             </li>
             @endpermission
-            
+
             <li class="treeview {{Request::is("documents/*") || Request::is("users")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management Kontrak" />
                 <span>Manajemen Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
@@ -26,7 +26,7 @@
                   <a href="#"><span>Tambah Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
                   <ul class="treeview-menu ">
                     <li class="{{Request::is("documents/create/khs")?'active':''}}" ><a href="{{route('doc.create',['type'=>'khs'])}}">KHS</a></li>
-                    <li class="#" ><a href="#">Turnkey</a></li>
+                    <li class="{{Request::is("documents/create/turnkey")?'active':''}}" ><a href="{{route('doc.create',['type'=>'turnkey'])}}">Turnkey</a></li>
                     <li class="#" ><a href="#">Surat Pesanan (SP)</a></li>
                     <li class="#" ><a href="#">Amandemen (SP)</a></li>
                     <li class="#" ><a href="#">Amandemen Kontrak</a></li>
@@ -101,7 +101,7 @@
               </ul>
             </li>
             @endpermission
-            
+
             @permission('lihat-supplier|lihat-klasifikasi-usaha|lihat-badan-usaha')
             <li class="treeview {{Request::is("supplier/*") || Request::is("supplier")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management Supplier" />

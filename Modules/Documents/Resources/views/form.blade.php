@@ -1,19 +1,28 @@
 @extends('layouts.app')
 
 @section('content')
-  
-    
+
+
     <form action="#" method="post" enctype="multipart/form-data">
     {{ csrf_field() }}
     <div class="nav-tabs-custom">
+      @if($doc_type['title'] == "Turnkey")
         <ul class="nav nav-tabs">
-          <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO</a></li>
+          <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
           <li><a href="#tab_2" data-toggle="tab">SOW,BOQ</a></li>
           <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
           <li><a href="#tab_4" data-toggle="tab">PASAL PENTING</a></li>
           <li><a href="#tab_5" data-toggle="tab">JAMINAN DAN ASURANSI</a></li>
-          <li><a href="#tab_6" data-toggle="tab">DOKUMEN PENDUKUNG</a></li>
         </ul>
+      @else
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
+          <li><a href="#tab_2" data-toggle="tab">DAFTAR HARGA SATUAN</a></li>
+          <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
+          <li><a href="#tab_4" data-toggle="tab">PASAL PENTING</a></li>
+        </ul>
+      @endif
+
         <div class="tab-content">
           <div class="tab-pane active" id="tab_1">
             @include('documents::doc-form.general-info')
@@ -56,16 +65,6 @@
           </div>
           <div class="tab-pane" id="tab_5">
             @include('documents::doc-form.jaminan-asuransi')
-            <div class="clearfix"></div>
-            <div class="row">
-              <div class="col-sm-12">
-                <a class="btn btn-info btnPrevious" ><i class="glyphicon glyphicon-arrow-left"></i> Kembali</a>
-                <a class="btn btn-info btnNext pull-right" >Selanjutnya <i class="glyphicon glyphicon-arrow-right"></i></a>
-              </div>
-            </div>
-          </div>
-          <div class="tab-pane" id="tab_6">
-            @include('documents::doc-form.dokumen-pendukung')
             <div class="clearfix"></div>
             <div class="row">
               <div class="col-sm-12">

@@ -50,10 +50,9 @@ $(function() {
     mdf_new_row.eq(0).html(row.length+1);
     mdf_new_row.eq(1).find('input').val('');
     mdf_new_row.eq(1).find('.error').remove();
-    mdf_new_row.eq(2).html('');
+    mdf_new_row.eq(2).find('input').val('');
     mdf_new_row.eq(2).find('.error').remove();
     var id_editor = 'editor'+(row.length+1);
-    mdf_new_row.eq(2).html('<textarea  class="form-control" rows="5" name="isi[]" class="editor" id="'+id_editor+'"></textarea>');
     $this.find('tbody').append(new_row);
     var row = $this.find('tbody>tr');
     $.each(row,function(index, el) {

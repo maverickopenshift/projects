@@ -78,17 +78,17 @@ class DocumentsController extends Controller
           abort(500);
       }
       $sql = \DB::table('dummy_po')->where('no_po','=',$search)->get();
+      dd($sql);
       return Datatables::of($sql)
           ->addIndexColumn()
           ->make(true);
     }
     public function getPic(Request $request){
-      $search = trim($request->pic);
-
+      $search = trim($request->id_user);
       if (empty($search)) {
           abort(500);
       }
-      $sql = \DB::table('dummy_pic')->where('nik','=',$search)->get();
+      $sql = \DB::table('dummy_pic')->where('id_user','=',$search)->get();
       return Datatables::of($sql)
           ->addIndexColumn()
           ->make(true);

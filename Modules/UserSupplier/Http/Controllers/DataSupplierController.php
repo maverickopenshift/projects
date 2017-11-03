@@ -284,7 +284,7 @@ class DataSupplierController extends Controller
           $data->jml_peg_domestik = $request->jml_peg_domestik;
           $data->jml_peg_asing = $request->jml_peg_asing;
           $data->approval_at = \DB::raw('now()');
-          $data->vendor_status = 1;
+          $data->vendor_status = 0;
           $data->created_by = \Auth::user()->username;
           $data->save();
 

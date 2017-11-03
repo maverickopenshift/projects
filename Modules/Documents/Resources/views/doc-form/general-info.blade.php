@@ -23,6 +23,7 @@
             <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Jenis {{$doc_type['title']}}</label>
             <div class="col-sm-3">
               {!!Helper::select_jenis($doc_type->name)!!}
+              
             </div>
           </div>
           @if($doc_type->name=="sp")
@@ -64,7 +65,7 @@
           <div class="form-group">
             <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Pihak I</label>
             <div class="col-sm-6">
-              <input type="text" class="form-control" name="nm_vendor" value="PT. TELEKOMUNIKASI INDONESIA Tbk"  placeholder="Masukan Judul Kontrak" autocomplete="off">
+              <input type="text" class="form-control" name="pihak1" id="pihak1" value="PT. TELEKOMUNIKASI INDONESIA Tbk"  placeholder="Masukan Judul Kontrak" autocomplete="off">
             </div>
           </div>
           <div class="form-group">
@@ -196,12 +197,14 @@
             <table class="table table-condensed table-striped" id="pictable">
                 <thead>
                 <tr>
+                    <th>No.</th>
                     <th>NIK</th>
                     <th>Nama</th>
                     <th>Loker</th>
                     <th>Posisi</th>
                     <th>No Telepon</th>
                     <th>Email</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
             </table>
@@ -291,7 +294,7 @@ $(function() {
                   var o = {};
                   o.id = v.id;
                   o.name = v.name;
-                  o.value = v.id;
+                  o.value = v.username;
                   o.username = v.username;
                   results.push(o);
               })
@@ -310,7 +313,7 @@ $(function() {
       templateResult: function (state) {
           if (state.id === undefined || state.id === "") { return ; }
           var $state = $(
-              '<span id="pic">' +  state.name +' <i>('+  state.username + ')</i></span>'
+              '<span>' +  state.name +' <i>('+  state.username + ')</i></span>'
           );
           return $state;
       },
@@ -421,38 +424,39 @@ $(function() {
     });
   });
 
-$("#pic").on("change", function () {
-
-$('.parent-pictable').show();
-$('#pictable').DataTable().destroy();
-$('#pictable').on('xhr.dt', function ( e, settings, json, xhr ) {
-    if(xhr.responseText=='Unauthorized.'){
-      location.reload();
-    }
-    }).DataTable({
-    processing: true,
-    serverSide: true,
-    autoWidth : false,
-    order : [[ 1, 'desc' ]],
-    pageLength: 10,
-    ajax: '{!! route('doc.get-pic') !!}?nik=123456',
-    columns: [
-        {data : 'DT_Row_Index',orderable:false,searchable:false},
-        { data: 'nik', name: 'nik' },
-        { data: 'nama', name: 'nama' },
-        { data: 'loker', name: 'loker' },
-        { data: 'posisi', name: 'posisi' },
-        { data: 'phone', name: 'phone' },
-        { data: 'email', name: 'email' },
-    ]
-});
+    $("#pict").on("change", function () {
+    // pict
+    var id_user = $('.select-user-telkom').val();
+    $('.parent-pictable').show();
+    $('#pictable').DataTable().destroy();
+    $('#pictable').on('xhr.dt', function ( e, settings, json, xhr ) {
+        if(xhr.responseText=='Unauthorized.'){
+          location.reload();
+        }
+        }).DataTable({
+        processing: true,
+        serverSide: true,
+        autoWidth : false,
+        order : [[ 1, 'desc' ]],
+        pageLength: 10,
+        ajax: '{!! route('doc.get-pic') !!}?id_user='+id_user,
+        columns: [
+            {data : 'DT_Row_Index',orderable:false,searchable:false},
+            { data: 'nik', name: 'nik' },
+            { data: 'nama', name: 'nama' },
+            { data: 'loker', name: 'loker' },
+            { data: 'posisi', name: 'posisi' },
+            { data: 'phone', name: 'phone' },
+            { data: 'email', name: 'email' },
+            { data:null,orderable:false,width:80,className:"text-center",searchable:false,render: function ( data, type, row ) {
+                  return '<button type="button" class="btn btn-danger btn-xs delete-tb"><i class="glyphicon glyphicon-remove"></i> hapus</button>';
+              }},
+        ]
+    });
  });
 
-  //
-  // $("#store_id").change(function () {
-  //        alert('hai');
-  //    });
 });
+
 $(document).on('change', '.mata-uang', function(event) {
   event.preventDefault();
   /* Act on the event */

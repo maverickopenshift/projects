@@ -28,8 +28,8 @@
                     <li class="{{Request::is("documents/create/khs")?'active':''}}" ><a href="{{route('doc.create',['type'=>'khs'])}}">KHS</a></li>
                     <li class="{{Request::is("documents/create/turnkey")?'active':''}}" ><a href="{{route('doc.create',['type'=>'turnkey'])}}">Turnkey</a></li>
                     <li class="{{Request::is("documents/create/sp")?'active':''}}" ><a href="{{route('doc.create',['type'=>'sp'])}}">Surat Pesanan (SP)</a></li>
-                    <li class="#" ><a href="#">Amandemen (SP)</a></li>
-                    <li class="#" ><a href="#">Amandemen Kontrak</a></li>
+                    <li class="{{Request::is("documents/create/amandemen-sp")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_sp'])}}">Amandemen (SP)</a></li>
+                    <li class="{{Request::is("documents/create/amandemen-kontrak")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_kontrak'])}}">Amandemen Kontrak</a></li>
                     <li class="#" ><a href="#">Adendum</a></li>
                     <li class="#" ><a href="#">Side Letter</a></li>
                     <li class="#" ><a href="#">Surat Pengikatan</a></li>

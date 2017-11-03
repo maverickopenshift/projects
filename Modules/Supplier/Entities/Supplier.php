@@ -22,7 +22,7 @@ class Supplier extends Model
       $pattern = "V";
       $cekid=$pattern.$tgl.$bln.$thn."0001";
       $count = DB::table('users')->where('username',$cekid)->count();
-        if($count==0){ 
+        if($count==0){
           $nextplgnya=$cekid;
         }
         else{
@@ -30,17 +30,19 @@ class Supplier extends Model
           $dt = DB::table('users')
                   ->select('username')
                   ->where([
-                      ['username', '=', DB::raw("(select max(`username`) from users)")], 
+                      ['username', 'like', 'v'.$tgl.$bln.$thn.'%'],
                       [DB::raw('DATE(created_at)'), '=', $today]
                    ])
                    ->orderBy('created_at','DESC')
                    ->first();
+
           $last = $dt->username;
-          $lastplg = substr($last, -4,4); 
+          $lastplg = substr($last, -4,4);
           $nextplg = $lastplg + 1;
           $idnya = sprintf('%04s', $nextplg);
           $nextplgnya=$pattern.$tgl.$bln.$thn.$idnya;
         }
+
         return $nextplgnya;
     }
 }

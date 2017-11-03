@@ -31,7 +31,7 @@
           <li><a href="#tab_4" data-toggle="tab">JAMINAN</a></li>
         </ul>
       @endif
-      @if($doc_type['title'] == "Amandemen")
+      @if($doc_type['title'] == "Amandemen SP" || $doc_type['title'] == "Amandemen Kontrak")
         <ul class="nav nav-tabs">
           <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
           <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
@@ -41,7 +41,11 @@
 
         <div class="tab-content">
           <div class="tab-pane active" id="tab_1">
-            @include('documents::doc-form.general-info')
+            @if($doc_type['title'] == "Amandemen SP" || $doc_type['title'] == "Amandemen Kontrak")
+              @include('documents::doc-form.amademen')
+            @else
+              @include('documents::doc-form.general-info')
+            @endif
             <div class="clearfix"></div>
             <div class="row">
               <div class="col-sm-12">

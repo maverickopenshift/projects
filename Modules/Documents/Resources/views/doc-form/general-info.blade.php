@@ -23,6 +23,7 @@
             <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Jenis {{$doc_type['title']}}</label>
             <div class="col-sm-3">
               {!!Helper::select_jenis($doc_type->name)!!}
+              
             </div>
           </div>
           @if($doc_type->name=="sp")
@@ -203,6 +204,7 @@
                     <th>Posisi</th>
                     <th>No Telepon</th>
                     <th>Email</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
             </table>
@@ -422,39 +424,39 @@ $(function() {
     });
   });
 
-$("#pict").on("change", function () {
-// pict
-var id_user = $('.select-user-telkom').val();
-$('.parent-pictable').show();
-$('#pictable').DataTable().destroy();
-$('#pictable').on('xhr.dt', function ( e, settings, json, xhr ) {
-    if(xhr.responseText=='Unauthorized.'){
-      location.reload();
-    }
-    }).DataTable({
-    processing: true,
-    serverSide: true,
-    autoWidth : false,
-    order : [[ 1, 'desc' ]],
-    pageLength: 10,
-    ajax: '{!! route('doc.get-pic') !!}?id_user='+id_user,
-    columns: [
-        {data : 'DT_Row_Index',orderable:false,searchable:false},
-        { data: 'nik', name: 'nik' },
-        { data: 'nama', name: 'nama' },
-        { data: 'loker', name: 'loker' },
-        { data: 'posisi', name: 'posisi' },
-        { data: 'phone', name: 'phone' },
-        { data: 'email', name: 'email' },
-    ]
-});
+    $("#pict").on("change", function () {
+    // pict
+    var id_user = $('.select-user-telkom').val();
+    $('.parent-pictable').show();
+    $('#pictable').DataTable().destroy();
+    $('#pictable').on('xhr.dt', function ( e, settings, json, xhr ) {
+        if(xhr.responseText=='Unauthorized.'){
+          location.reload();
+        }
+        }).DataTable({
+        processing: true,
+        serverSide: true,
+        autoWidth : false,
+        order : [[ 1, 'desc' ]],
+        pageLength: 10,
+        ajax: '{!! route('doc.get-pic') !!}?id_user='+id_user,
+        columns: [
+            {data : 'DT_Row_Index',orderable:false,searchable:false},
+            { data: 'nik', name: 'nik' },
+            { data: 'nama', name: 'nama' },
+            { data: 'loker', name: 'loker' },
+            { data: 'posisi', name: 'posisi' },
+            { data: 'phone', name: 'phone' },
+            { data: 'email', name: 'email' },
+            { data:null,orderable:false,width:80,className:"text-center",searchable:false,render: function ( data, type, row ) {
+                  return '<button type="button" class="btn btn-danger btn-xs delete-tb"><i class="glyphicon glyphicon-remove"></i> hapus</button>';
+              }},
+        ]
+    });
  });
 
-  //
-  // $("#store_id").change(function () {
-  //        alert('hai');
-  //    });
 });
+
 $(document).on('change', '.mata-uang', function(event) {
   event.preventDefault();
   /* Act on the event */

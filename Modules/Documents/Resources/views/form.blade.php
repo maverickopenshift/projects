@@ -14,12 +14,28 @@
           <li><a href="#tab_4" data-toggle="tab">PASAL PENTING</a></li>
           <li><a href="#tab_5" data-toggle="tab">JAMINAN DAN ASURANSI</a></li>
         </ul>
-      @else
+      @endif
+      @if($doc_type['title'] == "KHS")
         <ul class="nav nav-tabs">
           <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
           <li><a href="#tab_2" data-toggle="tab">DAFTAR HARGA SATUAN</a></li>
           <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
           <li><a href="#tab_4" data-toggle="tab">PASAL PENTING</a></li>
+        </ul>
+      @endif
+      @if($doc_type['title'] == "SP")
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
+          <li><a href="#tab_2" data-toggle="tab">SOW,BOQ</a></li>
+          <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
+          <li><a href="#tab_4" data-toggle="tab">JAMINAN</a></li>
+        </ul>
+      @endif
+      @if($doc_type['title'] == "Amandemen")
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
+          <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
+          <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
         </ul>
       @endif
 

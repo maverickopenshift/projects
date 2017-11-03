@@ -63,7 +63,7 @@
               </div>
             </div>
           </div>
-          <div class="tab-pane" id="tab_3">
+          <div class="tab-pane ok" id="tab_3">
             @include('documents::doc-form.latar-belakang')
             <div class="clearfix"></div>
             <div class="row">

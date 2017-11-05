@@ -45,7 +45,7 @@ class Helpers
             ->join('doc_category', 'doc_category.id', '=', 'doc_template.id_doc_category')
             ->select('doc_template.id','doc_category.title')
             ->where('doc_type.name','=',$type)->get();
-    $select  = '<select class="form-control" id="'.$name.'" name="'.$name.'" required>';
+    $select  = '<select class="form-control" id="'.$name.'" name="'.$name.'">';
     $select .= '<option value="">Pilih Jenis Kontrak</option>';
     foreach ($cat as $dt) {
       $selected = '';
@@ -119,6 +119,9 @@ class Helpers
       if(isset($obj->{$string})){
         return $obj->{$string};
       }
+      if(isset($obj[$string])){
+        return $obj[$string];
+      }
       if($type=='array'){
         return [];
       }
@@ -127,5 +130,35 @@ class Helpers
 
     public static function set_filename($kd_vendor,$name){
       return $kd_vendor.'_'.str_slug($name).'_'.time().'_'.str_random(5).'.pdf';
+    }
+    public static function error_help($obj,$val){
+      if ($obj->has($val)):
+          return '<span class="error help-block">
+              <strong>'.$obj->first($val).'</strong>
+          </span>';
+      endif;
+      return false;
+    }
+    public static function old_prop_each($obj,$val){
+      return old($val,self::prop_exists($obj,$val,'array'));
+    }
+    public static function old_prop($obj,$val){
+      return old($val,self::prop_exists($obj,$val));
+    }
+    
+    public static function old_prop_selected($obj,$key,$val){
+      return old($key,self::prop_exists($obj,$key))==$val?"selected='selected'":"";
+    }
+    
+    public static function input_rupiah($val){
+      if(!empty($val)){
+        $rp = preg_replace('/[^,\d]/','',$val);
+        $split = @explode(",",$rp);
+        if(count($split)==2){
+          return $split[0].'.'.$split[1];
+        }
+        return $rp;
+      }
+      return $val;
     }
 }

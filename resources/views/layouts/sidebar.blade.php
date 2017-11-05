@@ -12,13 +12,13 @@
               </a>
           </li>
             @permission('manajemen-dashboard')
-            <li class="treeview {{Request::is("documents")?'active':''}}">
+            <li class="treeview {{Request::is("documents/dasboard")?'active':''}}">
                 <a href="{{route('doc')}}"> <img src="{{asset('/images/icon-dashboard.png')}}" title="Dashboard" />
                     <span>Dashboard</span></a>
             </li>
             @endpermission
 
-            <li class="treeview {{Request::is("documents/*") || Request::is("users")?'active':''}}">
+            <li class="treeview {{Request::is("documents/*") || Request::is("documents")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management Kontrak" />
                 <span>Manajemen Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
@@ -35,7 +35,7 @@
                     <li class="#" ><a href="#">Surat Pengikatan</a></li>
                   </ul>
                 </li>
-                <li class="#" ><a href="#">Data Kontrak</a></li>
+                <li class="{{Request::is("documents")?'active':''}}" ><a href="{{route('doc')}}">Data Kontrak</a></li>
                 @permission('lihat-template-pasal-pasal')
                   <li class="{{Request::is("documents/doc-template") || Request::is("documents/doc-template/create") || Request::is("documents/doc-template/*/edit")?'active':''}}" ><a href="{{route('doc.template')}}">Template Pasal - Pasal</a></li>
                 @endpermission

@@ -142,7 +142,18 @@ class UsersController extends Controller
         $data = User::get_user_telkom($search)->paginate(30);
         return \Response::json($data);
     }
-
+    public function getSelectUserTelkomByNik(Request $request){
+        $search = trim($request->nik);
+        
+        if (empty($search)) {
+            return \Response::json([]);
+        }
+        $data = User::get_user_telkom_by_nik($search)->first();
+        if($data){
+          return \Response::json(array('status'=>true,'data'=>$data));
+        }
+        return \Response::json(array('status'=>false));
+    }
     public function getSelectUserVendor(Request $request){
         $search = trim($request->q);
 

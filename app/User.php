@@ -34,17 +34,18 @@ class User extends Authenticatable
         return $this->hasOne('Modules\Supplier\Entities\Supplier','id_user');
     }
     public static function get_user_telkom($key=null){
-      $data = \DB::table('role_user')
-                ->join('users', 'users.id', '=', 'role_user.user_id')
-                ->join('roles', 'roles.id', '=', 'role_user.role_id')
-                ->select('users.id','users.name','users.username')
-                ->whereNotIn('roles.name',['admin','vendor']);
+      $data = \DB::table('pegawai')
+                ->select('*');    
       if(!empty($key)){
         $data->where(function($q) use ($key) {
-            $q->orWhere('users.username', 'like', '%'.$key.'%');
-            $q->orWhere('users.name', 'like', '%'.$key.'%');
+            $q->orWhere('n_nik', 'like', '%'.$key.'%');
+            $q->orWhere('v_nama_karyawan', 'like', '%'.$key.'%');
         });
       }
+      return $data->orderBy('v_short_posisi','desc');
+    }
+    public static function get_user_telkom_by_nik($nik){
+      $data = \DB::table('pegawai')->select('*')->where('n_nik','=',$nik);
       return $data;
     }
     public static function get_user_vendor($key=null){

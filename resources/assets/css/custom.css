@@ -142,3 +142,44 @@
 .autocomplete-selected { background: #F0F0F0; }
 .autocomplete-suggestions strong { font-weight: bold; color: #000; }
 .autocomplete-group { padding: 2px 5px; font-weight: bold; font-size: 16px; color: #000; display: block; border-bottom: 1px solid #000; }
+.has-error .select2-selection,
+.has-error .form-control {
+    border-color: #dd4b39 !important;
+}
+.form-group.has-error .help-block,
+.has-error .help-block {
+    color: #dd4b39 !important;
+}
+table.tableLaravel thead .sorting,
+table.tableLaravel thead .sorting_asc,
+table.tableLaravel thead .sorting_desc,
+table.tableLaravel thead .sorting_asc_disabled,
+table.tableLaravel thead .sorting_desc_disabled {
+	cursor: pointer;
+	position: relative;
+}
+
+table.tableLaravel thead .sorting:after,
+table.tableLaravel thead .sorting_asc:after,
+table.tableLaravel thead .sorting_desc:after {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	display: block;
+	font-family: 'Glyphicons Halflings';
+	opacity: 0.5;
+}
+table.tableLaravel thead .sorting:after {
+	opacity: 0.2;
+	content: "\e150"; /* sort */
+}
+table.tableLaravel thead .sorting_asc:after {
+	content: "\e155"; /* sort-by-attributes */
+}
+table.tableLaravel thead .sorting_desc:after {
+	content: "\e156"; /* sort-by-attributes-alt */
+}
+table.tableLaravel thead .sorting_asc_disabled:after,
+table.tableLaravel thead .sorting_desc_disabled:after {
+	color: #eee;
+}

@@ -3,44 +3,38 @@
 @section('content')
 
 
-    <form action="#" method="post" enctype="multipart/form-data">
+    <form action="{{route('doc.store',['type'=>$doc_type->name])}}" class="form-kontrak" method="post" enctype="multipart/form-data">
     {{ csrf_field() }}
     <div class="nav-tabs-custom">
-      @if($doc_type['title'] == "Turnkey")
-        <ul class="nav nav-tabs">
-          <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
-          <li><a href="#tab_2" data-toggle="tab">SOW,BOQ</a></li>
-          <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
-          <li><a href="#tab_4" data-toggle="tab">PASAL PENTING</a></li>
-          <li><a href="#tab_5" data-toggle="tab">JAMINAN DAN ASURANSI</a></li>
-        </ul>
-      @endif
-      @if($doc_type['title'] == "KHS")
-        <ul class="nav nav-tabs">
-          <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
-          <li><a href="#tab_2" data-toggle="tab">DAFTAR HARGA SATUAN</a></li>
-          <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
-          <li><a href="#tab_4" data-toggle="tab">PASAL PENTING</a></li>
-        </ul>
-      @endif
-      @if($doc_type['title'] == "SP")
-        <ul class="nav nav-tabs">
-          <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
-          <li><a href="#tab_2" data-toggle="tab">SOW,BOQ</a></li>
-          <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
-          <li><a href="#tab_4" data-toggle="tab">JAMINAN</a></li>
-        </ul>
-      @endif
-      @if($doc_type['title'] == "Amandemen SP" || $doc_type['title'] == "Amandemen Kontrak")
-        <ul class="nav nav-tabs">
-          <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
+      @php
+        $title_sow = 'SOW,BOQ';
+        if($doc_type->name=='khs'){
+          $title_sow = 'DAFTAR HARGA SATUAN';
+        }
+      @endphp
+      <ul class="nav nav-tabs">
+        <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
+        
+        @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak']))
           <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
-          <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
-        </ul>
-      @endif
+        @else
+          <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
+        @endif
+        
+        <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
+        
+        @if(!in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','sp']))
+          <li><a href="#tab_4" data-toggle="tab">PASAL PENTING</a></li>
+        @endif
+        
+        @if(in_array($doc_type->name,['turnkey','sp']))
+          <li><a href="#tab_5" data-toggle="tab">JAMINAN DAN ASURANSI</a></li>
+        @endif
+      </ul>
 
         <div class="tab-content">
           <div class="tab-pane active" id="tab_1">
+            @include('documents::partials.alert-errors')
             @if($doc_type['title'] == "Amandemen SP" || $doc_type['title'] == "Amandemen Kontrak")
               @include('documents::doc-form.amademen')
             @else
@@ -54,6 +48,7 @@
             </div>
           </div>
           <div class="tab-pane" id="tab_2">
+            @include('documents::partials.alert-errors')
             @include('documents::doc-form.sow-boq')
             <div class="clearfix"></div>
             <div class="row">
@@ -64,6 +59,7 @@
             </div>
           </div>
           <div class="tab-pane ok" id="tab_3">
+            @include('documents::partials.alert-errors')
             @include('documents::doc-form.latar-belakang')
             <div class="clearfix"></div>
             <div class="row">
@@ -74,6 +70,7 @@
             </div>
           </div>
           <div class="tab-pane" id="tab_4">
+            @include('documents::partials.alert-errors')
             @include('documents::doc-form.pasal-penting')
             <div class="clearfix"></div>
             <div class="row">
@@ -84,7 +81,12 @@
             </div>
           </div>
           <div class="tab-pane" id="tab_5">
-            @include('documents::doc-form.jaminan-asuransi')
+            @include('documents::partials.alert-errors')
+            @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak']))
+              @include('documents::doc-form.scope-perubahan')
+            @elseif(in_array($doc_type->name,['turnkey','turnkey']))
+              @include('documents::doc-form.jaminan-asuransi')
+            @endif
             <div class="clearfix"></div>
             <div class="row">
               <div class="col-sm-12">

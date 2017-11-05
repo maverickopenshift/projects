@@ -1,7 +1,7 @@
 <div class="box">
     <div class="box-header with-border">
       <h3 class="box-title">
-          General Info {{$doc_type['title']}}
+          General Info
       </h3>
     </div>
     <!-- /.box-header -->

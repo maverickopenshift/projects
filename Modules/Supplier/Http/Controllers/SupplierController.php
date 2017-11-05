@@ -80,4 +80,20 @@ class SupplierController extends Controller
             })
             ->make(true);
     }
+    public function getSelect(Request $request){
+        $search = trim($request->q);
+
+        // if (empty($search)) {
+        //     return \Response::json([]);
+        // }
+        $data = Supplier::select('id','nm_vendor','kd_vendor','bdn_usaha');
+        if(!empty($search)){
+          $data->where(function($q) use ($search) {
+              $q->orWhere('nm_vendor', 'like', '%'.$search.'%');
+              $q->orWhere('kd_vendor', 'like', '%'.$search.'%');
+          });
+        }
+        $data = $data->paginate(30);
+        return \Response::json($data);
+    }
 }

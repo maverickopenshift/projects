@@ -103,3 +103,76 @@ $(function(e){
     }); 
   });
 });
+function toRP(bilangan){
+  var	number_string = bilangan.toString(),
+  	split	= number_string.split(','),
+  	sisa 	= split[0].length % 3,
+  	rupiah 	= split[0].substr(0, sisa),
+  	ribuan 	= split[0].substr(sisa).match(/\d{1,3}/gi);
+  		
+  if (ribuan) {
+  	separator = sisa ? '.' : '';
+  	rupiah += separator + ribuan.join('.');
+  }
+  rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+  return ribuan;
+}
+$(document).on('keyup', '.input-rupiah', function(event) {
+  event.preventDefault();
+  /* Act on the event */
+  var rupiah = formatRupiah($(this).val());
+  $(this).val(rupiah);
+});
+function formatRupiah(angka, prefix)
+{
+  var angka = angka.toString();
+	var number_string = angka.replace(/[^,\d]/g, ''),
+		split	= number_string.split(','),
+		sisa 	= split[0].length % 3,
+		rupiah 	= split[0].substr(0, sisa),
+		ribuan 	= split[0].substr(sisa).match(/\d{3}/gi);
+		
+	if (ribuan) {
+		separator = sisa ? '.' : '';
+		rupiah += separator + ribuan.join('.');
+	}
+	
+	rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+	return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
+}
+function convertNumber(number) {
+  var number = number.toString();
+  var split = number.split('.');
+  if(split.length==2){
+    if(split[1]!=""){
+      var decimal = split[1];
+      decimal = decimal.substr(0,3);
+      if(decimal!="000"){
+        number = split[0]+','+decimal.substr(0,3);
+      }
+    }
+  }
+  else{
+    number = split[0]
+  }
+  return number;
+  //console.log('harga_total => '+formatRupiah(harga_total));
+}
+function backNominal(angka){
+  var angka = angka.toString();
+  var clean = angka.replace(/[^,\d]/g, ''),
+		split	= clean.split(','),
+		sisa 	= split[0].length % 3,
+		rupiah 	= split[0].substr(0, sisa),
+		ribuan 	= split[0].substr(sisa).match(/\d{3}/gi);
+    // console.log('split => '+JSON.stringify(split));
+    // console.log('sisa => '+sisa);
+    // console.log('rupiah => '+rupiah);
+    // console.log('ribuan => '+ribuan);
+    if(split.length==2){
+      if(split[1]!=""){
+        return parseFloat(split[0]+'.'+split[1]);
+      }
+    }
+  return parseInt(split[0]);
+}

@@ -4,19 +4,44 @@ namespace Modules\Documents\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-
-use Datatables;
 use Response;
+
+use Modules\Documents\Entities\DocType;
+use Modules\Documents\Entities\Documents;
+use Modules\Documents\Entities\DocBoq;
+use Modules\Documents\Entities\DocMeta;
+use Modules\Documents\Entities\DocPic;
+use App\Helpers\Helpers;
 
 class DocumentsController extends Controller
 {
+    protected $documents;
+
+    public function __construct(Documents $documents)
+    {
+        $this->documents = $documents;
+    }
     /**
      * Display a listing of the resource.
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('documents::index');
+      if ($request->ajax()) {
+          $limit = 25;
+          if(!empty($request->limit)){
+            $limit = $request->limit;
+          }
+          $documents = $this->documents->latest('created_at')->paginate($limit);
+          // $documents->getCollection()->transform(function ($value) {
+          //   $value->doc_title = $value->doc_title.' <i>'.$value->supplier_id.'</i>';
+          //   return $value;
+          // });
+          return Response::json($documents);
+      }
+
+      //return view('articles.index', compact('articles'));
+      return view('documents::index');
     }
 
     /**
@@ -75,13 +100,10 @@ class DocumentsController extends Controller
       $search = trim($request->po);
 
       if (empty($search)) {
-          abort(500);
+        return Response::json(['status'=>false]);
       }
       $sql = \DB::table('dummy_po')->where('no_po','=',$search)->get();
-      dd($sql);
-      return Datatables::of($sql)
-          ->addIndexColumn()
-          ->make(true);
+      return Response::json(['status'=>true,'data'=>$sql,'length'=>count($sql)]);
     }
     public function getPic(Request $request){
       $search = trim($request->id_user);

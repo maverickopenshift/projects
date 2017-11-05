@@ -8,6 +8,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'users', 'namespace' =
     Route::post('/add', 'UsersController@add')->name('users.add');
     Route::delete('/delete', 'UsersController@delete')->name('users.delete');
     Route::get('/get-select-user-telkom', 'UsersController@getSelectUserTelkom')->name('users.get-select-user-telkom');
+    Route::get('/get-select-user-telkom-by-nik', 'UsersController@getSelectUserTelkomByNik')->name('users.get-select-user-telkom-by-nik');
     Route::get('/get-select-user-vendor', 'UsersController@getSelectUserVendor')->name('users.get-select-user-vendor');
 
 

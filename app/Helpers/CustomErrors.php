@@ -220,4 +220,18 @@ class CustomErrors
             'password_confirmation.same' => 'Password Konformasi tidak sama',
           ];
   }
+  
+  public static function documents(){
+    return [
+            'doc_title.min' => 'Input minimal 5 karakter',
+            '*.required' => 'Inputan harus diisi',
+            'doc_title.max' => 'Input maksimal 500 karakter',
+            '*.regex' => 'Karakter input tidak valid',
+            
+            
+            'doc_desc.min' => 'Input minimum 30 karakter',
+            'doc_date.format' => 'Input tanggal tidak valid',
+            '*.po_exists'=>'No.PO tidak ditemukan!',
+          ];
+  }
 }

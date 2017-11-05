@@ -21,4 +21,12 @@ class Documents extends Model
       }
       return $fields_r;
     }
+    
+    public static function check_po($po){
+      $count = \DB::table('dummy_po')->where('no_po','=',$po)->count();
+      if($count>0){
+        return true;
+      }
+      return false;
+    }
 }

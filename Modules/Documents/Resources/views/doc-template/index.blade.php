@@ -32,6 +32,7 @@
                 <th width="20">No.</th>
                 <th width="">Type</th>
                 <th width="">Category</th>
+                <th width="">Kode</th>
                 <th width="">Created At</th>
                 <th width="">Action</th>
             </tr>
@@ -62,6 +63,7 @@
             {data : 'DT_Row_Index',orderable:false,searchable:false},
             { data: 'type.title', name: 'type.title' },
             { data: 'category.title', name: 'category.title' },
+            { data: 'kode', name: 'kode' },
             { data: 'created_at', name: 'created_at' },
             { data: 'action', name: 'action',orderable:false,searchable:false }
         ]

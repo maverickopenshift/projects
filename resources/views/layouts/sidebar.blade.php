@@ -37,7 +37,7 @@
                 </li>
                 <li class="{{Request::is("documents")?'active':''}}" ><a href="{{route('doc')}}">Data Kontrak</a></li>
                 @permission('lihat-template-pasal-pasal')
-                  <li class="{{Request::is("documents/doc-template") || Request::is("documents/doc-template/create") || Request::is("documents/doc-template/*/edit")?'active':''}}" ><a href="{{route('doc.template')}}">Template Pasal - Pasal</a></li>
+                  <li class="{{Request::is("documents/doc-template") || Request::is("documents/doc-template/create") || Request::is("documents/doc-template/*/edit")?'active':''}}" ><a href="{{route('doc.template')}}">Template Kontrak</a></li>
                 @endpermission
               </ul>
             </li>

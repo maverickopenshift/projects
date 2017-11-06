@@ -14,6 +14,7 @@
               <div class="form-group">
                 <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Pilih Type Template</label>
                 <div class="col-sm-10">
+                  <input type="hidden" class="form-control" name="id"  value="{{old('id',Helper::prop_exists($data,'id'))}}"  placeholder="Masukan Kode Template" autocomplete="off">
                   {!! Helper::select_type('type',Helper::prop_exists($data,'id_doc_type')) !!}
                   <div class="error error-type"></div>
                 </div>
@@ -28,7 +29,16 @@
                 </div>
               </div>
           </div>
-          
+          <div class="form-horizontal">
+              <div class="form-group">
+                <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Kode Template</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" name="kode"  value="{{old('kode',Helper::prop_exists($data,'kode'))}}"  placeholder="Masukan Kode Template" autocomplete="off">
+                  <div class="error error-kode"></div>
+                </div>
+              </div>
+          </div>
+
           <div class="form-horizontal">
               <table class="table table-bordered table-me">
                 <thead>
@@ -135,6 +145,64 @@
         $.ajax({
             url: formMe.data('action'),
             type: 'post',
+            data: formMe.serialize(), // Remember that you need to have your csrf token included
+            dataType: 'json',
+            success: function( _response ){
+                // Handle your response..
+                console.log(_response)
+                if(_response.errors){
+                    if(_response.errors.type){
+                        attErrorType.html('<span class="text-danger">'+_response.errors.type+'</span>');
+                    }
+                    if(_response.errors.category){
+                        attErrorCat.html('<span class="text-danger">'+_response.errors.category+'</span>');
+                    }
+                    if(_response.errors.error){
+                        alertBS2(_response.errors.error,'danger');
+                    }
+                    var $this = $('.table-me');
+                    var row = $this.find('tbody>tr');
+                    $.each(row,function(index, el) {
+                      var mdf = $(this).find('td');
+                      if(_response.errors["pasal."+index]){
+                        mdf.eq(1).append('<div class="error text-danger">'+_response.errors["pasal."+index]+'</div>')
+                      }
+                      if(_response.errors["judul."+index]){
+                        mdf.eq(2).append('<div class="error text-danger">'+_response.errors["judul."+index]+'</div>')
+                      }
+                      if(_response.errors["isi."+index]){
+                        mdf.eq(3).append('<div class="error text-danger">'+_response.errors["isi."+index]+'</div>')
+                      }
+                    });
+                }
+                else{
+                    window.location = '{!!route('doc.template')!!}';
+                }
+                btnSave.button('reset')
+            },
+            error: function( _response ){
+                // Handle error
+                btnSave.button('reset')
+                $('#form-modal').modal('hide')
+                alertBS('Something wrong, please try again','danger')
+            }
+        });
+    })
+
+    $(document).on('submit','.form-edit',function (event) {
+        event.preventDefault();
+        var formMe = $(this)
+        var attErrorType = formMe.find('.error-type')
+        attErrorType.html('')
+        formMe.find('.alertBS').html('')
+        var attErrorCat = formMe.find('.error-category')
+        attErrorCat.html('')
+        formMe.find('.error').html('')
+        var btnSave = formMe.find('.btn-save')
+        btnSave.button('loading')
+        $.ajax({
+            url: formMe.data('action'),
+            type: 'get',
             data: formMe.serialize(), // Remember that you need to have your csrf token included
             dataType: 'json',
             success: function( _response ){

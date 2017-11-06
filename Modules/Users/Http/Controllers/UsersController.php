@@ -38,6 +38,11 @@ class UsersController extends Controller
   <i class="glyphicon glyphicon-edit"></i> Edit
   </button>';
               }
+              if(\Auth::user()->hasPermission('ubah-user')){
+                  $act .='<button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#modal-reset"  data-title="Reset" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'">
+  <i class="glyphicon glyphicon-edit"></i> Reset Password
+  </button>';
+              }
               if(\Auth::user()->hasPermission('hapus-user')){
                 $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-toggle="modal" data-target="#modal-delete">
 <i class="glyphicon glyphicon-trash"></i> Delete
@@ -101,6 +106,26 @@ class UsersController extends Controller
               return response()->json($data);
           }
     }
+    public function reset(Request $request)
+    {
+          $rules = array (
+              'reset_password' => 'required|max:50|min:5',
+              'konfirmasi_password' => 'required|max:50|min:5|same:reset_password',
+              // 'password' => 'required|confirmed|max:50|min:5',
+          );
+          $validator = Validator::make($request->all(), $rules);
+          if ($validator->fails ())
+              return Response::json (array(
+                  'errors' => $validator->getMessageBag()->toArray()
+              ));
+          else {
+              $roles = $request->roles;
+              $data = User::where('id','=',$request->id)->first();
+              $data->password = bcrypt($request->reset_password);
+              $data->save();
+              return response()->json($data);
+          }
+    }
     public function add(Request $request)
     {
         $rules = array (
@@ -135,7 +160,7 @@ class UsersController extends Controller
     }
     public function getSelectUserTelkom(Request $request){
         $search = trim($request->q);
-        
+
         // if (empty($search)) {
         //     return \Response::json([]);
         // }
@@ -144,7 +169,7 @@ class UsersController extends Controller
     }
     public function getSelectUserTelkomByNik(Request $request){
         $search = trim($request->nik);
-        
+
         if (empty($search)) {
             return \Response::json([]);
         }

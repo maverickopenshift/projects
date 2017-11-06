@@ -55,6 +55,38 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+<div class="modal fade" role="dialog" id="modal-reset">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form id="form-reset" action="#" method="post">
+                {{ csrf_field() }}
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Reset Password User</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="error-global"></div>
+                        <input type="text" id="id" name="id" />
+                        <label>Password Baru</label>
+                        <input type="password" id="reset_password" name="reset_password" value="" class="form-control" placeholder="Enter ..." required autocomplete="off">
+                        <div class="error-reset_password"></div>
+                    </div>
+                    <div class="form-group">
+                        <div class="error-global"></div>
+                        <label>Konfirmasi Password</label>
+                        <input type="password" id="konfirmasi_password" name="konfirmasi_password" class="form-control" placeholder="Enter ..." required autocomplete="off">
+                        <div class="error-konfirmasi_password"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary btn-save" data-loading-text="Please wait..." autocomplete="off">Save changes</button>
+                </div>
+            </form>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <div class="modal modal-danger fade" id="modal-delete">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
@@ -184,6 +216,72 @@
                 }
             });
         })
+
+        var modal_reset = $('#modal-reset');
+        modal_reset.on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget) // Button that triggered the modal
+            var modal = $(this)
+            var btnSave = modal.find('.btn-save')
+            btnSave.button('reset')
+            $('input').iCheck('uncheck');
+                var data = button.data('data');
+                var role = data.roles;
+                if(role.length>0){
+                  $.each(role, function( index, p ) {
+                    $('#roles'+p.id).iCheck('check');
+                  });
+                }
+                modal.find('.modal-body input#id').val(data.id)
+        })
+
+        $(document).on('submit','#form-reset',function (event) {
+          event.preventDefault();
+          var formReset = $(this)
+          var attError = {
+                  reset_password     : formReset.find('.error-reset_password'),
+                  konfirmasi_password : formReset.find('.error-konfirmasi_password'),
+            };
+          attError.reset_password.html('')
+          attError.reset_password.parent().removeClass('has-error')
+          attError.konfirmasi_password.html('')
+          attError.konfirmasi_password.parent().removeClass('has-error')
+          var btnSave = formReset.find('.btn-save')
+          btnSave.button('loading')
+          $.ajax({
+              url: '{!! route('users.reset') !!}',
+              type: 'get',
+              data: formReset.serialize(), // Remember that you need to have your csrf token included
+              dataType: 'json',
+              success: function( _response ){
+                  // Handle your response..
+                  console.log(_response)
+                  if(_response.errors){
+                      if(_response.errors.reset_password){
+                          attError.reset_password.html('<span class="text-danger">'+_response.errors.reset_password+'</span>');
+                          attError.reset_password.parent().addClass('has-error')
+                      }
+                      if(_response.errors.konfirmasi_password){
+                          attError.konfirmasi_password.html('<span class="text-danger">'+_response.errors.konfirmasi_password+'</span>');
+                          attError.konfirmasi_password.parent().addClass('has-error')
+                      }
+                  }
+                  else{
+                      $('#modal-reset').modal('hide')
+                      alertBS('Data successfully updated','success')
+                      var table = $('#datatables').dataTable();
+                          table.fnStandingRedraw();
+                  }
+                  btnSave.button('reset')
+              },
+              error: function( _response ){
+                  // Handle error
+                  btnSave.button('reset')
+                  $('#modal-reset').modal('hide')
+                  alertBS('Something wrong, please try again','danger')
+              }
+          });
+        })
+
         var modalDelete = $('#modal-delete');
         modalDelete.on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget) // Button that triggered the modal
@@ -194,6 +292,7 @@
             btnDelete.attr('data-token',button.data('token'))
             btnDelete.button('reset')
         })
+
         $(document).on('click','.btn-delete',function (event) {
             event.preventDefault();
             var btnDelete = $(this)
@@ -223,6 +322,7 @@
                 }
             });
         })
+
     });
     function content_password() {
       return '<div class="form-group">\

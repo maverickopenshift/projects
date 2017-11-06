@@ -5,6 +5,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'users', 'namespace' =
     Route::get('/', 'UsersController@index')->name('users');
     Route::get('/data', 'UsersController@data')->name('users.data');
     Route::post('/update', 'UsersController@update')->name('users.update');
+    Route::get('/reset-user', 'UsersController@reset')->name('users.reset');
     Route::post('/add', 'UsersController@add')->name('users.add');
     Route::delete('/delete', 'UsersController@delete')->name('users.delete');
     Route::get('/get-select-user-telkom', 'UsersController@getSelectUserTelkom')->name('users.get-select-user-telkom');

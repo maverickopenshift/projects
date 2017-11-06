@@ -19,7 +19,7 @@ class DocTemplateController extends Controller
      */
     public function index()
     {
-        $data['page_title'] = 'Template Pasal-Pasal';
+        $data['page_title'] = 'Template Kontrak';
         return view('documents::doc-template.index')->with($data);
     }
     public function data()
@@ -55,7 +55,7 @@ class DocTemplateController extends Controller
      */
     public function create()
     {
-        $data['page_title'] = 'Tambah Template Pasal-Pasal';
+        $data['page_title'] = 'Tambah Template Kontrak';
         $data['data_action'] = route('doc.template.store');
         $data['data_class'] = 'form-add';
         $data['data'] = [];
@@ -99,6 +99,7 @@ class DocTemplateController extends Controller
             $data = new DocTemplate();
             $data->id_doc_type = $request->type;
             $data->id_doc_category = $request->category;
+            $data->kode = $request->kode;
             $data->save ();
             foreach($pasal as $k=>$v){
               $data2 = new DocTemplateDetail();
@@ -122,10 +123,10 @@ class DocTemplateController extends Controller
      */
     public function edit(Request $req)
     {
-      $data['page_title'] = 'Ubah Template Pasal-Pasal';
-      $data['data_action'] = route('doc.template.store');
+      $data['page_title'] = 'Ubah Template Kontrak';
+      $data['data_action'] = route('doc.template.storeEdit');
       $data['data_class'] = 'form-edit';
-      $edit = DocTemplate::find($req->id)->with('category','type')->first();
+      $edit = DocTemplate::where('id','=',$req->id)->with('category','type')->first();
       if(!$edit){
         abort(500);
       }
@@ -133,6 +134,47 @@ class DocTemplateController extends Controller
       $data['data'] = $edit;
       $data['data_detail'] = $edit_detail;
       return view('documents::doc-template.form')->with($data);
+    }
+
+    public function storeEdit(Request $request)
+    {
+      $rules = array (
+          'type' => 'required',
+          'category' => 'required',
+          'pasal.*' => 'required|min:3|max:20',
+          'isi.*' => 'required|min:10',
+          'judul.*' => 'required|min:5',
+      );
+      $validator = Validator::make($request->all(), $rules);
+      if ($validator->fails ())
+          return Response::json (array(
+              'errors' => $validator->getMessageBag()->toArray()
+          ));
+      else {
+          $id = $request->id;
+          $pasal = $request->pasal;
+          $isi = $request->isi;
+          $judul = $request->judul;
+          if(count($pasal)==count($isi) || count($isi)==count($judul) || count($pasal)==count($judul)){
+
+            $data = DocTemplate::where('id','=',$id)->first();
+            $data->id_doc_type = $request->type;
+            $data->id_doc_category = $request->category;
+            $data->kode = $request->kode;
+            $data->save ();
+            foreach($pasal as $k=>$v){
+              $data2 = DocTemplateDetail::where('id_doc_template','=',$id)->first();
+              $data2->name = $v;
+              $data2->title = $judul[$k];
+              $data2->desc = $isi[$k];
+              $data2->save ();
+            }
+            return response()->json(array('status'=>true));
+          }
+          else{
+            abort(500);
+          }
+      }
     }
 
     /**

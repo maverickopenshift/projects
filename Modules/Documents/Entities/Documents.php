@@ -4,6 +4,8 @@ namespace Modules\Documents\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
+use Modules\Documents\Entities\DocType;
+use Modules\Documents\Entities\DocTemplate;
 
 class Documents extends Model
 {
@@ -49,5 +51,52 @@ class Documents extends Model
         return true;
       }
       return false;
+    }
+    public static function check_kontrak($val){
+      $count = self::where('id','=',$val)->count();
+      if($count>0){
+        return true;
+      }
+      return false;
+    }
+    public static function create_no_kontrak($template_id,$year=null){
+      $loker = 'L002K';
+      $start = '00001';
+      $pattern = 'K.TEL.';
+      $year = (is_null($year))?date('Y'):$year;
+      $doc_template = \DB::table('doc_template')->where('id',$template_id)->first();
+      $no_kontrak=$pattern.$start.'/'.$doc_template->kode.'/'.$loker."/".$year;
+      $count = \DB::table('documents')->where('doc_no',$no_kontrak)->count();
+        if($count==0){
+          $new_id = $no_kontrak;
+        }
+        else{
+          //jika 001 sudah ada
+          $dt = \DB::table('documents')
+                  ->select('doc_no')
+                  ->whereNotNull('doc_no')
+                  ->orderBy('updated_at','DESC')
+                  ->first();
+
+          $last = $dt->doc_no;
+          $lastplg = substr($last, 6,5);
+          $nextplg = intval($lastplg) + 1;
+          $idnya = sprintf('%05s', $nextplg);
+          $new_id=$pattern.$idnya.'/'.$doc_template->kode.'/'.$loker."/".$year;
+        }
+        $count = \DB::table('documents')->where('doc_no',$new_id)->count();
+        if($count>1){
+          $new_id = self::create_no_kontrak($template_id,$year);
+        }
+        return $new_id;
+    }
+    public function get_child($type,$doc_id,$count=true){
+      $type = DocType::where('name',$type)->first();
+      $temp = DocTemplate::where('id_doc_type', $type->id)->first();
+      $doc  = self::where('doc_parent', 0)->where('doc_parent_id', $doc_id)->where('doc_template_id', $temp->id);
+      if($count){
+        return $doc->count();
+      }
+      return $doc->get();
     }
 }

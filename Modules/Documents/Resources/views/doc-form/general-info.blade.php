@@ -7,6 +7,9 @@
     <!-- /.box-header -->
     <div class="box-body">
       <div class="form-horizontal">
+          @if(!in_array($doc_type->name,['khs','turnkey']))
+            @include('documents::doc-form.no-kontrak')
+          @else
           <div class="form-group  {{ $errors->has('doc_title') ? ' has-error' : '' }}">
             <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Judul {{$doc_type['title']}}</label>
             <div class="col-sm-10">
@@ -18,6 +21,7 @@
               @endif
             </div>
           </div>
+          @endif
           <div class="form-group {{ $errors->has('doc_desc') ? ' has-error' : '' }}">
             <label for="deskripsi_kontrak" class="col-sm-2 control-label"><span class="text-red">*</span> Deskripsi {{$doc_type['title']}}</label>
             <div class="col-sm-10">
@@ -186,10 +190,10 @@
                 <table class="table table-bordered table-latar">
                   <thead>
                   <tr>
-                    <th>Material</th>
-                    <th>Jasa</th>
+                    <th style="width:250px">Material</th>
+                    <th style="width:250px">Jasa</th>
                     <th>Total</th>
-                    <th>PPN</th>
+                    <th  style="width:50px">PPN</th>
                     <th>Total PPN</th>
                   </tr>
                 </thead>
@@ -198,38 +202,20 @@
                       <td>
                         <div class="input-group {{ $errors->has('doc_nilai_material') ? ' has-error' : '' }}">
                           <span class="input-group-addon mtu-set"></span>
-                          <input type="text" class="form-control" name="doc_nilai_material" value="{{Helper::old_prop($doc,'doc_nilai_material')}}" autocomplete="off">
+                          <input type="text" class="form-control input-rupiah hitung_sp" name="doc_nilai_material" value="{{Helper::old_prop($doc,'doc_nilai_material')}}" autocomplete="off">
                         </div>
                           {!!Helper::error_help($errors,'doc_nilai_material')!!}
                       </td>
                       <td>
                         <div class="input-group {{ $errors->has('doc_nilai_jasa') ? ' has-error' : '' }}">
                           <span class="input-group-addon mtu-set"></span>
-                          <input type="text" class="form-control" name="doc_nilai_jasa" value="{{Helper::old_prop($doc,'doc_nilai_jasa')}}"  autocomplete="off">
+                          <input type="text" class="form-control input-rupiah hitung_sp" name="doc_nilai_jasa" value="{{Helper::old_prop($doc,'doc_nilai_jasa')}}"  autocomplete="off">
                         </div>
                           {!!Helper::error_help($errors,'doc_nilai_jasa')!!}
                       </td>
-                      <td>
-                        <div class="input-group {{ $errors->has('doc_nilai_total') ? ' has-error' : '' }}">
-                          <span class="input-group-addon mtu-set"></span>
-                          <input type="text" class="form-control" name="doc_nilai_total" value="{{Helper::old_prop($doc,'doc_nilai_total')}}" autocomplete="off">
-                        </div>
-                          {!!Helper::error_help($errors,'doc_nilai_total')!!}
-                      </td>
-                      <td>
-                        <div class="input-group {{ $errors->has('doc_nilai_ppn') ? ' has-error' : '' }}">
-                          <span class="input-group-addon mtu-set"></span>
-                          <input type="text" class="form-control" name="doc_nilai_ppn" value="{{Helper::old_prop($doc,'doc_nilai_ppn')}}" autocomplete="off">
-                        </div>
-                          {!!Helper::error_help($errors,'doc_nilai_ppn')!!}
-                      </td>
-                      <td>
-                        <div class="input-group {{ $errors->has('doc_nilai_total_ppn') ? ' has-error' : '' }}">
-                          <span class="input-group-addon mtu-set"></span>
-                          <input type="text" class="form-control" name="doc_nilai_total_ppn" value="{{Helper::old_prop($doc,'doc_nilai_total_ppn')}}" autocomplete="off">
-                        </div>
-                          {!!Helper::error_help($errors,'doc_nilai_total_ppn')!!}
-                      </td>
+                      <td class="text-right" style="vertical-align: middle;">0</td>
+                      <td class="text-right" style="vertical-align: middle;">{!!config('app.ppn_set')!!} %</td>
+                      <td class="text-right" style="vertical-align: middle;">0</td>
                     </tr>
                 </tbody>
                 </table>
@@ -237,7 +223,7 @@
             </div>
           @endif
           <div class="form-group {{ $errors->has('pic_data') ? ' has-error' : '' }}">
-            <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Unit Penanggungjawab PIC</label>
+            <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Penanggung Jawab</label>
             <div class="col-sm-5">
               <select class="form-control select-user-telkom" style="width: 100%;" name="pict" id="pict">
                   <option value="">Pilih Penanggungjawab</option>
@@ -614,6 +600,43 @@ $(document).on('change', '.mata-uang', function(event) {
   /* Act on the event */
   $('.mtu-set').html($(this).val())
   //console.log($('.select-user-vendor').val());
+});
+$(document).on('keyup', '.hitung_sp', function(event) {
+  var _this = $(this),ppn={!!config('app.ppn_set')!!},total_ppn=0,total=0,td=_this.parent().parent().parent();
+  var td_length = td.find('td');
+  console.log(td_length.length);
+  if(td_length.length==5){
+    if(_this.attr('name')=='doc_nilai_material'){
+      var material = _this.val();
+    }
+    else{
+      var material = td.find('input[name="doc_nilai_material"]').val();
+    }
+    if(_this.attr('name')=='doc_nilai_jasa'){
+      var jasa = _this.val();
+    }
+    else{
+      var jasa = td.find('input[name="doc_nilai_jasa"]').val();
+    } 
+    if(material==""){
+      material = 0
+    }
+    if(jasa==""){
+      jasa = 0
+    }
+    material = backNominal(material);
+    jasa = backNominal(jasa);
+    //console.log('qty => '+qty);
+    //console.log('harga => '+harga);
+    total = material+jasa;
+    if(material!=0 && jasa!=0){
+      total_ppn = ((ppn/100)*total)+total;
+    }
+    total_ppn = convertNumber(total_ppn);
+    total = convertNumber(total);
+    td.find('td').eq(2).text(formatRupiah(total));
+    td.find('td').eq(4).text(formatRupiah(total_ppn));
+  }
 });
 </script>
 @endpush

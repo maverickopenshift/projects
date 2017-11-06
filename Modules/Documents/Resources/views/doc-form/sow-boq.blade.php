@@ -11,13 +11,15 @@
     <!-- /.box-header -->
     <div class="box-body">
       <div class="form-horizontal">
-          <div class="form-group {{ $errors->has('doc_sow') ? ' has-error' : '' }}">
-            <label for="doc_sow" class="col-sm-2 control-label"><span class="text-red">*</span> Lingkup Pekerjaan</label>
-            <div class="col-sm-10">
-              <textarea class="form-control" name="doc_sow" cols="4" rows="4">{{Helper::old_prop($doc,'doc_sow')}}</textarea>
-              {!!Helper::error_help($errors,'doc_sow')!!}
+          @if(in_array($doc_type->name,['turnkey','khs']))
+            <div class="form-group {{ $errors->has('doc_sow') ? ' has-error' : '' }}">
+              <label for="doc_sow" class="col-sm-2 control-label"><span class="text-red">*</span> Lingkup Pekerjaan</label>
+              <div class="col-sm-10">
+                <textarea class="form-control" name="doc_sow" cols="4" rows="4">{{Helper::old_prop($doc,'doc_sow')}}</textarea>
+                {!!Helper::error_help($errors,'doc_sow')!!}
+              </div>
             </div>
-          </div>
+          @endif
             @php
               $kode_item = Helper::old_prop_each($doc,'hs_kode_item');
               $item = Helper::old_prop_each($doc,'hs_item');
@@ -133,16 +135,19 @@
             </table>
           </div>
           @if($doc_type['title']=="SP")
-            <div class="form-group">
+            <div class="form-group  {{ $errors->has('doc_lampiran_teknis') ? ' has-error' : '' }}">
               <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Lampiran Teknis</label>
               <div class="col-sm-6">
                 <div class="input-group">
-                  <input type="file" class="hide" name="legal_dokumen[][file]">
+                  <input type="file" class="hide" name="doc_lampiran_teknis">
                   <input class="form-control" type="text" disabled>
                   <span class="input-group-btn">
                     <button class="btn btn-default click-upload" type="button">Browse</button>
                   </span>
                 </div>
+              </div>
+              <div class="col-sm-10 col-sm-offset-2">
+                {!!Helper::error_help($errors,'doc_lampiran_teknis')!!}
               </div>
             </div>
           @endif

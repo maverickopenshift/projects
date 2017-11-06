@@ -161,4 +161,13 @@ class Helpers
       }
       return $val;
     }
+    public static function create_button($title,$val,$type='primary'){
+      if($val>0){
+        return '
+                <button class="btn btn-'.$type.' btn-xs" type="button" style="line-height: 1;min-width: 43px;margin-right: 5px;padding-bottom: 1px;position: relative;text-align: left;padding-right: 20px;">
+                  '.$title.' <span class="badge" style="font-size: 10px;padding-left: 5px;line-height: 1;position: absolute;top: 1px;right: 2px;padding: 1px 4px;">'.$val.'</span>
+                </button>';
+      }
+      return false;
+    }
 }

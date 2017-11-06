@@ -84,7 +84,7 @@
             @include('documents::partials.alert-errors')
             @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak']))
               @include('documents::doc-form.scope-perubahan')
-            @elseif(in_array($doc_type->name,['turnkey','turnkey']))
+            @elseif(in_array($doc_type->name,['turnkey','sp']))
               @include('documents::doc-form.jaminan-asuransi')
             @endif
             <div class="clearfix"></div>

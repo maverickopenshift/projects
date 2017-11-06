@@ -3,12 +3,9 @@
 @section('content')
 <div class="box">
     <div class="box-header with-border">
-      <h3 class="box-title">Visitors Report</h3>
+      <h3 class="box-title"></h3>
 
       <div class="box-tools pull-right">
-        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-        </button>
-        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
       </div>
     </div>
     <!-- /.box-header -->
@@ -22,23 +19,7 @@
         @endforeach
       </div> <!-- end .flash-message -->
       <div class="table-kontrak">
-          <input class="form-controsl" name="oke" />
       </div>
-      {{-- <table class="table table-condensed table-striped table-ao">
-          <thead>
-          <tr>
-              <th>No.</th>
-              <th>No Kontrak</th>
-              <th>Judul</th>
-              <th>Type</th>
-          </tr>
-          </thead>
-          <tbody>
-            <tr class="loading-tr">
-              <td colspan="10" class="text-center"><img src="{{asset('/images/loader.gif')}}" title="please wait..."/></td>
-            </tr>
-          </tbody>
-      </table> --}}
     </div>
 <!-- /.box-body -->
 </div>
@@ -68,6 +49,12 @@ $.fn.tableLaravel = function(options) {
         
       return header;
     }
+    options.count_td = function(){
+      var tr_clone = $(options.renderHeader);
+      var tr = tr_clone.find('tr');
+      var th = tr.find('th');
+      return th.length;
+    };
     options.parseHTML = function(html,data){
       var regExp = /{#([^)]+)#}/g;
       // var match = [];
@@ -88,6 +75,19 @@ $.fn.tableLaravel = function(options) {
       }
       return mystring;
     }
+    options.splitName = function(data,val){
+      var str = val;
+      str = str.split('.');
+      var str_t = 'data';
+      var name = '';
+      $.each(str,function(index, el) {
+        if(this!==undefined){
+          name += '[\''+this+'\']';
+        }
+      });
+      return eval(str_t+name);
+      //console.log(str_t+name);
+    }
     options.tableHTML=$('<table/>', {class: options.tableClass+' tableLaravel'});
     options.tableHTML.append(options.renderHeader()).append('<tbody></tbody>');
     options.tableAttr.append(options.tableHTML);
@@ -99,7 +99,8 @@ $.fn.tableLaravel = function(options) {
       } 
       $.each(options.data,function(index, el) {
         if(this.name!==false && this.html===undefined){
-          render += '<td>'+((data[this.name]==null)?'-':data[this.name])+'</td>';
+          var rend_dt = options.splitName(data,this.name);
+          render += '<td>'+((rend_dt==null || rend_dt===undefined)?'-':rend_dt)+'</td>';
         }
         else{
           if(this.name===false && this.html!==undefined){
@@ -211,6 +212,7 @@ $.fn.tableLaravel = function(options) {
           options.tableAttr.find('tbody').append(render);
           options.tableAttr.find('.pagination').remove();
           options.tableAttr.append(options.pagination(data));
+          console.log(options.count_td());
         }
         else{
           options.tableAttr.find('tbody').append(options.renderEmpty);
@@ -242,7 +244,8 @@ $(function () {
     data : [
       { name : 'doc_no' , title : 'No Kontrak',orderable:true},
       { name : 'doc_title' , title  : 'Judul',orderable:true},
-      { name : 'doc_type' , title  : 'Type',orderable:true},
+      { name : 'supplier.nm_vendor' , title  : 'Vendor',orderable:true},
+      { name : 'jenis.type.title' , title  : 'Type',orderable:true},
       { name : 'link' , title  : 'Action'},
     ],
     page : 1,

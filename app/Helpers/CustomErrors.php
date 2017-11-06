@@ -232,6 +232,7 @@ class CustomErrors
             'doc_desc.min' => 'Input minimum 30 karakter',
             'doc_date.format' => 'Input tanggal tidak valid',
             '*.po_exists'=>'No.PO tidak ditemukan!',
+            '*.kontrak_exists'=>'Kontrak tidak ditemukan!',
           ];
   }
 }

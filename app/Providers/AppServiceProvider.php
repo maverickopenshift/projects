@@ -21,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
             $count = Documents::check_po($value);
             return $count;
         });
+        Validator::extend('kontrak_exists', function ($attribute, $value, $parameters, $validator) {
+            $count = Documents::check_kontrak($value);
+            return $count;
+        });
         \Carbon\Carbon::setlocale('id');
     }
 

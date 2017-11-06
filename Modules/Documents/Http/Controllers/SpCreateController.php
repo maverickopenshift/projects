@@ -1,83 +1,30 @@
 <?php
-
 namespace Modules\Documents\Http\Controllers;
-
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
-use Response;
 
 use Modules\Documents\Entities\DocType;
 use Modules\Documents\Entities\Documents;
 use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
-use Modules\Documents\Http\Controllers\SpCreateController as SpCreate;
 use App\Helpers\Helpers;
 use Validator;
 use DB;
 use Auth;
 
-class EntryDocumentController extends Controller
+class SpCreateController
 {
-    protected $fields=[];
-    protected $spCreate;
-    public function __construct(Request $req,SpCreate $spCreate){
-      $this->spCreate = $spCreate;
-      $doc_id = $req->doc_id;
-      $field = Documents::get_fields();
-      if(!empty($doc_id)){
-        $doc = Documents::where('id','=',$doc_id)->first();
-        if(!$doc){
-          abort(404);
-        }
-        $this->fields = $doc;
-      }
-      else{
-        $this->fields = $field;
-      }
-    }
-    /**
-     * Display a listing of the resource.
-     * @return Response
-     */
-    public function index(Request $req)
+    public function __construct()
     {
-        $doc_type = DocType::where('name','=',$req->type)->first();
-        if(!$doc_type){
-          abort(404);
-        }
-        $field = Documents::get_fields();
-        $data['page_title'] = 'Entry Kontrak - '.$doc_type['title'];
-        $data['doc_type'] = $doc_type;
-        $data['doc'] = [];
-        $data['doc']['doc_pihak1'] = 'PT. TELEKOMUNIKASI INDONESIA Tbk';
-        // dd($doc_type);
-        $data['data'] = $this->fields;
-        return view('documents::form')->with($data);
+        //oke
     }
-
-    /**
-     * Show the form for creating a new resource.
-     * @return Response
-     */
-    public function create()
-    {
-        return view('documents::create');
-    }
-    /**
-     * Store a newly created resource in storage.
-     * @param  Request $request
-     * @return Response
-     */
-    public function store(Request $request)
+    public function store($request)
     {
       $type = $request->type;
-      if($type=='sp'){
-        return $this->spCreate->store($request);
-      }
-      $doc_value = $request->doc_value;
-      $request->merge(['doc_value' => Helpers::input_rupiah($request->doc_value)]);
-      //$request->merge(['doc_value' => 'asdfsadfsdafsd']);
+      $doc_nilai_material = $request->doc_nilai_material;
+      $doc_nilai_jasa = $request->doc_nilai_jasa;
+      $request->merge(['doc_nilai_material' => Helpers::input_rupiah($request->doc_nilai_material)]);
+      $request->merge(['doc_nilai_jasa' => Helpers::input_rupiah($request->doc_nilai_jasa)]);
+      //dd($request->input());
       $m_hs_harga=[];
       $m_hs_qty=[];
       if(isset($request['hs_harga']) && count($request['hs_harga'])>0){
@@ -98,21 +45,22 @@ class EntryDocumentController extends Controller
       if(count($m_hs_qty)>0){
         $request->merge(['hs_qty'=>$m_hs_qty]);
       }
-      //dd($request->input());
       $rules = [];
-      $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['parent_kontrak']   =  'required|kontrak_exists';
       $rules['doc_desc']         =  'required|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_template_id']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-      $rules['doc_date']         =  'required|date_format:"Y-m-d"';
+      $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
+      $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_lampiran']     =  'required|mimes:pdf';
-      $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['doc_lampiran_teknis']     =  'required|mimes:pdf';
       $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['doc_value']        =  'required|max:500|min:3|regex:/^[0-9 .]+$/i';
-      $rules['doc_sow']          =  'required|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      
+      $rules['doc_nilai_material']   =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
+      $rules['doc_nilai_jasa']       =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
       
       $rules['hs_kode_item.*']   =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_item.*']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
@@ -122,30 +70,24 @@ class EntryDocumentController extends Controller
       $rules['hs_qty.*']         =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
       
-      if(in_array($type,['turnkey','sp'])){
-          $doc_jaminan_nilai = $request->doc_jaminan_nilai;
-          $request->merge(['doc_jaminan_nilai' => Helpers::input_rupiah($request->doc_jaminan_nilai)]);
-          $rules['doc_jaminan']           = 'required|in:PL,PM';
-          $rules['doc_asuransi']          = 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-          $rules['doc_jaminan_nilai']     = 'required|max:500|min:3|regex:/^[0-9 .]+$/i';
-          $rules['doc_jaminan_startdate'] = 'required|date_format:"Y-m-d"';
-          $rules['doc_jaminan_enddate']   = 'required|date_format:"Y-m-d"';
-          $rules['doc_jaminan_desc']      = 'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-          $rules['doc_po']                = 'required|po_exists|regex:/^[a-z0-9 .\-]+$/i';
-     }
+      
+      $doc_jaminan_nilai = $request->doc_jaminan_nilai;
+      $request->merge(['doc_jaminan_nilai' => Helpers::input_rupiah($request->doc_jaminan_nilai)]);
+      $rules['doc_jaminan']           = 'required|in:PL,PM';
+      $rules['doc_asuransi']          = 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['doc_jaminan_nilai']     = 'required|max:500|min:3|regex:/^[0-9 .]+$/i';
+      $rules['doc_jaminan_startdate'] = 'required|date_format:"Y-m-d"';
+      $rules['doc_jaminan_enddate']   = 'required|date_format:"Y-m-d"';
+      $rules['doc_jaminan_desc']      = 'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_po']                = 'required|po_exists|regex:/^[a-z0-9 .\-]+$/i';
+      
+      
       
       $rule_lt_name = (count($request['lt_name'])>1)?'required':'sometimes|nullable';
       $rule_lt_desc = (count($request['lt_desc'])>1)?'required':'sometimes|nullable';
       $rules['lt_file.*']  =  'sometimes|nullable|mimes:pdf';
       $rules['lt_desc.*']  =  $rule_lt_desc.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['lt_name.*']  =  $rule_lt_name.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      
-      $rule_ps_pasal = (count($request['ps_pasal'])>1)?'required':'sometimes|nullable';
-      $rule_ps_judul = (count($request['ps_judul'])>1)?'required':'sometimes|nullable';
-      $rule_ps_isi = (count($request['ps_isi'])>1)?'required':'sometimes|nullable';
-      $rules['ps_pasal.*']  =  $rule_ps_pasal.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['ps_judul.*']  =  $rule_ps_isi.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['ps_isi.*']    =  $rule_ps_judul.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
       $validator->after(function ($validator) use ($request) {
@@ -156,7 +98,7 @@ class EntryDocumentController extends Controller
       if(isset($doc_jaminan_nilai)){
         $request->merge(['doc_jaminan_nilai' => $doc_jaminan_nilai]);
       }
-      $request->merge(['doc_value' => $doc_value]);
+      
       if(isset($hs_harga) && count($hs_harga)>0){
         $request->merge(['hs_harga'=>$hs_harga]);
       }
@@ -174,7 +116,8 @@ class EntryDocumentController extends Controller
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
       $doc->doc_template_id = $request->doc_template_id;
-      $doc->doc_date = $request->doc_date;
+      $doc->doc_startdate = $request->doc_startdate;
+      $doc->doc_enddate = $request->doc_enddate;
       $doc->doc_pihak1 = $request->doc_pihak1;
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
@@ -187,20 +130,38 @@ class EntryDocumentController extends Controller
         $doc->doc_lampiran = $fileName;
       }
       
-      if(in_array($type,['turnkey','sp'])){
-        $doc->doc_po_no = $request->doc_po;
-        $doc->doc_jaminan = $request->doc_jaminan;
-        $doc->doc_asuransi = $request->doc_asuransi;
-        $doc->doc_jaminan_startdate = $request->doc_jaminan_startdate;
-        $doc->doc_jaminan_enddate = $request->doc_jaminan_enddate;
-        $doc->doc_jaminan_desc = $request->doc_jaminan_desc;
-        $doc->doc_jaminan_nilai = Helpers::input_rupiah($request->doc_jaminan_nilai);
+      if(isset($request->doc_lampiran_teknis)){
+        $fileName   = Helpers::set_filename('doc_lampiran_teknis_',strtolower($request->doc_title));
+        $request->doc_lampiran_teknis->storeAs('document/'.$request->type, $fileName);
+        $doc->doc_lampiran_teknis = $fileName;
       }
+      
+      $nilai_jasa               = Helpers::input_rupiah($request->doc_nilai_jasa);
+      $nilai_material           = Helpers::input_rupiah($request->doc_nilai_material);
+      $nilai_ppn                = config('app.ppn_set');
+      $nilai_total              = $nilai_jasa+$nilai_material;
+      
+      $doc->doc_nilai_material  = $nilai_material;
+      $doc->doc_nilai_jasa      = $nilai_jasa;
+      $doc->doc_nilai_ppn       = $nilai_ppn;
+      $doc->doc_nilai_total_ppn = (($nilai_ppn/100)*$nilai_total)+$nilai_total;
+      
+      $doc->doc_po_no = $request->doc_po;
+      $doc->doc_jaminan = $request->doc_jaminan;
+      $doc->doc_asuransi = $request->doc_asuransi;
+      $doc->doc_jaminan_startdate = $request->doc_jaminan_startdate;
+      $doc->doc_jaminan_enddate = $request->doc_jaminan_enddate;
+      $doc->doc_jaminan_desc = $request->doc_jaminan_desc;
+      $doc->doc_jaminan_nilai = Helpers::input_rupiah($request->doc_jaminan_nilai);
+      
       $doc->doc_proc_process = $request->doc_proc_process;
       $doc->doc_mtu = $request->doc_mtu;
       $doc->doc_value = Helpers::input_rupiah($request->doc_value);
       $doc->doc_sow = $request->doc_sow;
       $doc->doc_type = $request->type;
+      $doc->doc_parent = 0;
+      $doc->doc_parent_id = $request->parent_kontrak;
+      
       $doc->save();
       
       foreach($request['pic_data'] as $key => $val){
@@ -227,22 +188,6 @@ class EntryDocumentController extends Controller
               $doc_meta->meta_file = $fileName;
             }
             $doc_meta->save();
-          }
-        }      
-      }
-      if(count($request->ps_pasal)>0){
-        foreach($request->ps_pasal as $key => $val){
-          if(!empty($val) 
-              && !empty($request['ps_judul'][$key]) 
-              && !empty($request['ps_isi'][$key]) 
-          ){
-            $doc_meta2 = new DocMeta();
-            $doc_meta2->documents_id = $doc->id;
-            $doc_meta2->meta_type = 'pasal_pasal';
-            $doc_meta2->meta_name = $val;
-            $doc_meta2->meta_title =$request['ps_judul'][$key];
-            $doc_meta2->meta_desc = $request['ps_isi'][$key];
-            $doc_meta2->save();
           }
         }      
       }
@@ -280,45 +225,6 @@ class EntryDocumentController extends Controller
       //dd($request->input());
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
       return redirect()->route('doc');
-                  // ->withErrors($validator);
-    }
-
-    /**
-     * Show the specified resource.
-     * @return Response
-     */
-    public function show()
-    {
-        return view('documents::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * @return Response
-     */
-    public function edit()
-    {
-        return view('documents::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * @param  Request $request
-     * @return Response
-     */
-    public function update(Request $request)
-    {
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * @return Response
-     */
-    public function destroy()
-    {
     }
     
-    protected function rules(){
-      
-    }
 }

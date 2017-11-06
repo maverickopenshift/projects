@@ -3,12 +3,14 @@
 Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespace' => 'Modules\Documents\Http\Controllers'], function()
 {
     Route::get('/', 'DocumentsController@index')->name('doc');
+    Route::get('/child', 'DocumentsController@index')->name('doc.child');
     Route::get('/create/{type}', 'EntryDocumentController@index')->name('doc.create');
     Route::get('/get-po', 'DocumentsController@getPo')->name('doc.get-po');
     Route::get('/get-pic', 'DocumentsController@getPic')->name('doc.get-pic');
     Route::post('/store/{type}', 'EntryDocumentController@store')->name('doc.store');
     Route::get('/view/{type}/{id}/', 'DocumentsController@view')->name('doc.view');
     Route::post('/approve', 'DocumentsController@approve')->name('doc.approve');
+    Route::get('/get-select-kontrak', 'DocumentsController@getSelectKontrak')->name('doc.get-select-kontrak');
 
     Route::get('/doc-template', ['middleware' => ['permission:lihat-template-pasal-pasal'],'uses' => 'DocTemplateController@index'])->name('doc.template');
     Route::get('/doc-template/data', ['middleware' => ['permission:lihat-template-pasal-pasal'],'uses' => 'DocTemplateController@data'])->name('doc.template.data');

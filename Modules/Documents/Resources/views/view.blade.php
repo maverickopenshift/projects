@@ -138,7 +138,15 @@ $(document).on('click', '.btn-setuju', function(event) {
                 data: {id: '{!!$id!!}',}
               })
               .done(function(data) {
-                console.log(JSON.stringify(data));
+                if(data.status){
+                  bootbox.alert({
+                      title:"Pemberitahuan",
+                      message: "Data berhasil disetujui",
+                      callback: function (result) {
+                          window.location = '{!!route('doc')!!}'
+                      }
+                  });
+                }
                 loading.hide();
               });
             }

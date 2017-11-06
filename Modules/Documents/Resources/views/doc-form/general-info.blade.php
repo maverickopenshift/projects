@@ -123,7 +123,7 @@
             </div>
           </div>
           <div class="form-group {{ $errors->has('doc_lampiran') ? ' has-error' : '' }}">
-            <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Lampiran 1</label>
+            <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Lampiran 1 <br/><small style="font-weight:normal" class="text-info"><i>(Lembar Tanda Tangan)</i></small></label>
             <div class="col-sm-6">
               <div class="input-group">
                 <input type="file" class="hide" name="doc_lampiran">

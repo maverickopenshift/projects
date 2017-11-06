@@ -17,30 +17,34 @@
                     <span>Dashboard</span></a>
             </li>
             @endpermission
-
+            @permission('lihat-template-pasal-pasal|lihat-kontrak|tambah-kontrak')
             <li class="treeview {{Request::is("documents/*") || Request::is("documents")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management Kontrak" />
                 <span>Manajemen Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
-                <li class="treeview {{Request::is("documents/create/*")?'active':''}}">
-                  <a href="#"><span>Tambah Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
-                  <ul class="treeview-menu ">
-                    <li class="{{Request::is("documents/create/khs")?'active':''}}" ><a href="{{route('doc.create',['type'=>'khs'])}}">KHS</a></li>
-                    <li class="{{Request::is("documents/create/turnkey")?'active':''}}" ><a href="{{route('doc.create',['type'=>'turnkey'])}}">Turnkey</a></li>
-                    <li class="{{Request::is("documents/create/sp")?'active':''}}" ><a href="{{route('doc.create',['type'=>'sp'])}}">Surat Pesanan (SP)</a></li>
-                    <li class="{{Request::is("documents/create/amandemen-sp")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_sp'])}}">Amandemen (SP)</a></li>
-                    <li class="{{Request::is("documents/create/amandemen-kontrak")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_kontrak'])}}">Amandemen Kontrak</a></li>
-                    <li class="#" ><a href="#">Adendum</a></li>
-                    <li class="#" ><a href="#">Side Letter</a></li>
-                    <li class="#" ><a href="#">Surat Pengikatan</a></li>
-                  </ul>
-                </li>
-                <li class="{{Request::is("documents")?'active':''}}" ><a href="{{route('doc')}}">Data Kontrak</a></li>
+                @permission('tambah-kontrak')
+                  <li class="treeview {{Request::is("documents/create/*")?'active':''}}">
+                    <a href="#"><span>Tambah Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
+                    <ul class="treeview-menu ">
+                      <li class="{{Request::is("documents/create/khs")?'active':''}}" ><a href="{{route('doc.create',['type'=>'khs'])}}">KHS</a></li>
+                      <li class="{{Request::is("documents/create/turnkey")?'active':''}}" ><a href="{{route('doc.create',['type'=>'turnkey'])}}">Turnkey</a></li>
+                      <li class="{{Request::is("documents/create/sp")?'active':''}}" ><a href="{{route('doc.create',['type'=>'sp'])}}">Surat Pesanan (SP)</a></li>
+                      <li class="{{Request::is("documents/create/amandemen-sp")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_sp'])}}">Amandemen (SP)</a></li>
+                      <li class="{{Request::is("documents/create/amandemen-kontrak")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_kontrak'])}}">Amandemen Kontrak</a></li>
+                      <li class="#" ><a href="#">Adendum</a></li>
+                      <li class="#" ><a href="#">Side Letter</a></li>
+                    </ul>
+                  </li>
+                @endpermission
+                @permission('lihat-kontrak')
+                  <li class="{{Request::is("documents")?'active':''}}" ><a href="{{route('doc')}}">Data Kontrak</a></li>
+                @endpermission
                 @permission('lihat-template-pasal-pasal')
                   <li class="{{Request::is("documents/doc-template") || Request::is("documents/doc-template/create") || Request::is("documents/doc-template/*/edit")?'active':''}}" ><a href="{{route('doc.template')}}">Template Pasal - Pasal</a></li>
                 @endpermission
               </ul>
             </li>
+            @endpermission
             {{-- <li>
                 <a href="#"> <img src="{{asset('/images/icon-search.png')}}" title="Search" />
                     <span>Search</span></a>

@@ -18,10 +18,14 @@
                     <div class="form-group">
                         <div class="error-global"></div>
                         <label>Status Vendor</label>
-                        <select class="form-control" name="status" id="status">
+                        {{-- <select class="form-control" name="status" id="status">
                           <option value="1" {{ old('prinsipal_st')=='1'?"selected='selected'":"" }}>Data Sudah Disetujui</option>
                           <option value="0" {{ old('prinsipal_st')!='1'?"selected='selected'":"" }}>Data Belum Disetujui</option>
-                        </select>
+                        </select> --}}
+                        <div class="pull-right">
+                          <a class="btn btn-success approve-action" data-id="1">Approve</a>
+                          <input type="hidden" id="statuss" name="statuss" value="">
+                        </div>
                         <div class="error-name"></div>
                     </div>
                 </div>
@@ -51,9 +55,14 @@
                 var role = data.roles;
 
                 //data = JSON.parse(data);
+                if(data.vendor_status=='0'){
+                  $('.approve-action').addClass('btn-danger unapprove-action').text("Unapprove")
+                }else{
+                  $('.approve-action').addClass('btn-success  approve-action').text("Approve")
+                }
+
                 modal.find('.modal-body input#id').val(data.id)
                 modal.find('.modal-body input#kd_vendor').val(data.kd_vendor)
-                $('#status').val(data.vendor_status)
                 modal.find('form').attr('action','{!! route('supplier.editstatus') !!}')
 
 
@@ -84,7 +93,26 @@
                 }
             });
         })
+
+        $(document).on('click','.approve-action',function(e){
+          var btn = $(this),text_btn=btn.text();
+          btn.addClass('disabled').html('please wait');
+          setTimeout(function(){
+          	btn.removeClass('disabled btn-primary approve-action').addClass('btn-danger unapprove-action').text('Unapprove')
+          },3000);
+          $('#statuss').val('0');
+        });
+        $(document).on('click','.unapprove-action',function(e){
+    	     var btn = $(this),text_btn=btn.text();
+
+            btn.addClass('disabled').html('please wait');
+            setTimeout(function(){
+            	btn.removeClass('disabled btn-danger unapprove-action').addClass('btn-success  approve-action').text('Approve')
+            },3000);
+            $('#statuss').val('1');
+          });
     });
+
 
 </script>
 @endpush

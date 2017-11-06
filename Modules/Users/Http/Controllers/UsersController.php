@@ -32,7 +32,7 @@ class UsersController extends Controller
             ->addColumn('action', function ($data) {
               $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
               $roles = htmlspecialchars(json_encode($data->roles), ENT_QUOTES, 'UTF-8');
-              $act= '<div class="btn-group">';
+              $act= '<div>';
               if(\Auth::user()->hasPermission('ubah-user')){
                   $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'">
   <i class="glyphicon glyphicon-edit"></i> Edit

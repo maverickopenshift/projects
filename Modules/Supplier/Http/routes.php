@@ -25,7 +25,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
     Route::post('/editstatus', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@editstatus'])->name('supplier.editstatus');
     Route::post('/update', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@update'])->name('supplier.update');
     Route::get('/get-select', 'SupplierController@getSelect')->name('supplier.get-select');
-    
+
     Route::get('/legal-dokumen/{filename}', function ($filename){
         $path = storage_path('app/supplier/legal_dokumen/' . $filename);
 

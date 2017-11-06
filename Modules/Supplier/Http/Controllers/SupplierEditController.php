@@ -94,6 +94,7 @@ class SupplierEditController extends Controller
       $action_type = 'edit';
       return view('supplier::form')->with(compact('supplier','page_title','action_type','id'));
   }
+
   public function update(Request $request)
   {
     $id = $request->id;
@@ -396,25 +397,12 @@ class SupplierEditController extends Controller
 
   public function editstatus(Request $request)
   {
-    $id = $request->id;
-    $rules = array (
-        'status'         => 'required',
-    );
-
-    $validator = Validator::make($request->all(), $rules,CustomErrors::supplier());
-    //dd($request->input());
-    if ($validator->fails ()){
-      return redirect()->back()
-                  ->withInput($request->input())
-                  ->withErrors($validator);
-    }
-    else {
       $id = $request->id;
 
       $user = Supplier::where('id',$id)->first();
-      $user->vendor_status = $request->status;
+      $user->vendor_status = $request->statuss;
       $user->save();
       return redirect()->back()->with('message', 'Data berhasil disimpan!');
-    }
+    
   }
 }

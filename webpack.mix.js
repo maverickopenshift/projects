@@ -76,6 +76,7 @@ let mix = require('laravel-mix');
             'node_modules/admin-lte/plugins/select2/select2.full.js',
             'node_modules/admin-lte/plugins/select2/i18n/id.js',
             'resources/assets/js/jquery.autocomplete.min.js',
+            'resources/assets/js/bootbox.min.js',
             'resources/assets/js/bootstrap-tagsinput.js',
             'resources/assets/js/papaparse.js',
             'node_modules/admin-lte/plugins/iCheck/icheck.js',

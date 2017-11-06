@@ -21,6 +21,7 @@ class AppServiceProvider extends ServiceProvider
             $count = Documents::check_po($value);
             return $count;
         });
+        \Carbon\Carbon::setlocale('id');
     }
 
     /**

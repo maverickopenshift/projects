@@ -33,68 +33,31 @@ class DocumentsController extends Controller
             $limit = $request->limit;
           }
           $documents = $this->documents->latest('created_at')->paginate($limit);
-          // $documents->getCollection()->transform(function ($value) {
-          //   $value->doc_title = $value->doc_title.' <i>'.$value->supplier_id.'</i>';
-          //   return $value;
-          // });
+          $documents->getCollection()->transform(function ($value) {
+            $value['link'] = '<a class="btn btn-xs btn-success" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'">Setujui</a>';
+            // $value->doc_title = $value->doc_title.' <i>'.$value->supplier_id.'</i>';
+            return $value;
+          });
           return Response::json($documents);
       }
 
       //return view('articles.index', compact('articles'));
       return view('documents::index');
     }
-
-    /**
-     * Show the form for creating a new resource.
-     * @return Response
-     */
-    public function create()
+    public function view(Request $request)
     {
-        return view('documents::create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     * @param  Request $request
-     * @return Response
-     */
-    public function store(Request $request)
-    {
-    }
-
-    /**
-     * Show the specified resource.
-     * @return Response
-     */
-    public function show()
-    {
-        return view('documents::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * @return Response
-     */
-    public function edit()
-    {
-        return view('documents::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * @param  Request $request
-     * @return Response
-     */
-    public function update(Request $request)
-    {
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * @return Response
-     */
-    public function destroy()
-    {
+      $id = $request->id;
+      $doc_type = DocType::where('name','=',$request->type)->first();
+      $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic')->first();
+      //dd($dt);
+      if(!$doc_type || !$dt){
+        abort(404);
+      }
+      $data['doc_type'] = $doc_type;
+      $data['page_title'] = 'View Kontrak - '.$doc_type['title'];
+      $data['doc'] = $dt;
+      $data['id'] = $id;
+      return view('documents::view')->with($data);
     }
     public function getPo(Request $request){
       $search = trim($request->po);
@@ -114,5 +77,12 @@ class DocumentsController extends Controller
       return Datatables::of($sql)
           ->addIndexColumn()
           ->make(true);
+    }
+    public function approve(Request $request)
+    {
+      if ($request->ajax()) {
+        return Response::json(['status'=>true]);
+      }
+      abort(500);
     }
 }

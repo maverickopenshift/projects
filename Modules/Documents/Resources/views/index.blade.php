@@ -68,6 +68,26 @@ $.fn.tableLaravel = function(options) {
         
       return header;
     }
+    options.parseHTML = function(html,data){
+      var regExp = /{#([^)]+)#}/g;
+      // var match = [];
+      var matches = regExp.exec(html);
+      // while ((matches = regExp.exec(html)) != null) {
+      //   alert(matches[1]);
+      // }
+      // while (matches != null) {
+      //     match.push(matches[1]);
+      //     matches = regExp.exec(html);
+      // }
+      //console.log(matches);
+      //matches[1] contains the value between the parentheses
+      var mystring = html;
+      // console.log(JSON.stringify(match));
+      if(matches!==null){
+        mystring = mystring.replace('{#'+matches[1]+'#}', data[matches[1]]);
+      }
+      return mystring;
+    }
     options.tableHTML=$('<table/>', {class: options.tableClass+' tableLaravel'});
     options.tableHTML.append(options.renderHeader()).append('<tbody></tbody>');
     options.tableAttr.append(options.tableHTML);
@@ -78,7 +98,18 @@ $.fn.tableLaravel = function(options) {
           render += '<td>'+(no+1)+'</td>';
       } 
       $.each(options.data,function(index, el) {
-        render += '<td>'+((data[this.name]==null)?'-':data[this.name])+'</td>';
+        if(this.name!==false && this.html===undefined){
+          render += '<td>'+((data[this.name]==null)?'-':data[this.name])+'</td>';
+        }
+        else{
+          if(this.name===false && this.html!==undefined){
+            render += '<td>'+options.parseHTML(this.html,data)+'</td>';
+          }
+          else{
+            render += '<td></td>';
+          }
+        }
+        
       });    
       render += '</tr>';
         
@@ -212,6 +243,7 @@ $(function () {
       { name : 'doc_no' , title : 'No Kontrak',orderable:true},
       { name : 'doc_title' , title  : 'Judul',orderable:true},
       { name : 'doc_type' , title  : 'Type',orderable:true},
+      { name : 'link' , title  : 'Action'},
     ],
     page : 1,
     limit : 25,

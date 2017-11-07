@@ -20,6 +20,116 @@
       </div> <!-- end .flash-message -->
       <div class="table-kontrak">
       </div>
+      <table class="table table-condensed table-striped">
+        <thead>
+          <tr>
+            <th style="width:50px;">No.</th>
+            <th style="width:350px;">Judul</th>
+            <th style="width:300px;">No Kontrak</th>
+            <th style="width:300px;">Vendor</th>
+            <th style="width:100px;">Type</th>
+            <th style="width:90px;">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>PENGADAAN DAN PEMASANGAN KABEL FIBER OPTIK</td>
+            <td>K.TEL.00001/HK.810/L002K/2017</td>
+            <td>CV.Maju Mundur</td>
+            <td>Turnkey</td>
+            <td>
+              <a class="btn btn-xs btn-primary" href="http://consys.in2digital.net:81/documents/view/turnkey/11">Lihat</a>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="6" class="no-padding">
+                <table class="table table-condensed table-striped" style="margin-bottom:0;">
+                  <thead>
+                    <tr>
+                      <td style="width:50px;"></td>
+                      <th style="width:260px;">Judul</th>
+                      <th>No</th>
+                      <th>Vendor</th>
+                      <th>Type</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td></td>
+                      <td>- SP #1</td>
+                      <td>K.TEL.00003/HK.810/L002K/2017</td>
+                      <td>CV.Maju Mundur</td>
+                      <td>SP</td>
+                      <td><a class="btn btn-xs btn-primary" href="http://consys.in2digital.net:81/documents/view/turnkey/11">Lihat</a></td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td>- SP #2</td>
+                      <td>K.TEL.00004/HK.810/L002K/2017</td>
+                      <td>CV.Maju Mundur</td>
+                      <td>SP</td>
+                      <td><a class="btn btn-xs btn-primary" href="http://consys.in2digital.net:81/documents/view/turnkey/11">Lihat</a></td>
+                    </tr>
+                    <tr>
+                      <td colspan="6" class="no-padding">
+                        <table class="table table-condensed table-striped" style="margin-bottom:0;">
+                          <thead>
+                            <tr>
+                              <td style="width:80px;"></td>
+                              <th style="width:250px;" >Judul</th>
+                              <th>No</th>
+                              <th>Vendor</th>
+                              <th>Type</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td></td>
+                              <td>- Amandemen #1</td>
+                              <td>K.TEL.00003/HK.810/L002K/2017</td>
+                              <td>CV.Maju Mundur</td>
+                              <td>Amandemen SP</td>
+                              <td><a class="btn btn-xs btn-primary" href="http://consys.in2digital.net:81/documents/view/turnkey/11">Lihat</a></td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td>- Amandemen #1</td>
+                      <td>K.TEL.00003/HK.810/L002K/2017</td>
+                      <td>CV.Maju Mundur</td>
+                      <td>Amandemen Kontrak</td>
+                      <td><a class="btn btn-xs btn-primary" href="http://consys.in2digital.net:81/documents/view/turnkey/11">Lihat</a></td>
+                    </tr>
+                    <tr>
+                      <td></td>
+                      <td>- Amandemen #2</td>
+                      <td>K.TEL.00004/HK.810/L002K/2017</td>
+                      <td>CV.Maju Mundur</td>
+                      <td>Amandemen Kontrak</td>
+                      <td><a class="btn btn-xs btn-primary" href="http://consys.in2digital.net:81/documents/view/turnkey/11">Lihat</a></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>PENGADAAN DAN PEMASANGAN JEMBATAN</td>
+              <td>K.TEL.00002/HK.810/L002K/2017</td>
+              <td>PT.Muncul Jaya</td>
+              <td>KHS</td>
+              <td>
+                <a class="btn btn-xs btn-primary" href="http://consys.in2digital.net:81/documents/view/khs/10">Lihat</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
     </div>
 <!-- /.box-body -->
 </div>

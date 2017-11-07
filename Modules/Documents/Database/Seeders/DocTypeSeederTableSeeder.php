@@ -64,7 +64,7 @@ class DocTypeSeederTableSeeder extends Seeder
         $admin->save();
               
         $admin = new DocType;
-        $admin->name = 'adendum Kontrak';
+        $admin->name = 'adendum';
         $admin->title = 'Adendum Kontrak';
         $admin->desc = 'Adendum Kontrak';
         $admin->save();

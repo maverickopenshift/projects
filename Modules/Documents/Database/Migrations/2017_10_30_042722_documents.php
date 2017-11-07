@@ -18,10 +18,9 @@ class Documents extends Migration
           $table->bigInteger('id_doc_type')->unsigned();
           $table->bigInteger('id_doc_category')->unsigned();
           $table->string('name');
+          $table->string('kode');
           $table->string('title');
           $table->longText('desc')->nullable();
-          $table->string('created_by')->nullable();
-          $table->string('updated_by')->nullable();
           $table->timestamps();
           $table->softDeletes();
           

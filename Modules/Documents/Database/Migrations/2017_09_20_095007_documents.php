@@ -49,7 +49,7 @@ class Documents extends Migration
             $table->longText('doc_file_desc')->nullable();
             $table->longText('doc_related')->nullable();
             $table->integer('doc_signing')->nullable();
-            $table->date('doc_signing_date')->nullable();
+            $table->timestamp('doc_signing_date')->nullable();
             $table->longText('doc_signing_reason')->nullable();
             $table->enum('doc_change', array('addendum', 'amandemen', 'side letter'))->nullable();
             $table->string('doc_status')->nullable();

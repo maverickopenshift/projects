@@ -321,7 +321,7 @@ $(function() {
   if(po!=""){
     render_po(po);
   }
-  
+
   $('.mtu-set').text($('.mata-uang').val());
   $(".select-user-telkom").select2({
       placeholder : "Pilih Penanggung....",
@@ -441,7 +441,7 @@ $(function() {
     $('.select-user-vendor-text').val(render);
     return render ;
   }
-  
+
   var user_vendor = $(".select-user-vendor");
   if(user_vendor.data('id')!==""){
     var newOption = new Option($(".select-user-vendor-text").val(), user_vendor.data('id'), false, true);
@@ -515,7 +515,7 @@ function templatePO(data) {
               <td>'+data.keterangan+'</th>\
           </tr>';
 }
-  @php 
+  @php
     $pic=Helper::old_prop($doc,'pic_data');
   @endphp
   @if($pic)
@@ -617,7 +617,7 @@ $(document).on('keyup', '.hitung_sp', function(event) {
     }
     else{
       var jasa = td.find('input[name="doc_nilai_jasa"]').val();
-    } 
+    }
     if(material==""){
       material = 0
     }

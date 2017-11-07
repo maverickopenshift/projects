@@ -309,8 +309,9 @@ $.fn.tableLaravel = function(options) {
       })
       .done(function(data) {
           if(data.data.length>0){
-            var render = '';
+            var render;
             $.each(data.data,function(index, el) {
+              $('.row-'+this.id).remove();
               render += options.renderDataChild(this,index,child);
             }); 
             attr.after(render);

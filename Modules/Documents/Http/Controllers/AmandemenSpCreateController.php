@@ -113,7 +113,7 @@ class AmandemenSpCreateController
           $doc_meta->meta_type = 'scope_perubahan';
           $doc_meta->meta_name = $val;
           $doc_meta->meta_title = $request['scope_name'][$key];
-          // $doc_scope->meta_desc = json_encode(['semula'=>$scope_awal,'diubah_menjadi'=>$scope_akhir]);
+          $doc_meta->meta_desc = json_encode(['semula'=>$scope_awal,'diubah_menjadi'=>$scope_akhir]);
 
           if(isset($request['scope_file'][$key])){
             $fileName   = Helpers::set_filename('doc_scope_perubahan_',strtolower($val));

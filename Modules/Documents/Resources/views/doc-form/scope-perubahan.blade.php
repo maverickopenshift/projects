@@ -18,14 +18,48 @@
         </tr>
       </thead>
       <tbody>
+        @php
+          $scope_name = Helper::old_prop_each($doc,'scope_name');
+          $scope_awal = Helper::old_prop_each($doc,'scope_awal');
+          $scope_akhir = Helper::old_prop_each($doc,'scope_akhir');
+          $scope_file = Helper::old_prop_each($doc,'scope_file');
+        @endphp
+        @if(count($scope_name)>0)
+          @foreach ($scope_name as $key => $value)
+            <tr>
+                <td>{{$key+1}}</td>
+                <td class="{{ $errors->has('scope_name.'.$key) ? ' has-error' : '' }}"><input type="text" class="form-control" name="scope_name[]" autocomplete="off" value="{{$value}}" placeholder="Masukan Scope Perubahan">{!!Helper::error_help($errors,'scope_name.'.$key)!!}</td>
+                <td class="{{ $errors->has('scope_awal.'.$key) ? ' has-error' : '' }}"><input type="text" class="form-control" name="scope_awal[]" autocomplete="off" value="{{$value}}">{!!Helper::error_help($errors,'scope_awal.'.$key)!!}</td>
+                <td class="{{ $errors->has('scope_akhir.'.$key) ? ' has-error' : '' }}"><input type="text" class="form-control" name="scope_akhir[]" autocomplete="off" value="{{$value}}">{!!Helper::error_help($errors,'scope_akhir.'.$key)!!}</td>
+                <td class="{{ $errors->has('scope_file.'.$key) ? ' has-error' : '' }}">
+                  <div class="input-group">
+                    <input type="file" class="hide" name="scope_file[]">
+                    <input class="form-control" type="text" disabled>
+                    <span class="input-group-btn">
+                      <button class="btn btn-default click-upload" type="button">Browse</button>
+                    </span>
+                  </div>
+                  {!!Helper::error_help($errors,'scope_file.'.$key)!!}
+                  @if(isset($scope_file[$key]))
+                    <a target="_blank" href="{{route('supplier.legaldokumen.file',['filename'=>$scope_file[$key]])}}"><i class="glyphicon glyphicon-paperclip"></i> {{$scope_file[$key]}}</a>
+                  @endif
+                </td>
+                <td class="action">
+                  @if(count($scope_name)>1)
+                    <button type="button" class="btn btn-danger btn-xs delete-sc"><i class="glyphicon glyphicon-remove"></i> hapus</button>
+                  @endif
+                </td>
+            </tr>
+          @endforeach
+          @else
           <tr>
               <td>1</td>
-              <td><input type="text" class="form-control" name="judul[]" autocomplete="off"></td>
-              <td><input type="text" class="form-control" name="judul[]" autocomplete="off"></td>
-              <td><input type="text" class="form-control" name="judul[]" autocomplete="off"></td>
+              <td><input type="text" class="form-control" name="scope_name[]" autocomplete="off" placeholder="Masukan Scope Perubahan"></td>
+              <td><input type="text" class="form-control" name="scope_awal[]" autocomplete="off"></td>
+              <td><input type="text" class="form-control" name="scope_akhir[]" autocomplete="off"></td>
               <td><div class="col-sm-10">
                 <div class="input-group">
-                  <input type="file" class="hide" name="legal_dokumen[][file]">
+                  <input type="file" class="hide" name="scope_file[]">
                   <input class="form-control" type="text" disabled>
                   <span class="input-group-btn">
                     <button class="btn btn-default click-upload" type="button">Browse</button>
@@ -34,6 +68,7 @@
               </div></td>
               <td class="action"></td>
           </tr>
+          @endif
       </tbody>
       </table>
     {{-- @include('documents::partials.buttons') --}}

@@ -8,6 +8,15 @@
     <div class="box-body">
       <div class="form-horizontal">
           @include('documents::doc-form.no-sp')
+          <div class="form-group {{ $errors->has('doc_template_id') ? ' has-error' : '' }}">
+            <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Jenis {{$doc_type['title']}}</label>
+            <div class="col-sm-3">
+              {!!Helper::select_jenis($doc_type->name,old('doc_template_id',Helper::prop_exists($doc,'doc_template_id')),'doc_template_id')!!}
+            </div>
+            <div class="col-sm-10 col-sm-offset-2">
+              {!!Helper::error_help($errors,'doc_template_id')!!}
+            </div>
+          </div>
           <div class="form-group {{ $errors->has('doc_date') ? ' has-error' : '' }}">
             <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal {{$doc_type['title']}}</label>
             <div class="col-sm-3">
@@ -59,6 +68,21 @@
             </div>
             <div class="col-sm-10 col-sm-offset-2">
               {!!Helper::error_help($errors,'doc_pihak2_nama')!!}
+            </div>
+          </div>
+          <div class="form-group {{ $errors->has('doc_lampiran') ? ' has-error' : '' }}">
+            <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Lampiran 1 <br/><small style="font-weight:normal" class="text-info"><i>(Lembar Tanda Tangan)</i></small></label>
+            <div class="col-sm-6">
+              <div class="input-group">
+                <input type="file" class="hide" name="doc_lampiran">
+                <input class="form-control" type="text" disabled>
+                <span class="input-group-btn">
+                  <button class="btn btn-default click-upload" type="button">Browse</button>
+                </span>
+              </div>
+            </div>
+            <div class="col-sm-10 col-sm-offset-2">
+              {!!Helper::error_help($errors,'doc_lampiran')!!}
             </div>
           </div>
           {{-- @include('documents::partials.buttons') --}}

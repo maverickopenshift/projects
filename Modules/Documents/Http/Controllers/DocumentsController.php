@@ -149,7 +149,7 @@ class DocumentsController extends Controller
         if (empty($type)) {
             return \Response::json([]);
         }
-        $data = $this->documents->select('id','doc_no','doc_date','doc_title','doc_template_id','supplier_id')->with('jenis','supplier','pic')->whereNotNull('doc_no')->where('doc_parent',0);
+        $data = $this->documents->select('id','doc_no','doc_startdate','doc_enddate','doc_title','doc_template_id','supplier_id')->with('jenis','supplier','pic')->whereNotNull('doc_no')->where('doc_parent',0);
         if(!empty($search)){
           $data->where(function($q) use ($search) {
               $q->orWhere('doc_no', 'like', '%'.$search.'%');

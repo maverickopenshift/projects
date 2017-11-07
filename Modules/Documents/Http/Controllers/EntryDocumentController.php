@@ -13,6 +13,7 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Http\Controllers\SpCreateController as SpCreate;
 use Modules\Documents\Http\Controllers\AmandemenSpCreateController as AmandemenSp;
+
 use App\Helpers\Helpers;
 use Validator;
 use DB;
@@ -22,8 +23,10 @@ class EntryDocumentController extends Controller
 {
     protected $fields=[];
     protected $spCreate;
-    public function __construct(Request $req,SpCreate $spCreate){
+    protected $AmandemenSp;
+    public function __construct(Request $req,SpCreate $spCreate,AmandemenSp $AmandemenSp){
       $this->spCreate = $spCreate;
+      $this->AmandemenSp = $AmandemenSp;
       $doc_id = $req->doc_id;
       $field = Documents::get_fields();
       if(!empty($doc_id)){

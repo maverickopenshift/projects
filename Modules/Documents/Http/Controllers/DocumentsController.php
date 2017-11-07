@@ -56,6 +56,7 @@ class DocumentsController extends Controller
             //   .Helpers::create_button('Adendum',$adendum,'warning')
             //   .Helpers::create_button('Side Letter',$side_letter,'info');
             // }
+            $value['total_child']=$this->documents->total_child($value['id']);
             if($value['doc_signing']==0){
               $value['link'] = '<a class="btn btn-xs btn-success" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'">Setujui</a>';
             }

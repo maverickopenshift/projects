@@ -93,7 +93,7 @@ $.fn.tableLaravel = function(options) {
     options.tableAttr.append(options.tableHTML);
     options.tableAttr.prepend(options.loadingHtml);
     options.renderData = function(data,no){
-      var render = '<tr data-id="'+data['id']+'" class="row-'+data['id']+'">';
+      var render = '<tr data-total-child="'+data['total_child']+'" data-id="'+data['id']+'" class="row-parent row-'+data['id']+'">';
       if(options.withNumber){
           render += '<td>'+(no+1)+'</td>';
       } 
@@ -117,7 +117,7 @@ $.fn.tableLaravel = function(options) {
       return render;
     }
     options.renderDataChild = function(data,no,child){
-      var render = '<tr data-id="'+data['id']+'" class="row-child row-'+data['id']+'">';
+      var render = '<tr data-total-child="'+data['total_child']+'" data-id="'+data['id']+'" class="row-child row-'+data['id']+'">';
       if(options.withNumber){
           render += '<td></td>';
       } 
@@ -244,12 +244,14 @@ $.fn.tableLaravel = function(options) {
             return options.tableAttr.append(options.pagination(data));
           };
           $.when( wait_render() ).done(function() {
-            var tr = options.tableAttr.find('tbody>tr');
+            var tr = options.tableAttr.find('tbody>tr.row-parent');
             $.each(tr,function(index, el) {
                 var row_id = $(this).data('id');
                 var row_class = $(this).attr('class');
                 // console.log(row_id+' - '+row_class);
-                options.ajaxChild(1,row_id,$(this));
+                if(parseInt($(this).data('total-child'))>0){
+                  options.ajaxChild(1,row_id,$(this));
+                }
             });
             
           });
@@ -287,7 +289,9 @@ $.fn.tableLaravel = function(options) {
                   var row_id = $(this).data('id');
                   var row_class = $(this).attr('class');
                   console.log(row_id+' - '+row_class);
-                  options.ajaxChild2(2,row_id,$(this));
+                  if(parseInt($(this).data('total-child'))>0){
+                    options.ajaxChild2(2,row_id,$(this));
+                  }
               });
             });
           }

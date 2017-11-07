@@ -20,116 +20,6 @@
       </div> <!-- end .flash-message -->
       <div class="table-kontrak">
       </div>
-      <table class="table table-condensed table-striped">
-        <thead>
-          <tr>
-            <th style="width:50px;">No.</th>
-            <th style="width:350px;">Judul</th>
-            <th style="width:300px;">No Kontrak</th>
-            <th style="width:300px;">Vendor</th>
-            <th style="width:100px;">Type</th>
-            <th style="width:90px;">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td>PENGADAAN DAN PEMASANGAN KABEL FIBER OPTIK</td>
-            <td>K.TEL.00001/HK.810/L002K/2017</td>
-            <td>CV.Maju Mundur</td>
-            <td>Turnkey</td>
-            <td>
-              <a class="btn btn-xs btn-primary" href="http://consys.in2digital.net:81/documents/view/turnkey/11">Lihat</a>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="6" class="no-padding">
-                <table class="table table-condensed table-striped" style="margin-bottom:0;">
-                  <thead>
-                    <tr>
-                      <td style="width:50px;"></td>
-                      <th style="width:260px;">Judul</th>
-                      <th>No</th>
-                      <th>Vendor</th>
-                      <th>Type</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td></td>
-                      <td>- SP #1</td>
-                      <td>K.TEL.00003/HK.810/L002K/2017</td>
-                      <td>CV.Maju Mundur</td>
-                      <td>SP</td>
-                      <td><a class="btn btn-xs btn-primary" href="http://consys.in2digital.net:81/documents/view/turnkey/11">Lihat</a></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>- SP #2</td>
-                      <td>K.TEL.00004/HK.810/L002K/2017</td>
-                      <td>CV.Maju Mundur</td>
-                      <td>SP</td>
-                      <td><a class="btn btn-xs btn-primary" href="http://consys.in2digital.net:81/documents/view/turnkey/11">Lihat</a></td>
-                    </tr>
-                    <tr>
-                      <td colspan="6" class="no-padding">
-                        <table class="table table-condensed table-striped" style="margin-bottom:0;">
-                          <thead>
-                            <tr>
-                              <td style="width:80px;"></td>
-                              <th style="width:250px;" >Judul</th>
-                              <th>No</th>
-                              <th>Vendor</th>
-                              <th>Type</th>
-                              <th>Action</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            <tr>
-                              <td></td>
-                              <td>- Amandemen #1</td>
-                              <td>K.TEL.00003/HK.810/L002K/2017</td>
-                              <td>CV.Maju Mundur</td>
-                              <td>Amandemen SP</td>
-                              <td><a class="btn btn-xs btn-primary" href="http://consys.in2digital.net:81/documents/view/turnkey/11">Lihat</a></td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>- Amandemen #1</td>
-                      <td>K.TEL.00003/HK.810/L002K/2017</td>
-                      <td>CV.Maju Mundur</td>
-                      <td>Amandemen Kontrak</td>
-                      <td><a class="btn btn-xs btn-primary" href="http://consys.in2digital.net:81/documents/view/turnkey/11">Lihat</a></td>
-                    </tr>
-                    <tr>
-                      <td></td>
-                      <td>- Amandemen #2</td>
-                      <td>K.TEL.00004/HK.810/L002K/2017</td>
-                      <td>CV.Maju Mundur</td>
-                      <td>Amandemen Kontrak</td>
-                      <td><a class="btn btn-xs btn-primary" href="http://consys.in2digital.net:81/documents/view/turnkey/11">Lihat</a></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>PENGADAAN DAN PEMASANGAN JEMBATAN</td>
-              <td>K.TEL.00002/HK.810/L002K/2017</td>
-              <td>PT.Muncul Jaya</td>
-              <td>KHS</td>
-              <td>
-                <a class="btn btn-xs btn-primary" href="http://consys.in2digital.net:81/documents/view/khs/10">Lihat</a>
-              </td>
-            </tr>
-          </tbody>
-        </table>
     </div>
 <!-- /.box-body -->
 </div>
@@ -203,7 +93,7 @@ $.fn.tableLaravel = function(options) {
     options.tableAttr.append(options.tableHTML);
     options.tableAttr.prepend(options.loadingHtml);
     options.renderData = function(data,no){
-      var render = '<tr>';
+      var render = '<tr data-id="'+data['id']+'" class="row-'+data['id']+'">';
       if(options.withNumber){
           render += '<td>'+(no+1)+'</td>';
       } 
@@ -218,6 +108,34 @@ $.fn.tableLaravel = function(options) {
           }
           else{
             render += '<td></td>';
+          }
+        }
+        
+      });    
+      render += '</tr>';
+        
+      return render;
+    }
+    options.renderDataChild = function(data,no,child){
+      var render = '<tr data-id="'+data['id']+'" class="row-child row-'+data['id']+'">';
+      if(options.withNumber){
+          render += '<td></td>';
+      } 
+      $.each(options.data,function(index, el) {
+        if(this.name!==false && this.html===undefined){
+          var class_a = '';
+          if(index==0){
+            class_a = 'class="child-'+child+'"';
+          }
+          var rend_dt = options.splitName(data,this.name);
+          render += '<td '+class_a+'>'+((rend_dt==null || rend_dt===undefined)?'-':rend_dt)+'</td>';
+        }
+        else{
+          if(this.name===false && this.html!==undefined){
+            render += '<td '+class_a+'>'+options.parseHTML(this.html,data)+'</td>';
+          }
+          else{
+            render += '<td '+class_a+'></td>';
           }
         }
         
@@ -318,17 +236,81 @@ $.fn.tableLaravel = function(options) {
           $.each(data.data,function(index, el) {
             render += options.renderData(this,index);
           }); 
-          options.tableAttr.find('tbody').html('');
-          options.tableAttr.find('tbody').append(render);
-          options.tableAttr.find('.pagination').remove();
-          options.tableAttr.append(options.pagination(data));
-          console.log(options.count_td());
+          var wait_render = function() {
+            options.tableAttr.find('tbody').html('');
+            options.tableAttr.find('tbody').append(render);
+            options.tableAttr.find('.pagination').remove();
+            
+            return options.tableAttr.append(options.pagination(data));
+          };
+          $.when( wait_render() ).done(function() {
+            var tr = options.tableAttr.find('tbody>tr');
+            $.each(tr,function(index, el) {
+                var row_id = $(this).data('id');
+                var row_class = $(this).attr('class');
+                // console.log(row_id+' - '+row_class);
+                options.ajaxChild(1,row_id,$(this));
+            });
+            
+          });
         }
         else{
           options.tableAttr.find('tbody').append(options.renderEmpty);
           console.log('empty');
         }
         options.tableAttr.find('.'+options.loading).remove();
+      });
+    }
+    options.ajaxChild = function(child,parent_id,attr){
+      $.ajax({
+        url: options.url,
+        type: 'GET',
+        dataType: 'json',
+        data : {
+          child     : child,
+          parent_id : parent_id
+        }
+      })
+      .done(function(data) {
+          if(data.data.length>0){
+            var render = '';
+            $.each(data.data,function(index, el) {
+              render += options.renderDataChild(this,index,child);
+            }); 
+            
+            var wait_render2 = function() {
+                return attr.after(render);
+            };
+            $.when( wait_render2() ).done(function() {
+              var tr = options.tableAttr.find('tbody>tr.row-child');
+              $.each(tr,function(index, el) {
+                  var row_id = $(this).data('id');
+                  var row_class = $(this).attr('class');
+                  console.log(row_id+' - '+row_class);
+                  options.ajaxChild2(2,row_id,$(this));
+              });
+            });
+          }
+      });
+    }
+    options.ajaxChild2 = function(child,parent_id,attr){
+      $.ajax({
+        url: options.url,
+        type: 'GET',
+        dataType: 'json',
+        data : {
+          child     : child,
+          parent_id : parent_id
+        }
+      })
+      .done(function(data) {
+          if(data.data.length>0){
+            var render = '';
+            $.each(data.data,function(index, el) {
+              render += options.renderDataChild(this,index,child);
+            }); 
+            attr.after(render);
+          }
       });
     }
     options.ajaxPro();
@@ -352,8 +334,8 @@ $(function () {
     url : '{!!route('doc')!!}',
     with_number : true,
     data : [
-      { name : 'doc_no' , title : 'No Kontrak',orderable:true},
       { name : 'doc_title' , title  : 'Judul',orderable:true},
+      { name : 'doc_no' , title : 'No Kontrak',orderable:true},
       { name : 'supplier.nm_vendor' , title  : 'Vendor',orderable:true},
       { name : 'jenis.type.title' , title  : 'Type',orderable:true},
       { name : 'link' , title  : 'Action'},

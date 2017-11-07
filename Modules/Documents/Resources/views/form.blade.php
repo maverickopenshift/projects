@@ -15,7 +15,7 @@
       <ul class="nav nav-tabs">
         <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
 
-        @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak']))
+        @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter']))
           <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
         @else
           <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
@@ -23,7 +23,7 @@
 
         <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
 
-        @if(!in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','sp']))
+        @if(in_array($doc_type->name,['khs','turnkey']))
           <li><a href="#tab_4" data-toggle="tab">PASAL PENTING</a></li>
         @endif
 
@@ -35,10 +35,10 @@
         <div class="tab-content">
           <div class="tab-pane active" id="tab_1">
             @include('documents::partials.alert-errors')
-            @if($doc_type['title'] == "Amandemen SP" || $doc_type['title'] == "Amandemen Kontrak")
-              @include('documents::doc-form.amademen')
+            @if(in_array($doc_type->name,['turnkey','sp','khs']))
+              @include('documents::doc-form.general-info')  
             @else
-              @include('documents::doc-form.general-info')
+              @include('documents::doc-form.amademen')
             @endif
             <div class="clearfix"></div>
             <div class="row">
@@ -49,7 +49,9 @@
           </div>
           <div class="tab-pane" id="tab_2">
             @include('documents::partials.alert-errors')
-            @include('documents::doc-form.sow-boq')
+            @if(in_array($doc_type->name,['turnkey','sp','khs']))
+              @include('documents::doc-form.sow-boq')
+            @endif
             <div class="clearfix"></div>
             <div class="row">
               <div class="col-sm-12">
@@ -69,6 +71,7 @@
               </div>
             </div>
           </div>
+          @if(in_array($doc_type->name,['khs','turnkey']))
           <div class="tab-pane" id="tab_4">
             @include('documents::partials.alert-errors')
             @include('documents::doc-form.pasal-penting')
@@ -80,12 +83,15 @@
               </div>
             </div>
           </div>
+          @endif
           <div class="tab-pane" id="tab_5">
             @include('documents::partials.alert-errors')
-            @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak']))
+            @if(in_array($doc_type->name,['amandemen_sp']))
               @include('documents::doc-form.scope-perubahan')
             @elseif(in_array($doc_type->name,['turnkey','sp']))
               @include('documents::doc-form.jaminan-asuransi')
+            @else
+              @include('documents::doc-form.scope-perubahan-others')
             @endif
             <div class="clearfix"></div>
             <div class="row">

@@ -12,7 +12,10 @@ use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Http\Controllers\SpCreateController as SpCreate;
-use Modules\Documents\Http\Controllers\AmandemenSpCreateController as AmandemenSp;
+use Modules\Documents\Http\Controllers\AmandemenSpCreateController as AmandemenSpCreate;
+use Modules\Documents\Http\Controllers\AmandemenKontrakCreateController as AmandemenKontrakCreate;
+use Modules\Documents\Http\Controllers\AdendumCreateController as AdendumCreate;
+use Modules\Documents\Http\Controllers\SideLetterCreateController as SideLetterCreate;
 
 use App\Helpers\Helpers;
 use Validator;
@@ -23,10 +26,16 @@ class EntryDocumentController extends Controller
 {
     protected $fields=[];
     protected $spCreate;
-    protected $AmandemenSp;
-    public function __construct(Request $req,SpCreate $spCreate,AmandemenSp $AmandemenSp){
-      $this->spCreate = $spCreate;
-      $this->AmandemenSp = $AmandemenSp;
+    protected $AmandemenSpCreate;
+    protected $AmandemenKontrakCreate;
+    protected $AdendumCreate;
+    protected $SideLetterCreate;
+    public function __construct(Request $req,SpCreate $spCreate,AmandemenSpCreate $AmandemenSpCreate,AmandemenKontrakCreate $AmandemenKontrakCreate,AdendumCreate $AdendumCreate,SideLetterCreate $SideLetterCreate){
+      $this->spCreate               = $spCreate;
+      $this->AmandemenSpCreate      = $AmandemenSpCreate;
+      $this->AmandemenKontrakCreate = $AmandemenKontrakCreate;
+      $this->AdendumCreate          = $AdendumCreate;
+      $this->SideLetterCreate       = $SideLetterCreate;
       $doc_id = $req->doc_id;
       $field = Documents::get_fields();
       if(!empty($doc_id)){
@@ -51,7 +60,7 @@ class EntryDocumentController extends Controller
           abort(404);
         }
         $field = Documents::get_fields();
-        $data['page_title'] = 'Entry Kontrak - '.$doc_type['title'];
+        $data['page_title'] = 'Entry - '.$doc_type['title'];
         $data['doc_type'] = $doc_type;
         $data['doc'] = [];
         $data['doc']['doc_pihak1'] = 'PT. TELEKOMUNIKASI INDONESIA Tbk';
@@ -79,8 +88,17 @@ class EntryDocumentController extends Controller
       if($type=='sp'){
         return $this->spCreate->store($request);
       }
-      else if($type=='amandemen_sp'){
-        return $this->AmandemenSp->store($request);
+      if($type=='amandemen_sp'){
+        return $this->AmandemenSpCreate->store($request);
+      }
+      if($type=='amandemen_kontrak'){
+        return $this->AmandemenKontrakCreate->store($request);
+      }
+      if($type=='adendum'){
+        return $this->AdendumCreate->store($request);
+      }
+      if($type=='side_letter'){
+        return $this->SideLetterCreate->store($request);
       }
       $doc_value = $request->doc_value;
       $request->merge(['doc_value' => Helpers::input_rupiah($request->doc_value)]);

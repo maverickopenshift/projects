@@ -33,15 +33,17 @@
               @endif
             </div>
           </div>
-          <div class="form-group {{ $errors->has('doc_template_id') ? ' has-error' : '' }}">
-            <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Jenis {{$doc_type['title']}}</label>
-            <div class="col-sm-3">
-              {!!Helper::select_jenis($doc_type->name,old('doc_template_id',Helper::prop_exists($doc,'doc_template_id')),'doc_template_id')!!}
+          @if(in_array($doc_type->name,['khs','turnkey']))
+            <div class="form-group {{ $errors->has('doc_template_id') ? ' has-error' : '' }}">
+              <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Jenis {{$doc_type['title']}}</label>
+              <div class="col-sm-3">
+                {!!Helper::select_jenis($doc_type->name,old('doc_template_id',Helper::prop_exists($doc,'doc_template_id')),'doc_template_id')!!}
+              </div>
+              <div class="col-sm-10 col-sm-offset-2">
+                {!!Helper::error_help($errors,'doc_template_id')!!}
+              </div>
             </div>
-            <div class="col-sm-10 col-sm-offset-2">
-              {!!Helper::error_help($errors,'doc_template_id')!!}
-            </div>
-          </div>
+          @endif
           @if($doc_type->name=="sp")
             <div class="form-group {{ $errors->has('doc_startdate') ? ' has-error' : '' }}">
               <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Mulai {{$doc_type['title']}}</label>

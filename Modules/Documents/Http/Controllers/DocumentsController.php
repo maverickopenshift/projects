@@ -33,21 +33,29 @@ class DocumentsController extends Controller
           if(!empty($request->limit)){
             $limit = $request->limit;
           }
-          $documents = $this->documents->latest('created_at')->where('doc_parent',1)->with('jenis','supplier','pic')->paginate($limit);
+          $documents = $this->documents->latest('updated_at');
+          if(in_array($request->child,[1,2])){
+            $documents->where('doc_parent',0);
+            $documents->where('doc_parent_id',$request->parent_id);
+          }
+          else{
+            $documents->where('doc_parent',1);
+          }
+          $documents = $documents->with('jenis','supplier','pic')->paginate($limit);
           $documents->getCollection()->transform(function ($value) {
-            $sp = $this->documents->get_child('sp',$value['id']);
-            $aman_sp = $this->documents->get_child('amandemen_sp',$value['id']);
-            $aman_kon = $this->documents->get_child('amandemen_kontrak',$value['id']);
-            $adendum = $this->documents->get_child('adendum',$value['id']);
-            $side_letter = $this->documents->get_child('side_letter',$value['id']);
-            if($sp>0 || $aman_sp>0 || $aman_kon>0 || $adendum>0 || $side_letter>0){
-              $value['doc_no'] = $value['doc_no'].'<br/>'
-              .Helpers::create_button('SP',$sp)
-              .Helpers::create_button('Amandemen SP',$aman_sp,'info')
-              .Helpers::create_button('Amandemen Kontrak',$aman_kon,'danger')
-              .Helpers::create_button('Adendum',$adendum,'warning')
-              .Helpers::create_button('Side Letter',$side_letter,'info');
-            }
+            // $sp = $this->documents->get_child('sp',$value['id']);
+            // $aman_sp = $this->documents->get_child('amandemen_sp',$value['id']);
+            // $aman_kon = $this->documents->get_child('amandemen_kontrak',$value['id']);
+            // $adendum = $this->documents->get_child('adendum',$value['id']);
+            // $side_letter = $this->documents->get_child('side_letter',$value['id']);
+            // if($sp>0 || $aman_sp>0 || $aman_kon>0 || $adendum>0 || $side_letter>0){
+            //   $value['doc_no'] = $value['doc_no'].'<br/>'
+            //   .Helpers::create_button('SP',$sp)
+            //   .Helpers::create_button('Amandemen SP',$aman_sp,'info')
+            //   .Helpers::create_button('Amandemen Kontrak',$aman_kon,'danger')
+            //   .Helpers::create_button('Adendum',$adendum,'warning')
+            //   .Helpers::create_button('Side Letter',$side_letter,'info');
+            // }
             if($value['doc_signing']==0){
               $value['link'] = '<a class="btn btn-xs btn-success" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'">Setujui</a>';
             }
@@ -58,9 +66,9 @@ class DocumentsController extends Controller
             // $value->doc_title = $value->doc_title.' <i>'.$value->supplier_id.'</i>';
             return $value;
           });
+          
           return Response::json($documents);
      }
-
       $data['page_title'] = 'Data Kontrak';
       return view('documents::index')->with($data);
     }
@@ -123,7 +131,7 @@ class DocumentsController extends Controller
         if (empty($type)) {
             return \Response::json([]);
         }
-        $data = $this->documents->select('id','doc_no','doc_date','doc_title','doc_template_id','supplier_id')->with('jenis','supplier','pic')->whereNotNull('doc_no')->where('doc_parent',1);
+        $data = $this->documents->select('id','doc_no','doc_date','doc_title','doc_template_id','supplier_id')->with('jenis','supplier','pic')->whereNotNull('doc_no')->where('doc_parent',1)->where('doc_type','khs');
         if(!empty($search)){
           $data->where(function($q) use ($search) {
               $q->orWhere('doc_no', 'like', '%'.$search.'%');
@@ -133,8 +141,8 @@ class DocumentsController extends Controller
         $data = $data->paginate(30);
         //dd($data);
         $data->getCollection()->transform(function ($value) use ($type){
-          $type=DocType::where('name',$type)->first();
-          $temp = DocTemplate::where('id_doc_type', $type->id)->first();
+          $type=DocType::select('id')->where('name',$type)->first();
+          $temp = DocTemplate::select('id')->where('id_doc_type', $type->id)->first();
           $doc = Documents::where('doc_parent', 0)->where('doc_parent_id', $value['id'])->where('doc_template_id', $temp->id)->get();
           $value['type'] = json_encode($doc->toArray());
           return $value;
@@ -145,11 +153,17 @@ class DocumentsController extends Controller
     public function getSelectSp(Request $request){
         $search = trim($request->q);
         $type = trim($request->type);//sp,amandemen,adendum dll
+        $type_id = trim($request->type_id);//sp,amandemen,adendum dll
 
         if (empty($type)) {
             return \Response::json([]);
         }
-        $data = $this->documents->select('id','doc_no','doc_startdate','doc_enddate','doc_title','doc_template_id','supplier_id')->with('jenis','supplier','pic')->whereNotNull('doc_no')->where('doc_parent',0);
+        $data = $this->documents
+                     ->select('id','doc_no','doc_startdate','doc_enddate','doc_parent_id','doc_title','doc_template_id','supplier_id')
+                     ->with('jenis','supplier','pic')
+                      ->where('doc_type','sp')
+                      ->whereNotNull('doc_no')
+                      ->where('doc_parent',0);
         if(!empty($search)){
           $data->where(function($q) use ($search) {
               $q->orWhere('doc_no', 'like', '%'.$search.'%');
@@ -159,9 +173,12 @@ class DocumentsController extends Controller
         $data = $data->paginate(30);
         // dd($data);
         $data->getCollection()->transform(function ($value) use ($type){
-          $type=DocType::where('name',$type)->first();
-          $temp = DocTemplate::where('id_doc_type', $type->id)->first();
+          $type=DocType::select('id')->where('name',$type)->first();
+          $temp = DocTemplate::select('id')->where('id_doc_type', $type->id)->first();
           $doc = Documents::where('doc_parent', 0)->where('doc_parent_id', $value['id'])->where('doc_template_id', $temp->id)->get();
+          $doc_parent = Documents::select('doc_title','doc_date')->where('id', $value['doc_parent_id'])->first();
+          $value['parent_title'] = $doc_parent->doc_title;
+          $value['parent_date'] = $doc_parent->doc_date;
           $value['type'] = json_encode($doc->toArray());
           return $value;
         });

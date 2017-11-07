@@ -7,14 +7,21 @@
     <!-- /.box-header -->
     <div class="box-body">
       <div class="form-horizontal">
-          @include('documents::doc-form.no-sp')
-          <div class="form-group {{ $errors->has('doc_template_id') ? ' has-error' : '' }}">
-            <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Jenis {{$doc_type['title']}}</label>
-            <div class="col-sm-3">
-              {!!Helper::select_jenis($doc_type->name,old('doc_template_id',Helper::prop_exists($doc,'doc_template_id')),'doc_template_id')!!}
-            </div>
-            <div class="col-sm-10 col-sm-offset-2">
-              {!!Helper::error_help($errors,'doc_template_id')!!}
+          @if($doc_type->name=='amandemen_sp')
+            @include('documents::doc-form.no-sp')
+          @else
+            @include('documents::doc-form.no-kontrak')
+          @endif
+          
+          <div class="form-group {{ $errors->has('doc_desc') ? ' has-error' : '' }}">
+            <label for="deskripsi_kontrak" class="col-sm-2 control-label">Deskripsi {{$doc_type['title']}}</label>
+            <div class="col-sm-10">
+              <textarea class="form-control" rows="4" name="doc_desc" placeholder="Masukan Deskripsi Kontrak">{{old('doc_desc',Helper::prop_exists($doc,'doc_desc'))}}</textarea>
+              @if ($errors->has('doc_desc'))
+                  <span class="help-block">
+                      <strong>{{ $errors->first('doc_desc') }}</strong>
+                  </span>
+              @endif
             </div>
           </div>
           <div class="form-group {{ $errors->has('doc_date') ? ' has-error' : '' }}">

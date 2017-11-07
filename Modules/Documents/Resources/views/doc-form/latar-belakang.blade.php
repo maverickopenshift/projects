@@ -68,9 +68,9 @@
           @endif
       </tbody>
       </table>
-        @if($doc_type->name=="amandemen_sp")
-    @include('documents::partials.buttons')
-  @endif
+        @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter']))
+          @include('documents::partials.buttons')
+        @endif
     </div>
 
 

@@ -6,6 +6,7 @@ use Modules\Documents\Entities\Documents;
 use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
+use Modules\Documents\Entities\DocTemplate;
 use App\Helpers\Helpers;
 use Validator;
 use DB;
@@ -48,7 +49,6 @@ class SpCreateController
       $rules = [];
       $rules['parent_kontrak']   =  'required|kontrak_exists';
       $rules['doc_desc']         =  'required|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_template_id']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -115,7 +115,7 @@ class SpCreateController
       $doc = new Documents();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
-      $doc->doc_template_id = $request->doc_template_id;
+      $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
       $doc->doc_startdate = $request->doc_startdate;
       $doc->doc_enddate = $request->doc_enddate;
       $doc->doc_pihak1 = $request->doc_pihak1;

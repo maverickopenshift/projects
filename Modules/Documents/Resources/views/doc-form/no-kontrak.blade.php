@@ -161,10 +161,10 @@
                         });
           t_type +=    '</tbody>\
                       </table>';
-          judul = '{!!strtoupper($doc_type->name)!!} #'+(s_type.length+1);
+          judul = '{!!strtoupper($doc_type->title)!!} #'+(s_type.length+1);
       }
       else{
-        judul = '{!!strtoupper($doc_type->name)!!} #1';
+        judul = '{!!strtoupper($doc_type->title)!!} #1';
       }
     $('.judul-man').show().find('.text-me').html(judul+'<input type="hidden" value="'+judul+'" name="doc_title"/>');
     table.html(t_table+t_type);

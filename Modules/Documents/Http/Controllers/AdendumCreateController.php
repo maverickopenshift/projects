@@ -2,71 +2,25 @@
 
 namespace Modules\Documents\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Routing\Controller;
+use Modules\Documents\Entities\DocType;
+use Modules\Documents\Entities\Documents;
+use Modules\Documents\Entities\DocBoq;
+use Modules\Documents\Entities\DocMeta;
+use Modules\Documents\Entities\DocPic;
+use Modules\Documents\Entities\DocTemplate;
+use App\Helpers\Helpers;
+use Validator;
+use DB;
+use Auth;
 
-class AdendumCreateController.php extends Controller
+class AdendumCreateController
 {
-    /**
-     * Display a listing of the resource.
-     * @return Response
-     */
-    public function index()
-    {
-        return view('documents::index');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     * @return Response
-     */
-    public function create()
-    {
-        return view('documents::create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     * @param  Request $request
-     * @return Response
-     */
-    public function store(Request $request)
-    {
-    }
-
-    /**
-     * Show the specified resource.
-     * @return Response
-     */
-    public function show()
-    {
-        return view('documents::show');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     * @return Response
-     */
-    public function edit()
-    {
-        return view('documents::edit');
-    }
-
-    /**
-     * Update the specified resource in storage.
-     * @param  Request $request
-     * @return Response
-     */
-    public function update(Request $request)
-    {
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * @return Response
-     */
-    public function destroy()
-    {
-    }
+  public function __construct()
+  {
+      //oke
+  }
+  public function store($request)
+  {
+    return redirect()->route('doc');
+  }
 }

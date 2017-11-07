@@ -66,7 +66,7 @@ class Documents extends Model
       $year = (is_null($year))?date('Y'):$year;
       $doc_template = \DB::table('doc_template')->where('id',$template_id)->first();
       $no_kontrak=$pattern.$start.'/'.$doc_template->kode.'/'.$loker."/".$year;
-      $count = \DB::table('documents')->where('doc_no',$no_kontrak)->count();
+      $count = \DB::table('documents')->where('doc_no', 'like', $pattern.$start.'%')->count();
         if($count==0){
           $new_id = $no_kontrak;
         }

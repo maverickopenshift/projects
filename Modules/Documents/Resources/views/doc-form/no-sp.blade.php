@@ -46,9 +46,11 @@
                   var o = {};
                   o.id = v.id;
                   o.name = v.doc_title;
+                  o.parent_title = v.parent_title;
                   o.value = v.doc_no;
-                  o.datestart = $.format.date(v.doc_startdate+" 10:54:50", "ddd, dd MMMM yyyy");
-                  o.dateend = $.format.date(v.doc_enddate+" 10:54:50", "ddd, dd MMMM yyyy");
+                  o.parent_date = $.format.date(v.parent_date+" 10:54:50", "dd MMMM yyyy");
+                  o.datestart = $.format.date(v.doc_startdate+" 10:54:50", "dd MMMM yyyy");
+                  o.dateend = $.format.date(v.doc_enddate+" 10:54:50", "dd MMMM yyyy");
                   o.type = v.type;
                   o.jenis = v.jenis;
                   results.push(o);
@@ -68,7 +70,7 @@
       templateResult: function (state) {
           if (state.id === undefined || state.id === "") { return ; }
           var $state = $(
-              '<span>' +  state.name +' <i>('+  state.value + ')</i></span>'
+              '<span>'+state.name+' - '+  state.parent_title +' <i>('+  state.value + ')</i></span>'
           );
           return $state;
       },
@@ -109,9 +111,11 @@
             //var o = {};
             o.id = v.id;
             o.name = v.doc_title;
+            o.parent_title = v.parent_title;
             o.value = v.doc_no;
-            o.datestart = $.format.date(v.doc_startdate+" 10:54:50", "ddd, dd MMMM yyyy");
-            o.dateend = $.format.date(v.doc_enddate+" 10:54:50", "ddd, dd MMMM yyyy");
+            o.datestart = $.format.date(v.doc_startdate+" 10:54:50", "dd MMMM yyyy");
+            o.dateend = $.format.date(v.doc_enddate+" 10:54:50", "dd MMMM yyyy");
+            o.parent_date = $.format.date(v.parent_date+" 10:54:50", "dd MMMM yyyy");
             o.type = v.type;
             o.jenis = v.jenis;
         })
@@ -131,14 +135,18 @@
     var t_table = '<table class="table">\
                     <thead>\
                       <tr >\
-                            <th width="400">Judul</th>\
-                            <th>Tanggal Mulai</th>\
-                            <th>Tanggal Akhir</th>\
-                            <th  width="200">Jenis</th>\
+                            <th width="300">Judul Kontrak</th>\
+                            <th width="150">Tanggal Kontrak</th>\
+                            <th>Judul SP</th>\
+                            <th  width="150">Tanggal Mulai SP</th>\
+                            <th  width="150">Tanggal Akhir SP</th>\
+                            <th>Jenis</th>\
                       </tr>\
                     </thead>\
                     <tbody>\
                       <tr>\
+                            <td>'+data.parent_title+'</td>\
+                            <td>'+data.parent_date+'</td>\
                             <td>'+data.name+'</td>\
                             <td>'+data.datestart+'</td>\
                             <td>'+data.dateend+'</td>\
@@ -149,26 +157,26 @@
       if(s_type.length>0){
         t_type = '<table class="table">\
                         <thead>\
-                          <tr width="400">\
+                          <tr>\
                                 <th>Judul</th>\
-                                <th>Tanggal Mulai</th>\
-                                <th>Tanggal Akhir</th>\
+                                <th>No Amandemen SP</th>\
+                                <th>Tanggal Amandemen SP</th>\
                           </tr>\
                         </thead>\
                         <tbody>';
                         $.each(s_type,function(index, el) {
                           t_type += '<tr>\
                                           <td>'+this.doc_title+'</td>\
-                                          <td>'+$.format.date(this.doc_startdate+" 10:54:50", "dd MMMM yyyy")+'</td>\
-                                          <td>'+$.format.date(this.doc_enddate+" 10:54:50", "dd MMMM yyyy")+'</td>\
+                                          <td>'+((this.doc_no==null)?'-':this.doc_no)+'</td>\
+                                          <td>'+$.format.date(this.doc_date+" 10:54:50", "dd MMMM yyyy")+'</td>\
                                     </tr>';
                         });
           t_type +=    '</tbody>\
                       </table>';
-          judul = '{!!strtoupper($doc_type->name)!!} #'+(s_type.length+1);
+          judul = '{!!strtoupper($doc_type->title)!!} #'+(s_type.length+1);
       }
       else{
-        judul = '{!!strtoupper($doc_type->name)!!} #1';
+        judul = '{!!strtoupper($doc_type->title)!!} #1';
       }
     $('.judul-man').show().find('.text-me').html(judul+'<input type="hidden" value="'+judul+'" name="doc_title"/>');
     table.html(t_table+t_type);

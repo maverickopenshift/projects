@@ -3,6 +3,7 @@
 namespace Modules\Documents\Entities;
 
 use Illuminate\Database\Eloquent\Model;
+use Modules\Documents\Entities\DocType;
 use DB;
 
 class DocTemplate extends Model
@@ -20,7 +21,11 @@ class DocTemplate extends Model
     //  dd($data);
       return $data;
     }
-    
+    public static function get_by_type($type){
+      $type=DocType::where('name',$type)->first();
+      $temp = self::where('id_doc_type', $type->id)->first();
+      return $temp;
+    }
     public function type()
     {
         return $this->hasOne('Modules\Documents\Entities\DocType','id','id_doc_type');

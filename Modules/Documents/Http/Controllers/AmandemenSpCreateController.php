@@ -2,19 +2,16 @@
 
 namespace Modules\Documents\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
 use Modules\Documents\Entities\DocType;
 use Modules\Documents\Entities\Documents;
 use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
-
+use Modules\Documents\Entities\DocTemplate;
 use App\Helpers\Helpers;
 use Validator;
 use DB;
 use Auth;
-use Response;
 
 class AmandemenSpCreateController
 {
@@ -27,11 +24,11 @@ class AmandemenSpCreateController
     $type = $request->type;
     $rules = [];
     $rules['doc_date']         =  'required|date_format:"Y-m-d"';
+    $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
     $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['doc_template_id']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
     $rules['doc_lampiran']     =  'required|mimes:pdf';
 
     $rule_scope_name = (count($request['scope_name'])>1)?'required':'sometimes|nullable';
@@ -61,7 +58,8 @@ class AmandemenSpCreateController
     $doc = new Documents();
     $doc->doc_title = $request->doc_title;
     $doc->doc_date = $request->doc_date;
-    $doc->doc_template_id = $request->doc_template_id;
+    $doc->doc_desc = $request->doc_desc;
+    $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
     $doc->doc_pihak1 = $request->doc_pihak1;
     $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
     $doc->doc_pihak2_nama = $request->doc_pihak2_nama;

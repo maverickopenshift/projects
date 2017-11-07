@@ -68,8 +68,12 @@
           @endif
       </tbody>
       </table>
-    {{-- @include('documents::partials.buttons') --}}
+        @if($doc_type->name=="amandemen_sp")
+    @include('documents::partials.buttons')
+  @endif
     </div>
+
+
 <!-- /.box-body -->
 </div>
 @push('scripts')

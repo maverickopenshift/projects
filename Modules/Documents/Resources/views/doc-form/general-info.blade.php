@@ -187,7 +187,7 @@
             <div class="form-group">
               <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Nilai SP</label>
               <div class="col-sm-10">
-                <table class="table table-bordered table-latar">
+                <table class="table table-bordered table-sp">
                   <thead>
                   <tr>
                     <th style="width:250px">Material</th>

@@ -12,6 +12,7 @@ use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Http\Controllers\SpCreateController as SpCreate;
+use Modules\Documents\Http\Controllers\AmandemenSpCreateController as AmandemenSp;
 use App\Helpers\Helpers;
 use Validator;
 use DB;
@@ -75,6 +76,9 @@ class EntryDocumentController extends Controller
       if($type=='sp'){
         return $this->spCreate->store($request);
       }
+      else if($type=='amandemen_sp'){
+        return $this->AmandemenSp->store($request);
+      }
       $doc_value = $request->doc_value;
       $request->merge(['doc_value' => Helpers::input_rupiah($request->doc_value)]);
       //$request->merge(['doc_value' => 'asdfsadfsdafsd']);
@@ -113,7 +117,7 @@ class EntryDocumentController extends Controller
       $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
       $rules['doc_value']        =  'required|max:500|min:3|regex:/^[0-9 .]+$/i';
       $rules['doc_sow']          =  'required|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      
+
       $rules['hs_kode_item.*']   =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_item.*']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_satuan.*']      =  'required|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
@@ -121,7 +125,7 @@ class EntryDocumentController extends Controller
       $rules['hs_harga.*']       =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['hs_qty.*']         =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      
+
       if(in_array($type,['turnkey','sp'])){
           $doc_jaminan_nilai = $request->doc_jaminan_nilai;
           $request->merge(['doc_jaminan_nilai' => Helpers::input_rupiah($request->doc_jaminan_nilai)]);
@@ -133,20 +137,20 @@ class EntryDocumentController extends Controller
           $rules['doc_jaminan_desc']      = 'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
           $rules['doc_po']                = 'required|po_exists|regex:/^[a-z0-9 .\-]+$/i';
      }
-      
+
       $rule_lt_name = (count($request['lt_name'])>1)?'required':'sometimes|nullable';
       $rule_lt_desc = (count($request['lt_desc'])>1)?'required':'sometimes|nullable';
       $rules['lt_file.*']  =  'sometimes|nullable|mimes:pdf';
       $rules['lt_desc.*']  =  $rule_lt_desc.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['lt_name.*']  =  $rule_lt_name.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      
+
       $rule_ps_pasal = (count($request['ps_pasal'])>1)?'required':'sometimes|nullable';
       $rule_ps_judul = (count($request['ps_judul'])>1)?'required':'sometimes|nullable';
       $rule_ps_isi = (count($request['ps_isi'])>1)?'required':'sometimes|nullable';
       $rules['ps_pasal.*']  =  $rule_ps_pasal.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['ps_judul.*']  =  $rule_ps_isi.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['ps_isi.*']    =  $rule_ps_judul.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      
+
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
       $validator->after(function ($validator) use ($request) {
           if (!isset($request['pic_data'][0])) {
@@ -180,13 +184,13 @@ class EntryDocumentController extends Controller
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       $doc->user_id = Auth::id();
       $doc->supplier_id = $request->supplier_id;
-      
+
       if(isset($request->doc_lampiran)){
         $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($request->doc_title));
         $request->doc_lampiran->storeAs('document/'.$request->type, $fileName);
         $doc->doc_lampiran = $fileName;
       }
-      
+
       if(in_array($type,['turnkey','sp'])){
         $doc->doc_po_no = $request->doc_po;
         $doc->doc_jaminan = $request->doc_jaminan;
@@ -202,7 +206,7 @@ class EntryDocumentController extends Controller
       $doc->doc_sow = $request->doc_sow;
       $doc->doc_type = $request->type;
       $doc->save();
-      
+
       foreach($request['pic_data'] as $key => $val){
         $data = json_decode(urldecode($val),true);
         $pic = new DocPic();
@@ -212,8 +216,8 @@ class EntryDocumentController extends Controller
       }
       if(count($request->lt_name)>0){
         foreach($request->lt_name as $key => $val){
-          if(!empty($val) 
-              && !empty($request['lt_desc'][$key]) 
+          if(!empty($val)
+              && !empty($request['lt_desc'][$key])
           ){
             $doc_meta = new DocMeta();
             $doc_meta->documents_id = $doc->id;
@@ -228,13 +232,13 @@ class EntryDocumentController extends Controller
             }
             $doc_meta->save();
           }
-        }      
+        }
       }
       if(count($request->ps_pasal)>0){
         foreach($request->ps_pasal as $key => $val){
-          if(!empty($val) 
-              && !empty($request['ps_judul'][$key]) 
-              && !empty($request['ps_isi'][$key]) 
+          if(!empty($val)
+              && !empty($request['ps_judul'][$key])
+              && !empty($request['ps_isi'][$key])
           ){
             $doc_meta2 = new DocMeta();
             $doc_meta2->documents_id = $doc->id;
@@ -244,12 +248,12 @@ class EntryDocumentController extends Controller
             $doc_meta2->meta_desc = $request['ps_isi'][$key];
             $doc_meta2->save();
           }
-        }      
+        }
       }
       if(count($request->hs_harga)>0){
         foreach($request->hs_harga as $key => $val){
-          if(!empty($val) 
-              && !empty($request['hs_kode_item'][$key]) 
+          if(!empty($val)
+              && !empty($request['hs_kode_item'][$key])
               && !empty($request['hs_item'][$key])
               && !empty($request['hs_satuan'][$key])
               && !empty($request['hs_mtu'][$key])
@@ -274,7 +278,7 @@ class EntryDocumentController extends Controller
             $doc_boq->data = json_encode(array('type'=>$hs_type));
             $doc_boq->save();
           }
-        }      
+        }
       }
 
       //dd($request->input());
@@ -317,8 +321,8 @@ class EntryDocumentController extends Controller
     public function destroy()
     {
     }
-    
+
     protected function rules(){
-      
+
     }
 }

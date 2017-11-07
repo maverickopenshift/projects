@@ -1,9 +1,9 @@
 <div class="form-group  {{ $errors->has('parent_kontrak') ? ' has-error' : '' }}">
-  <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> No Kontrak</label>
+  <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> No SP</label>
   <div class="col-sm-10">
     <input type="hidden" class="select-kontrak-text" name="parent_kontrak_text" value="{{Helper::old_prop($doc,'parent_kontrak_text')}}">
     <select class="form-control select-kontrak" style="width: 100%;" name="parent_kontrak" data-id="{{Helper::old_prop($doc,'parent_kontrak')}}">
-        <option value="">Pilih Kontrak</option>
+        <option value="">Pilih SP</option>
     </select>
     @if ($errors->has('parent_kontrak'))
         <span class="help-block">
@@ -23,7 +23,7 @@
     var selectKontrak = $(".select-kontrak").select2({
       placeholder : "Pilih Kontrak....",
       ajax: {
-          url: '{!! route('doc.get-select-kontrak') !!}',
+          url: '{!! route('doc.get-select-sp') !!}',
           dataType: 'json',
           delay: 350,
           data: function (params) {

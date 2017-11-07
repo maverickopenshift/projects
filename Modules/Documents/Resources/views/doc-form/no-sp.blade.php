@@ -1,16 +1,16 @@
-<div class="form-group  {{ $errors->has('parent_kontrak') ? ' has-error' : '' }}">
-  <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> No Kontrak</label>
+<div class="form-group  {{ $errors->has('parent_sp') ? ' has-error' : '' }}">
+  <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> No SP</label>
   <div class="col-sm-10">
-    <input type="hidden" class="select-kontrak-text" name="parent_kontrak_text" value="{{Helper::old_prop($doc,'parent_kontrak_text')}}">
-    <select class="form-control select-kontrak" style="width: 100%;" name="parent_kontrak" data-id="{{Helper::old_prop($doc,'parent_kontrak')}}">
-        <option value="">Pilih Kontrak</option>
+    <input type="hidden" class="select-sp-text" name="parent_sp_text" value="{{Helper::old_prop($doc,'parent_sp_text')}}">
+    <select class="form-control select-sp" style="width: 100%;" name="parent_sp" data-id="{{Helper::old_prop($doc,'parent_sp')}}">
+        <option value="">Pilih SP</option>
     </select>
-    @if ($errors->has('parent_kontrak'))
+    @if ($errors->has('parent_sp'))
         <span class="help-block">
-            <strong>{{ $errors->first('parent_kontrak') }}</strong>
+            <strong>{{ $errors->first('parent_sp') }}</strong>
         </span>
     @endif
-    <div class="result-kontrak"></div>
+    <div class="result-sp"></div>
   </div>
 </div>
 <div class="form-group judul-man" style="display:none;">
@@ -20,10 +20,10 @@
 @push('scripts')
   <script>
   $(function() {
-    var selectKontrak = $(".select-kontrak").select2({
-      placeholder : "Pilih Kontrak....",
+    var selectKontrak = $(".select-sp").select2({
+      placeholder : "Pilih SP....",
       ajax: {
-          url: '{!! route('doc.get-select-kontrak') !!}',
+          url: '{!! route('doc.get-select-sp') !!}',
           dataType: 'json',
           delay: 350,
           data: function (params) {
@@ -47,7 +47,8 @@
                   o.id = v.id;
                   o.name = v.doc_title;
                   o.value = v.doc_no;
-                  o.date = $.format.date(v.doc_date+" 10:54:50", "ddd, dd MMMM yyyy");
+                  o.datestart = $.format.date(v.doc_startdate+" 10:54:50", "ddd, dd MMMM yyyy");
+                  o.dateend = $.format.date(v.doc_enddate+" 10:54:50", "ddd, dd MMMM yyyy");
                   o.type = v.type;
                   o.jenis = v.jenis;
                   results.push(o);
@@ -77,9 +78,9 @@
           }
           var render = data.value;
           if(data.value === undefined){
-            render = $('.select-kontrak :selected').text();
+            render = $('.select-sp :selected').text();
           }
-          $('.select-kontrak-text').val(render);
+          $('.select-sp-text').val(render);
           return render ;
       }
     });
@@ -87,14 +88,14 @@
         var data = e.params.data;
         templateKontrakSelect(data);
     });
-    var kontrak_set = $(".select-kontrak");
+    var kontrak_set = $(".select-sp");
     if(kontrak_set.data('id')!==""){
-      var text_kontrak = $(".select-kontrak-text").val();
+      var text_kontrak = $(".select-sp-text").val();
       var newOption_ = new Option(text_kontrak, kontrak_set.data('id'), false, true);
       kontrak_set.append(newOption_);
       kontrak_set.val(kontrak_set.data('id')).change();
       $.ajax({
-        url: '{!! route('doc.get-select-kontrak') !!}',
+        url: '{!! route('doc.get-select-sp') !!}',
         type: 'GET',
         dataType: 'json',
         data: {
@@ -109,7 +110,8 @@
             o.id = v.id;
             o.name = v.doc_title;
             o.value = v.doc_no;
-            o.date = $.format.date(v.doc_date+" 10:54:50", "ddd, dd MMMM yyyy");
+            o.datestart = $.format.date(v.doc_startdate+" 10:54:50", "ddd, dd MMMM yyyy");
+            o.dateend = $.format.date(v.doc_enddate+" 10:54:50", "ddd, dd MMMM yyyy");
             o.type = v.type;
             o.jenis = v.jenis;
         })
@@ -121,7 +123,7 @@
   });
   function templateKontrakSelect(data){
     $('.judul-man').hide().find('.text-me').html('');
-    var table = $('.result-kontrak'),judul,t_type='';
+    var table = $('.result-sp'),judul,t_type='';
     //console.log(JSON.stringify(data));
     table.html('');
     var s_type = JSON.parse(data.type);
@@ -130,14 +132,16 @@
                     <thead>\
                       <tr >\
                             <th width="400">Judul</th>\
-                            <th>Tanggal</th>\
+                            <th>Tanggal Mulai</th>\
+                            <th>Tanggal Akhir</th>\
                             <th  width="200">Jenis</th>\
                       </tr>\
                     </thead>\
                     <tbody>\
                       <tr>\
                             <td>'+data.name+'</td>\
-                            <td>'+data.date+'</td>\
+                            <td>'+data.datestart+'</td>\
+                            <td>'+data.dateend+'</td>\
                             <td>'+data.jenis.type.title+'</td>\
                       </tr>\
                     </tbody>\

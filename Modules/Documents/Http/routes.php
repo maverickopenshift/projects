@@ -11,6 +11,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
     Route::get('/view/{type}/{id}/', 'DocumentsController@view')->name('doc.view');
     Route::post('/approve', 'DocumentsController@approve')->name('doc.approve');
     Route::get('/get-select-kontrak', 'DocumentsController@getSelectKontrak')->name('doc.get-select-kontrak');
+    Route::get('/get-select-sp', 'DocumentsController@getSelectSp')->name('doc.get-select-sp');
 
     Route::get('/doc-template', ['middleware' => ['permission:lihat-template-pasal-pasal'],'uses' => 'DocTemplateController@index'])->name('doc.template');
     Route::get('/doc-template/data', ['middleware' => ['permission:lihat-template-pasal-pasal'],'uses' => 'DocTemplateController@data'])->name('doc.template.data');
@@ -33,7 +34,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
         $name = $filename.'_'.time().'.csv';
         return response()->download($path, $name, $headers);
     })->name('doc.template.download');
-    
+
     Route::get('/file/{type}/{filename}', function ($type,$filename){
         $path = storage_path('app/document/'.$type.'/' . $filename);
         //dd($path);
@@ -49,7 +50,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
 
         return $response;
     })->name('doc.file');
-    
+
     Route::get('/file_lt/{type}/{filename}', function ($filename,$type){
         $path = storage_path('app/documents/'.$type.'_latar_belakang/' . $filename);
 

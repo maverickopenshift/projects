@@ -60,7 +60,7 @@ class DocumentsController extends Controller
           });
           return Response::json($documents);
      }
-      
+
       $data['page_title'] = 'Data Kontrak';
       return view('documents::index')->with($data);
     }
@@ -115,6 +115,7 @@ class DocumentsController extends Controller
       }
       abort(500);
     }
+
     public function getSelectKontrak(Request $request){
         $search = trim($request->q);
         $type = trim($request->type);//sp,amandemen,adendum dll
@@ -131,6 +132,32 @@ class DocumentsController extends Controller
         }
         $data = $data->paginate(30);
         //dd($data);
+        $data->getCollection()->transform(function ($value) use ($type){
+          $type=DocType::where('name',$type)->first();
+          $temp = DocTemplate::where('id_doc_type', $type->id)->first();
+          $doc = Documents::where('doc_parent', 0)->where('doc_parent_id', $value['id'])->where('doc_template_id', $temp->id)->get();
+          $value['type'] = json_encode($doc->toArray());
+          return $value;
+        });
+        return \Response::json($data);
+    }
+
+    public function getSelectSp(Request $request){
+        $search = trim($request->q);
+        $type = trim($request->type);//sp,amandemen,adendum dll
+
+        if (empty($type)) {
+            return \Response::json([]);
+        }
+        $data = $this->documents->select('id','doc_no','doc_startdate','doc_enddate','doc_title','doc_template_id','supplier_id')->with('jenis','supplier','pic')->whereNotNull('doc_no')->where('doc_parent',0);
+        if(!empty($search)){
+          $data->where(function($q) use ($search) {
+              $q->orWhere('doc_no', 'like', '%'.$search.'%');
+              $q->orWhere('doc_title', 'like', '%'.$search.'%');
+          });
+        }
+        $data = $data->paginate(30);
+        // dd($data);
         $data->getCollection()->transform(function ($value) use ($type){
           $type=DocType::where('name',$type)->first();
           $temp = DocTemplate::where('id_doc_type', $type->id)->first();

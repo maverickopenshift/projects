@@ -24,7 +24,7 @@
         <img src="{{asset('images/logo.png')}}" alt="Consys">
       </div>
       <form id="form-me" action="{{ route('usersupplier.add') }}"  method="post">
-
+        <img src="{{asset('images/loader.gif')}}" alt="Consys" id="loader" style="display:none;">
           {{ csrf_field() }}
           @include('usersupplier::partials.alert-message')
           @include('usersupplier::partials.alert-errors')
@@ -38,6 +38,7 @@
                   </span>
               @endif
           </div>
+
 
           <div class="form-group {{ $errors->has('company_name') ? ' has-error' : '' }}">
             <label>Nama Perusahaan</label>
@@ -113,5 +114,32 @@
 </div>
 </body>
     <!-- /.login-box -->
+    @push('scripts')
+    <script>
+    $(document).on('submit','#form-me',function (event) {
+        event.preventDefault();
+        var formMe = $(this)
+        $.ajax({
+            url: formMe.attr('action'),
+            type: 'post',
+            data: formMe.serialize(), // Remember that you need to have your csrf token included
+            dataType: 'json',
+            $('#loader').show();
+            success: function( _response ){
+              $('#form-modal').modal('show')
+            },
+            complete: function(){
+              $('#loader').hide();
+            }
+
+        });
+    })
+    function reload(){
+      location.reload();
+    }
+
+
+    </script>
+    @endpush
 
 </html>

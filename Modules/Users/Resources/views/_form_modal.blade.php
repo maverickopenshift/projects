@@ -67,7 +67,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <div class="error-global"></div>
-                        <input type="text" id="id" name="id" />
+                        <input type="hidden" id="id" name="id" />
                         <label>Password Baru</label>
                         <input type="password" id="reset_password" name="reset_password" value="" class="form-control" placeholder="Enter ..." required autocomplete="off">
                         <div class="error-reset_password"></div>

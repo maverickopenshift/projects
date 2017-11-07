@@ -117,7 +117,7 @@ $.fn.tableLaravel = function(options) {
       return render;
     }
     options.renderDataChild = function(data,no,child){
-      var render = '<tr data-total-child="'+data['total_child']+'" data-id="'+data['id']+'" class="row-child row-'+data['id']+'">';
+      var render = '<tr data-total-child="'+data['total_child']+'" data-id="'+data['id']+'" class="row-child-'+child+' row-'+data['id']+'">';
       if(options.withNumber){
           render += '<td></td>';
       } 
@@ -284,12 +284,12 @@ $.fn.tableLaravel = function(options) {
                 return attr.after(render);
             };
             $.when( wait_render2() ).done(function() {
-              var tr = options.tableAttr.find('tbody>tr.row-child');
+              var tr = options.tableAttr.find('tbody>tr.row-child-1');
               $.each(tr,function(index, el) {
                   var row_id = $(this).data('id');
                   var row_class = $(this).attr('class');
-                  console.log(row_id+' - '+row_class);
                   if(parseInt($(this).data('total-child'))>0){
+                  console.log(row_id+' - '+row_class+' - '+$(this).data('total-child'));
                     options.ajaxChild2(2,row_id,$(this));
                   }
               });

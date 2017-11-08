@@ -67,7 +67,7 @@ class DocumentsController extends Controller
             // $value->doc_title = $value->doc_title.' <i>'.$value->supplier_id.'</i>';
             return $value;
           });
-          
+
           return Response::json($documents);
      }
       $data['page_title'] = 'Data Kontrak';
@@ -78,14 +78,46 @@ class DocumentsController extends Controller
       $id = $request->id;
       $doc_type = DocType::where('name','=',$request->type)->first();
       $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic')->first();
-      //dd($dt);
+
+      $boq = $this->documents->where('documents.id','=',$id)
+            ->join('doc_boq', 'documents.id', '=', 'doc_boq.documents_id')
+            ->select('doc_boq.*')
+            ->get();
+
+      $meta_lt = $this->documents
+            ->where('documents.id','=',$id)
+            ->where('meta_type','latar_belakang')
+            ->join('doc_meta', 'documents.id', '=', 'doc_meta.documents_id')
+            ->select('doc_meta.*')
+            ->get();
+
+      $meta_sc = $this->documents
+            ->where('documents.id','=',$id)
+            ->where('meta_type','scope_perubahan')
+            ->join('doc_meta', 'documents.id', '=', 'doc_meta.documents_id')
+            ->select('doc_meta.*')
+            ->get();
+
+      $meta_ps = $this->documents
+            ->where('documents.id','=',$id)
+            ->where('meta_type','pasal_pasal')
+            ->join('doc_meta', 'documents.id', '=', 'doc_meta.documents_id')
+            ->select('doc_meta.*')
+            ->get();
+
+      // dd($meta);
       if(!$doc_type || !$dt){
         abort(404);
       }
       $data['doc_type'] = $doc_type;
+      $data['boq'] = $boq;
+      $data['meta_lt'] = $meta_lt;
+      $data['meta_sc'] = $meta_sc;
+      $data['meta_ps'] = $meta_ps;
       $data['page_title'] = 'View Kontrak - '.$doc_type['title'];
       $data['doc'] = $dt;
       $data['id'] = $id;
+
       return view('documents::view')->with($data);
     }
     public function getPo(Request $request){

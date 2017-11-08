@@ -11,19 +11,19 @@
       @endphp
       <ul class="nav nav-tabs">
         <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
-        
+
         @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak']))
           <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
         @else
           <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
         @endif
-        
+
         <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
-        
+
         @if(!in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','sp']))
           <li><a href="#tab_4" data-toggle="tab">PASAL PENTING</a></li>
         @endif
-        
+
         @if(in_array($doc_type->name,['turnkey','sp']))
           <li><a href="#tab_5" data-toggle="tab">JAMINAN DAN ASURANSI</a></li>
         @endif
@@ -79,10 +79,12 @@
           </div>
           <div class="tab-pane" id="tab_5">
             @include('documents::partials.alert-errors')
-            @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak']))
+            @if(in_array($doc_type->name,['amandemen_sp']))
               @include('documents::doc-view.scope-perubahan')
-            @elseif(in_array($doc_type->name,['turnkey','turnkey']))
+            @elseif(in_array($doc_type->name,['turnkey','sp']))
               @include('documents::doc-view.jaminan-asuransi')
+            @else
+              @include('documents::doc-view.scope-perubahan-others')
             @endif
             <div class="clearfix"></div>
             <div class="row">

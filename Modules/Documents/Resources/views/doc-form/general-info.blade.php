@@ -224,7 +224,7 @@
               </div>
             </div>
           @endif
-          <div class="form-group {{ $errors->has('pic_data') ? ' has-error' : '' }}">
+          <div class="form-group {{ $errors->has('pic_data') ? ' has-error' : '' }} {{ $errors->has('pic_posisi') ? ' has-error' : '' }}">
             <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Penanggung Jawab</label>
             <div class="col-sm-5">
               <select class="form-control select-user-telkom" style="width: 100%;" name="pict" id="pict">
@@ -233,6 +233,7 @@
             </div>
             <div class="col-sm-10 col-sm-offset-2">
               {!!Helper::error_help($errors,'pic_data')!!}
+              {!!Helper::error_help($errors,'pic_posisi')!!}
             </div>
           </div>
           <div class="parent-pictable" style="display:none;">
@@ -519,6 +520,7 @@ function templatePO(data) {
 }
   @php
     $pic=Helper::old_prop($doc,'pic_data');
+    $pic_posisi=Helper::old_prop_each($doc,'pic_posisi');
   @endphp
   @if($pic)
       @if(count($pic)>0)
@@ -529,7 +531,10 @@ function templatePO(data) {
         table.parent().show();
         var tr;
         @foreach ($pic as $key=>$value)
-          @php echo 'var data_json=JSON.parse(decodeURIComponent("'.$value.'"));tr += templatePIC(data_json);'; @endphp
+          @php 
+              echo 'var errornya = \''.trim(preg_replace('/\s+/', ' ',Helper::error_help($errors,'pic_posisi.'.$key))).'\';';
+              echo 'var data_json=JSON.parse(decodeURIComponent("'.$value.'"));tr += templatePIC(data_json,\''.$pic_posisi[$key].'\',errornya);'; 
+          @endphp
         @endforeach
         table.find('tbody').append(tr);
       @endif
@@ -578,9 +583,17 @@ $(document).on('change', '#pict', function(event) {
     });
   }
 });
-function templatePIC(pic_data) {
+function templatePIC(pic_data,pic_posisi,thiserror) {
+  if(pic_posisi===undefined){
+    pic_posisi = "";
+  }
+  var has_error = 'class="has-error"';
+  if(thiserror===undefined || thiserror===""){
+    thiserror = "";
+    has_error = '';
+  }
   var json_render =encodeURIComponent(JSON.stringify(pic_data));
-  return '<tr><td class="data-no">'+pic_data.no+'<input type="hidden" name="pic_data[]" value="'+json_render+'" /></td><td class="data-nik">'+pic_data.nik+'</td><td>'+pic_data.nama+'</td><td>'+pic_data.posisi+'</td><td><button type="button" class="btn btn-danger btn-xs delete-pic"><i class="glyphicon glyphicon-remove"></i> batal</button></td></tr>';
+  return '<tr><td class="data-no">'+pic_data.no+'<input type="hidden" name="pic_data[]" value="'+json_render+'" /></td><td class="data-nik">'+pic_data.nik+'</td><td>'+pic_data.nama+'</td><td '+has_error+'><input type="text" class="form-control" name="pic_posisi[]" value="'+pic_posisi+'" />'+thiserror+'</td><td><button type="button" class="btn btn-danger btn-xs delete-pic"><i class="glyphicon glyphicon-remove"></i> batal</button></td></tr>';
 }
 $(document).on('click', '.delete-pic', function(event) {
   event.preventDefault();

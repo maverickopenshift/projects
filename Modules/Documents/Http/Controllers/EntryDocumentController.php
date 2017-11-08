@@ -171,6 +171,9 @@ class EntryDocumentController extends Controller
       $rules['ps_pasal.*']  =  $rule_ps_pasal.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['ps_judul.*']  =  $rule_ps_isi.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['ps_isi.*']    =  $rule_ps_judul.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      
+      
+      $rules['pic_posisi.*']    =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
 
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
       $validator->after(function ($validator) use ($request) {
@@ -233,6 +236,7 @@ class EntryDocumentController extends Controller
         $pic = new DocPic();
         $pic->documents_id = $doc->id;
         $pic->pegawai_id = $data['id'];
+        $pic->posisi = $request['pic_posisi'][$key];
         $pic->save();
       }
       if(count($request->lt_name)>0){

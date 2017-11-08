@@ -8,6 +8,7 @@
     <div class="box-body">
       <div class="col-sm-10">
         <div class="parent-pictable">
+            @if(count($meta_sc)>0)
             <table class="table table-condensed table-striped">
                 <thead>
                   <tr>
@@ -33,6 +34,9 @@
                   @endforeach
                 </tbody>
             </table>
+            @else
+              <div class="alert alert-info text-center" role="alert">Tidak ada scope perubahan</div>
+            @endif
           </div>
       </div>
     {{-- @include('documents::partials.buttons') --}}

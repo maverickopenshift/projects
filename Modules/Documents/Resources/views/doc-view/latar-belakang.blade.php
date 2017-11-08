@@ -6,6 +6,7 @@
     </div>
     <!-- /.box-header -->
     <div class="box-body">
+      @if(count($meta_lt)>0)
       <div class="table-responsive">
         <table class="table table-condensed table-striped">
             <thead>
@@ -33,6 +34,9 @@
             </tbody>
         </table>
     </div>
+    @else
+      <div class="alert alert-info text-center" role="alert">Tidak ada data</div>
+    @endif
     {{-- @include('documents::partials.buttons-view') --}}
     </div>
 <!-- /.box-body -->

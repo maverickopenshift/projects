@@ -6,8 +6,8 @@
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-      <div class="col-sm-10">
         <div class="parent-pictable">
+            @if(count($meta_sc)>0)
             <table class="table table-condensed table-striped">
                 <thead>
                   <tr>
@@ -19,21 +19,30 @@
                   </tr>
                 </thead>
                 <tbody>
-                  @foreach ($meta_sc as $key=>$dt)
-                    <tr>
-                      <td>{{($key+1)}}</td>
-                      <td>{{($dt->meta_name)}} </td>
-                      <td>{{($dt->meta_title)}} </td>
-                      <td>{{($dt->meta_desc)}} </td>
-                      <td>@if(!empty($dt->meta_file))<a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_scope_perubahan'])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
-                      @else
-                      -
-                    @endif</td>
-                    </tr>
-                  @endforeach
+                  
+                    @foreach ($meta_sc as $key=>$dt)
+                      <tr>
+                        <td>{{($key+1)}}</td>
+                        <td>{{($dt->meta_name)}} </td>
+                        <td>{{($dt->meta_title)}} </td>
+                        <td>{{($dt->meta_desc)}} </td>
+                        <td>
+                            @if(!empty($dt->meta_file))
+                              <a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_scope_perubahan'])}}">
+                                <i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran
+                              </a>
+                            @else
+                              -
+                            @endif
+                        </td>
+                      </tr>
+                    @endforeach
                 </tbody>
             </table>
-          </div>
+            
+            @else
+              <div class="alert alert-info text-center" role="alert">Tidak ada scope perubahan</div>
+            @endif
       </div>
     {{-- @include('documents::partials.buttons') --}}
     </div>

@@ -91,15 +91,15 @@ class EntryDocumentController extends Controller
       if($type=='amandemen_sp'){
         return $this->AmandemenSpCreate->store($request);
       }
-      if($type=='amandemen_kontrak'){
+      if(in_array($type,['amandemen_kontrak','adendum','side_letter'])){
         return $this->AmandemenKontrakCreate->store($request);
       }
-      if($type=='adendum'){
-        return $this->AdendumCreate->store($request);
-      }
-      if($type=='side_letter'){
-        return $this->SideLetterCreate->store($request);
-      }
+      // if($type=='adendum'){
+      //   return $this->AdendumCreate->store($request);
+      // }
+      // if($type=='side_letter'){
+      //   return $this->SideLetterCreate->store($request);
+      // }
       $doc_value = $request->doc_value;
       $request->merge(['doc_value' => Helpers::input_rupiah($request->doc_value)]);
       //$request->merge(['doc_value' => 'asdfsadfsdafsd']);

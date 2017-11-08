@@ -6,6 +6,7 @@
     </div>
     <!-- /.box-header -->
     <div class="box-body">
+      @if(count($meta_ps)>0)
       <div class="table-responsive">
         <table class="table table-condensed table-striped">
             <thead>
@@ -28,6 +29,9 @@
             </tbody>
         </table>
     </div>
+    @else
+      <div class="alert alert-info text-center" role="alert">Tidak ada data</div>
+    @endif
 
         @if($doc_type->name=="khs")
               @include('documents::partials.buttons-view')

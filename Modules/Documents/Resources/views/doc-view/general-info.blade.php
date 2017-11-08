@@ -130,7 +130,7 @@
                             <td>{{($key+1)}}</td>
                             <td>{{($dt->pegawai->n_nik)}}</td>
                             <td>{{($dt->pegawai->v_nama_karyawan)}}</td>
-                            <td>{{($dt->pegawai->v_short_posisi)}}</td>
+                            <td>{{($dt->posisi)}}</td>
                           </tr>
                         @endforeach
                       </tbody>

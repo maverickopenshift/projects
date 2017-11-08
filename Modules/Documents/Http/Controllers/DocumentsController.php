@@ -33,12 +33,14 @@ class DocumentsController extends Controller
           if(!empty($request->limit)){
             $limit = $request->limit;
           }
-          $documents = $this->documents->latest('updated_at');
+          
           if(in_array($request->child,[1,2])){
+            $documents = $this->documents->oldest('created_at');
             $documents->where('doc_parent',0);
             $documents->where('doc_parent_id',$request->parent_id);
           }
           else{
+            $documents = $this->documents->latest('updated_at');
             $documents->where('doc_parent',1);
           }
           $documents = $documents->with('jenis','supplier','pic')->paginate($limit);

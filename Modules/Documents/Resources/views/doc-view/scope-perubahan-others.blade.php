@@ -22,8 +22,9 @@
                   @foreach ($meta_sc as $key=>$dt)
                     <tr>
                       <td>{{($key+1)}}</td>
+                      <td>{{($dt->meta_name)}} </td>
                       <td>{{($dt->meta_title)}} </td>
-                      {{-- <td>{{($dt->meta_desc[semula])}} </td> --}}
+                      <td>{{($dt->meta_desc)}} </td>
                       <td>@if(!empty($dt->meta_file))<a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_scope_perubahan'])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
                       @else
                       -

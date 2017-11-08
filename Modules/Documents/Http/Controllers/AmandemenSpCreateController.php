@@ -104,14 +104,13 @@ class AmandemenSpCreateController
             && !empty($request['scope_awal'][$key])
             && !empty($request['scope_akhir'][$key])
         ){
-          $scope_awal = $request['scope_awal'][$key];
-          $scope_akhir = $request['scope_akhir'][$key];
+          
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = 'scope_perubahan';
-          $doc_meta->meta_name = $val;
-          $doc_meta->meta_title = $request['scope_name'][$key];
-          $doc_meta->meta_desc = json_encode(['semula'=>$scope_awal,'diubah_menjadi'=>$scope_akhir]);
+          $doc_meta->meta_name = $request['scope_name'][$key];
+          $doc_meta->meta_title = $request['scope_awal'][$key];
+          $doc_meta->meta_desc = $request['scope_akhir'][$key];
 
           if(isset($request['scope_file'][$key])){
             $fileName   = Helpers::set_filename('doc_scope_perubahan_',strtolower($val));

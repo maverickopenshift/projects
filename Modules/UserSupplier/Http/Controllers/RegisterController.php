@@ -29,6 +29,7 @@ class RegisterController extends Controller
 
      public function add(Request $request)
      {
+
          $rules = array (
              'bdn_usaha'            => 'required',
              'company_name'         => 'required|min:5|unique:users,name',
@@ -44,6 +45,8 @@ class RegisterController extends Controller
                        ->withErrors($validator);
          }
          else {
+
+          //  dd($request);
          $kd_vendor = $this->generate_id();
          $inisial = $request->initial_company_name;
          $bdn_usaha = $request->bdn_usaha;

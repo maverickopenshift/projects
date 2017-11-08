@@ -12,10 +12,10 @@
                 <thead>
                   <tr>
                     <th width="30">No. </th>
-                    <th width="150">Scope Perubahan</th>
-                    <th width="150">Semula</th>
-                    <th width="150">Diubah Menjadi</th>
-                    <th width="300">Attachment</th>
+                    <th width="150">Pasal</th>
+                    <th width="250">Judul</th>
+                    <th width="400">Isi</th>
+                    <th width="">Attachment</th>
                   </tr>
                 </thead>
                 <tbody>

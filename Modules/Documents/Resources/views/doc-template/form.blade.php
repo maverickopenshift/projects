@@ -15,8 +15,12 @@
                 <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Pilih Type Template</label>
                 <div class="col-sm-10">
                   <input type="hidden" class="form-control" name="id"  value="{{old('id',Helper::prop_exists($data,'id'))}}"  placeholder="Masukan Kode Template" autocomplete="off">
+                  @if($data_class=='form-add')
                   {!! Helper::select_type('type',Helper::prop_exists($data,'id_doc_type')) !!}
                   <div class="error error-type"></div>
+                  @else
+                  <span>{{ Helper::prop_exists($data,'title_type') }}</span>
+                  @endif
                 </div>
               </div>
           </div>
@@ -24,8 +28,12 @@
               <div class="form-group">
                 <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Pilih Jenis Template</label>
                 <div class="col-sm-10">
+                  @if($data_class=='form-add')
                   {!! Helper::select_category2('category',Helper::prop_exists($data,'id_doc_category')) !!}
                   <div class="error error-category"></div>
+                  @else
+                  <span>{{ Helper::prop_exists($data,'title') }}</span>
+                  @endif
                 </div>
               </div>
           </div>
@@ -39,7 +47,7 @@
               </div>
           </div>
 
-          <div class="form-horizontal">
+          <div class="form-horizontal" style="display:none">
               <table class="table table-bordered table-me">
                 <thead>
                 <tr>
@@ -192,11 +200,9 @@
     $(document).on('submit','.form-edit',function (event) {
         event.preventDefault();
         var formMe = $(this)
-        var attErrorType = formMe.find('.error-type')
-        attErrorType.html('')
+        var attErrorKode = formMe.find('.error-kode')
+        attErrorKode.html('')
         formMe.find('.alertBS').html('')
-        var attErrorCat = formMe.find('.error-category')
-        attErrorCat.html('')
         formMe.find('.error').html('')
         var btnSave = formMe.find('.btn-save')
         btnSave.button('loading')
@@ -209,29 +215,26 @@
                 // Handle your response..
                 console.log(_response)
                 if(_response.errors){
-                    if(_response.errors.type){
-                        attErrorType.html('<span class="text-danger">'+_response.errors.type+'</span>');
-                    }
-                    if(_response.errors.category){
-                        attErrorCat.html('<span class="text-danger">'+_response.errors.category+'</span>');
+                    if(_response.errors.kode){
+                        attErrorKode.html('<span class="text-danger">'+_response.errors.kode+'</span>');
                     }
                     if(_response.errors.error){
                         alertBS2(_response.errors.error,'danger');
                     }
-                    var $this = $('.table-me');
-                    var row = $this.find('tbody>tr');
-                    $.each(row,function(index, el) {
-                      var mdf = $(this).find('td');
-                      if(_response.errors["pasal."+index]){
-                        mdf.eq(1).append('<div class="error text-danger">'+_response.errors["pasal."+index]+'</div>')
-                      }
-                      if(_response.errors["judul."+index]){
-                        mdf.eq(2).append('<div class="error text-danger">'+_response.errors["judul."+index]+'</div>')
-                      }
-                      if(_response.errors["isi."+index]){
-                        mdf.eq(3).append('<div class="error text-danger">'+_response.errors["isi."+index]+'</div>')
-                      }
-                    });
+                    // var $this = $('.table-me');
+                    // var row = $this.find('tbody>tr');
+                    // $.each(row,function(index, el) {
+                    //   var mdf = $(this).find('td');
+                    //   if(_response.errors["pasal."+index]){
+                    //     mdf.eq(1).append('<div class="error text-danger">'+_response.errors["pasal."+index]+'</div>')
+                    //   }
+                    //   if(_response.errors["judul."+index]){
+                    //     mdf.eq(2).append('<div class="error text-danger">'+_response.errors["judul."+index]+'</div>')
+                    //   }
+                    //   if(_response.errors["isi."+index]){
+                    //     mdf.eq(3).append('<div class="error text-danger">'+_response.errors["isi."+index]+'</div>')
+                    //   }
+                    // });
                 }
                 else{
                     window.location = '{!!route('doc.template')!!}';

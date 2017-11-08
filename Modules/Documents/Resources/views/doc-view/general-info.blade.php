@@ -84,64 +84,36 @@
           @endif
           @if($doc_type->name=="sp")
             <div class="form-group">
-              <label for="ttd_pihak2" class="col-sm-2 control-label">Nilai SP</label>
+              <label for="prinsipal_st" class="col-sm-2 control-label">Nilai SP</label>
               <div class="col-sm-10">
-                <table class="table table-bordered table-latar">
-                  <thead>
-                  <tr>
-                    <th>Material</th>
-                    <th>Jasa</th>
-                    <th>Total</th>
-                    <th>PPN</th>
-                    <th>Total PPN</th>
-                  </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                      <td>
-                        <div class="input-group {{ $errors->has('doc_nilai_material') ? ' has-error' : '' }}">
-                          <span class="input-group-addon mtu-set"></span>
-                          <input type="text" class="form-control" name="doc_nilai_material" value="{{Helper::old_prop($doc,'doc_nilai_material')}}" autocomplete="off">
-                        </div>
-                          {!!Helper::error_help($errors,'doc_nilai_material')!!}
-                      </td>
-                      <td>
-                        <div class="input-group {{ $errors->has('doc_nilai_jasa') ? ' has-error' : '' }}">
-                          <span class="input-group-addon mtu-set"></span>
-                          <input type="text" class="form-control" name="doc_nilai_jasa" value="{{Helper::old_prop($doc,'doc_nilai_jasa')}}"  autocomplete="off">
-                        </div>
-                          {!!Helper::error_help($errors,'doc_nilai_jasa')!!}
-                      </td>
-                      <td>
-                        <div class="input-group {{ $errors->has('doc_nilai_total') ? ' has-error' : '' }}">
-                          <span class="input-group-addon mtu-set"></span>
-                          <input type="text" class="form-control" name="doc_nilai_total" value="{{Helper::old_prop($doc,'doc_nilai_total')}}" autocomplete="off">
-                        </div>
-                          {!!Helper::error_help($errors,'doc_nilai_total')!!}
-                      </td>
-                      <td>
-                        <div class="input-group {{ $errors->has('doc_nilai_ppn') ? ' has-error' : '' }}">
-                          <span class="input-group-addon mtu-set"></span>
-                          <input type="text" class="form-control" name="doc_nilai_ppn" value="{{Helper::old_prop($doc,'doc_nilai_ppn')}}" autocomplete="off">
-                        </div>
-                          {!!Helper::error_help($errors,'doc_nilai_ppn')!!}
-                      </td>
-                      <td>
-                        <div class="input-group {{ $errors->has('doc_nilai_total_ppn') ? ' has-error' : '' }}">
-                          <span class="input-group-addon mtu-set"></span>
-                          <input type="text" class="form-control" name="doc_nilai_total_ppn" value="{{Helper::old_prop($doc,'doc_nilai_total_ppn')}}" autocomplete="off">
-                        </div>
-                          {!!Helper::error_help($errors,'doc_nilai_total_ppn')!!}
-                      </td>
-                    </tr>
-                </tbody>
-                </table>
+                <div class="parent-pictable">
+                    <table class="table table-condensed table-striped">
+                        <thead>
+                          <tr>
+                            <th>Material</th>
+                            <th>Jasa</th>
+                            <th>Total</th>
+                            <th>PPN</th>
+                            <th>Total PPN</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                              <td>{{($doc->doc_nilai_material)}}</td>
+                              <td>{{($doc->doc_nilai_jasa)}}</td>
+                              <td>{{($doc->doc_nilai_total)}}</td>
+                              <td>{{($doc->doc_nilai_ppn)}}</td>
+                              <td>{{($doc->doc_nilai_total_ppn)}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                  </div>
               </div>
             </div>
           @endif
           <div class="form-group">
             <label for="prinsipal_st" class="col-sm-2 control-label">Unit Penanggungjawab PIC</label>
-            <div class="col-sm-10">          
+            <div class="col-sm-10">
               <div class="parent-pictable">
                   <table class="table table-condensed table-striped">
                       <thead>

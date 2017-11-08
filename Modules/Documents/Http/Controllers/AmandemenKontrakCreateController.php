@@ -109,9 +109,10 @@ class AmandemenKontrakCreateController
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = 'scope_perubahan';
-          $doc_meta->meta_name = $val;
-          $doc_meta->meta_title = $request['scope_pasal'][$key];
-          $doc_meta->meta_desc = json_encode(['semula'=>$scope_judul,'diubah_menjadi'=>$scope_isi]);
+          $doc_meta->meta_name = $request['scope_pasal'][$key];
+          $doc_meta->meta_title = $request['scope_judul'][$key];
+          $doc_meta->meta_desc = $request['scope_isi'][$key];
+        
 
           if(isset($request['scope_file'][$key])){
             $fileName   = Helpers::set_filename('doc_scope_perubahan_',strtolower($val));

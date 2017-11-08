@@ -126,7 +126,13 @@ class DocTemplateController extends Controller
       $data['page_title'] = 'Ubah Template Kontrak';
       $data['data_action'] = route('doc.template.storeEdit');
       $data['data_class'] = 'form-edit';
-      $edit = DocTemplate::where('id','=',$req->id)->with('category','type')->first();
+      // $edit = DocTemplate::where('id','=',$req->id)->with('category','type')->first();
+      $edit = DocTemplate::where('doc_template.id','=',$req->id)
+            ->join('doc_category', 'doc_template.id_doc_category', '=', 'doc_category.id')
+            ->join('doc_type', 'doc_template.id_doc_type', '=', 'doc_type.id')
+            ->select('doc_template.kode','doc_template.id', 'doc_type.title as title_type' , 'doc_category.title')
+            ->first();
+
       if(!$edit){
         abort(500);
       }
@@ -139,8 +145,7 @@ class DocTemplateController extends Controller
     public function storeEdit(Request $request)
     {
       $rules = array (
-          'type' => 'required',
-          'category' => 'required',
+          'kode' => 'required',
           'pasal.*' => 'required|min:3|max:20',
           'isi.*' => 'required|min:10',
           'judul.*' => 'required|min:5',
@@ -158,17 +163,15 @@ class DocTemplateController extends Controller
           if(count($pasal)==count($isi) || count($isi)==count($judul) || count($pasal)==count($judul)){
 
             $data = DocTemplate::where('id','=',$id)->first();
-            $data->id_doc_type = $request->type;
-            $data->id_doc_category = $request->category;
             $data->kode = $request->kode;
             $data->save ();
-            foreach($pasal as $k=>$v){
-              $data2 = DocTemplateDetail::where('id_doc_template','=',$id)->first();
-              $data2->name = $v;
-              $data2->title = $judul[$k];
-              $data2->desc = $isi[$k];
-              $data2->save ();
-            }
+            // foreach($pasal as $k=>$v){
+            //   $data2 = DocTemplateDetail::where('id_doc_template','=',$id)->first();
+            //   $data2->name = $v;
+            //   $data2->title = $judul[$k];
+            //   $data2->desc = $isi[$k];
+            //   $data2->save ();
+            // }
             return response()->json(array('status'=>true));
           }
           else{

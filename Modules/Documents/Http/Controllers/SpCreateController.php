@@ -169,6 +169,7 @@ class SpCreateController
         $pic = new DocPic();
         $pic->documents_id = $doc->id;
         $pic->pegawai_id = $data['id'];
+        $pic->posisi = $request['pic_posisi'][$key];
         $pic->save();
       }
       if(count($request->lt_name)>0){

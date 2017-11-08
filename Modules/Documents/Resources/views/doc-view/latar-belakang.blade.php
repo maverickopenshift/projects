@@ -37,7 +37,9 @@
     @else
       <div class="alert alert-info text-center" role="alert">Tidak ada data</div>
     @endif
-    {{-- @include('documents::partials.buttons-view') --}}
+    @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter']))
+      @include('documents::partials.buttons-view')
+    @endif
     </div>
 <!-- /.box-body -->
 </div>

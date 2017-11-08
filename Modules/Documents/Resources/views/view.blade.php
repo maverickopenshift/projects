@@ -20,7 +20,7 @@
 
         <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
 
-        @if(!in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','sp']))
+        @if(in_array($doc_type->name,['turnkey','khs']))
           <li><a href="#tab_4" data-toggle="tab">PASAL PENTING</a></li>
         @endif
 

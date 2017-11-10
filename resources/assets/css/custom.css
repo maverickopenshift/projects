@@ -190,6 +190,24 @@ table.tableLaravel thead .sorting_desc_disabled:after {
 .loading2{
   background-color: rgba(255,255,255,0.5);position: absolute;width: 100%;height: 100%;background-image: url(../images/loader.gif);background-position: center center;background-repeat: no-repeat;z-index:1000;display: none;
 }
+.td-expand{
+  position: relative;
+  cursor: pointer;
+}
+.td-expand.plus:after{
+  content: "\f055";
+  font-family: 'FontAwesome';
+  position: absolute;
+  left: -10px;
+  color: #dd4b39;
+}
+.td-expand.minus:after{
+  content: "\f056";
+  font-family: 'FontAwesome';
+  position: absolute;
+  left: -10px;
+  color: #dd4b39;
+}
 .child-1 {
     position: relative;
     padding-left: 32px !important;
@@ -197,7 +215,7 @@ table.tableLaravel thead .sorting_desc_disabled:after {
 .child-1:after {
     content: "\f178";
     font-family: 'FontAwesome';
-    position: absolute;
+    position: absolute ;
     left: 14px;
 }
 .child-2 {
@@ -207,6 +225,18 @@ table.tableLaravel thead .sorting_desc_disabled:after {
 .child-2:after {
     content: "\f178";
     font-family: 'FontAwesome';
-    position: absolute;
+    position: absolute ;
     left: 42px;
+}
+.child-1.td-expand,
+.child-2.td-expand{
+  cursor: pointer;
+}
+.child-1.td-expand.plus:after,
+.child-1.td-expand.minus:after{
+  left: 14px;
+}
+.child-2.td-expand.plus:after,
+.child-2.td-expand.minus:after{
+  left: 42px;
 }

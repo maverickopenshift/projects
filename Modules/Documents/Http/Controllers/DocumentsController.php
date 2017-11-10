@@ -28,11 +28,23 @@ class DocumentsController extends Controller
      */
     public function index(Request $request)
     {
+      $status = $request->status;
+      $status_arr = ['proses','selesai','draft'];
+      if(!in_array($status,$status_arr)){
+        abort(404);
+      }
+      foreach ($status_arr as $key => $st){
+        if($status==$st){
+          $status_no = $key;
+        }
+      }
       if ($request->ajax()) {
           $limit = 25;
+          $search = $request->q;
           if(!empty($request->limit)){
             $limit = $request->limit;
           }
+          
           $documents = $this->documents->latest('updated_at');
           if(in_array($request->child,[1,2])){
             $documents->where('doc_parent',0);
@@ -40,8 +52,23 @@ class DocumentsController extends Controller
           }
           else{
             $documents->where('doc_parent',1);
+            $documents->where('doc_signing',$status_no);
+            if(!empty($request->q)){
+              $documents->where(function($q) use ($search) {
+                  $q->orWhere('doc_no', 'like', '%'.$search.'%');
+                  $q->orWhere('doc_title', 'like', '%'.$search.'%');
+                  // $q->whereHas(
+                  //       'child', function ($q) use ($search) {
+                  //                 $q->orWhere('doc_no', 'like', '%'.$search.'%');
+                  //                 $q->orWhere('doc_title', 'like', '%'.$search.'%');
+                  //       }
+                  //   );
+              });
+            }
+            
           }
-          $documents = $documents->with('jenis','supplier','pic')->paginate($limit);
+          $documents = $documents->with(['jenis','supplier','pic']);
+          $documents = $documents->paginate($limit);
           $documents->getCollection()->transform(function ($value) {
             // $sp = $this->documents->get_child('sp',$value['id']);
             // $aman_sp = $this->documents->get_child('amandemen_sp',$value['id']);
@@ -63,14 +90,16 @@ class DocumentsController extends Controller
             else{
               $value['link'] = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'">Lihat</a>';
             }
-            $value['supplier']['nm_vendor'] = $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
+            $value['sup_name']= $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
+            // $value['supplier']['nm_vendor'] = $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
             // $value->doc_title = $value->doc_title.' <i>'.$value->supplier_id.'</i>';
             return $value;
           });
 
           return Response::json($documents);
      }
-      $data['page_title'] = 'Data Kontrak';
+      $data['page_title'] = 'Data Dokumen '.ucfirst($status);
+      $data['doc_status'] = $status;
       return view('documents::index')->with($data);
     }
     public function view(Request $request)

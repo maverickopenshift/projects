@@ -66,6 +66,7 @@ let mix = require('laravel-mix');
             'node_modules/datatables.net-responsive/js/dataTables.responsive.js',
             'node_modules/datatables.net-responsive-bs/js/responsive.bootstrap.js',
             'node_modules/bootstrap/dist/sweetalert.js',
+            'node_modules/sweetalert/dist/sweetalert.min.js',
             'node_modules/admin-lte/plugins/slimScroll/jquery.slimscroll.js',
             'node_modules/admin-lte/plugins/fastclick/fastclick.js',
             'node_modules/summernote/dist/summernote.js',
@@ -84,6 +85,10 @@ let mix = require('laravel-mix');
            // 'public/js/app.js',
             'resources/assets/js/custom.js',
         ], 'public/js/all.js', './')
+        .scripts([
+            'node_modules/vue/dist/vue.min.js',
+            'node_modules/vue-resource/dist/vue-resource.min.js',
+        ], 'public/js/vue.js', './')
         .scripts([
             'node_modules/admin-lte/plugins/jQuery/jquery-2.2.3.min.js',
             'node_modules/admin-lte/bootstrap/js/bootstrap.js',

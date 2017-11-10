@@ -13,18 +13,18 @@
           </li>
             @permission('manajemen-dashboard')
             <li class="treeview {{Request::is("documents/dasboard")?'active':''}}">
-                <a href="{{route('doc')}}"> <img src="{{asset('/images/icon-dashboard.png')}}" title="Dashboard" />
+                <a href="{{route('doc',['status'=>'selesai'])}}"> <img src="{{asset('/images/icon-dashboard.png')}}" title="Dashboard" />
                     <span>Dashboard</span></a>
             </li>
             @endpermission
             @permission('lihat-template-pasal-pasal|lihat-kontrak|tambah-kontrak')
             <li class="treeview {{Request::is("documents/*") || Request::is("documents")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management Kontrak" />
-                <span>Manajemen Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
+                <span>Manajemen Dokumen</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 @permission('tambah-kontrak')
                   <li class="treeview {{Request::is("documents/create/*")?'active':''}}">
-                    <a href="#"><span>Tambah Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
+                    <a href="#"><span>Tambah Dokumen</span> <i class="fa fa-angle-left pull-right"></i></a>
                     <ul class="treeview-menu ">
                       <li class="{{Request::is("documents/create/khs")?'active':''}}" ><a href="{{route('doc.create',['type'=>'khs'])}}">KHS</a></li>
                       <li class="{{Request::is("documents/create/turnkey")?'active':''}}" ><a href="{{route('doc.create',['type'=>'turnkey'])}}">Turnkey</a></li>
@@ -37,7 +37,9 @@
                   </li>
                 @endpermission
                 @permission('lihat-kontrak')
-                  <li class="{{Request::is("documents") || Request::is("documents/view/*") ?'active':''}}" ><a href="{{route('doc')}}">Data Kontrak</a></li>
+                  <li class="{{Request::is("documents/draft") || Request::is("documents/view/*") ?'active':''}}" ><a href="{{route('doc',['status'=>'draft'])}}">Data Draft</a></li>
+                  <li class="{{Request::is("documents/proses") || Request::is("documents/view/*") ?'active':''}}" ><a href="{{route('doc',['status'=>'proses'])}}">Data Sedang Proses</a></li>
+                  <li class="{{Request::is("documents/selesai") || Request::is("documents/view/*") ?'active':''}}" ><a href="{{route('doc',['status'=>'selesai'])}}">Data Selesai</a></li>
                 @endpermission
                 @permission('lihat-template-pasal-pasal')
                   <li class="{{Request::is("documents/doc-template") || Request::is("documents/doc-template/create") || Request::is("documents/doc-template/*/edit")?'active':''}}" ><a href="{{route('doc.template')}}">Template Kontrak</a></li>

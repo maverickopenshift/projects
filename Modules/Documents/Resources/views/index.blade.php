@@ -19,6 +19,12 @@
         @endforeach
       </div> <!-- end .flash-message -->
       <div class="table-kontrak">
+        <div class="form-inline bottom25">
+          <div class="form-group">
+            <input type="text" class="form-control cari-judul" placeholder="Judul Kontrak">
+          </div>
+          <button type="button" class="btn btn-success search">Cari</button>
+        </div>
       </div>
     </div>
 <!-- /.box-body -->
@@ -26,13 +32,17 @@
 @endsection
 @push('scripts')
 <script>
-$.fn.tableLaravel = function(options) {
+$.fn.tableOke = function(options) {
     options.tableAttr = this;
     options.tableClass = 'table table-condensed table-striped';
     options.tableAttr.css({position:'relative'});
     options.withNumber = true,
     options.emptyMessage = 'No data available!';
-    options.cssLoading='background-color: rgba(255,255,255,0.5);position: absolute;width: 100%;height: 100%;background-image: url(images/loader.gif);background-position: center center;background-repeat: no-repeat;z-index:1000;';
+    options.loadingImg = 'images/loader.gif';
+    options.trLoadingClass='row-loading';
+    options.qAttr = options.tableAttr.find('.cari-judul');
+    options.q = options.qAttr.val();
+    options.cssLoading='background-color: rgba(255,255,255,0.5);position: absolute;width: 100%;height: 100%;background-image: url('+options.loadingImg+');background-position: center center;background-repeat: no-repeat;z-index:1000;';
     options.loading = 'loading-me';
     options.loadingHtml = '<div class="'+options.loading+'" style="'+options.cssLoading+'"></div>';
     options.renderHeader = function(){
@@ -94,17 +104,23 @@ $.fn.tableLaravel = function(options) {
     options.tableAttr.prepend(options.loadingHtml);
     options.renderData = function(data,no){
       var render = '<tr data-total-child="'+data['total_child']+'" data-id="'+data['id']+'" class="row-parent row-'+data['id']+'">';
+      var expandable = '';
+      if(parseInt(data['total_child'])>0){
+        var expandable = 'class="td-expand plus"';
+      }
       if(options.withNumber){
           render += '<td>'+(no+1)+'</td>';
       } 
       $.each(options.data,function(index, el) {
         if(this.name!==false && this.html===undefined){
           var rend_dt = options.splitName(data,this.name);
-          render += '<td>'+((rend_dt==null || rend_dt===undefined)?'-':rend_dt)+'</td>';
+          var rend_exp = (index==0)?expandable:'';
+          render += '<td '+rend_exp+'>'+((rend_dt==null || rend_dt===undefined)?'-':rend_dt)+'</td>';
         }
         else{
           if(this.name===false && this.html!==undefined){
-            render += '<td>'+options.parseHTML(this.html,data)+'</td>';
+            var rend_exp = (index==0)?expandable:'';
+            render += '<td '+rend_exp+'>'+options.parseHTML(this.html,data)+'</td>';
           }
           else{
             render += '<td></td>';
@@ -117,7 +133,11 @@ $.fn.tableLaravel = function(options) {
       return render;
     }
     options.renderDataChild = function(data,no,child){
-      var render = '<tr data-total-child="'+data['total_child']+'" data-id="'+data['id']+'" class="row-child-'+child+' row-'+data['id']+'">';
+      var render = '<tr data-total-child="'+data['total_child']+'" data-id="'+data['id']+'" class="row-parent-'+data['doc_parent_id']+' row-child-'+child+' row-'+data['id']+'">';
+      var expandable = '';
+      if(parseInt(data['total_child'])>0){
+        var expandable = ' td-expand plus ';
+      }
       if(options.withNumber){
           render += '<td></td>';
       } 
@@ -125,12 +145,16 @@ $.fn.tableLaravel = function(options) {
         if(this.name!==false && this.html===undefined){
           var class_a = '';
           if(index==0){
-            class_a = 'class="child-'+child+'"';
+            class_a = 'class="child-'+child+' '+expandable+'"';
           }
           var rend_dt = options.splitName(data,this.name);
           render += '<td '+class_a+'>'+((rend_dt==null || rend_dt===undefined)?'-':rend_dt)+'</td>';
         }
         else{
+          var class_a = '';
+          if(index==0){
+            class_a = 'class="child-'+child+' '+expandable+'"';
+          }
           if(this.name===false && this.html!==undefined){
             render += '<td '+class_a+'>'+options.parseHTML(this.html,data)+'</td>';
           }
@@ -155,13 +179,24 @@ $.fn.tableLaravel = function(options) {
         
       return renderEmp;
     }
+    options.renderLoading = function(id){
+      var renderEmp = '<tr class="'+options.trLoadingClass+' row-'+id+'">';
+      var countColspan = options.data.length;
+      if(options.withNumber){
+          countColspan = countColspan+1;
+      } 
+      renderEmp += '<td style="text-align:center;" colspan="'+countColspan+'"><img style="width: 22px;" src="'+options.loadingImg+'" title="please wait..."/></td>';
+      renderEmp += '</tr>';
+        
+      return renderEmp;
+    }
     options.pagination = function(data){
       var render_pg='';
       if(data.last_page>1){
         render_pg += '<ul class="pagination">';
           if(data.current_page != 1 && data.last_page >=5){
             render_pg += '<li>';
-            render_pg += '<a href='+options.url+'?page=1&limit='+options.limit+'>&laquo;</a>';
+            render_pg += '<a href='+options.url+'?page=1&limit='+options.limit+'&q='+options.q+'>&laquo;</a>';
             render_pg += '</li>';
           }
           else{
@@ -171,7 +206,7 @@ $.fn.tableLaravel = function(options) {
           }
           if(data.current_page != 1){
             render_pg += '<li>';
-            render_pg += '<a href='+options.url+'?page='+(data.current_page-1)+'&limit='+options.limit+'>Prev</a>';
+            render_pg += '<a href='+options.url+'?page='+(data.current_page-1)+'&limit='+options.limit+'&q='+options.q+'>Prev</a>';
             render_pg += '</li>';
           }          
           else{
@@ -181,12 +216,12 @@ $.fn.tableLaravel = function(options) {
           }
           for (var i = Math.max((data.current_page-2), 1); i <= Math.min(Math.max((data.current_page-2), 1)+4,data.last_page); i++) {
             render_pg += '<li class="'+((data.current_page==i)?' active':' ')+'">';
-            render_pg += '<a class="'+((data.current_page==i)?'disabled':' ')+'" href='+options.url+'?page='+(i)+'&limit='+options.limit+'>'+i+'</a>';
+            render_pg += '<a class="'+((data.current_page==i)?'disabled':' ')+'" href='+options.url+'?page='+(i)+'&limit='+options.limit+'&q='+options.q+'>'+i+'</a>';
             render_pg += '</li>';
           }
           if(data.current_page != data.last_page){
             render_pg += '<li>';
-            render_pg += '<a href='+options.url+'?page='+(data.current_page+1)+'&limit='+options.limit+'>Next</a>';
+            render_pg += '<a href='+options.url+'?page='+(data.current_page+1)+'&limit='+options.limit+'&q='+options.q+'>Next</a>';
             render_pg += '</li>';
           }
           else{
@@ -196,7 +231,7 @@ $.fn.tableLaravel = function(options) {
           }
           if(data.current_page != data.last_page && data.last_page>=5){
             render_pg += '<li>';
-            render_pg += '<a href='+options.url+'?page='+(data.last_page)+'&limit='+options.limit+'>&raquo;</a>';
+            render_pg += '<a href='+options.url+'?page='+(data.last_page)+'&limit='+options.limit+'&q='+options.q+'>&raquo;</a>';
             render_pg += '</li>';
           }
           else{
@@ -219,6 +254,7 @@ $.fn.tableLaravel = function(options) {
     }
     options.page = options.getParams('page',options.page);
     options.limit = options.getParams('limit',options.limit);
+    options.q = options.getParams('q',options.q);
     options.ajaxPro = function(){
       $.ajax({
         url: options.url,
@@ -226,6 +262,7 @@ $.fn.tableLaravel = function(options) {
         dataType: 'json',
         data : {
           page  : options.page,
+          q : (options.q!==undefined)?options.q:'',
           limit : options.limit
         }
       })
@@ -244,26 +281,32 @@ $.fn.tableLaravel = function(options) {
             return options.tableAttr.append(options.pagination(data));
           };
           $.when( wait_render() ).done(function() {
-            var tr = options.tableAttr.find('tbody>tr.row-parent');
-            $.each(tr,function(index, el) {
-                var row_id = $(this).data('id');
-                var row_class = $(this).attr('class');
-                // console.log(row_id+' - '+row_class);
-                if(parseInt($(this).data('total-child'))>0){
-                  options.ajaxChild(1,row_id,$(this));
-                }
-            });
+            // var tr = options.tableAttr.find('tbody>tr.row-parent');
+            // $.each(tr,function(index, el) {
+            //     var row_id = $(this).data('id');
+            //     var row_class = $(this).attr('class');
+            //     // console.log(row_id+' - '+row_class);
+            //     if(parseInt($(this).data('total-child'))>0){
+            //       options.ajaxChild(1,row_id,$(this));
+            //     }
+            // });
             
           });
         }
         else{
+          options.tableAttr.find('tbody').html('');
           options.tableAttr.find('tbody').append(options.renderEmpty);
-          console.log('empty');
+          options.tableAttr.find('.pagination').remove();
         }
+        options.qAttr.val(options.q);
         options.tableAttr.find('.'+options.loading).remove();
       });
     }
     options.ajaxChild = function(child,parent_id,attr){
+      var tr_id = attr.data('id');
+      attr.parent().find('.'+options.trLoadingClass+'.row-'+tr_id).remove();
+      attr.after(options.renderLoading(tr_id));
+      attr.find('td.td-expand').removeClass('minus').addClass('plus');
       $.ajax({
         url: options.url,
         type: 'GET',
@@ -284,71 +327,145 @@ $.fn.tableLaravel = function(options) {
                 return attr.after(render);
             };
             $.when( wait_render2() ).done(function() {
-              var tr = options.tableAttr.find('tbody>tr.row-child-1');
-              $.each(tr,function(index, el) {
-                  var row_id = $(this).data('id');
-                  var row_class = $(this).attr('class');
-                  if(parseInt($(this).data('total-child'))>0){
-                  console.log(row_id+' - '+row_class+' - '+$(this).data('total-child'));
-                    options.ajaxChild2(2,row_id,$(this));
-                  }
-              });
+              attr.parent().find('.'+options.trLoadingClass+'.row-'+tr_id).remove();
+              attr.find('td.td-expand').removeClass('plus').addClass('minus');
+              // var tr = options.tableAttr.find('tbody>tr.row-child-1');
+              // $.each(tr,function(index, el) {
+              //     var row_id = $(this).data('id');
+              //     var row_class = $(this).attr('class');
+              //     if(parseInt($(this).data('total-child'))>0){
+              //     console.log(row_id+' - '+row_class+' - '+$(this).data('total-child'));
+              //       options.ajaxChild2(2,row_id,$(this));
+              //     }
+              // });
             });
           }
       });
     }
-    options.ajaxChild2 = function(child,parent_id,attr){
-      $.ajax({
-        url: options.url,
-        type: 'GET',
-        dataType: 'json',
-        data : {
-          child     : child,
-          parent_id : parent_id
-        }
-      })
-      .done(function(data) {
-          if(data.data.length>0){
-            var render;
-            $.each(data.data,function(index, el) {
-              $('.row-'+this.id).remove();
-              render += options.renderDataChild(this,index,child);
-            }); 
-            attr.after(render);
-          }
-      });
-    }
     options.ajaxPro();
-    $(document).on('click','.pagination>li>a', function(event) {
+    $(options.tableAttr).on('click','.pagination>li>a', function(event) {
       event.preventDefault();
       /* Act on the event */
       if(!$(this).hasClass('disabled')){
         var urls = $(this).attr('href');
-        console.log($(this));
         options.page = options.getParams('page',options.page,urls);
         options.limit = options.getParams('limit',options.limit,urls);
+        options.q = options.getParams('q',options.q,urls);
         window.history.pushState("", "", urls);
         options.tableAttr.prepend(options.loadingHtml);
         options.ajaxPro();
+      }
+    });
+    $(options.tableAttr).on('click','.search', function(event) {
+      event.preventDefault();
+      /* Act on the event */
+        options.page = 1;
+        options.limit = options.getParams('limit',options.limit,urls);
+        options.q = options.getParams('q',options.q,urls);
+        options.tableAttr.prepend(options.loadingHtml);
+        options.q = options.qAttr.val();
+        var urls = options.url+'?page='+options.page+'&limit='+options.limit+'&q='+options.q;
+        window.history.pushState({}, "", urls);
+        options.ajaxPro();
+    });
+    $(options.tableAttr).on('click','.td-expand.plus', function(event) {
+      event.preventDefault();
+      /* Act on the event */
+      var td = $(this);
+      var tr_id = td.parent().data('id');
+      var tr = td.parent();
+      var table = tr.parent();
+      var child_set = 1;
+      if(td.hasClass('child-1')){
+        child_set = 2;
+      }
+      var count_expand = table.find('.row-parent-'+tr_id);
+      table.find('.'+options.trLoadingClass+'.row-'+tr_id).remove();
+      td.parent().after(options.renderLoading(tr_id));
+      if(count_expand.length>0){
+        $.each(count_expand,function(index, el) {
+          var get_tr = $(this);
+          if(parseInt(get_tr.data('total-child'))>0){
+            var new_tr = get_tr.find('.td-expand');
+            if(new_tr.hasClass('minus')){
+              get_tr.find('.td-expand').trigger('click');
+            }
+            else if(new_tr.hasClass('plus')){
+              var check = get_tr.parent().find('.row-parent-'+get_tr.data('id'));
+              if(check.length>0){
+                get_tr.find('.td-expand').trigger('click');
+              }
+            }
+          }
+          get_tr.show();
+        });
+        table.find('.'+options.trLoadingClass+'.row-'+tr_id).remove();
+        td.removeClass('plus').addClass('minus');
+      }
+      else{
+        $.each(tr,function(index, el) {
+            var row_id = $(this).data('id');
+            var row_class = $(this).attr('class');
+            // console.log(row_id+' - '+row_class);
+            if(parseInt($(this).data('total-child'))>0){
+              options.ajaxChild(child_set,row_id,$(this));
+            }
+        });
+      }
+    });
+    $(options.tableAttr).on('click','.td-expand.minus', function(event) {
+      event.preventDefault();
+      /* Act on the event */
+      var td = $(this);
+      var tr_id = td.parent().data('id');
+      var tr = td.parent();
+      var table = tr.parent();
+      var count_expand = table.find('.row-parent-'+tr_id);
+      table.find('.'+options.trLoadingClass+'.row-'+tr_id).remove();
+      td.parent().after(options.renderLoading(tr_id));
+      if(count_expand.length>0){
+        $.each(count_expand,function(index, el) {
+          var get_tr = $(this);
+          if(parseInt(get_tr.data('total-child'))>0){
+            var new_tr = get_tr.find('.td-expand');
+            if(new_tr.hasClass('minus')){
+              get_tr.find('.td-expand').trigger('click');
+            }
+          }
+          get_tr.hide();
+        });
+        table.find('.'+options.trLoadingClass+'.row-'+tr_id).remove();
+        td.removeClass('minus').addClass('plus');
       }
     });
     return this;
 }
 $(function () {
   var options = {
-    url : '{!!route('doc')!!}',
+    url : '{!!route('doc',['status'=>$doc_status])!!}',
     with_number : true,
     data : [
       { name : 'doc_title' , title  : 'Judul',orderable:true},
       { name : 'doc_no' , title : 'No Kontrak',orderable:true},
-      { name : 'supplier.nm_vendor' , title  : 'Vendor',orderable:true},
+      { name : 'sup_name' , title  : 'Vendor',orderable:true},
+      // { name : 'supplier.nm_vendor' , title  : 'Vendor',orderable:true},
       { name : 'jenis.type.title' , title  : 'Type',orderable:true},
       { name : 'link' , title  : 'Action'},
     ],
     page : 1,
     limit : 25,
+    q : '',
   };
-  $('.table-kontrak').tableLaravel(options);
+  var tbl = $('.table-kontrak').tableOke(options);
+  $(tbl).on('click', '.btn-cari', function(event) {
+    event.preventDefault();
+    /* Act on the event */
+    var judul = $('.cari-judul');
+    if(judul.val()!==""){
+      options.q = judul.val();
+      options.ajaxPro();
+    }
+  });
 });
 </script>
 @endpush

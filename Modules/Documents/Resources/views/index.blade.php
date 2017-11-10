@@ -38,7 +38,7 @@ $.fn.tableOke = function(options) {
     options.tableAttr.css({position:'relative'});
     options.withNumber = true,
     options.emptyMessage = 'No data available!';
-    options.loadingImg = 'images/loader.gif';
+    options.loadingImg = '/images/loader.gif';
     options.trLoadingClass='row-loading';
     options.qAttr = options.tableAttr.find('.cari-judul');
     options.q = options.qAttr.val();

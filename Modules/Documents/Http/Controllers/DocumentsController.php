@@ -46,7 +46,9 @@ class DocumentsController extends Controller
           }
 
           if(in_array($request->child,[1,2])){
-            $documents = $this->documents->oldest('documents.created_at');
+            $documents = $this->documents
+                ->oldest('documents.created_at')
+            ;
               $documents->leftJoin('documents as child','child.doc_parent_id','=','documents.id');
             $documents->where('documents.doc_parent',0);
             $documents->where('documents.doc_parent_id',$request->parent_id);
@@ -54,13 +56,16 @@ class DocumentsController extends Controller
               $documents->selectRaw('DISTINCT (documents.id) , documents.*');
           }
           else{
-            $documents = $this->documents->latest('documents.updated_at');
+            $documents = $this->documents
+                ->latest('documents.updated_at')
+            ;
             $documents->leftJoin('documents as child','child.doc_parent_id','=','documents.id');
+            $documents->leftJoin('documents as child2','child2.doc_parent_id','=','child.id');
 //            $documents->select('documents.*');
               $documents->selectRaw('DISTINCT (documents.id) , documents.*');
             $documents->where('documents.doc_parent',1);
 //            $documents->where('documents.doc_signing',$status_no);
-            $documents->whereRaw('(child.`doc_signing`='.$status_no.' OR documents.`doc_signing`='.$status_no.')');
+            $documents->whereRaw('(child.`doc_signing`='.$status_no.' OR child2.`doc_signing`='.$status_no.' OR documents.`doc_signing`='.$status_no.')');
             if(!empty($request->q)){
               $documents->where(function($q) use ($search) {
                   $q->orWhere('documents.doc_no', 'like', '%'.$search.'%');

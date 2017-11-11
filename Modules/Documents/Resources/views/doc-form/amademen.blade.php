@@ -12,7 +12,7 @@
           @else
             @include('documents::doc-form.no-kontrak')
           @endif
-          
+
           <div class="form-group {{ $errors->has('doc_desc') ? ' has-error' : '' }}">
             <label for="deskripsi_kontrak" class="col-sm-2 control-label">Deskripsi {{$doc_type['title']}}</label>
             <div class="col-sm-10">
@@ -26,7 +26,7 @@
           </div>
           <div class="form-group {{ $errors->has('doc_date') ? ' has-error' : '' }}">
             <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal {{$doc_type['title']}}</label>
-            <div class="col-sm-3">
+            <div class="col-sm-6">
               <div class="input-group date" data-provide="datepicker">
                   <div class="input-group-addon">
                       <span class="fa fa-calendar"></span>

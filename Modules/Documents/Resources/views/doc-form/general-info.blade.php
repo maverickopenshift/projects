@@ -36,7 +36,7 @@
           @if(in_array($doc_type->name,['khs','turnkey']))
             <div class="form-group {{ $errors->has('doc_template_id') ? ' has-error' : '' }}">
               <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Jenis {{$doc_type['title']}}</label>
-              <div class="col-sm-3">
+              <div class="col-sm-6">
                 {!!Helper::select_jenis($doc_type->name,old('doc_template_id',Helper::prop_exists($doc,'doc_template_id')),'doc_template_id')!!}
               </div>
               <div class="col-sm-10 col-sm-offset-2">
@@ -47,7 +47,7 @@
           @if($doc_type->name=="sp")
             <div class="form-group {{ $errors->has('doc_startdate') ? ' has-error' : '' }}">
               <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Mulai {{$doc_type['title']}}</label>
-              <div class="col-sm-3">
+              <div class="col-sm-6">
                 <div class="input-group date" data-provide="datepicker">
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
@@ -61,7 +61,7 @@
             </div>
             <div class="form-group {{ $errors->has('doc_enddate') ? ' has-error' : '' }}">
               <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Akhir {{$doc_type['title']}}</label>
-              <div class="col-sm-3">
+              <div class="col-sm-6">
                 <div class="input-group date" data-provide="datepicker">
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
@@ -76,7 +76,7 @@
           @else
             <div class="form-group {{ $errors->has('doc_date') ? ' has-error' : '' }}">
               <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal {{$doc_type['title']}}</label>
-              <div class="col-sm-3">
+              <div class="col-sm-6">
                 <div class="input-group date" data-provide="datepicker">
                     <div class="input-group-addon">
                         <span class="fa fa-calendar"></span>
@@ -146,7 +146,7 @@
           @if($doc_type->name!="sp")
             <div class="form-group {{ $errors->has('doc_proc_process') ? ' has-error' : '' }}">
               <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Cara Pengadaan</label>
-              <div class="col-sm-3">
+              <div class="col-sm-6">
                 <select class="form-control" name="doc_proc_process">
                   <option value="P" {!!Helper::old_prop_selected($doc,'doc_proc_process','P')!!}>Pelanggan</option>
                   <option value="PL" {!!Helper::old_prop_selected($doc,'doc_proc_process','PL')!!}>Pemilihan Langsung</option>
@@ -160,7 +160,7 @@
           @endif
             <div class="form-group {{ $errors->has('doc_proc_process') ? ' has-error' : '' }}">
               <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Mata Uang</label>
-              <div class="col-sm-1">
+              <div class="col-sm-3">
                 <select class="form-control mata-uang" name="doc_mtu">
                   <option value="RP" {!!Helper::old_prop_selected($doc,'doc_mtu','RP')!!}>Rp.</option>
                   <option value="USD" {!!Helper::old_prop_selected($doc,'doc_mtu','USD')!!}>USD</option>
@@ -225,10 +225,10 @@
             </div>
           @endif
           <div class="form-group {{ $errors->has('pic_data') ? ' has-error' : '' }} {{ $errors->has('pic_posisi') ? ' has-error' : '' }}">
-            <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Penanggung Jawab</label>
-            <div class="col-sm-5">
+            <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> PIC</label>
+            <div class="col-sm-6">
               <select class="form-control select-user-telkom" style="width: 100%;" name="pict" id="pict">
-                  <option value="">Pilih Penanggungjawab</option>
+                  <option value="">Pilih PIC</option>
               </select>
             </div>
             <div class="col-sm-10 col-sm-offset-2">
@@ -257,7 +257,7 @@
           @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
           <div class="form-group {{ $errors->has('doc_po') ? ' has-error' : '' }}">
             <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> PO</label>
-            <div class="col-sm-4">
+            <div class="col-sm-6">
               <div class="input-group">
                 <input class="form-control no_po" type="text" name="doc_po" value="{{Helper::old_prop($doc,'doc_po')}}" placeholder="Masukan No.PO">
                 <span class="input-group-btn">
@@ -271,23 +271,8 @@
             </div>
           </div>
           <div class="parent-potables" style="display:none;">
-            <table class="table">
+            <table class="table" id="parentPO">
               <tbody>
-              <tr>
-                <td width="150">No PO </td>
-                <td width="10">:</td>
-                <td>PO0001</td>
-              </tr>
-              <tr>
-                <td>Nama Pembuat</td>
-                <td> : </td>
-                <td>SUMARNI</td>
-              </tr>
-              <tr>
-                <td>Tanggal PO</td>
-                <td> : </td>
-                <td>27 Agustus 2017</td>
-              <tr>
               </tbody>
             </table>
             <table class="table table-condensed table-striped" id="potables">
@@ -298,9 +283,11 @@
                     <th>Item</th>
                     <th>Qty</th>
                     <th>Satuan</th>
-                    <th>MTU</th>
-                    <th>Harga</th>
+                    <th>Currency</th>
                     <th>Harga Total</th>
+                    <th>Delivery Date</th>
+                    <th>Penandatangan Approval</th>
+                    <th>No PR</th>
                     <th>Keterangan</th>
                 </tr>
                 </thead>
@@ -327,7 +314,7 @@ $(function() {
 
   $('.mtu-set').text($('.mata-uang').val());
   $(".select-user-telkom").select2({
-      placeholder : "Pilih Penanggung....",
+      placeholder : "Pilih PIC....",
       ajax: {
           url: '{!! route('users.get-select-user-telkom') !!}',
           dataType: 'json',
@@ -465,6 +452,7 @@ $(function() {
 function render_po(po){
   var error_po = $('.error-po');
   var table = $('#potables');
+  var parentPO = $('#parentPO');
   var loading = table.find('.loading-tr');
   loading.show();
   var tr_count = table.find('tbody>tr').not('tbody>tr.loading-tr');
@@ -500,6 +488,8 @@ function render_po(po){
             var tr = templatePO(po_data);
             table.find('tbody').append(tr);
           });
+          var td = ParentPO();
+          parentPO.find('tbody').append(td);
           error_po.html('');
         }
       }
@@ -513,9 +503,36 @@ function templatePO(data) {
               <td>'+data.qty+'</th>\
               <td>'+data.satuan+'</th>\
               <td>'+data.mtu+'</th>\
-              <td>'+data.harga+'</th>\
               <td>'+data.harga_total+'</th>\
+              <td>-</th>\
+              <td>-</th>\
+              <td>-</th>\
               <td>'+data.keterangan+'</th>\
+          </tr>';
+}
+
+function ParentPO() {
+  var nopo = $('.no_po').val();
+  return '<tr>\
+            <td width="150">No PO </td>\
+            <td width="10">:</td>\
+            <td>'+nopo+'</td>\
+            <td>Nama Vendor</td>\
+            <td> : </td>\
+            <td>PT Jaya Makmur Sentosa</td>\
+          </tr>\
+          <tr>\
+            <td>Nama Pembuat / nik</td>\
+            <td> : </td>\
+            <td>SUMARNI / 123456</td>\
+            <td>Nama Approval PO</td>\
+            <td> : </td>\
+            <td>Purwiro</td>\
+          </tr>\
+          <tr>\
+            <td>Tanggal PO</td>\
+            <td> : </td>\
+            <td>27 Agustus 2017</td>\
           </tr>';
 }
   @php
@@ -531,9 +548,9 @@ function templatePO(data) {
         table.parent().show();
         var tr;
         @foreach ($pic as $key=>$value)
-          @php 
+          @php
               echo 'var errornya = \''.trim(preg_replace('/\s+/', ' ',Helper::error_help($errors,'pic_posisi.'.$key))).'\';';
-              echo 'var data_json=JSON.parse(decodeURIComponent("'.$value.'"));tr += templatePIC(data_json,\''.$pic_posisi[$key].'\',errornya);'; 
+              echo 'var data_json=JSON.parse(decodeURIComponent("'.$value.'"));tr += templatePIC(data_json,\''.$pic_posisi[$key].'\',errornya);';
           @endphp
         @endforeach
         table.find('tbody').append(tr);

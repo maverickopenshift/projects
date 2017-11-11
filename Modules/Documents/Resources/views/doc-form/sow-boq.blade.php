@@ -57,7 +57,7 @@
                       <th  style="width:70px;">Qty</th>
                     @endif
                     <th style="width:100px;">Satuan</th>
-                    <th style="width:70px;">MTU</th>
+                    <th style="width:70px;">Currency</th>
                     <th>Harga</th>
                     @if($doc_type->name!='khs')
                       <th style="width:100px;">Harga Total</th>
@@ -312,7 +312,7 @@ $(document).on('keyup', '.hitung_total', function(event) {
     }
     else{
       var harga = _this.parent().parent().find('input[name="hs_harga[]"]').val();
-    } 
+    }
     if(harga==""){
       harga = 0
     }

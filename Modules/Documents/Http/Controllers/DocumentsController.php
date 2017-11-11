@@ -76,7 +76,7 @@ class DocumentsController extends Controller
 //          echo($documents->toSql());exit;
           $documents = $documents->with(['jenis','supplier','pic']);
           $documents = $documents->paginate($limit);
-          $documents->getCollection()->transform(function ($value) {
+          $documents->getCollection()->transform(function ($value)use ($status_no) {
             // $sp = $this->documents->get_child('sp',$value['id']);
             // $aman_sp = $this->documents->get_child('amandemen_sp',$value['id']);
             // $aman_kon = $this->documents->get_child('amandemen_kontrak',$value['id']);
@@ -90,7 +90,7 @@ class DocumentsController extends Controller
             //   .Helpers::create_button('Adendum',$adendum,'warning')
             //   .Helpers::create_button('Side Letter',$side_letter,'info');
             // }
-            $value['total_child']=$this->documents->total_child($value['id']);
+            $value['total_child']=$this->documents->total_child($value['id'],$status_no);
             if($value['doc_signing']==0){
               $value['link'] = '<a class="btn btn-xs btn-success" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'">Setujui</a>';
             }

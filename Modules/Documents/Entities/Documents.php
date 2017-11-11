@@ -103,8 +103,12 @@ class Documents extends Model
       }
       return $doc->get();
     }
-    public function total_child($doc_id){
-      $doc  = self::where('doc_parent', 0)->where('doc_parent_id', $doc_id)->count();
+    public function total_child($doc_id,$status_no){
+      $doc  = self::where('doc_parent', 0)
+          ->where('doc_parent_id', $doc_id)
+          ->where('doc_signing',$status_no)
+          ->count();
+//      echo $status_no;exit;
       return $doc;
     }
 }

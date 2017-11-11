@@ -145,7 +145,7 @@ $(document).on('click', '.btn-setuju', function(event) {
                       title:"Pemberitahuan",
                       message: "Data berhasil disetujui",
                       callback: function (result) {
-                          window.location = '{!!route('doc')!!}'
+                          window.location = '{!!route('doc',['status'=>'selesai'])!!}'
                       }
                   });
                 }

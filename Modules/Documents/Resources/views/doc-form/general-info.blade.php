@@ -177,7 +177,7 @@
                 <div class="input-group">
                   <div class="input-group-addon mtu-set">
                   </div>
-                  <input type="text" class="form-control input-rupiah" name="doc_value" value="{{Helper::old_prop($doc,'doc_value')}}">
+                  <input type="text" class="form-control input-rupiah" name="doc_value" value="{{Helper::old_prop($doc,'doc_value')}}" autocomplete="off">
                 </div>
               </div>
               <div class="col-sm-10 col-sm-offset-2">
@@ -224,36 +224,7 @@
               </div>
             </div>
           @endif
-          <div class="form-group {{ $errors->has('pic_data') ? ' has-error' : '' }} {{ $errors->has('pic_posisi') ? ' has-error' : '' }}">
-            <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Penanggung Jawab</label>
-            <div class="col-sm-5">
-              <select class="form-control select-user-telkom" style="width: 100%;" name="pict" id="pict">
-                  <option value="">Pilih Penanggungjawab</option>
-              </select>
-            </div>
-            <div class="col-sm-10 col-sm-offset-2">
-              {!!Helper::error_help($errors,'pic_data')!!}
-              {!!Helper::error_help($errors,'pic_posisi')!!}
-            </div>
-          </div>
-          <div class="parent-pictable" style="display:none;">
-            <table class="table table-condensed table-striped" id="pictable">
-                <thead>
-                <tr>
-                    <th width="40">No.</th>
-                    <th  width="200">NIK</th>
-                    <th  width="250">Nama</th>
-                    <th>Posisi</th>
-                    <th width="60">Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                  <tr class="loading-tr">
-                    <td colspan="5" class="text-center"><img src="{{asset('/images/loader.gif')}}" title="please wait..."/></td>
-                  </tr>
-                </tbody>
-            </table>
-          </div>
+          @include('documents::doc-form.pic')
           @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
           <div class="form-group {{ $errors->has('doc_po') ? ' has-error' : '' }}">
             <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> PO</label>
@@ -321,66 +292,11 @@
 <script>
 $(function() {
   var po = $('.no_po').val()
-  if(po!=""){
+  if(po!=="" || po!==undefined){
     render_po(po);
   }
 
   $('.mtu-set').text($('.mata-uang').val());
-  $(".select-user-telkom").select2({
-      placeholder : "Pilih Penanggung....",
-      ajax: {
-          url: '{!! route('users.get-select-user-telkom') !!}',
-          dataType: 'json',
-          delay: 350,
-          data: function (params) {
-              return {
-                  q: params.term, // search term
-                  page: params.page
-              };
-          },
-          //id: function(data){ return data.store_id; },
-          processResults: function (data, params) {
-              // parse the results into the format expected by Select2
-              // since we are using custom formatting functions we do not need to
-              // alter the remote JSON data, except to indicate that infinite
-              // scrolling can be used
-
-              var results = [];
-
-              $.each(data.data, function (i, v) {
-                  var o = {};
-                  o.id = v.n_nik;
-                  o.name = v.v_nama_karyawan;
-                  o.value = v.n_nik;
-                  o.username = v.n_nik;
-                  results.push(o);
-              })
-              params.page = params.page || 1;
-              return {
-                  results: results,
-                  pagination: {
-                      more: (data.next_page_url ? true: false)
-                  }
-              };
-          },
-          cache: true
-      },
-      //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
-      minimumInputLength: 0,
-      templateResult: function (state) {
-          if (state.id === undefined || state.id === "") { return ; }
-          var $state = $(
-              '<span>' +  state.name +' <i>('+  state.username + ')</i></span>'
-          );
-          return $state;
-      },
-      templateSelection: function (data) {
-          if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
-              return;
-          }
-          return data.name +' - '+  data.username ;
-      }
-  });
   var selectUserVendor = $(".select-user-vendor").select2({
       placeholder : "Pilih Pihak II....",
       ajax: {
@@ -518,97 +434,6 @@ function templatePO(data) {
               <td>'+data.keterangan+'</th>\
           </tr>';
 }
-  @php
-    $pic=Helper::old_prop($doc,'pic_data');
-    $pic_posisi=Helper::old_prop_each($doc,'pic_posisi');
-  @endphp
-  @if($pic)
-      @if(count($pic)>0)
-        var table = $('#pictable');
-        var loading = table.find('.loading-tr');
-        loading.hide();
-        var tr_count = table.find('tbody>tr').not('tbody>tr.loading-tr');
-        table.parent().show();
-        var tr;
-        @foreach ($pic as $key=>$value)
-          @php 
-              echo 'var errornya = \''.trim(preg_replace('/\s+/', ' ',Helper::error_help($errors,'pic_posisi.'.$key))).'\';';
-              echo 'var data_json=JSON.parse(decodeURIComponent("'.$value.'"));tr += templatePIC(data_json,\''.$pic_posisi[$key].'\',errornya);'; 
-          @endphp
-        @endforeach
-        table.find('tbody').append(tr);
-      @endif
-  @endif
-});
-var tr_pic =[];
-
-$(document).on('change', '#pict', function(event) {
-  event.preventDefault();
-  /* Act on the event */
-  var nik = $(this).val();
-  $(this).val('');
-  $('#select2-pict-container').html('');
-  var table = $('#pictable');
-  var loading = table.find('.loading-tr');
-  var render = true;
-  $.each(table.find('.data-nik'),function(index, el) {
-    if($(this).text()==nik){
-      render = false;
-    }
-  });
-  if(render){
-    loading.show();
-    var tr_count = table.find('tbody>tr').not('tbody>tr.loading-tr');
-    table.parent().show();
-    $.ajax({
-      url: '{!! route('users.get-select-user-telkom-by-nik') !!}',
-      type: 'GET',
-      dataType: 'json',
-      data: {nik: nik}
-    })
-    .done(function(response) {
-      if(response.status){
-        var data = response.data;
-        loading.hide();
-        var pic_data = {
-          no     : (tr_count.length+1),
-          id     : data.id,
-          nik    : data.n_nik,
-          nama   : data.v_nama_karyawan,
-          posisi : (data.v_short_posisi==null?"-":data.v_short_posisi)
-        }
-        var tr = templatePIC(pic_data);
-        table.find('tbody').append(tr);
-      }
-    });
-  }
-});
-function templatePIC(pic_data,pic_posisi,thiserror) {
-  if(pic_posisi===undefined){
-    pic_posisi = "";
-  }
-  var has_error = 'class="has-error"';
-  if(thiserror===undefined || thiserror===""){
-    thiserror = "";
-    has_error = '';
-  }
-  var json_render =encodeURIComponent(JSON.stringify(pic_data));
-  return '<tr><td class="data-no">'+pic_data.no+'<input type="hidden" name="pic_data[]" value="'+json_render+'" /></td><td class="data-nik">'+pic_data.nik+'</td><td>'+pic_data.nama+'</td><td '+has_error+'><input type="text" class="form-control" name="pic_posisi[]" value="'+pic_posisi+'" />'+thiserror+'</td><td><button type="button" class="btn btn-danger btn-xs delete-pic"><i class="glyphicon glyphicon-remove"></i> batal</button></td></tr>';
-}
-$(document).on('click', '.delete-pic', function(event) {
-  event.preventDefault();
-  /* Act on the event */
-  $(this).parent().parent().remove();
-  var table = $('#pictable');
-  var tr_count = table.find('tbody>tr').not('tbody>tr.loading-tr');
-  var loading = table.find('.loading-tr');
-  $.each(table.find('.data-no'),function(index, el) {
-    $(this).html(index+1);
-  });
-  if(tr_count.length==0){
-    loading.show();
-    table.parent().hide();
-  }
 });
 $(document).on('change', '.mata-uang', function(event) {
   event.preventDefault();

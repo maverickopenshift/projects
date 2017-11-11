@@ -149,8 +149,8 @@ class EntryDocumentController extends Controller
       $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
       if(in_array($type,['turnkey','sp'])){
-          $doc_jaminan_nilai = $request->doc_jaminan_nilai;
-          $request->merge(['doc_jaminan_nilai.*' => Helpers::input_rupiah($request->doc_jaminan_nilai)]);
+          // $doc_jaminan_nilai = $request->doc_jaminan_nilai;
+          // $request->merge(['doc_jaminan_nilai.*' => Helpers::input_rupiah($request->doc_jaminan_nilai)]);
           $rules['doc_jaminan.*']           = 'required|in:PL,PM';
           $rules['doc_asuransi.*']          = 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
           $rules['doc_jaminan_nilai.*']     = 'required|max:500|min:3|regex:/^[0-9 .]+$/i';
@@ -182,9 +182,9 @@ class EntryDocumentController extends Controller
               $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
           }
       });
-      if(isset($doc_jaminan_nilai)){
-        $request->merge(['doc_jaminan_nilai' => $doc_jaminan_nilai]);
-      }
+      // if(isset($doc_jaminan_nilai)){
+      //   $request->merge(['doc_jaminan_nilai.*' => $doc_jaminan_nilai]);
+      // }
       $request->merge(['doc_value' => $doc_value]);
       if(isset($hs_harga) && count($hs_harga)>0){
         $request->merge(['hs_harga'=>$hs_harga]);

@@ -69,13 +69,13 @@
                         <div class="error-global"></div>
                         <input type="hidden" id="id" name="id" />
                         <label>Password Baru</label>
-                        <input type="text" id="reset_password" name="reset_password" class="form-control" placeholder="Enter ..." required autocomplete="off">
+                        <input type="hidden" id="reset_password" name="reset_password" class="form-control" placeholder="Enter ..." required autocomplete="off">
                         <div class="error-reset_password"></div>
                     </div>
                     <div class="form-group">
                         <div class="error-global"></div>
                         <label>Konfirmasi Password</label>
-                        <input type="text" id="konfirmasi_password" name="konfirmasi_password" class="form-control" placeholder="Enter ..." required autocomplete="off">
+                        <input type="hidden" id="konfirmasi_password" name="konfirmasi_password" class="form-control" placeholder="Enter ..." required autocomplete="off">
                         <div class="error-konfirmasi_password"></div>
                     </div>
                 </div>

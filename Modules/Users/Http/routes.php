@@ -2,12 +2,12 @@
 
 Route::group(['middleware' => ['web','auth'], 'prefix' => 'users', 'namespace' => 'Modules\Users\Http\Controllers'], function()
 {
-    Route::get('/', 'UsersController@index')->name('users');
-    Route::get('/data', 'UsersController@data')->name('users.data');
-    Route::post('/update', 'UsersController@update')->name('users.update');
-    Route::get('/reset-user', 'UsersController@reset')->name('users.reset');
-    Route::post('/add', 'UsersController@add')->name('users.add');
-    Route::delete('/delete', 'UsersController@delete')->name('users.delete');
+    Route::get('/', ['middleware' => ['permission:lihat-user'],'uses' => 'UsersController@index'])->name('users');
+    Route::get('/data', ['middleware' => ['permission:lihat-user'],'uses' => 'UsersController@data'])->name('users.data');
+    Route::post('/update', ['middleware' => ['permission:ubah-user'],'uses' => 'UsersController@update'])->name('users.update');
+    Route::get('/reset-user',  ['middleware' => ['permission:ubah-user'],'uses' => 'UsersController@reset'])->name('users.reset');
+    Route::post('/add', ['middleware' => ['permission:tambah-user'],'uses' => 'UsersController@add'])->name('users.add');
+    Route::delete('/delete', ['middleware' => ['permission:hapus-user'],'uses' => 'UsersController@delete'])->name('users.delete');
     Route::get('/get-select-user-telkom', 'UsersController@getSelectUserTelkom')->name('users.get-select-user-telkom');
     Route::get('/get-select-user-telkom-by-nik', 'UsersController@getSelectUserTelkomByNik')->name('users.get-select-user-telkom-by-nik');
     Route::get('/get-select-user-vendor', 'UsersController@getSelectUserVendor')->name('users.get-select-user-vendor');

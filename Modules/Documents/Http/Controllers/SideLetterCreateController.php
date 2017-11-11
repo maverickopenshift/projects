@@ -21,6 +21,6 @@ class SideLetterCreateController
   }
   public function store($request)
   {
-    return redirect()->route('doc');
+    return redirect()->route('doc',['status'=>'proses']);
   }
 }

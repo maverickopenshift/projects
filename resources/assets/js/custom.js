@@ -104,6 +104,39 @@ $(function(e){
       $file_txt.val($(this).val());
     }); 
   });
+  $( document ).ajaxError(function( event, jqxhr, settings, thrownError ) {
+    console.log(JSON.stringify(jqxhr));
+    if(jqxhr.status==403) {
+      swal(
+          'Oops...',
+          'Anda tidak memiliki hak akses!',
+          'error'
+        ).then((value) => {
+          window.location.reload();
+        });
+    }
+    if(jqxhr.status==500) {
+      swal(
+          'Oops...',
+          'Ada sesuatu yg salah',
+          'error'
+        ).then((value) => {
+          window.location.reload();
+        });
+    }
+    if(jqxhr.status==401) {
+      if(jqxhr.responseJSON.error=='Unauthenticated'){
+        //ini bisa muncul login
+      }
+      swal(
+          'Oops...',
+          'Sesi Anda telah habis',
+          'error'
+        ).then((value) => {
+          window.location.reload();
+        });
+    }
+  });
 });
 function toRP(bilangan){
   var	number_string = bilangan.toString(),

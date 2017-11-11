@@ -37,9 +37,9 @@
                   </li>
                 @endpermission
                 @permission('lihat-kontrak')
-                  <li class="{{Request::is("documents/draft") || Request::is("documents/view/*") ?'active':''}}" ><a href="{{route('doc',['status'=>'draft'])}}">Data Draft</a></li>
-                  <li class="{{Request::is("documents/proses") || Request::is("documents/view/*") ?'active':''}}" ><a href="{{route('doc',['status'=>'proses'])}}">Data Sedang Proses</a></li>
-                  <li class="{{Request::is("documents/selesai") || Request::is("documents/view/*") ?'active':''}}" ><a href="{{route('doc',['status'=>'selesai'])}}">Data Selesai</a></li>
+                  <li class="{{Request::is("documents/status/draft")?'active':''}}" ><a href="{{route('doc',['status'=>'draft'])}}">Data Draft</a></li>
+                  <li class="{{Request::is("documents/status/proses")?'active':''}}" ><a href="{{route('doc',['status'=>'proses'])}}">Data Sedang Proses</a></li>
+                  <li class="{{Request::is("documents/status/selesai")?'active':''}}" ><a href="{{route('doc',['status'=>'selesai'])}}">Data Selesai</a></li>
                 @endpermission
                 @permission('lihat-template-pasal-pasal')
                   <li class="{{Request::is("documents/doc-template") || Request::is("documents/doc-template/create") || Request::is("documents/doc-template/*/edit")?'active':''}}" ><a href="{{route('doc.template')}}">Template Kontrak</a></li>

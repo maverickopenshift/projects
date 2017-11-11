@@ -1,11 +1,13 @@
 <div class="form-group {{ $errors->has('pic_nama_err') ? ' has-error' : '' }}">
   <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> PIC</label>
-  <div class="col-sm-5">
+  <div class="col-sm-3">
     <select class="form-control select-user-pic" style="width: 100%;" name="pic_search" id="pic_search">
         <option value="">Pilih PIC</option>
     </select>
   </div>
-  <div class="col-sm-3"><button type="button" class="btn btn-success add-pic"><i class="glyphicon glyphicon-plus"></i> Tambah PIC</button></div>
+  <div class="col-sm-2">
+    <button type="button" class="btn btn-success add-pic"><i class="glyphicon glyphicon-plus"></i> Tambah PIC</button>
+  </div>
   <div class="col-sm-10 col-sm-offset-2">
     {!!Helper::error_help($errors,'pic_nama_err')!!}
   </div>

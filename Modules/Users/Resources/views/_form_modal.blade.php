@@ -181,6 +181,7 @@
                 modal.find('.content-add').html(contentAdd())
                 modal.find('.content-atasan').html(contentAtasan())
                 modal.find('.content-atasan').hide();
+                modal.find('.table-atasan').hide().find('table>tbody').html('')
                 selectUser("#user_search")
                 modal.find('form').attr('action','{!! route('users.add') !!}')
             }

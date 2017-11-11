@@ -48,6 +48,13 @@ class User extends Authenticatable
       }
       return $data->orderBy('v_short_posisi','desc');
     }
+    public static function get_atasan_by_divisi($type,$posisi){
+      $data = \DB::table('pegawai')
+                ->select('*');    
+      $data->where('objiddivisi',$type);
+      $data->where('v_band_posisi','<',$posisi);
+      return $data->orderBy('v_band_posisi','asc')->get();
+    }
     public static function get_user_telkom_by_nik($nik){
       $data = \DB::table('pegawai')->select('*')->where('n_nik','=',$nik);
       return $data;
@@ -66,5 +73,11 @@ class User extends Authenticatable
         });
       }
       return $data;
+    }
+    public static function get_user_pegawai(){
+      $data = \DB::table('users_pegawai')
+                ->join('pegawai', 'pegawai.n_nik', '=', 'users_pegawai.nik')
+                ->where('users_pegawai.users_id',\Auth::id());
+      return $data->first();
     }
 }

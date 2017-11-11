@@ -66,6 +66,30 @@ class Helpers
     $select .= '</select>';
     return $select;
 }
+public static function select_atasan($pegawai,$val=null)
+{
+  $cat = \DB::table('users_atasan')
+          ->join('users_pegawai', 'users_pegawai.id', '=', 'users_atasan.users_pegawai_id')
+          ->join('pegawai', 'pegawai.n_nik', '=', 'users_atasan.nik')
+          ->where('users_pegawai.users_id',\Auth::id());
+  if($cat->count()==0){
+    $cat = \App\User::get_atasan_by_divisi($pegawai->objiddivisi,$pegawai->v_band_posisi);
+  }
+  else{
+    $cat = $cat->get();
+  }
+  $select  = '<select class="form-control" id="doc_pihak1_nama" name="doc_pihak1_nama">';
+  $select .= '<option value="">Pilih Penandatangan Pihak 1</option>';
+  foreach ($cat as $dt) {
+    $selected = '';
+    if($val==$dt->id){
+      $selected = 'selected="selected"';
+    }
+    $select .= '<option value="'.$dt->n_nik.'" '.$selected.'>'.$dt->v_nama_karyawan.' - '.$dt->v_short_posisi.'</option>';
+  }
+  $select .= '</select>';
+  return $select;
+}
   public static function select_category2($name='category',$val=null)
   {
     $cat = DocCategory::all();

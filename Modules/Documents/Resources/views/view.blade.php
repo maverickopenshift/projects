@@ -150,6 +150,9 @@ $(document).on('click', '.btn-setuju', function(event) {
                   });
                 }
                 loading.hide();
+              })
+              .always(function(){
+                loading.hide();
               });
             }
         }

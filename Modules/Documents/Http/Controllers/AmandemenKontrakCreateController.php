@@ -146,6 +146,6 @@ class AmandemenKontrakCreateController
 
     //dd($request->input());
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
-    return redirect()->route('doc');
+    return redirect()->route('doc',['status'=>'proses']);
   }
 }

@@ -92,9 +92,9 @@ class SpCreateController
 
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
       $validator->after(function ($validator) use ($request) {
-          if (!isset($request['pic_data'][0])) {
-              $validator->errors()->add('pic_data', 'Unit Penanggung jawab harus dipilih!');
-          }
+        if (!isset($request['pic_nama'][0])) {
+            $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
+        }
       });
       if(isset($doc_jaminan_nilai)){
         $request->merge(['doc_jaminan_nilai.*' => $doc_jaminan_nilai]);
@@ -195,11 +195,14 @@ class SpCreateController
         }
       }
 
-      foreach($request['pic_data'] as $key => $val){
-        $data = json_decode(urldecode($val),true);
+      foreach($request['pic_nama'] as $key => $val){
         $pic = new DocPic();
         $pic->documents_id = $doc->id;
-        $pic->pegawai_id = $data['id'];
+        $pic->pegawai_id = $request['pic_id'][$key];
+        $pic->nama = $val;
+        $pic->email = $request['pic_email'][$key];
+        $pic->jabatan = $request['pic_jabatan'][$key];
+        $pic->telp = $request['pic_telp'][$key];
         $pic->posisi = $request['pic_posisi'][$key];
         $pic->save();
       }
@@ -256,7 +259,7 @@ class SpCreateController
 
       //dd($request->input());
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
-      return redirect()->route('doc');
+      return redirect()->route('doc',['status'=>'proses']);
     }
 
 }

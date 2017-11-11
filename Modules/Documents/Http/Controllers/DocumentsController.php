@@ -46,18 +46,21 @@ class DocumentsController extends Controller
           }
 
           if(in_array($request->child,[1,2])){
-            $documents = $this->documents->oldest('created_at');
-            $documents->where('doc_parent',0);
-            $documents->where('doc_parent_id',$request->parent_id);
+            $documents = $this->documents->oldest('documents.created_at');
+            $documents->where('documents.doc_parent',0);
+            $documents->where('documents.doc_parent_id',$request->parent_id);
           }
           else{
-            $documents = $this->documents->latest('updated_at');
-            $documents->where('doc_parent',1);
-            $documents->where('doc_signing',$status_no);
+            $documents = $this->documents->latest('documents.updated_at');
+            $documents->leftJoin('documents as child','child.doc_parent_id','=','documents.id');
+            $documents->select('documents.*');
+            $documents->where('documents.doc_parent',1);
+//            $documents->where('documents.doc_signing',$status_no);
+            $documents->whereRaw('(child.`doc_signing`='.$status_no.' OR documents.`doc_signing`='.$status_no.')');
             if(!empty($request->q)){
               $documents->where(function($q) use ($search) {
-                  $q->orWhere('doc_no', 'like', '%'.$search.'%');
-                  $q->orWhere('doc_title', 'like', '%'.$search.'%');
+                  $q->orWhere('documents.doc_no', 'like', '%'.$search.'%');
+                  $q->orWhere('documents.doc_title', 'like', '%'.$search.'%');
                   // $q->whereHas(
                   //       'child', function ($q) use ($search) {
                   //                 $q->orWhere('doc_no', 'like', '%'.$search.'%');
@@ -68,6 +71,9 @@ class DocumentsController extends Controller
             }
 
           }
+//          echo $search;
+//          echo $status_no;
+//          echo($documents->toSql());exit;
           $documents = $documents->with(['jenis','supplier','pic']);
           $documents = $documents->paginate($limit);
           $documents->getCollection()->transform(function ($value) {

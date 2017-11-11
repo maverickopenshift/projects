@@ -49,11 +49,14 @@ class DocumentsController extends Controller
             $documents = $this->documents->oldest('documents.created_at');
             $documents->where('documents.doc_parent',0);
             $documents->where('documents.doc_parent_id',$request->parent_id);
+              $documents->where('documents.doc_signing',$status_no);
+              $documents->selectRaw('DISTINCT (documents.id) , documents.*');
           }
           else{
             $documents = $this->documents->latest('documents.updated_at');
             $documents->leftJoin('documents as child','child.doc_parent_id','=','documents.id');
-            $documents->select('documents.*');
+//            $documents->select('documents.*');
+              $documents->selectRaw('DISTINCT (documents.id) , documents.*');
             $documents->where('documents.doc_parent',1);
 //            $documents->where('documents.doc_signing',$status_no);
             $documents->whereRaw('(child.`doc_signing`='.$status_no.' OR documents.`doc_signing`='.$status_no.')');

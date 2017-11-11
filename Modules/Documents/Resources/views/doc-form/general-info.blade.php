@@ -256,7 +256,7 @@
           </div>
           @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
           <div class="form-group {{ $errors->has('doc_po') ? ' has-error' : '' }}">
-            <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> PO</label>
+            <label for="prinsipal_st" class="col-sm-2 control-label"> PO</label>
             <div class="col-sm-6">
               <div class="input-group">
                 <input class="form-control no_po" type="text" name="doc_po" value="{{Helper::old_prop($doc,'doc_po')}}" placeholder="Masukan No.PO">

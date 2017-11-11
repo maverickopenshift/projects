@@ -44,7 +44,7 @@ class DocumentsController extends Controller
           if(!empty($request->limit)){
             $limit = $request->limit;
           }
-          
+
           if(in_array($request->child,[1,2])){
             $documents = $this->documents->oldest('created_at');
             $documents->where('doc_parent',0);
@@ -66,7 +66,7 @@ class DocumentsController extends Controller
                   //   );
               });
             }
-            
+
           }
           $documents = $documents->with(['jenis','supplier','pic']);
           $documents = $documents->paginate($limit);
@@ -159,6 +159,7 @@ class DocumentsController extends Controller
       $sql = \DB::table('dummy_po')->where('no_po','=',$search)->get();
       return Response::json(['status'=>true,'data'=>$sql,'length'=>count($sql)]);
     }
+    
     public function getPic(Request $request){
       $search = trim($request->id_user);
       if (empty($search)) {

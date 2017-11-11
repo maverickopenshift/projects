@@ -13,7 +13,7 @@
       <div class="form-horizontal">
           @if(in_array($doc_type->name,['turnkey','khs']))
             <div class="form-group {{ $errors->has('doc_sow') ? ' has-error' : '' }}">
-              <label for="doc_sow" class="col-sm-2 control-label"><span class="text-red">*</span> Lingkup Pekerjaan</label>
+              <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label>
               <div class="col-sm-10">
                 <textarea class="form-control" name="doc_sow" cols="4" rows="4">{{Helper::old_prop($doc,'doc_sow')}}</textarea>
                 {!!Helper::error_help($errors,'doc_sow')!!}
@@ -38,7 +38,7 @@
               }
             @endphp
           <div class="form-group top20">
-            <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> {{$title_hs}}</label>
+            <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
             <div class="col-sm-10">
               <input type="file" name="daftar_harga" class="daftar_harga hide"/>
               <button class="btn btn-primary btn-sm upload-daftar_harga" type="button"><i class="fa fa-upload"></i> Upload {{$title_hs}}</button>
@@ -136,7 +136,7 @@
           </div>
           @if($doc_type['title']=="SP")
             <div class="form-group  {{ $errors->has('doc_lampiran_teknis') ? ' has-error' : '' }}">
-              <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Lampiran Teknis</label>
+              <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran Teknis</label>
               <div class="col-sm-6">
                 <div class="input-group">
                   <input type="file" class="hide" name="doc_lampiran_teknis">

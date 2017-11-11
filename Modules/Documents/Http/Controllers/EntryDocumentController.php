@@ -123,10 +123,10 @@ class EntryDocumentController extends Controller
       if(count($m_hs_qty)>0){
         $request->merge(['hs_qty'=>$m_hs_qty]);
       }
-      //dd($request->input());
+      // dd($request->input());
       $rules = [];
       $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['doc_desc']         =  'required|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_template_id']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['doc_date']         =  'required|date_format:"Y-m-d"';
       $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -137,14 +137,14 @@ class EntryDocumentController extends Controller
       $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
       $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
       $rules['doc_value']        =  'required|max:500|min:3|regex:/^[0-9 .]+$/i';
-      $rules['doc_sow']          =  'required|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_sow']          =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
-      $rules['hs_kode_item.*']   =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['hs_item.*']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['hs_satuan.*']      =  'required|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['hs_mtu.*']         =  'required|max:5|min:1|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['hs_harga.*']       =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
-      $rules['hs_qty.*']         =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
+      $rules['hs_kode_item.*']   =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['hs_satuan.*']      =  'sometimes|nullable|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['hs_mtu.*']         =  'sometimes|nullable|max:5|min:1|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['hs_harga.*']       =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
+      $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
       if(in_array($type,['turnkey','sp'])){
@@ -156,7 +156,7 @@ class EntryDocumentController extends Controller
           $rules['doc_jaminan_startdate'] = 'required|date_format:"Y-m-d"';
           $rules['doc_jaminan_enddate']   = 'required|date_format:"Y-m-d"';
           $rules['doc_jaminan_desc']      = 'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-          $rules['doc_po']                = 'required|po_exists|regex:/^[a-z0-9 .\-]+$/i';
+          $rules['doc_po']                = 'sometimes|nullable|po_exists|regex:/^[a-z0-9 .\-]+$/i';
      }
 
       $rule_lt_name = (count($request['lt_name'])>1)?'required':'sometimes|nullable';
@@ -171,8 +171,8 @@ class EntryDocumentController extends Controller
       $rules['ps_pasal.*']  =  $rule_ps_pasal.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['ps_judul.*']  =  $rule_ps_isi.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['ps_isi.*']    =  $rule_ps_judul.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      
-      
+
+
       $rules['pic_posisi.*']    =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
 
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());

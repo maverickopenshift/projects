@@ -72,14 +72,14 @@ class SpCreateController
       $rules['hs_keterangan.*']  =  'sometimes|nullable|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
 
-      $doc_jaminan_nilai = $request->doc_jaminan_nilai;
-      $request->merge(['doc_jaminan_nilai.*' => Helpers::input_rupiah($request->doc_jaminan_nilai)]);
-      $rules['doc_jaminan.*']           = 'required|in:PL,PM';
-      $rules['doc_asuransi.*']          = 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['doc_jaminan_nilai.*']     = 'required|max:500|min:3|regex:/^[0-9 .]+$/i';
-      $rules['doc_jaminan_startdate.*'] = 'required|date_format:"Y-m-d"';
-      $rules['doc_jaminan_enddate.*']   = 'required|date_format:"Y-m-d"';
-      $rules['doc_jaminan_desc.*']      = 'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      // $doc_jaminan_nilai = $request->doc_jaminan_nilai;
+      // $request->merge(['doc_jaminan_nilai.*' => Helpers::input_rupiah($request->doc_jaminan_nilai)]);
+      // $rules['doc_jaminan.*']           = 'required|in:PL,PM';
+      // $rules['doc_asuransi.*']          = 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+      // $rules['doc_jaminan_nilai.*']     = 'required|max:500|min:3|regex:/^[0-9 .]+$/i';
+      // $rules['doc_jaminan_startdate.*'] = 'required|date_format:"Y-m-d"';
+      // $rules['doc_jaminan_enddate.*']   = 'required|date_format:"Y-m-d"';
+      // $rules['doc_jaminan_desc.*']      = 'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_po']                = 'sometimes|nullable|po_exists|regex:/^[a-z0-9 .\-]+$/i';
 
 
@@ -174,7 +174,7 @@ class SpCreateController
           $file->storeAs('document/'.$request->type.'_asuransi', $fileName);
           $asr->doc_jaminan_file = $fileName;
         }
-        $asr->save();
+        // $asr->save();
       }
 
       if(count($request->doc_lampiran)>0){

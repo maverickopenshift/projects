@@ -39,11 +39,12 @@ class Helpers
       return $select;
   }
   public static function select_posisi($val=null){
-    $select = '<select class="form-control pic-posisi" name="pic_posisi[]">
-                  <option value="USER" '.($val=='USER'?"selected='selected'":'').'>USER</option>
-                  <option value="WASLAK" '.($val=='WASLAK'?"selected='selected'":'').'>WASLAK</option>
-                  <option value="WASPANG" '.($val=='WASPANG'?"selected='selected'":'').'>WASPANG</option>
-                  <option value="VENDOR" '.($val=='VENDOR'?"selected='selected'":'').'>VENDOR</option>
+    return '<select class="form-control pic-posisi" name="pic_posisi[]">
+                  <option value="" '.($val==null || $val==""?"selected=\"selected\"":'').'>Pilih Posisi</option>
+                  <option value="USER" '.($val=='USER'?"selected=\"selected\"":'').'>USER</option>
+                  <option value="WASLAK" '.($val=='WASLAK'?"selected=\"selected\"":'').'>WASLAK</option>
+                  <option value="WASPANG" '.($val=='WASPANG'?"selected=\"selected\"":'').'>WASPANG</option>
+                  <option value="VENDOR" '.($val=='VENDOR'?"selected=\"selected\"":'').'>VENDOR</option>
                 </select>';
   }
   public static function select_jenis($type,$val=null,$name='jenis_kontrak')

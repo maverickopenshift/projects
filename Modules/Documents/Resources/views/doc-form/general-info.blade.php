@@ -177,7 +177,7 @@
                 <div class="input-group">
                   <div class="input-group-addon mtu-set">
                   </div>
-                  <input type="text" class="form-control input-rupiah" name="doc_value" value="{{Helper::old_prop($doc,'doc_value')}}">
+                  <input type="text" class="form-control input-rupiah" name="doc_value" value="{{Helper::old_prop($doc,'doc_value')}}" autocomplete="off">
                 </div>
               </div>
               <div class="col-sm-10 col-sm-offset-2">
@@ -224,36 +224,7 @@
               </div>
             </div>
           @endif
-          <div class="form-group {{ $errors->has('pic_data') ? ' has-error' : '' }} {{ $errors->has('pic_posisi') ? ' has-error' : '' }}">
-            <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> PIC</label>
-            <div class="col-sm-6">
-              <select class="form-control select-user-telkom" style="width: 100%;" name="pict" id="pict">
-                  <option value="">Pilih PIC</option>
-              </select>
-            </div>
-            <div class="col-sm-10 col-sm-offset-2">
-              {!!Helper::error_help($errors,'pic_data')!!}
-              {!!Helper::error_help($errors,'pic_posisi')!!}
-            </div>
-          </div>
-          <div class="parent-pictable" style="display:none;">
-            <table class="table table-condensed table-striped" id="pictable">
-                <thead>
-                <tr>
-                    <th width="40">No.</th>
-                    <th  width="200">NIK</th>
-                    <th  width="250">Nama</th>
-                    <th>Posisi</th>
-                    <th width="60">Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                  <tr class="loading-tr">
-                    <td colspan="5" class="text-center"><img src="{{asset('/images/loader.gif')}}" title="please wait..."/></td>
-                  </tr>
-                </tbody>
-            </table>
-          </div>
+          @include('documents::doc-form.pic')
           @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
           <div class="form-group {{ $errors->has('doc_po') ? ' has-error' : '' }}">
             <label for="prinsipal_st" class="col-sm-2 control-label"> PO</label>
@@ -308,11 +279,12 @@
 <script>
 $(function() {
   var po = $('.no_po').val()
-  if(po!=""){
+  if(po!=="" || po!==undefined){
     render_po(po);
   }
 
   $('.mtu-set').text($('.mata-uang').val());
+
   $(".select-user-telkom").select2({
       placeholder : "Pilih PIC....",
       ajax: {
@@ -368,6 +340,7 @@ $(function() {
           return data.name +' - '+  data.username ;
       }
   });
+
   var selectUserVendor = $(".select-user-vendor").select2({
       placeholder : "Pilih Pihak II....",
       ajax: {
@@ -626,6 +599,7 @@ $(document).on('click', '.delete-pic', function(event) {
     loading.show();
     table.parent().hide();
   }
+
 });
 $(document).on('change', '.mata-uang', function(event) {
   event.preventDefault();

@@ -29,7 +29,7 @@ class AdendumCreateController
     $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
     $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['doc_lampiran']     =  'required|mimes:pdf';
+    $rules['doc_lampiran.*']     =  'required|mimes:pdf';
 
     $rule_scope_pasal = (count($request['scope_pasal'])>1)?'required':'sometimes|nullable';
     $rule_scope_judul = (count($request['scope_judul'])>1)?'required':'sometimes|nullable';
@@ -66,16 +66,34 @@ class AdendumCreateController
     $doc->user_id = Auth::id();
     $doc->supplier_id = $request->supplier_id;
 
-    if(isset($request->doc_lampiran)){
-      $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($request->doc_title));
-      $request->doc_lampiran->storeAs('document/'.$request->type, $fileName);
-      $doc->doc_lampiran = $fileName;
-    }
+    // if(isset($request->doc_lampiran)){
+    //   $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($request->doc_title));
+    //   $request->doc_lampiran->storeAs('document/'.$request->type, $fileName);
+    //   $doc->doc_lampiran = $fileName;
+    // }
 
     $doc->doc_type = $request->type;
     $doc->doc_parent = 0;
     $doc->doc_parent_id = $request->parent_kontrak;
     $doc->save();
+
+    if(count($request->doc_lampiran)>0){
+      foreach($request->doc_lampiran as $key => $val){
+        if(!empty($val)
+        ){
+          $doc_meta = new DocMeta();
+          $doc_meta->documents_id = $doc->id;
+          $doc_meta->meta_type = 'lampiran_ttd';
+          if(isset($request['doc_lampiran'][$key])){
+            $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
+            $file = $request['doc_lampiran'][$key];
+            $file->storeAs('document/'.$request->type.'_lampiran_ttd', $fileName);
+            $doc_meta->meta_file = $fileName;
+          }
+          $doc_meta->save();
+        }
+      }
+    }
 
     if(count($request->lt_name)>0){
       foreach($request->lt_name as $key => $val){
@@ -112,7 +130,7 @@ class AdendumCreateController
           $doc_meta->meta_name = $request['scope_pasal'][$key];
           $doc_meta->meta_title = $request['scope_judul'][$key];
           $doc_meta->meta_desc = $request['scope_isi'][$key];
-        
+
 
           if(isset($request['scope_file'][$key])){
             $fileName   = Helpers::set_filename('doc_scope_perubahan_',strtolower($val));

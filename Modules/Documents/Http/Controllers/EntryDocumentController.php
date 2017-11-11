@@ -227,16 +227,15 @@ class EntryDocumentController extends Controller
       $doc->doc_type = $request->type;
       $doc->save();
 
-      if(count($request->name_lampiran)>0){
-        foreach($request->name_lampiran as $key => $val){
-          dd($val);
+      if(count($request->doc_lampiran)>0){
+        foreach($request->doc_lampiran as $key => $val){
           if(!empty($val)
           ){
             $doc_meta = new DocMeta();
             $doc_meta->documents_id = $doc->id;
             $doc_meta->meta_type = 'lampiran_ttd';
             if(isset($request['doc_lampiran'][$key])){
-              $fileName   = Helpers::set_filename('doc_',strtolower($val));
+              $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
               $file = $request['doc_lampiran'][$key];
               $file->storeAs('document/'.$request->type.'_lampiran_ttd', $fileName);
               $doc_meta->meta_file = $fileName;

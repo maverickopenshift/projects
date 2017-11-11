@@ -2,7 +2,7 @@
 
 Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespace' => 'Modules\Documents\Http\Controllers'], function()
 {
-    Route::get('/{status}', 'DocumentsController@index')->name('doc');
+    Route::get('/status/{status}', 'DocumentsController@index')->name('doc');
     Route::get('/child', 'DocumentsController@index')->name('doc.child');
     Route::get('/create/{type}', 'EntryDocumentController@index')->name('doc.create');
     Route::get('/get-po', 'DocumentsController@getPo')->name('doc.get-po');

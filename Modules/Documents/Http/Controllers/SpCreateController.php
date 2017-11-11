@@ -7,6 +7,7 @@ use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
+use Modules\Documents\Entities\DocAsuransi;
 use App\Helpers\Helpers;
 use Validator;
 use DB;
@@ -72,14 +73,14 @@ class SpCreateController
 
 
       $doc_jaminan_nilai = $request->doc_jaminan_nilai;
-      $request->merge(['doc_jaminan_nilai' => Helpers::input_rupiah($request->doc_jaminan_nilai)]);
-      $rules['doc_jaminan']           = 'required|in:PL,PM';
-      $rules['doc_asuransi']          = 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['doc_jaminan_nilai']     = 'required|max:500|min:3|regex:/^[0-9 .]+$/i';
-      $rules['doc_jaminan_startdate'] = 'required|date_format:"Y-m-d"';
-      $rules['doc_jaminan_enddate']   = 'required|date_format:"Y-m-d"';
-      $rules['doc_jaminan_desc']      = 'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_po']                = 'required|po_exists|regex:/^[a-z0-9 .\-]+$/i';
+      $request->merge(['doc_jaminan_nilai.*' => Helpers::input_rupiah($request->doc_jaminan_nilai)]);
+      $rules['doc_jaminan.*']           = 'required|in:PL,PM';
+      $rules['doc_asuransi.*']          = 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['doc_jaminan_nilai.*']     = 'required|max:500|min:3|regex:/^[0-9 .]+$/i';
+      $rules['doc_jaminan_startdate.*'] = 'required|date_format:"Y-m-d"';
+      $rules['doc_jaminan_enddate.*']   = 'required|date_format:"Y-m-d"';
+      $rules['doc_jaminan_desc.*']      = 'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_po']                = 'sometimes|nullable|po_exists|regex:/^[a-z0-9 .\-]+$/i';
 
 
 
@@ -96,7 +97,7 @@ class SpCreateController
           }
       });
       if(isset($doc_jaminan_nilai)){
-        $request->merge(['doc_jaminan_nilai' => $doc_jaminan_nilai]);
+        $request->merge(['doc_jaminan_nilai.*' => $doc_jaminan_nilai]);
       }
 
       if(isset($hs_harga) && count($hs_harga)>0){
@@ -147,12 +148,6 @@ class SpCreateController
       $doc->doc_nilai_total_ppn = (($nilai_ppn/100)*$nilai_total)+$nilai_total;
 
       $doc->doc_po_no = $request->doc_po;
-      $doc->doc_jaminan = $request->doc_jaminan;
-      $doc->doc_asuransi = $request->doc_asuransi;
-      $doc->doc_jaminan_startdate = $request->doc_jaminan_startdate;
-      $doc->doc_jaminan_enddate = $request->doc_jaminan_enddate;
-      $doc->doc_jaminan_desc = $request->doc_jaminan_desc;
-      $doc->doc_jaminan_nilai = Helpers::input_rupiah($request->doc_jaminan_nilai);
 
       $doc->doc_proc_process = $request->doc_proc_process;
       $doc->doc_mtu = $request->doc_mtu;
@@ -164,6 +159,24 @@ class SpCreateController
 
       $doc->save();
 
+      foreach($request['doc_asuransi'] as $key => $val){
+        $asr = new DocAsuransi();
+        $asr->documents_id = $doc->id;
+        $asr->doc_jaminan = $request['doc_jaminan'][$key];
+        $asr->doc_jaminan_name = $request['doc_asuransi'][$key];
+        $asr->doc_jaminan_nilai = Helpers::input_rupiah($request['doc_jaminan_startdate'][$key]);
+        $asr->doc_jaminan_startdate = $request['doc_jaminan_startdate'][$key];
+        $asr->doc_jaminan_enddate = $request['doc_jaminan_enddate'][$key];
+        $asr->doc_jaminan_desc = $request['doc_jaminan_desc'][$key];
+        if(isset($request['doc_jaminan_file'][$key])){
+          $fileName   = Helpers::set_filename('doc_',strtolower($val));
+          $file = $request['doc_jaminan_file'][$key];
+          $file->storeAs('document/'.$request->type.'_asuransi', $fileName);
+          $asr->doc_jaminan_file = $fileName;
+        }
+        $asr->save();
+      }
+
       if(count($request->doc_lampiran)>0){
         foreach($request->doc_lampiran as $key => $val){
           if(!empty($val)
@@ -172,7 +185,7 @@ class SpCreateController
             $doc_meta->documents_id = $doc->id;
             $doc_meta->meta_type = 'lampiran_ttd';
             if(isset($request['doc_lampiran'][$key])){
-              $fileName   = Helpers::set_filename('doc_',strtolower($val));
+              $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
               $file = $request['doc_lampiran'][$key];
               $file->storeAs('document/'.$request->type.'_lampiran_ttd', $fileName);
               $doc_meta->meta_file = $fileName;

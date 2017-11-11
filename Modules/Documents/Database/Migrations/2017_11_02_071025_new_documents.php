@@ -18,7 +18,7 @@ class NewDocuments extends Migration
           $table->bigInteger('user_id')->unsigned();
           $table->bigInteger('supplier_id')->unsigned();
           $table->bigInteger('doc_template_id')->unsigned();
-          $table->string('doc_title',500);
+          $table->string('doc_title',500)->nullable();
           $table->string('doc_no')->unique()->index()->nullable();
           $table->string('doc_mitra')->nullable();
           $table->longText('doc_desc')->nullable();
@@ -40,7 +40,7 @@ class NewDocuments extends Migration
           $table->longText('doc_jaminan_desc')->nullable();
           $table->integer('doc_parent')->nullable()->default(1);
           $table->bigInteger('doc_parent_id')->nullable();
-          $table->string('doc_lampiran',500);
+          $table->string('doc_lampiran',500)->nullable();
           $table->integer('doc_status')->nullable()->default(0);
           $table->integer('doc_signing')->nullable()->default(0);
           $table->date('doc_signing_date')->nullable();
@@ -66,10 +66,10 @@ class NewDocuments extends Migration
         $table->string('harga_total')->nullable();
         $table->longText('desc')->nullable();
         $table->longText('data')->nullable();
-        
+
         $table->foreign('documents_id')->references('id')->on('documents');
       });
-      
+
       Schema::create('doc_meta', function (Blueprint $table) {
         $table->bigIncrements('id');
         $table->bigInteger('documents_id')->unsigned();
@@ -78,7 +78,7 @@ class NewDocuments extends Migration
         $table->string('meta_title',500)->nullable();
         $table->longText('meta_desc')->nullable();
         $table->string('meta_file',500)->nullable();
-        
+
         $table->foreign('documents_id')->references('id')->on('documents');
       });
       Schema::create('pegawai', function (Blueprint $table) {
@@ -88,14 +88,14 @@ class NewDocuments extends Migration
         $table->string('name',500)->nullable();
         $table->string('loker',500)->nullable();
         $table->string('posisi',500)->nullable();
-        
+
         $table->foreign('user_id')->references('id')->on('users');
       });
       Schema::create('doc_pic', function (Blueprint $table) {
         $table->bigIncrements('id');
         $table->bigInteger('documents_id')->unsigned();
         $table->bigInteger('pegawai_id')->unsigned();
-        
+
         $table->foreign('documents_id')->references('id')->on('documents');
         $table->foreign('pegawai_id')->references('id')->on('pegawai');
       });
@@ -112,18 +112,18 @@ class NewDocuments extends Migration
         $table->dropForeign(['id_roles','id_doc_cat','id_doc_type','id_supplier']);
       });
       Schema::dropIfExists('documents');
-      
+
       Schema::table('doc_wbs', function (Blueprint $table) {
         $table->dropForeign(['id_doc']);
       });
       Schema::dropIfExists('doc_wbs');
-      
+
       Schema::table('doc_wbs_lokasi', function (Blueprint $table) {
         $table->dropForeign(['id_doc_wbs']);
         // $table->dropIfExists('doc_wbs_lokasi');
       });
       Schema::dropIfExists('doc_wbs_lokasi');
-      
+
       Schema::table('doc_wbs_nilai', function (Blueprint $table) {
         $table->dropForeign(['id_doc_wbs']);
         // $table->dropIfExists('doc_wbs_nilai');

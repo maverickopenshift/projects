@@ -8,6 +8,8 @@
                     <h4 class="modal-title">Edit User</h4>
                 </div>
                 <div class="modal-body">
+                    <div class="content-add">
+                    </div>
                     <div class="form-group">
                         <div class="error-global"></div>
                         <input type="hidden" id="id" name="id" />
@@ -107,6 +109,13 @@
     </div>
     <!-- /.modal-dialog -->
 </div>
+@push('css')
+  <style>
+  span.select2-container {
+    z-index:10050 !important;
+  }
+  </style>
+@endpush
 @push('scripts')
 <script>
     $(function() {
@@ -122,6 +131,8 @@
             $('input').iCheck('uncheck');
             modal.find('.modal-title').text(title+' User')
             modal.find('.content-password').html('');
+            $(this).val('');
+            $('#select2-pic_search-container').html('');
             if(title=='Edit'){
                 var data = button.data('data');
                 var role = data.roles;
@@ -136,6 +147,7 @@
                 modal.find('.modal-body input#username').val(data.username)
                 modal.find('.modal-body input#email').val(data.email)
                 modal.find('.modal-body input#phone').val(data.phone)
+                modal.find('.content-add').html('')
                 modal.find('form').attr('action','{!! route('users.update') !!}')
             }
             else{
@@ -144,7 +156,11 @@
                 modal.find('.modal-body input#username').val('')
                 modal.find('.modal-body input#email').val('')
                 modal.find('.modal-body input#phone').val('')
+                // modal.find('.modal-footer').find('.btn-reset').remove()
+                // modal.find('.modal-footer').append('<button type="reset" class="btn btn-danger btn-reset">Reset</button>')
                 modal.find('.content-password').html(content_password())
+                modal.find('.content-add').html(contentAdd())
+                selectUser()
                 modal.find('form').attr('action','{!! route('users.add') !!}')
             }
         })
@@ -315,7 +331,79 @@
                 }
             });
         })
+        function selectUser() {
+          $(".select-user-telkom").select2({
+              placeholder : "Pilih PIC....",
+              dropdownParent: $('#form-modal'),
+              ajax: {
+                  url: '{!! route('users.get-select-user-telkom') !!}',
+                  dataType: 'json',
+                  delay: 350,
+                  data: function (params) {
+                      return {
+                          q: params.term, // search term
+                          page: params.page
+                      };
+                  },
+                  //id: function(data){ return data.store_id; },
+                  processResults: function (data, params) {
+                      // parse the results into the format expected by Select2
+                      // since we are using custom formatting functions we do not need to
+                      // alter the remote JSON data, except to indicate that infinite
+                      // scrolling can be used
 
+                      var results = [];
+
+                      $.each(data.data, function (i, v) {
+                          var o = {};
+                          o.id = v.n_nik;
+                          o.name = v.v_nama_karyawan;
+                          o.value = v.n_nik;
+                          o.username = v.n_nik;
+                          o.jabatan = v.v_short_posisi;
+                          o.email = v.n_nik+'@telkom.co.id';
+                          o.telp = '';
+                          results.push(o);
+                      })
+                      params.page = params.page || 1;
+                      return {
+                          results: data.data,
+                          pagination: {
+                              more: (data.next_page_url ? true: false)
+                          }
+                      };
+                  },
+                  cache: true
+              },
+              //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+              minimumInputLength: 0,
+              templateResult: function (state) {
+                  if (state.id === undefined || state.id === "") { return ; }
+                  var $state = $(
+                      '<span>' +  state.v_nama_karyawan +' <i>('+  state.n_nik + ')</i></span>'
+                  );
+                  return $state;
+              },
+              templateSelection: function (data) {
+                  if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
+                      return;
+                  }
+                  return data.v_nama_karyawan +' - '+  data.n_nik ;
+              }
+          });
+          $(document).on('select2:select', '#user_search', function(event) {
+            event.preventDefault();
+            /* Act on the event */
+            var data = event.params.data;
+            console.log(data);
+            formModal.find('#name').val(data.v_nama_karyawan);
+            formModal.find('#username').val(data.n_nik);
+            formModal.find('#divisi').val(data.v_short_divisi);
+            formModal.find('#loker').val(data.v_short_unit);
+            formModal.find('#jabatan').val(data.v_short_posisi);
+            formModal.find('#email').val(data.n_nik+'@telkom.co.id');
+          });
+        }
     });
     function content_password() {
       return '<div class="form-group">\
@@ -330,6 +418,27 @@
           <input type="password" id="password_confirmation" name="password_confirmation" value="" class="form-control" placeholder="Enter ..." required autocomplete="off">\
           <div class="error-password_confirmation"></div>\
       </div>';
+    }
+    function contentAdd() {
+      return '<div class="form-group">\
+                  <div class="error-global"></div>\
+                  <label>Pilih Pegawai</label>\
+                  <select class="form-control select-user-telkom" style="width: 100%;" name="user_search" id="user_search">\
+                      <option value="">Pilih Pegawai</option>\
+                  </select>\
+                </div>\
+                <div class="form-group">\
+                    <label>Divisi</label>\
+                    <input type="text" id="divisi" name="divisi" class="form-control" disabled="disabled">\
+                </div>\
+                <div class="form-group">\
+                    <label>Loker</label>\
+                    <input type="text" id="loker" name="loker" class="form-control" disabled="disabled">\
+                </div>\
+                <div class="form-group">\
+                    <label>Jabatan</label>\
+                    <input type="text" id="jabatan" name="jabatan" class="form-control" disabled="disabled">\
+                </div>';
     }
 </script>
 @endpush

@@ -7,6 +7,8 @@ use Illuminate\Routing\Controller;
 
 use App\User;
 use App\Role;
+use Modules\Users\Entities\UsersAtasan as Atasan;
+use Modules\Users\Entities\UsersPegawai as Pegawai;
 use Datatables;
 use Validator;
 use Response;
@@ -132,7 +134,7 @@ class UsersController extends Controller
             'name' => 'required|max:250|min:3',
             'username' => 'required|unique:users,username|max:250|min:3',
             'email' => 'required|unique:users,email|max:250|min:5',
-            'phone' => 'required|max:15|min:5',
+            'phone' => 'sometimes|nullable|max:15|min:5',
             'password' => 'required|confirmed|max:50|min:5',
         );
         $validator = Validator::make($request->all(), $rules);
@@ -150,6 +152,21 @@ class UsersController extends Controller
             $roles = $request->roles;
             $data->save ();
             $data->attachRoles($roles);
+            
+            $peg = new Pegawai();
+            $peg->users_id = $data->id;
+            $peg->nik = $data->username;
+            $peg->save();
+            
+            if ($request->has(['atasan_id'])) {
+                foreach($request->atasan_id as $key=>$v){
+                  $atasan = new Atasan();
+                  $atasan->users_pegawai_id = $peg->id;
+                  $atasan->nik = $v;
+                  $atasan->save();
+                }
+            }
+            
             return response()->json($data);
         }
     }
@@ -160,11 +177,13 @@ class UsersController extends Controller
     }
     public function getSelectUserTelkom(Request $request){
         $search = trim($request->q);
+        $type = trim($request->type);
+        $posisi = trim($request->posisi);
 
         // if (empty($search)) {
         //     return \Response::json([]);
         // }
-        $data = User::get_user_telkom($search)->paginate(30);
+        $data = User::get_user_telkom($search,$type,$posisi)->paginate(30);
         return \Response::json($data);
     }
     public function getSelectUserTelkomByNik(Request $request){

@@ -33,7 +33,7 @@ class User extends Authenticatable
     {
         return $this->hasOne('Modules\Supplier\Entities\Supplier','id_user');
     }
-    public static function get_user_telkom($key=null){
+    public static function get_user_telkom($key=null,$type=null,$posisi=null){
       $data = \DB::table('pegawai')
                 ->select('*');    
       if(!empty($key)){
@@ -41,6 +41,10 @@ class User extends Authenticatable
             $q->orWhere('n_nik', 'like', '%'.$key.'%');
             $q->orWhere('v_nama_karyawan', 'like', '%'.$key.'%');
         });
+      }
+      if(!empty($type) && !empty($posisi)){
+        $data->where('objiddivisi',$type);
+        $data->where('v_band_posisi','<',$posisi);
       }
       return $data->orderBy('v_short_posisi','desc');
     }

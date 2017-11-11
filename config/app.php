@@ -15,6 +15,8 @@ return [
     'name' => env('APP_NAME', 'Consys'),
     
     'ppn_set' => 10,
+    
+    'password_default' => 'telkom2017!',
     /*
     |--------------------------------------------------------------------------
     | Application Environment

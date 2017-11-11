@@ -1,5 +1,5 @@
 <div class="modal fade" role="dialog" id="form-modal">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <form id="form-me" action="#" method="post">
                 {{ csrf_field() }}
@@ -32,10 +32,27 @@
                     <div class="form-group">
                         <div class="error-global"></div>
                         <label>Phone</label>
-                        <input type="text" id="phone" name="phone" value="" class="form-control" placeholder="Enter ..." required autocomplete="off">
+                        <input type="text" id="phone" name="phone" value="" class="form-control" placeholder="Enter ..." autocomplete="off">
                         <div class="error-phone"></div>
                     </div>
                     <div class="content-password"></div>
+                    <div class="content-atasan"></div>
+                    <div class="table-atasan table-responsive" style="display:none;">
+                      <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                              <th width="40">No.</th>
+                              <th class="hide"></th>
+                              <th width="200">Nama</th>
+                              <th width="150">Email</th>
+                              <th width="250">Jabatan</th>
+                              <th width="60">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                          </tbody>
+                      </table>
+                    </div>
                     <div class="form-group">
                     <label>Roles</label>
                       @foreach ($roles as $role)
@@ -148,6 +165,8 @@
                 modal.find('.modal-body input#email').val(data.email)
                 modal.find('.modal-body input#phone').val(data.phone)
                 modal.find('.content-add').html('')
+                modal.find('.content-atasan').html('')
+                modal.find('.table-atasan').hide().find('table>tbody').html('')
                 modal.find('form').attr('action','{!! route('users.update') !!}')
             }
             else{
@@ -160,7 +179,9 @@
                 // modal.find('.modal-footer').append('<button type="reset" class="btn btn-danger btn-reset">Reset</button>')
                 modal.find('.content-password').html(content_password())
                 modal.find('.content-add').html(contentAdd())
-                selectUser()
+                modal.find('.content-atasan').html(contentAtasan())
+                modal.find('.content-atasan').hide();
+                selectUser("#user_search")
                 modal.find('form').attr('action','{!! route('users.add') !!}')
             }
         })
@@ -331,19 +352,29 @@
                 }
             });
         })
-        function selectUser() {
-          $(".select-user-telkom").select2({
+        function selectUser(attr,divisi,v_band_posisi) {
+          $(attr).select2({
               placeholder : "Pilih PIC....",
-              dropdownParent: $('#form-modal'),
+              dropdownParent: $(attr).parent(),
               ajax: {
                   url: '{!! route('users.get-select-user-telkom') !!}',
                   dataType: 'json',
                   delay: 350,
                   data: function (params) {
-                      return {
+                      var datas =  {
                           q: params.term, // search term
                           page: params.page
                       };
+                      if(divisi!==undefined && v_band_posisi!==undefined){
+                        var datas =  {
+                            q: params.term, // search term
+                            page: params.page,
+                            type:divisi,
+                            posisi:v_band_posisi
+                        };
+                      }
+                      return datas;
+                      
                   },
                   //id: function(data){ return data.store_id; },
                   processResults: function (data, params) {
@@ -377,33 +408,71 @@
               },
               //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
               minimumInputLength: 0,
-              templateResult: function (state) {
-                  if (state.id === undefined || state.id === "") { return ; }
-                  var $state = $(
-                      '<span>' +  state.v_nama_karyawan +' <i>('+  state.n_nik + ')</i></span>'
-                  );
-                  return $state;
-              },
-              templateSelection: function (data) {
-                  if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
-                      return;
-                  }
-                  return data.v_nama_karyawan +' - '+  data.n_nik ;
-              }
-          });
-          $(document).on('select2:select', '#user_search', function(event) {
-            event.preventDefault();
-            /* Act on the event */
-            var data = event.params.data;
-            console.log(data);
-            formModal.find('#name').val(data.v_nama_karyawan);
-            formModal.find('#username').val(data.n_nik);
-            formModal.find('#divisi').val(data.v_short_divisi);
-            formModal.find('#loker').val(data.v_short_unit);
-            formModal.find('#jabatan').val(data.v_short_posisi);
-            formModal.find('#email').val(data.n_nik+'@telkom.co.id');
+              templateResult: aoTempResult ,
+              templateSelection: aoTempSelect
           });
         }
+        function aoTempResult(state) {
+            if (state.id === undefined || state.id === "") { return ; }
+            var $state = $(
+                '<span>' +  state.v_nama_karyawan +' <i>('+  state.n_nik + ')</i></span>'
+            );
+            return $state;
+        }
+        function aoTempSelect(data){
+            if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
+                return;
+            }
+            return data.v_nama_karyawan +' - '+  data.n_nik ;
+        }
+        $(document).on('select2:select', '#user_search', function(event) {
+          event.preventDefault();
+          /* Act on the event */
+          var data = event.params.data;
+          // console.log(data);
+          formModal.find('#name').val(data.v_nama_karyawan);
+          formModal.find('#username').val(data.n_nik);
+          formModal.find('#divisi').val(data.v_short_divisi);
+          formModal.find('#loker').val(data.v_short_unit);
+          formModal.find('#jabatan').val(data.v_short_posisi);
+          formModal.find('#password').val('{!!config('app.password_default')!!}').parent().find('.info-default').remove();
+          formModal.find('#password').after('<span class="text-info info-default">Default password {!!config('app.password_default')!!}')
+          formModal.find('#password_confirmation').val('{!!config('app.password_default')!!}');
+          formModal.find('#email').val(data.n_nik+'@telkom.co.id');
+          formModal.find('.table-atasan').find('table>tbody').html('');
+          formModal.find('.table-atasan').hide();
+          formModal.find('.content-atasan').show();
+          selectUser("#user_atasan",data.objiddivisi,data.v_band_posisi)
+        });
+        $(document).on('select2:select', '#user_atasan', function(event) {
+          event.preventDefault();
+          /* Act on the event */
+          var data = event.params.data;
+          $(this).val('');
+          $('#select2-user_atasan-container').html('');
+          console.log(data);
+          var $this = $('.table-atasan');
+          $this.show();
+          var row = $this.find('table>tbody>tr');
+          var new_row = $(templateAtasan(data)).clone();
+          var mdf_new_row = new_row.find('td');
+          mdf_new_row.eq(0).html(row.length+1);
+          mdf_new_row.eq(1).find('input').val(data.n_nik);
+          mdf_new_row.eq(2).text(data.v_nama_karyawan);
+          mdf_new_row.eq(3).text(data.n_nik+'@telkom.co.id');
+          mdf_new_row.eq(4).text(data.v_short_posisi);
+          $this.find('table>tbody').append(new_row);
+        });
+        $(document).on('click', '.delete-atasan', function(event) {
+          var tbl_t = $(this).parent().parent();
+          $(this).parent().parent().remove();
+          var $this = $('.table-atasan');
+          var row = $this.find('table>tbody>tr');
+          if(row.length==0){
+            //mdf.html('');
+            $this.hide();
+          }
+        });
     });
     function content_password() {
       return '<div class="form-group">\
@@ -439,6 +508,24 @@
                     <label>Jabatan</label>\
                     <input type="text" id="jabatan" name="jabatan" class="form-control" disabled="disabled">\
                 </div>';
+    }
+    function contentAtasan() {
+      return '<div class="form-group">\
+                  <label>Pilih Atasan</label>\
+                  <select class="form-control select-user-atasan" style="width: 100%;" name="user_atasan" id="user_atasan">\
+                      <option value="">Pilih Atasan</option>\
+                  </select>\
+                </div>';
+    }
+    function templateAtasan(){
+      return '<tr>\
+              <td>1</td>\
+              <td class="hide"><input type="hidden" name="atasan_id[]"></td>\
+              <td></td>\
+              <td></td>\
+              <td></td>\
+              <td class="action"><button type="button" class="btn btn-danger btn-xs delete-atasan"><i class="glyphicon glyphicon-remove"></i> hapus</button></td>\
+          </tr>';
     }
 </script>
 @endpush

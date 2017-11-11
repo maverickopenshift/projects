@@ -47,7 +47,7 @@
                           <th  style="width:70px;">Qty</th>
                         @endif
                         <th style="width:100px;">Satuan</th>
-                        <th style="width:70px;">MTU</th>
+                        <th style="width:70px;">Currency</th>
                         <th>Harga</th>
                         @if($doc_type->name!='khs')
                           <th style="width:100px;">Harga Total</th>

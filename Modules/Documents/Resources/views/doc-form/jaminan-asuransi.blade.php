@@ -67,7 +67,7 @@
               </td>
               <td>
                 <div class="input-group">
-                  <input type="file" class="hide" name="asr_file[]">
+                  <input type="file" class="hide" name="doc_jaminan_file[]">
                   <input class="form-control" type="text" disabled>
                   <span class="input-group-btn">
                     <button class="btn btn-default click-upload" type="button">Browse</button>

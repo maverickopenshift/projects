@@ -11,6 +11,7 @@ use Modules\Documents\Entities\Documents;
 use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
+use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Http\Controllers\SpCreateController as SpCreate;
 use Modules\Documents\Http\Controllers\AmandemenSpCreateController as AmandemenSpCreate;
 use Modules\Documents\Http\Controllers\AmandemenKontrakCreateController as AmandemenKontrakCreate;
@@ -209,20 +210,14 @@ class EntryDocumentController extends Controller
       $doc->user_id = Auth::id();
       $doc->supplier_id = $request->supplier_id;
 
-      if(isset($request->doc_lampiran)){
-        $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($request->doc_title));
-        $request->doc_lampiran->storeAs('document/'.$request->type, $fileName);
-        $doc->doc_lampiran = $fileName;
-      }
-
       if(in_array($type,['turnkey','sp'])){
         $doc->doc_po_no = $request->doc_po;
-        $doc->doc_jaminan = $request->doc_jaminan;
-        $doc->doc_asuransi = $request->doc_asuransi;
-        $doc->doc_jaminan_startdate = $request->doc_jaminan_startdate;
-        $doc->doc_jaminan_enddate = $request->doc_jaminan_enddate;
-        $doc->doc_jaminan_desc = $request->doc_jaminan_desc;
-        $doc->doc_jaminan_nilai = Helpers::input_rupiah($request->doc_jaminan_nilai);
+        // $doc->doc_jaminan = $request->doc_jaminan;
+        // $doc->doc_asuransi = $request->doc_asuransi;
+        // $doc->doc_jaminan_startdate = $request->doc_jaminan_startdate;
+        // $doc->doc_jaminan_enddate = $request->doc_jaminan_enddate;
+        // $doc->doc_jaminan_desc = $request->doc_jaminan_desc;
+        // $doc->doc_jaminan_nilai = Helpers::input_rupiah($request->doc_jaminan_nilai);
       }
       $doc->doc_proc_process = $request->doc_proc_process;
       $doc->doc_mtu = $request->doc_mtu;
@@ -230,6 +225,49 @@ class EntryDocumentController extends Controller
       $doc->doc_sow = $request->doc_sow;
       $doc->doc_type = $request->type;
       $doc->save();
+
+      if(isset($request->doc_lampiran)){
+        $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($request->doc_title));
+        $request->doc_lampiran->storeAs('document/'.$request->type, $fileName);
+        $doc->doc_lampiran = $fileName;
+      }
+
+      if(count($request->doc_lampiran)>0){
+        foreach($request->doc_lampiran as $key => $val){
+          if(!empty($val)
+          ){
+            $doc_meta = new DocMeta();
+            $doc_meta->documents_id = $doc->id;
+            $doc_meta->meta_type = 'lampiran_ttd';
+            if(isset($request['doc_lampiran'][$key])){
+              $fileName   = Helpers::set_filename('doc_',strtolower($val));
+              $file = $request['doc_lampiran'][$key];
+              $file->storeAs('document/'.$request->type.'_lampiran_ttd', $fileName);
+              $doc_meta->meta_file = $fileName;
+            }
+            $doc_meta->save();
+          }
+        }
+      }
+
+      foreach($request['doc_jaminan'] as $key => $val){
+        $asr = new DocAsuransi();
+        $asr->documents_id = $doc->id;
+        $asr->doc_jaminan = $request['doc_jaminan'][$key];
+        $asr->doc_jaminan_name = $request['doc_asuransi'][$key];
+        $asr->doc_jaminan_nilai = Helpers::input_rupiah($request['doc_jaminan_startdate'][$key]);
+        $asr->doc_jaminan_startdate = $request['doc_jaminan_startdate'][$key];
+        $asr->doc_jaminan_enddate = $request['doc_jaminan_enddate'][$key];
+        $asr->doc_jaminan_desc = $request['doc_jaminan_desc'][$key];
+        if(isset($request['doc_jaminan_file'][$key])){
+          $fileName   = Helpers::set_filename('doc_',strtolower($val));
+          $file = $request['doc_jaminan_file'][$key];
+          $file->storeAs('document/'.$request->type.'_asuransi', $fileName);
+          $asr->meta_fdoc_jaminan_fileile = $fileName;
+        }
+        $asr->save();
+      }
+
 
       foreach($request['pic_nama'] as $key => $val){
         $pic = new DocPic();

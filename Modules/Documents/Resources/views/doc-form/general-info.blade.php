@@ -132,11 +132,12 @@
             <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Lampiran 1 <br/><small style="font-weight:normal" class="text-info"><i>(Lembar Tanda Tangan)</i></small></label>
             <div class="col-sm-6">
               <div class="input-group">
-                <input type="file" class="hide" name="doc_lampiran">
+                <input type="file" class="hide" name="doc_lampiran[]">
                 <input class="form-control" type="text" disabled>
-                <span class="input-group-btn">
+                <div class="input-group-btn">
                   <button class="btn btn-default click-upload" type="button">Browse</button>
-                </span>
+                  <button type="button" class="btn btn-default add-doc_lampiran"><i class="glyphicon glyphicon-plus"></i></button>
+                </div>
               </div>
             </div>
             <div class="col-sm-10 col-sm-offset-2">
@@ -278,68 +279,14 @@
 @push('scripts')
 <script>
 $(function() {
+  add_select('doc_lampiran');
+  delete_select('doc_lampiran');
   var po = $('.no_po').val()
   if(po!=="" || po!==undefined){
     render_po(po);
   }
 
   $('.mtu-set').text($('.mata-uang').val());
-
-  $(".select-user-telkom").select2({
-      placeholder : "Pilih PIC....",
-      ajax: {
-          url: '{!! route('users.get-select-user-telkom') !!}',
-          dataType: 'json',
-          delay: 350,
-          data: function (params) {
-              return {
-                  q: params.term, // search term
-                  page: params.page
-              };
-          },
-          //id: function(data){ return data.store_id; },
-          processResults: function (data, params) {
-              // parse the results into the format expected by Select2
-              // since we are using custom formatting functions we do not need to
-              // alter the remote JSON data, except to indicate that infinite
-              // scrolling can be used
-
-              var results = [];
-
-              $.each(data.data, function (i, v) {
-                  var o = {};
-                  o.id = v.n_nik;
-                  o.name = v.v_nama_karyawan;
-                  o.value = v.n_nik;
-                  o.username = v.n_nik;
-                  results.push(o);
-              })
-              params.page = params.page || 1;
-              return {
-                  results: results,
-                  pagination: {
-                      more: (data.next_page_url ? true: false)
-                  }
-              };
-          },
-          cache: true
-      },
-      //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
-      minimumInputLength: 0,
-      templateResult: function (state) {
-          if (state.id === undefined || state.id === "") { return ; }
-          var $state = $(
-              '<span>' +  state.name +' <i>('+  state.username + ')</i></span>'
-          );
-          return $state;
-      },
-      templateSelection: function (data) {
-          if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
-              return;
-          }
-          return data.name +' - '+  data.username ;
-      }
-  });
 
   var selectUserVendor = $(".select-user-vendor").select2({
       placeholder : "Pilih Pihak II....",
@@ -644,5 +591,45 @@ $(document).on('keyup', '.hitung_sp', function(event) {
     td.find('td').eq(4).text(formatRupiah(total_ppn));
   }
 });
+
+function add_select(attr) {
+  $(document).on('click','.add-'+attr,function(){
+    var _this = $(this);
+    var content = _this.parent().parent();
+    var btnDelete = content.find('.delete-'+attr);
+    if(btnDelete.length==0){
+      content.find('.input-group-btn').append('<button type="button" class="btn btn-default delete-'+attr+'"><i class="glyphicon glyphicon-trash"></i></button>');
+    }
+    content.after(create_content(attr));
+  });
+}
+function delete_select(attr) {
+  $(document).on('click','.delete-'+attr,function(){
+    var _this = $(this);
+    var content = _this.parent().parent();
+    content.remove();
+    var attrNya = $('.'+attr);
+    if(attrNya.length==1){
+      attrNya.parent().find('.delete-'+attr).remove();
+    }
+  });
+}
+function create_content(attr){
+  var content = $('.'+attr),btnDelete;
+  //console.log(content.length)
+  if(content.length>0){
+    btnDelete = '<button type="button" class="btn btn-default delete-'+attr+'"><i class="glyphicon glyphicon-trash"></i></button>'
+  }
+  return '<div class="input-group">\
+    <input type="file" class="hide" name="'+attr+'[]">\
+    <input class="form-control" type="text" disabled>\
+    <div class="input-group-btn">\
+      <button class="btn btn-default click-upload" type="button">Browse</button>\
+      <button type="button" class="btn btn-default add-'+attr+'"><i class="glyphicon glyphicon-plus"></i></button>\
+      '+btnDelete+'\
+    </div>\
+  </div>';
+}
+
 </script>
 @endpush

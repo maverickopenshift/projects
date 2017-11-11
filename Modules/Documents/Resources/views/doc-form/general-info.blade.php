@@ -133,7 +133,7 @@
             <div class="col-sm-6">
               <div class="input-group">
                 <input type="file" class="hide" name="doc_lampiran[]">
-                <input class="form-control" type="text" disabled>
+                <input class="form-control" type="text" name="name_lampiran[]" val="lampiran" disabled>
                 <div class="input-group-btn">
                   <button class="btn btn-default click-upload" type="button">Browse</button>
                   <button type="button" class="btn btn-default add-doc_lampiran"><i class="glyphicon glyphicon-plus"></i></button>
@@ -622,7 +622,7 @@ function create_content(attr){
   }
   return '<div class="input-group">\
     <input type="file" class="hide" name="'+attr+'[]">\
-    <input class="form-control" type="text" disabled>\
+    <input class="form-control" type="text" name="name_lampiran[]" val="lampiran"  disabled>\
     <div class="input-group-btn">\
       <button class="btn btn-default click-upload" type="button">Browse</button>\
       <button type="button" class="btn btn-default add-'+attr+'"><i class="glyphicon glyphicon-plus"></i></button>\

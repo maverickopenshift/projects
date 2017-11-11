@@ -48,29 +48,29 @@ class SpCreateController
       }
       $rules = [];
       $rules['parent_kontrak']   =  'required|kontrak_exists';
-      $rules['doc_desc']         =  'required|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_lampiran']     =  'required|mimes:pdf';
+      $rules['doc_lampiran.*']     =  'required|mimes:pdf';
       $rules['doc_lampiran_teknis']     =  'required|mimes:pdf';
       $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
-      
+
       $rules['doc_nilai_material']   =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['doc_nilai_jasa']       =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
-      
-      $rules['hs_kode_item.*']   =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['hs_item.*']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['hs_satuan.*']      =  'required|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['hs_mtu.*']         =  'required|max:5|min:1|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['hs_harga.*']       =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
-      $rules['hs_qty.*']         =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
-      $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      
-      
+
+      $rules['hs_kode_item.*']   =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['hs_satuan.*']      =  'sometimes|nullable|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['hs_mtu.*']         =  'sometimes|nullable|max:5|min:1|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['hs_harga.*']       =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
+      $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
+      $rules['hs_keterangan.*']  =  'sometimes|nullable|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
+
+
       $doc_jaminan_nilai = $request->doc_jaminan_nilai;
       $request->merge(['doc_jaminan_nilai' => Helpers::input_rupiah($request->doc_jaminan_nilai)]);
       $rules['doc_jaminan']           = 'required|in:PL,PM';
@@ -80,15 +80,15 @@ class SpCreateController
       $rules['doc_jaminan_enddate']   = 'required|date_format:"Y-m-d"';
       $rules['doc_jaminan_desc']      = 'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_po']                = 'required|po_exists|regex:/^[a-z0-9 .\-]+$/i';
-      
-      
-      
+
+
+
       $rule_lt_name = (count($request['lt_name'])>1)?'required':'sometimes|nullable';
       $rule_lt_desc = (count($request['lt_desc'])>1)?'required':'sometimes|nullable';
       $rules['lt_file.*']  =  'sometimes|nullable|mimes:pdf';
       $rules['lt_desc.*']  =  $rule_lt_desc.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['lt_name.*']  =  $rule_lt_name.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      
+
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
       $validator->after(function ($validator) use ($request) {
           if (!isset($request['pic_data'][0])) {
@@ -98,7 +98,7 @@ class SpCreateController
       if(isset($doc_jaminan_nilai)){
         $request->merge(['doc_jaminan_nilai' => $doc_jaminan_nilai]);
       }
-      
+
       if(isset($hs_harga) && count($hs_harga)>0){
         $request->merge(['hs_harga'=>$hs_harga]);
       }
@@ -123,29 +123,29 @@ class SpCreateController
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       $doc->user_id = Auth::id();
       $doc->supplier_id = $request->supplier_id;
-      
-      if(isset($request->doc_lampiran)){
-        $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($request->doc_title));
-        $request->doc_lampiran->storeAs('document/'.$request->type, $fileName);
-        $doc->doc_lampiran = $fileName;
-      }
-      
+
+      // if(isset($request->doc_lampiran)){
+      //   $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($request->doc_title));
+      //   $request->doc_lampiran->storeAs('document/'.$request->type, $fileName);
+      //   $doc->doc_lampiran = $fileName;
+      // }
+
       if(isset($request->doc_lampiran_teknis)){
         $fileName   = Helpers::set_filename('doc_lampiran_teknis_',strtolower($request->doc_title));
         $request->doc_lampiran_teknis->storeAs('document/'.$request->type, $fileName);
         $doc->doc_lampiran_teknis = $fileName;
       }
-      
+
       $nilai_jasa               = Helpers::input_rupiah($request->doc_nilai_jasa);
       $nilai_material           = Helpers::input_rupiah($request->doc_nilai_material);
       $nilai_ppn                = config('app.ppn_set');
       $nilai_total              = $nilai_jasa+$nilai_material;
-      
+
       $doc->doc_nilai_material  = $nilai_material;
       $doc->doc_nilai_jasa      = $nilai_jasa;
       $doc->doc_nilai_ppn       = $nilai_ppn;
       $doc->doc_nilai_total_ppn = (($nilai_ppn/100)*$nilai_total)+$nilai_total;
-      
+
       $doc->doc_po_no = $request->doc_po;
       $doc->doc_jaminan = $request->doc_jaminan;
       $doc->doc_asuransi = $request->doc_asuransi;
@@ -153,7 +153,7 @@ class SpCreateController
       $doc->doc_jaminan_enddate = $request->doc_jaminan_enddate;
       $doc->doc_jaminan_desc = $request->doc_jaminan_desc;
       $doc->doc_jaminan_nilai = Helpers::input_rupiah($request->doc_jaminan_nilai);
-      
+
       $doc->doc_proc_process = $request->doc_proc_process;
       $doc->doc_mtu = $request->doc_mtu;
       $doc->doc_value = Helpers::input_rupiah($request->doc_value);
@@ -161,9 +161,27 @@ class SpCreateController
       $doc->doc_type = $request->type;
       $doc->doc_parent = 0;
       $doc->doc_parent_id = $request->parent_kontrak;
-      
+
       $doc->save();
-      
+
+      if(count($request->doc_lampiran)>0){
+        foreach($request->doc_lampiran as $key => $val){
+          if(!empty($val)
+          ){
+            $doc_meta = new DocMeta();
+            $doc_meta->documents_id = $doc->id;
+            $doc_meta->meta_type = 'lampiran_ttd';
+            if(isset($request['doc_lampiran'][$key])){
+              $fileName   = Helpers::set_filename('doc_',strtolower($val));
+              $file = $request['doc_lampiran'][$key];
+              $file->storeAs('document/'.$request->type.'_lampiran_ttd', $fileName);
+              $doc_meta->meta_file = $fileName;
+            }
+            $doc_meta->save();
+          }
+        }
+      }
+
       foreach($request['pic_data'] as $key => $val){
         $data = json_decode(urldecode($val),true);
         $pic = new DocPic();
@@ -174,8 +192,8 @@ class SpCreateController
       }
       if(count($request->lt_name)>0){
         foreach($request->lt_name as $key => $val){
-          if(!empty($val) 
-              && !empty($request['lt_desc'][$key]) 
+          if(!empty($val)
+              && !empty($request['lt_desc'][$key])
           ){
             $doc_meta = new DocMeta();
             $doc_meta->documents_id = $doc->id;
@@ -190,12 +208,12 @@ class SpCreateController
             }
             $doc_meta->save();
           }
-        }      
+        }
       }
       if(count($request->hs_harga)>0){
         foreach($request->hs_harga as $key => $val){
-          if(!empty($val) 
-              && !empty($request['hs_kode_item'][$key]) 
+          if(!empty($val)
+              && !empty($request['hs_kode_item'][$key])
               && !empty($request['hs_item'][$key])
               && !empty($request['hs_satuan'][$key])
               && !empty($request['hs_mtu'][$key])
@@ -220,12 +238,12 @@ class SpCreateController
             $doc_boq->data = json_encode(array('type'=>$hs_type));
             $doc_boq->save();
           }
-        }      
+        }
       }
 
       //dd($request->input());
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
       return redirect()->route('doc');
     }
-    
+
 }

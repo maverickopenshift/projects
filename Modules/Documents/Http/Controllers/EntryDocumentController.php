@@ -177,7 +177,7 @@ class EntryDocumentController extends Controller
       $rules['ps_isi.*']    =  $rule_ps_judul.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
 
-      $rules['pic_posisi.*']    =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['pic_posisi.*']    =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
 
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
       $validator->after(function ($validator) use ($request) {

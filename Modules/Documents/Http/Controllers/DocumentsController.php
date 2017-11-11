@@ -100,12 +100,13 @@ class DocumentsController extends Controller
             //   .Helpers::create_button('Side Letter',$side_letter,'info');
             // }
             $value['total_child']=$this->documents->total_child($value['id'],$status_no);
-            if($value['doc_signing']==0){
+            if($value['doc_signing']==0 && \Laratrust::can('approve-kontrak')){
               $value['link'] = '<a class="btn btn-xs btn-success" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'">Setujui</a>';
             }
             else{
               $value['link'] = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'">Lihat</a>';
             }
+            $value['status'] = Helpers::label_status($value['doc_signing']);
             $value['sup_name']= $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
             // $value['supplier']['nm_vendor'] = $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
             // $value->doc_title = $value->doc_title.' <i>'.$value->supplier_id.'</i>';
@@ -190,7 +191,7 @@ class DocumentsController extends Controller
       if ($request->ajax()) {
         $doc = $this->documents->where('id',$request->id)->whereNull('doc_no')->first();
         if($doc){
-          $doc->doc_no = $this->documents->create_no_kontrak($doc->doc_template_id);
+          $doc->doc_no = $this->documents->create_no_kontrak($doc->doc_template_id,$doc->id);
           $doc->doc_signing = 1;
           $doc->doc_signing_date = \DB::raw('NOW()');
           $doc->doc_data =  json_encode(['signing_by_userid'=>\Auth::id()]);

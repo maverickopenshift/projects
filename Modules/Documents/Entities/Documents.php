@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
 use Modules\Documents\Entities\DocType;
 use Modules\Documents\Entities\DocTemplate;
+use Modules\Users\Entities\Pegawai;
 
 class Documents extends Model
 {
@@ -63,8 +64,13 @@ class Documents extends Model
       }
       return false;
     }
-    public static function create_no_kontrak($template_id,$year=null){
-      $loker = 'L002K';
+    public static function get_loker($doc_id){
+      $doc = self::select('doc_pihak1_nama')->where('id','=',$doc_id)->first();
+      $peg = Pegawai::select('c_kode_unit')->where('n_nik','=',$doc->doc_pihak1_nama)->first();
+      return $peg->c_kode_unit;
+    }
+    public static function create_no_kontrak($template_id,$doc_id,$year=null){
+      $loker = self::get_loker($doc_id);
       $start = '00001';
       $pattern = 'K.TEL.';
       $year = (is_null($year))?date('Y'):$year;

@@ -82,7 +82,7 @@ public static function select_atasan($pegawai,$val=null)
   $select .= '<option value="">Pilih Penandatangan Pihak 1</option>';
   foreach ($cat as $dt) {
     $selected = '';
-    if($val==$dt->id){
+    if($val==$dt->n_nik){
       $selected = 'selected="selected"';
     }
     $select .= '<option value="'.$dt->n_nik.'" '.$selected.'>'.$dt->v_nama_karyawan.' - '.$dt->v_short_posisi.'</option>';
@@ -202,5 +202,17 @@ public static function select_atasan($pegawai,$val=null)
                 </button>';
       }
       return false;
+    }
+    public static function label_status($val=null){
+      if($val==2){
+        $ret ='<span class="label label-warning">draft</span>';
+      }
+      else if($val==1){
+        $ret ='<span class="label label-success">selesai</span>';
+      }
+      else{
+        $ret ='<span class="label label-info">proses</span>';
+      }
+      return $ret;
     }
 }

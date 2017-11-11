@@ -449,6 +449,7 @@ $(function () {
       { name : 'doc_no' , title : 'No Kontrak',orderable:true},
       { name : 'sup_name' , title  : 'Vendor',orderable:true},
       // { name : 'supplier.nm_vendor' , title  : 'Vendor',orderable:true},
+      { name : 'status' , title  : 'Status',orderable:true},
       { name : 'jenis.type.title' , title  : 'Type',orderable:true},
       { name : 'link' , title  : 'Action'},
     ],

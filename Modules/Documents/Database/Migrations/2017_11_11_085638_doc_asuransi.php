@@ -26,6 +26,7 @@ class DocAsuransi extends Migration
 
           $table->foreign('documents_id')
                 ->references('id')->on('documents');
+          $table->timestamps();
         });
     }
 

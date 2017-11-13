@@ -48,6 +48,8 @@ class SpCreateController
         $request->merge(['hs_qty'=>$m_hs_qty]);
       }
       $rules = [];
+
+      if($request->statusButton == '0'){
       $rules['parent_kontrak']   =  'required|kontrak_exists';
       $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
@@ -57,7 +59,7 @@ class SpCreateController
       $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_lampiran.*']     =  'required|mimes:pdf';
-      $rules['doc_lampiran_teknis']     =  'required|mimes:pdf';
+      $rules['doc_lampiran_teknis']     =  'sometimes|nullable|mimes:pdf';
       $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
 
       $rules['doc_nilai_material']   =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
@@ -112,7 +114,19 @@ class SpCreateController
                     ->withInput($request->input())
                     ->withErrors($validator);
       }
-      //dd('berhasil');
+
+    }else{
+        $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+        $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
+
+        if ($validator->fails ()){
+          return redirect()->back()
+                      ->withInput($request->input())
+                      ->withErrors($validator);
+        }
+
+    }
+      // dd('berhasil');
       $doc = new Documents();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
@@ -156,7 +170,7 @@ class SpCreateController
       $doc->doc_type = $request->type;
       $doc->doc_parent = 0;
       $doc->doc_parent_id = $request->parent_kontrak;
-
+      $doc->doc_signing = $request->statusButton;
       $doc->save();
 
       foreach($request['doc_asuransi'] as $key => $val){
@@ -194,7 +208,7 @@ class SpCreateController
           }
         }
       }
-
+      if(count($request->pic_nama)>0){
       foreach($request['pic_nama'] as $key => $val){
         $pic = new DocPic();
         $pic->documents_id = $doc->id;
@@ -206,6 +220,7 @@ class SpCreateController
         $pic->posisi = $request['pic_posisi'][$key];
         $pic->save();
       }
+    }
       if(count($request->lt_name)>0){
         foreach($request->lt_name as $key => $val){
           if(!empty($val)
@@ -259,7 +274,11 @@ class SpCreateController
 
       //dd($request->input());
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
+      if($request->statusButton == '0'){
       return redirect()->route('doc',['status'=>'proses']);
+      }else{
+        return redirect()->route('doc',['status'=>'draft']);
+      }
     }
 
 }

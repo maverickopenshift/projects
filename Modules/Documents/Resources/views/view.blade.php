@@ -112,9 +112,15 @@ $(document).on('click', '.btn-setuju', function(event) {
   event.preventDefault();
   var content = $('.content-view');
   var loading = content.find('.loading2');
+  var no_kontrak = content.find('.no_kontrak').text();
+  var nama_ttd = content.find('.nama_ttd').text();
+  var no_loker = content.find('.no_loker').text();
   bootbox.confirm({
     title:"Pemberitahuan",
-    message: "Anda yakin sudah mengecek semua data?",
+    message: "Anda yakin sudah mengecek semua data?<br><br>"+
+    "Nomor Kontrak: <strong>"+no_kontrak+"</strong><br>"+
+    "Nama Penandatangan: <strong>"+nama_ttd+"</strong><br>"+
+    "Nomor Loker: <strong>"+no_loker+"</strong><br>",
         buttons: {
             confirm: {
                 label: 'Yakin',

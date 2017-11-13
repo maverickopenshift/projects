@@ -23,6 +23,7 @@ class AmandemenSpCreateController
   {
     $type = $request->type;
     $rules = [];
+    if($request->statusButton == '0'){
     $rules['doc_date']         =  'required|date_format:"Y-m-d"';
     $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -54,6 +55,17 @@ class AmandemenSpCreateController
                   ->withInput($request->input())
                   ->withErrors($validator);
     }
+  }else{
+      $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
+
+      if ($validator->fails ()){
+        return redirect()->back()
+                    ->withInput($request->input())
+                    ->withErrors($validator);
+      }
+
+  }
     // dd($request->input());
     $doc = new Documents();
     $doc->doc_title = $request->doc_title;
@@ -75,6 +87,7 @@ class AmandemenSpCreateController
     $doc->doc_type = $request->type;
     $doc->doc_parent = 0;
     $doc->doc_parent_id = $request->parent_sp;
+    $doc->doc_signing = $request->statusButton;
     $doc->save();
 
     if(count($request->doc_lampiran)>0){
@@ -144,6 +157,10 @@ class AmandemenSpCreateController
 
     //dd($request->input());
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
+    if($request->statusButton == '0'){
     return redirect()->route('doc',['status'=>'proses']);
+    }else{
+      return redirect()->route('doc',['status'=>'draft']);
+    }
   }
 }

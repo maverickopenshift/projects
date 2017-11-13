@@ -212,7 +212,6 @@
               <th>Currency</th>
               <th>Harga Total</th>
               <th>Delivery Date</th>
-              <th>Penandatangan Approval</th>
               <th>No PR</th>
               <th>Keterangan</th>
           </tr>

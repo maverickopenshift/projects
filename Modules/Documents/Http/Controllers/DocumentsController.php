@@ -130,6 +130,11 @@ class DocumentsController extends Controller
             ->select('doc_boq.*')
             ->get();
 
+      $pgw = $this->documents->where('documents.id','=',$id)
+            ->join('pegawai', 'documents.doc_pihak1_nama', '=', 'pegawai.n_nik')
+            ->select('pegawai.v_nama_karyawan as nama_pegawai')
+            ->first();
+
       $meta_lt = $this->documents
             ->where('documents.id','=',$id)
             ->where('meta_type','latar_belakang')
@@ -152,6 +157,9 @@ class DocumentsController extends Controller
             ->get();
 
       // dd($meta);
+      $no_kontrak=$this->documents->create_no_kontrak($dt->doc_template_id,$id);
+      $loker=$this->documents->get_loker($id);
+      // dd($loker);
       if(!$doc_type || !$dt){
         abort(404);
       }
@@ -160,6 +168,9 @@ class DocumentsController extends Controller
       $data['meta_lt'] = $meta_lt;
       $data['meta_sc'] = $meta_sc;
       $data['meta_ps'] = $meta_ps;
+      $data['pgw']  = $pgw;
+      $data['no_kontrak']  = $no_kontrak;
+      $data['no_loker']  = $loker;
       $data['page_title'] = 'View Kontrak - '.$doc_type['title'];
       $data['doc'] = $dt;
       $data['id'] = $id;
@@ -175,7 +186,7 @@ class DocumentsController extends Controller
       $sql = \DB::table('dummy_po')->where('no_po','=',$search)->get();
       return Response::json(['status'=>true,'data'=>$sql,'length'=>count($sql)]);
     }
-    
+
     public function getPic(Request $request){
       $search = trim($request->id_user);
       if (empty($search)) {

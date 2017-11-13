@@ -160,7 +160,6 @@ function templatePO(data) {
               <td>'+data.harga_total+'</th>\
               <td>-</th>\
               <td>-</th>\
-              <td>-</th>\
               <td>'+data.keterangan+'</th>\
           </tr>';
 }
@@ -171,22 +170,26 @@ function ParentPO() {
             <td width="150">No PO </td>\
             <td width="10">:</td>\
             <td>'+nopo+'</td>\
-            <td>Nama Vendor</td>\
-            <td> : </td>\
-            <td>PT Jaya Makmur Sentosa</td>\
-          </tr>\
-          <tr>\
-            <td>Nama Pembuat / nik</td>\
-            <td> : </td>\
-            <td>SUMARNI / 123456</td>\
-            <td>Nama Approval PO</td>\
-            <td> : </td>\
-            <td>Purwiro</td>\
           </tr>\
           <tr>\
             <td>Tanggal PO</td>\
             <td> : </td>\
             <td>27 Agustus 2017</td>\
+          </tr>\
+          <tr>\
+            <td>Nama Vendor</td>\
+            <td> : </td>\
+            <td>PT Jaya Makmur Sentosa</td>\
+          </tr>\
+          <tr>\
+            <td>Nama Pembuat/nik</td>\
+            <td> : </td>\
+            <td>SUMARNI/123456</td>\
+          </tr>\
+          <tr>\
+            <td>Nama Approval PO</td>\
+            <td> : </td>\
+            <td>Purwiro</td>\
           </tr>';
 }
   @php

@@ -8,8 +8,10 @@
     <div class="box-body">
       <div class="form-horizontal">
           <div class="form-group ">
-            <label class="col-sm-2 control-label">No.Kontrak</label>
+            <label class="col-sm-2 control-label">No.Kontrak </label>
             <div class="col-sm-10 text-me">{{$doc->doc_no or '-'}}</div>
+            <div style="Display:none" class="no_kontrak">{{$no_kontrak}}</div>
+            <div style="Display:none" class="no_loker">{{$no_loker}}</div>
           </div>
           <div class="form-group ">
             <label class="col-sm-2 control-label">Judul {{$doc_type['title']}}</label>
@@ -34,17 +36,17 @@
             </div>
           @else
             <div class="form-group">
-              <label class="col-sm-2 control-label">Tanggal {{$doc_type['title']}}</label>
+              <label class="col-sm-2 control-label">Tanggal  {{$doc_type['title']}}</label>
               <div class="col-sm-10 text-me">{{Carbon\Carbon::parse($doc->doc_date)->format('l, d F Y')}}</div>
             </div>
           @endif
           <div class="form-group">
-            <label class="col-sm-2 control-label">Pihak I</label>
+            <label class="col-sm-2 control-label">Pihak I </label>
             <div class="col-sm-10 text-me">{{$doc->doc_pihak1}}</div>
           </div>
           <div class="form-group">
             <label for="ttd_pihak1" class="col-sm-2 control-label">Penandatangan Pihak I</label>
-            <div class="col-sm-10 text-me">{{$doc->doc_pihak1_nama}}</div>
+            <div class="col-sm-10 text-me nama_ttd">{{$pgw->nama_pegawai}}</div>
           </div>
           <div class="form-group">
             <label for="akte_awal_tg" class="col-sm-2 control-label">Pihak II</label>

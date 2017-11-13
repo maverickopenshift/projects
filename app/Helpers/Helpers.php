@@ -23,6 +23,21 @@ class Helpers
       $select .= '</select>';
       return $select;
     }
+    public static function select_unit($name,$val=null)
+    {
+      $unit = \App\User::get_unit_by_disivi()->get();
+      $select  = '<select class="form-control" id="'.$name.'" name="'.$name.'">';
+      $select .= '<option value="">Pilih Unit</option>';
+      foreach ($unit as $dt) {
+        $selected = '';
+        if($val==$dt->id){
+          $selected = 'selected="selected"';
+        }
+        $select .= '<option value="'.$dt->id.'" '.$selected.'>'.$dt->title.'</option>';
+      }
+      $select .= '</select>';
+      return $select;
+    }
     public static function select_category($name='category',$val=null)
     {
       $cat = DocCategory::all();

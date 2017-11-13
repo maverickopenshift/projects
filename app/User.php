@@ -55,6 +55,23 @@ class User extends Authenticatable
       $data->where('v_band_posisi','<',$posisi);
       return $data->orderBy('v_band_posisi','asc')->get();
     }
+    public static function get_divisi_by_user_id(){
+      $data = \DB::table('users_pegawai')->select('*');  
+      $data->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');  
+      $data->where('users_pegawai.users_id',\Auth::id())->orderBy('users_pegawai.users_id','desc');
+      $data = $data->first();
+      return $data->objiddivisi;
+    }
+    public static function get_unit_by_disivi(){
+      $data = \DB::table('rptom')->selectRaw('objidunit as id,v_short_unit as title,count(objidposisi) as total_posisi');
+      $data->where('objiddivisi',self::get_divisi_by_user_id())->groupBy(['objidunit','v_short_unit']);
+      return $data;
+    } 
+    public static function get_posisi_by_unit($unit){
+      $data = \DB::table('rptom')->selectRaw('objidposisi as id,v_short_posisi as title');
+      $data->where('objidunit',$unit);
+      return $data;
+    }
     public static function get_user_telkom_by_nik($nik){
       $data = \DB::table('pegawai')->select('*')->where('n_nik','=',$nik);
       return $data;

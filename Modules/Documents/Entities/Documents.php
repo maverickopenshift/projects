@@ -112,11 +112,23 @@ class Documents extends Model
     public function total_child($doc_id,$status_no){
       $doc  = self::
       leftJoin('documents as child','child.doc_parent_id','=','documents.id')
+      ->leftJoin('documents as child2','child2.doc_parent_id','=','child.id')
           ->where('documents.doc_parent', 0)
           ->where('documents.doc_parent_id', $doc_id)
-          ->whereRaw('(child.`doc_signing`='.$status_no.' OR documents.`doc_signing`='.$status_no.')')
+          ->whereRaw('(child.`doc_signing`='.$status_no.' OR child2.`doc_signing`='.$status_no.' OR documents.`doc_signing`='.$status_no.')')
           ->count();
 //      echo $status_no;exit;
       return $doc;
+    }
+    public static function get_id_parent_sp($doc_id){
+      $doc = self::where('doc_parent_id','=',$doc_id)
+              ->where('doc_type','=','amandemen_kontrak')
+              ->orderBy('doc_title','desc')->first();
+      if($doc){
+        return $doc->id;
+      }
+      else{
+        return $doc_id;
+      }
     }
 }

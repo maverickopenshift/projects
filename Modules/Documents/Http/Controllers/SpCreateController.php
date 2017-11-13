@@ -171,6 +171,7 @@ class SpCreateController
       $doc->doc_parent = 0;
       $doc->doc_parent_id = $request->parent_kontrak;
       $doc->doc_signing = $request->statusButton;
+      $doc->doc_parent_id = Documents::get_id_parent_sp($request->parent_kontrak);
       $doc->save();
 
       foreach($request['doc_asuransi'] as $key => $val){

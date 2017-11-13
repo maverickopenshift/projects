@@ -443,6 +443,9 @@ $.fn.tableOke = function(options) {
       if(td.hasClass('child-1')){
         child_set = 2;
       }
+      else if(td.hasClass('child-2')){
+        child_set = 3;
+      }
       var count_expand = table.find('.row-parent-'+tr_id);
       table.find('.'+options.trLoadingClass+'.row-'+tr_id).remove();
       td.parent().after(options.renderLoading(tr_id));

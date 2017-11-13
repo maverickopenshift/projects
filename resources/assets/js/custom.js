@@ -111,7 +111,7 @@ $(function(e){
           'Oops...',
           'Anda tidak memiliki hak akses!',
           'error'
-        ).then((value) => {
+        ).then(function(value){
           window.location.reload();
         });
     }
@@ -120,7 +120,7 @@ $(function(e){
           'Oops...',
           'Ada sesuatu yg salah',
           'error'
-        ).then((value) => {
+        ).then(function(value){
           window.location.reload();
         });
     }
@@ -132,7 +132,7 @@ $(function(e){
           'Oops...',
           'Sesi Anda telah habis',
           'error'
-        ).then((value) => {
+        ).then(function(value){
           window.location.reload();
         });
     }

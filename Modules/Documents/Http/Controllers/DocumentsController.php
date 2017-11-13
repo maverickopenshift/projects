@@ -41,6 +41,8 @@ class DocumentsController extends Controller
       if ($request->ajax()) {
           $limit = 25;
           $search = $request->q;
+          $unit = $request->unit;
+          $posisi = $request->posisi;
           if(!empty($request->limit)){
             $limit = $request->limit;
           }
@@ -78,11 +80,24 @@ class DocumentsController extends Controller
                   //   );
               });
             }
-
+            
+          }
+          if(!empty($unit)){
+            $documents->join('users_pegawai as up','up.users_id','=','documents.user_id');
+            $documents->join('pegawai as g','g.n_nik','=','up.nik');
+            if(!empty($posisi)){
+              $documents->where('g.objidposisi',$posisi);
+            }
+            $documents->where('g.objidunit',$unit); 
           }
 //          echo $search;
 //          echo $status_no;
 //          echo($documents->toSql());exit;
+          if(!\Auth::user()->hasRole('admin')){
+            $documents->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
+            $documents->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
+            $documents->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+          }
           $documents = $documents->with(['jenis','supplier','pic']);
           $documents = $documents->paginate($limit);
           $documents->getCollection()->transform(function ($value)use ($status_no) {
@@ -233,6 +248,11 @@ class DocumentsController extends Controller
               $q->orWhere('doc_title', 'like', '%'.$search.'%');
           });
         }
+        if(!\Auth::user()->hasRole('admin')){
+          $data->join('users_pegawai','users_pegawai.users_id','=','user_id');
+          $data->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
+          $data->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+        }
         $data = $data->paginate(30);
         //dd($data);
         $data->getCollection()->transform(function ($value) use ($type){
@@ -254,16 +274,21 @@ class DocumentsController extends Controller
             return \Response::json([]);
         }
         $data = $this->documents
-                     ->select('id','doc_no','doc_startdate','doc_enddate','doc_parent_id','doc_title','doc_template_id','supplier_id')
+                     ->select('documents.id','documents.doc_no','documents.doc_startdate','documents.doc_enddate','documents.doc_parent_id','documents.doc_title','documents.doc_template_id','documents.supplier_id')
                      ->with('jenis','supplier','pic')
-                      ->where('doc_type','sp')
-                      ->whereNotNull('doc_no')
-                      ->where('doc_parent',0);
+                      ->where('documents.doc_type','sp')
+                      ->whereNotNull('documents.doc_no')
+                      ->where('documents.doc_parent',0);
         if(!empty($search)){
           $data->where(function($q) use ($search) {
-              $q->orWhere('doc_no', 'like', '%'.$search.'%');
-              $q->orWhere('doc_title', 'like', '%'.$search.'%');
+              $q->orWhere('documents.doc_no', 'like', '%'.$search.'%');
+              $q->orWhere('documents.doc_title', 'like', '%'.$search.'%');
           });
+        }
+        if(!\Auth::user()->hasRole('admin')){
+          $data->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
+          $data->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
+          $data->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
         }
         $data = $data->paginate(30);
         // dd($data);
@@ -277,6 +302,15 @@ class DocumentsController extends Controller
           $value['type'] = json_encode($doc->toArray());
           return $value;
         });
+        return \Response::json($data);
+    }
+    public function getPosisi(Request $request){
+        $unit = trim($request->unit);
+
+        if (empty($unit)) {
+            return \Response::json([]);
+        }
+        $data = \App\User::get_posisi_by_unit($unit)->get();
         return \Response::json($data);
     }
 }

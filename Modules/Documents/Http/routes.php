@@ -12,6 +12,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
     Route::get('/get-select-sp', 'DocumentsController@getSelectSp')->name('doc.get-select-sp');
     Route::get('/get-po', 'DocumentsController@getPo')->name('doc.get-po');
     Route::get('/get-pic', 'DocumentsController@getPic')->name('doc.get-pic');
+    Route::get('/get-posisi', 'DocumentsController@getPosisi')->name('doc.get-posisi');
 
     Route::get('/doc-template', ['middleware' => ['permission:lihat-template-pasal-pasal'],'uses' => 'DocTemplateController@index'])->name('doc.template');
     Route::get('/doc-template/data', ['middleware' => ['permission:lihat-template-pasal-pasal'],'uses' => 'DocTemplateController@data'])->name('doc.template.data');

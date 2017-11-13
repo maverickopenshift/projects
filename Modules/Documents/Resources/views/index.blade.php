@@ -23,7 +23,16 @@
           <div class="form-group">
             <input type="text" class="form-control cari-judul" placeholder="Judul Kontrak">
           </div>
+          <div class="form-group">
+            {!!Helper::select_unit('unit_bisnis')!!}
+          </div>
+          <div class="form-group">
+            <select class="form-control" id="select-posisi">
+              <option value="">Pilih Jabatan</option>
+            </select>
+          </div>
           <button type="button" class="btn btn-success search">Cari</button>
+          <button type="button" class="btn btn-danger reset">Reset</button>
         </div>
       </div>
     </div>
@@ -32,6 +41,32 @@
 @endsection
 @push('scripts')
 <script>
+$(document).on('change', '#unit_bisnis', function(event) {
+  event.preventDefault();
+  /* Act on the event */
+  var unit = this.value;
+  //if(unit!==""){
+    $('#select-posisi').find('option').not('option[value=""]').remove();
+    $.ajax({
+      url: '{!!route('doc.get-posisi')!!}',
+      type: 'GET',
+      dataType: 'json',
+      data: {unit: unit}
+    })
+    .done(function(data) {
+      if(data.length>0){
+        $.each(data,function(index, el) {
+          $('#select-posisi').append('<option value="'+this.id+'">'+this.title+'</option>');
+        });
+      }
+    });
+  //}
+});
+$(function(e){
+  if($('#unit_bisnis').val()!==""){
+    $('#unit_bisnis').change();
+  }
+});
 $.fn.tableOke = function(options) {
     options.tableAttr = this;
     options.tableClass = 'table table-condensed table-striped';
@@ -41,7 +76,11 @@ $.fn.tableOke = function(options) {
     options.loadingImg = '/images/loader.gif';
     options.trLoadingClass='row-loading';
     options.qAttr = options.tableAttr.find('.cari-judul');
+    options.unitAttr = options.tableAttr.find('#unit_bisnis');
+    options.posisiAttr = options.tableAttr.find('#select-posisi');
     options.q = options.qAttr.val();
+    options.posisi = options.posisiAttr.val();
+    options.unit = options.unitAttr.val();
     options.cssLoading='background-color: rgba(255,255,255,0.5);position: absolute;width: 100%;height: 100%;background-image: url('+options.loadingImg+');background-position: center center;background-repeat: no-repeat;z-index:1000;';
     options.loading = 'loading-me';
     options.loadingHtml = '<div class="'+options.loading+'" style="'+options.cssLoading+'"></div>';
@@ -192,11 +231,12 @@ $.fn.tableOke = function(options) {
     }
     options.pagination = function(data){
       var render_pg='';
+      var url = '&limit='+options.limit+'&q='+options.q+'&unit='+options.unit+'&posisi='+options.posisi;
       if(data.last_page>1){
         render_pg += '<ul class="pagination">';
           if(data.current_page != 1 && data.last_page >=5){
             render_pg += '<li>';
-            render_pg += '<a href='+options.url+'?page=1&limit='+options.limit+'&q='+options.q+'>&laquo;</a>';
+            render_pg += '<a href='+options.url+'?page=1'+url+'>&laquo;</a>';
             render_pg += '</li>';
           }
           else{
@@ -206,7 +246,7 @@ $.fn.tableOke = function(options) {
           }
           if(data.current_page != 1){
             render_pg += '<li>';
-            render_pg += '<a href='+options.url+'?page='+(data.current_page-1)+'&limit='+options.limit+'&q='+options.q+'>Prev</a>';
+            render_pg += '<a href='+options.url+'?page='+(data.current_page-1)+url+'>Prev</a>';
             render_pg += '</li>';
           }          
           else{
@@ -216,12 +256,12 @@ $.fn.tableOke = function(options) {
           }
           for (var i = Math.max((data.current_page-2), 1); i <= Math.min(Math.max((data.current_page-2), 1)+4,data.last_page); i++) {
             render_pg += '<li class="'+((data.current_page==i)?' active':' ')+'">';
-            render_pg += '<a class="'+((data.current_page==i)?'disabled':' ')+'" href='+options.url+'?page='+(i)+'&limit='+options.limit+'&q='+options.q+'>'+i+'</a>';
+            render_pg += '<a class="'+((data.current_page==i)?'disabled':' ')+'" href='+options.url+'?page='+(i)+url+'>'+i+'</a>';
             render_pg += '</li>';
           }
           if(data.current_page != data.last_page){
             render_pg += '<li>';
-            render_pg += '<a href='+options.url+'?page='+(data.current_page+1)+'&limit='+options.limit+'&q='+options.q+'>Next</a>';
+            render_pg += '<a href='+options.url+'?page='+(data.current_page+1)+url+'>Next</a>';
             render_pg += '</li>';
           }
           else{
@@ -231,7 +271,7 @@ $.fn.tableOke = function(options) {
           }
           if(data.current_page != data.last_page && data.last_page>=5){
             render_pg += '<li>';
-            render_pg += '<a href='+options.url+'?page='+(data.last_page)+'&limit='+options.limit+'&q='+options.q+'>&raquo;</a>';
+            render_pg += '<a href='+options.url+'?page='+(data.last_page)+url+'>&raquo;</a>';
             render_pg += '</li>';
           }
           else{
@@ -255,6 +295,8 @@ $.fn.tableOke = function(options) {
     options.page = options.getParams('page',options.page);
     options.limit = options.getParams('limit',options.limit);
     options.q = options.getParams('q',options.q);
+    options.unit = options.getParams('unit',options.unit);
+    options.posisi = options.getParams('posisi',options.posisi);
     options.ajaxPro = function(){
       $.ajax({
         url: options.url,
@@ -263,10 +305,13 @@ $.fn.tableOke = function(options) {
         data : {
           page  : options.page,
           q : (options.q!==undefined)?options.q:'',
+          posisi : (options.posisi!==undefined)?options.posisi:'',
+          unit : (options.unit!==undefined)?options.unit:'',
           limit : options.limit
         }
       })
       .done(function(data) {
+        options.posisiAttr.val(options.posisi);
         if(data.data.length>0){
           options.tableAttr.find('.empty-data').remove();
           var render;
@@ -361,11 +406,30 @@ $.fn.tableOke = function(options) {
       /* Act on the event */
         options.page = 1;
         options.limit = options.getParams('limit',options.limit,urls);
-        options.q = options.getParams('q',options.q,urls);
+        // options.q = options.getParams('q',options.q,urls);
+        // options.posisi = options.getParams('posisi',options.posisi,urls);
+        // options.unit = options.getParams('unit',options.unit,urls);
         options.tableAttr.prepend(options.loadingHtml);
         options.q = options.qAttr.val();
-        var urls = options.url+'?page='+options.page+'&limit='+options.limit+'&q='+options.q;
+        options.posisi = options.posisiAttr.val();
+        options.unit = options.unitAttr.val();
+        var urls = options.url+'?page='+options.page+'&limit='+options.limit+'&q='+options.q+'&unit='+options.unit+'&posisi='+options.posisi;
         window.history.pushState({}, "", urls);
+        options.ajaxPro();
+    });
+    $(options.tableAttr).on('click','.reset', function(event) {
+      event.preventDefault();
+      /* Act on the event */
+        options.page = 1;
+        options.tableAttr.prepend(options.loadingHtml);
+        options.q = "";
+        options.posisi = "";
+        options.unit = "";
+        $('#select-posisi').find('option').not('option[value=""]').remove();
+        options.qAttr.val('');
+        options.posisiAttr.val('');
+        options.unitAttr.val('');
+        window.history.pushState({}, "", options.url);
         options.ajaxPro();
     });
     $(options.tableAttr).on('click','.td-expand.plus', function(event) {
@@ -458,15 +522,6 @@ $(function () {
     q : '',
   };
   var tbl = $('.table-kontrak').tableOke(options);
-  $(tbl).on('click', '.btn-cari', function(event) {
-    event.preventDefault();
-    /* Act on the event */
-    var judul = $('.cari-judul');
-    if(judul.val()!==""){
-      options.q = judul.val();
-      options.ajaxPro();
-    }
-  });
 });
 </script>
 @endpush

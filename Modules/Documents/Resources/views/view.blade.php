@@ -108,6 +108,59 @@ $(function () {
    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
   });
 });
+$(document).on('click', '.btn-reject', function(event) {
+  event.preventDefault();
+  /* Act on the event */
+  swal({
+    // html: '<div class="form-group">\
+    //         <label class="text-left">Masukan Alasan</label>\
+    //         <textarea rows="6" class="form-control reason-text"></textarea>\
+    //       </div>',
+    title:'Masukan Alasan',
+    input:'textarea',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    confirmButtonText: 'Submit',
+    cancelButtonText: 'Batal',
+    showLoaderOnConfirm: true,
+    preConfirm: function (text) {
+       return new Promise(function (resolve, reject) {
+         $.ajaxSetup({
+           headers: {
+                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+             }
+         });
+         $.ajax({
+           url: '{!!route('doc.reject')!!}',
+           type: 'POST',
+           dataType: 'json',
+           data: {id: '{!!$id!!}',reason: text}
+         })
+         .done(function(data) {
+           if(data.status){
+             $('meta[name="csrf-token"]').attr('content',data.csrf_token)
+             resolve();
+           }
+           else{
+             reject(data.msg)
+           }
+         });
+         
+       })
+    },
+  }).then(function (text) {
+    swal({
+      type: 'success',
+      html: 'Dokumen berhasil direject'
+    })
+  }, function (dismiss) {
+    // dismiss can be 'cancel', 'overlay',
+    // 'close', and 'timer'
+    if (dismiss === 'cancel') {
+      
+    }
+  })
+});
 $(document).on('click', '.btn-setuju', function(event) {
   event.preventDefault();
   var content = $('.content-view');

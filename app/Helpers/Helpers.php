@@ -38,6 +38,21 @@ class Helpers
       $select .= '</select>';
       return $select;
     }
+    public static function select_divisi($name,$val=null)
+    {
+      $unit = \App\User::get_unit_by_disivi()->get();
+      $select  = '<select class="form-control" id="'.$name.'" name="'.$name.'">';
+      $select .= '<option value="">Pilih Unit</option>';
+      foreach ($unit as $dt) {
+        $selected = '';
+        if($val==$dt->id){
+          $selected = 'selected="selected"';
+        }
+        $select .= '<option value="'.$dt->id.'" '.$selected.'>'.$dt->title.'</option>';
+      }
+      $select .= '</select>';
+      return $select;
+    }
     public static function select_category($name='category',$val=null)
     {
       $cat = DocCategory::all();
@@ -218,7 +233,7 @@ public static function select_atasan($pegawai,$val=null)
       }
       return false;
     }
-    public static function label_status($val=null){
+    public static function label_status($val=null,$status=null,$message=null){
       if($val==2){
         $ret ='<span class="label label-warning">draft</span>';
       }
@@ -227,6 +242,10 @@ public static function select_atasan($pegawai,$val=null)
       }
       else{
         $ret ='<span class="label label-info">proses</span>';
+        if($status==1)//reject
+        {
+          $ret ='<button type="button" class="btn btn-xs btn-danger btn-reject" data-msg="'.$message.'">reject</button>';
+        }
       }
       return $ret;
     }

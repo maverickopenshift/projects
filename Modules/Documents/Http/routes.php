@@ -8,6 +8,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
     Route::post('/store/{type}',['middleware' => ['permission:tambah-kontrak'],'uses' => 'EntryDocumentController@store'])->name('doc.store');
     Route::get('/view/{type}/{id}/', ['middleware' => ['permission:lihat-kontrak'],'uses' => 'DocumentsController@view'])->name('doc.view');
     Route::post('/approve', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@approve'])->name('doc.approve');
+    Route::post('/reject', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@reject'])->name('doc.reject');
     Route::get('/get-select-kontrak', 'DocumentsController@getSelectKontrak')->name('doc.get-select-kontrak');
     Route::get('/get-select-sp', 'DocumentsController@getSelectSp')->name('doc.get-select-sp');
     Route::get('/get-po', 'DocumentsController@getPo')->name('doc.get-po');

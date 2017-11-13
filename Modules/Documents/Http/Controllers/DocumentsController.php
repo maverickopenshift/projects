@@ -13,6 +13,7 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
 use App\Helpers\Helpers;
+use Validator;
 
 class DocumentsController extends Controller
 {
@@ -29,7 +30,7 @@ class DocumentsController extends Controller
     public function index(Request $request)
     {
       $status = $request->status;
-      $status_arr = ['proses','selesai','draft'];
+      $status_arr = ['proses','selesai','draft','reject'];
       if(!in_array($status,$status_arr)){
         abort(404);
       }
@@ -51,10 +52,10 @@ class DocumentsController extends Controller
             $documents = $this->documents
                 ->oldest('documents.created_at')
             ;
-            $documents->leftJoin('documents as child','child.doc_parent_id','=','documents.id');
+              $documents->leftJoin('documents as child','child.doc_parent_id','=','documents.id');
               $documents->leftJoin('documents as child2','child2.doc_parent_id','=','child.id');
-            $documents->where('documents.doc_parent',0);
-            $documents->where('documents.doc_parent_id',$request->parent_id);
+              $documents->where('documents.doc_parent',0);
+              $documents->where('documents.doc_parent_id',$request->parent_id);
               $documents->whereRaw('(child.`doc_signing`='.$status_no.' OR child2.`doc_signing`='.$status_no.' OR documents.`doc_signing`='.$status_no.')');
               $documents->selectRaw('DISTINCT (documents.id) , documents.*');
           }
@@ -123,7 +124,7 @@ class DocumentsController extends Controller
             else{
               $value['link'] = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'">Lihat</a>';
             }
-            $value['status'] = Helpers::label_status($value['doc_signing']);
+            $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason']);
             $value['sup_name']= $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
             // $value['supplier']['nm_vendor'] = $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
             // $value->doc_title = $value->doc_title.' <i>'.$value->supplier_id.'</i>';
@@ -221,6 +222,7 @@ class DocumentsController extends Controller
         if($doc){
           $doc->doc_no = $this->documents->create_no_kontrak($doc->doc_template_id,$doc->id);
           $doc->doc_signing = 1;
+          $doc->doc_status = 0;
           $doc->doc_signing_date = \DB::raw('NOW()');
           $doc->doc_data =  json_encode(['signing_by_userid'=>\Auth::id()]);
           $doc->save();
@@ -231,7 +233,30 @@ class DocumentsController extends Controller
       }
       abort(500);
     }
-
+    public function reject(Request $request)
+    {
+      if ($request->ajax()) {
+        $doc = $this->documents->where('id',$request->id)->whereNull('doc_no')->first();
+        if($doc){
+          $rules['reason'] = 'required|min:5|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+          $validator = Validator::make($request->all(), $rules,['reason.required'=>'Alasan harus diisi!','reason.regex'=>'Format penulisan tidak valid!','reason.min'=>'Inputan minimal 5 karakter']);
+          if ($validator->fails ()){
+            return Response::json(['status'=>false,'msg'=>$validator->errors()->first()]);
+          }
+          else{
+            $doc->doc_status = 1;
+            $doc->doc_signing_date   = \DB::raw('NOW()');
+            $doc->doc_signing_reason = $request->reason;
+            $doc->doc_data =  json_encode(['rejected_by_userid'=>\Auth::id()]);
+            $doc->save();
+            //$request->session()->flash('alert-success', 'Data berhasil disetujui!');
+            return Response::json(['status'=>true,'doc_no'=>$doc->doc_no,'csrf_token'=>csrf_token()]);
+          }
+        }
+        return Response::json(['status'=>false,'msg'=>'Dokumen tidak ditemukan']);
+      }
+      abort(500);
+    }
     public function getSelectKontrak(Request $request){
         $search = trim($request->q);
         $type = trim($request->type);//sp,amandemen,adendum dll

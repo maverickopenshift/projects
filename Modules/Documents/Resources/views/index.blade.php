@@ -526,5 +526,14 @@ $(function () {
   };
   var tbl = $('.table-kontrak').tableOke(options);
 });
+$(document).on('click', '.btn-reject', function(event) {
+  event.preventDefault();
+  /* Act on the event */
+  swal(
+    'Dokumen Anda ditolak!',
+    $(this).data('msg'),
+    'error'
+  );
+});
 </script>
 @endpush

@@ -38,13 +38,14 @@
               <div class="col-sm-10 text-me">{{Carbon\Carbon::parse($doc->doc_date)->format('l, d F Y')}}</div>
             </div>
           @endif
+          @include('documents::doc-view.general-info-right')
           <div class="form-group">
             <label class="col-sm-2 control-label">Pihak I </label>
             <div class="col-sm-10 text-me">{{$doc->doc_pihak1}}</div>
           </div>
           <div class="form-group">
             <label for="ttd_pihak1" class="col-sm-2 control-label">Penandatangan Pihak I</label>
-            <div class="col-sm-10 text-me nama_ttd">{{$pgw->nama_pegawai}}</div>
+            <div class="col-sm-10 text-me nama_ttd">{{$doc->doc_pihak1_nama}}</div>
           </div>
           <div class="form-group">
             <label for="akte_awal_tg" class="col-sm-2 control-label">Pihak II</label>
@@ -56,10 +57,34 @@
           </div>
           <div class="form-group">
             <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran 1 <br/><small style="font-weight:normal" class="text-info"><i>(Lembar Tanda Tangan)</i></small></label>
-            <div class="col-sm-10 text-me">
-              @if(!empty($doc->doc_lampiran))
-                  <a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$doc->doc_lampiran,'type'=>$doc_type['name']])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
-              @endif
+            <div class="col-sm-5">
+              <div class="parent-pictable">
+                  <table class="table table-condensed table-striped">
+                      <thead>
+                        <tr>
+                          <th>Lampiran Ke</th>
+                          <th>Lihat</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @if(count($doc->boq)>0)
+                        @foreach ($doc->lampiran_ttd as $key=>$dt)
+                          <tr>
+                            <td>{{($key+1)}}</td>
+                            <td>@if(!empty($dt->meta_file))<a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
+                            @else
+                            -
+                          @endif</td>
+                          </tr>
+                        @endforeach
+                        @else
+                          <tr>
+                              <td colspan="2" align="center">-</td>
+                          </tr>
+                        @endif
+                      </tbody>
+                  </table>
+                </div>
             </div>
           </div>
           @if($doc_type->name!="sp")

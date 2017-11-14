@@ -83,7 +83,7 @@ class DocumentsController extends Controller
                   //   );
               });
             }
-            
+
           }
           if(!empty($unit)){
             $documents->join('users_pegawai as up','up.users_id','=','documents.user_id');
@@ -91,7 +91,7 @@ class DocumentsController extends Controller
             if(!empty($posisi)){
               $documents->where('g.objidposisi',$posisi);
             }
-            $documents->where('g.objidunit',$unit); 
+            $documents->where('g.objidunit',$unit);
           }
 //          echo $search;
 //          echo $status_no;
@@ -146,7 +146,7 @@ class DocumentsController extends Controller
     {
       $id = $request->id;
       $doc = $this->documents->where('documents.id','=',$id);
-      $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi')->first();
+      $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan')->first();
       if(!$dt || !$this->documents->check_permission_doc($id)){
         abort(404);
       }
@@ -191,14 +191,14 @@ class DocumentsController extends Controller
       if(count($dt->latar_belakang)>0){
         foreach($dt->latar_belakang as $key => $val){
           $lt['name'][$key]  = $val->meta_name;
-          $lt['desc'][$key]       = $val->meta_desc;
-          $lt['file'][$key]     = $val->meta_file;
+          $lt['desc'][$key]  = $val->meta_desc;
+          $lt['file'][$key]  = $val->meta_file;
         }
         $dt->lt_file  = $lt['file'];
         $dt->lt_desc  = $lt['desc'];
         $dt->lt_name  = $lt['name'];
       }
-      
+
       if(count($dt->pasal)>0){
         foreach($dt->pasal as $key => $val){
           $lt['name'][$key]  = $val->meta_name;
@@ -223,38 +223,7 @@ class DocumentsController extends Controller
     {
       $id = $request->id;
       $doc_type = DocType::where('name','=',$request->type)->first();
-      $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic')->first();
-
-      $boq = $this->documents->where('documents.id','=',$id)
-            ->join('doc_boq', 'documents.id', '=', 'doc_boq.documents_id')
-            ->select('doc_boq.*')
-            ->get();
-
-      $pgw = $this->documents->where('documents.id','=',$id)
-            ->join('pegawai', 'documents.doc_pihak1_nama', '=', 'pegawai.n_nik')
-            ->select('pegawai.v_nama_karyawan as nama_pegawai')
-            ->first();
-
-      $meta_lt = $this->documents
-            ->where('documents.id','=',$id)
-            ->where('meta_type','latar_belakang')
-            ->join('doc_meta', 'documents.id', '=', 'doc_meta.documents_id')
-            ->select('doc_meta.*')
-            ->get();
-
-      $meta_sc = $this->documents
-            ->where('documents.id','=',$id)
-            ->where('meta_type','scope_perubahan')
-            ->join('doc_meta', 'documents.id', '=', 'doc_meta.documents_id')
-            ->select('doc_meta.*')
-            ->get();
-
-      $meta_ps = $this->documents
-            ->where('documents.id','=',$id)
-            ->where('meta_type','pasal_pasal')
-            ->join('doc_meta', 'documents.id', '=', 'doc_meta.documents_id')
-            ->select('doc_meta.*')
-            ->get();
+      $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan')->first();
 
       // dd($meta);
       $no_kontrak=$this->documents->create_no_kontrak($dt->doc_template_id,$id);
@@ -264,16 +233,12 @@ class DocumentsController extends Controller
         abort(404);
       }
       $data['doc_type'] = $doc_type;
-      $data['boq'] = $boq;
-      $data['meta_lt'] = $meta_lt;
-      $data['meta_sc'] = $meta_sc;
-      $data['meta_ps'] = $meta_ps;
-      $data['pgw']  = $pgw;
-      $data['no_kontrak']  = $no_kontrak;
-      $data['no_loker']  = $loker;
       $data['page_title'] = 'View Kontrak - '.$doc_type['title'];
       $data['doc'] = $dt;
       $data['id'] = $id;
+      $data['no_kontrak'] = $no_kontrak;
+      $data['no_loker'] = $loker;
+      $data['pegawai'] = \App\User::get_user_pegawai();
 
       return view('documents::view')->with($data);
     }
@@ -373,7 +338,7 @@ class DocumentsController extends Controller
           else{
            $doc = Documents::where('doc_parent', 0)->where('doc_parent_id', $value['id'])->where('doc_template_id', $temp->id)->get();
           }
-          
+
           $value['type'] = json_encode($doc->toArray());
           return $value;
         });

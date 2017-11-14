@@ -145,7 +145,7 @@ $(document).on('click', '.btn-reject', function(event) {
              reject(data.msg)
            }
          });
-         
+
        })
     },
   }).then(function (text) {
@@ -157,7 +157,7 @@ $(document).on('click', '.btn-reject', function(event) {
     // dismiss can be 'cancel', 'overlay',
     // 'close', and 'timer'
     if (dismiss === 'cancel') {
-      
+
     }
   })
 });
@@ -169,9 +169,9 @@ $(document).on('click', '.btn-setuju', function(event) {
   bootbox.confirm({
     title:"Pemberitahuan",
     message: "Anda yakin sudah mengecek semua data?<br><br>"+
-    "Nomor Kontrak: <strong>"+{!!$no_kontrak!!}+"</strong><br>"+
+    "Nomor Kontrak: <strong>"+'{!!$no_kontrak!!}'+"</strong><br>"+
     "Nama Penandatangan: <strong>"+nama_ttd+"</strong><br>"+
-    "Nomor Loker: <strong>"+{!!$no_loker!!}+"</strong><br>",
+    "Nomor Loker: <strong>"+'{!!$no_loker!!}'+"</strong><br>",
         buttons: {
             confirm: {
                 label: 'Yakin',

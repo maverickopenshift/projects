@@ -178,7 +178,7 @@ class SpCreateController
         $asr->documents_id = $doc->id;
         $asr->doc_jaminan = $request['doc_jaminan'][$key];
         $asr->doc_jaminan_name = $request['doc_asuransi'][$key];
-        $asr->doc_jaminan_nilai = Helpers::input_rupiah($request['doc_jaminan_startdate'][$key]);
+        $asr->doc_jaminan_nilai = Helpers::input_rupiah($request['doc_jaminan_nilai'][$key]);
         $asr->doc_jaminan_startdate = $request['doc_jaminan_startdate'][$key];
         $asr->doc_jaminan_enddate = $request['doc_jaminan_enddate'][$key];
         $asr->doc_jaminan_desc = $request['doc_jaminan_desc'][$key];

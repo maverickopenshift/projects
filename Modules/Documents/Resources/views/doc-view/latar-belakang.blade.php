@@ -6,7 +6,7 @@
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-      @if(count($meta_lt)>0)
+      @if(count($doc->latar_belakang)>0)
       <div class="table-responsive">
         <table class="table table-condensed table-striped">
             <thead>
@@ -20,7 +20,7 @@
             </thead>
             <tbody>
 
-              @foreach ($meta_lt as $key=>$dt)
+              @foreach ($doc->latar_belakang as $key=>$dt)
                 <tr>
                   <td>{{($key+1)}}</td>
                   <td>{{($dt->meta_name)}} </td>

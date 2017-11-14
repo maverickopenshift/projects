@@ -17,6 +17,8 @@
                         <input type="text" id="name" name="name" value="" class="form-control" placeholder="Enter ..." required autocomplete="off">
                         <div class="error-name"></div>
                     </div>
+                    <div class="content-edit">
+                    </div>
                     <div class="form-group">
                         <div class="error-global"></div>
                         <label>Username</label>
@@ -137,6 +139,10 @@
 <script>
     $(function() {
         var formModal = $('#form-modal');
+        // var titleForm = button.data('title');
+        // if(titleForm=='Edit'){
+        //   alert("hai");
+        // }
         formModal.on('show.bs.modal', function (event) {
             var button = $(event.relatedTarget) // Button that triggered the modal
             var title = button.data('title') // Extract info from data-* attributes
@@ -158,13 +164,16 @@
                     $('#roles'+p.id).iCheck('check');
                   });
                 }
-                //data = JSON.parse(data);
+                // data = JSON.parse(data);
+                // console.log(data);
                 modal.find('.modal-body input#id').val(data.id)
                 modal.find('.modal-body input#name').val(data.name)
                 modal.find('.modal-body input#username').val(data.username)
                 modal.find('.modal-body input#email').val(data.email)
                 modal.find('.modal-body input#phone').val(data.phone)
                 modal.find('.content-add').html('')
+                modal.find('.content-edit').html(contentEdit())
+
                 modal.find('.content-atasan').html('')
                 modal.find('.table-atasan').hide().find('table>tbody').html('')
                 modal.find('form').attr('action','{!! route('users.update') !!}')
@@ -509,6 +518,20 @@
                     <label>Jabatan</label>\
                     <input type="text" id="jabatan" name="jabatan" class="form-control" disabled="disabled">\
                 </div>';
+    }
+    function contentEdit() {
+      return '<div class="form-group">\
+                <label>Divisi</label>\
+                <input type="text" id="divisi" name="divisi" class="form-control" disabled="disabled">\
+              </div>\
+              <div class="form-group">\
+                  <label>Loker</label>\
+                  <input type="text" id="loker" name="loker" class="form-control" disabled="disabled">\
+              </div>\
+              <div class="form-group">\
+                  <label>Jabatan</label>\
+                  <input type="text" id="jabatan" name="jabatan" class="form-control" disabled="disabled">\
+              </div>';
     }
     function contentAtasan() {
       return '<div class="form-group">\

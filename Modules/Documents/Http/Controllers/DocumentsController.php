@@ -118,12 +118,17 @@ class DocumentsController extends Controller
             //   .Helpers::create_button('Side Letter',$side_letter,'info');
             // }
             $value['total_child']=$this->documents->total_child($value['id'],$status_no);
+            $edit = '';
             if($value['doc_signing']==0 && \Laratrust::can('approve-kontrak')){
-              $value['link'] = '<a class="btn btn-xs btn-success" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'">Setujui</a>';
+              $view = '<a class="btn btn-xs btn-success" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'">Setujui</a>';
             }
             else{
-              $value['link'] = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'">Lihat</a>';
+              $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'">Lihat</a>';
             }
+            if(!\Laratrust::hasRole('approver') ){
+              $edit = '<a class="btn btn-xs btn-info" href="'.route('doc.edit',['type'=>$value['doc_type'],'id'=>$value['id']]).'">Edit</a>';
+            }
+            $value['link'] = $view.$edit;
             $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason']);
             $value['sup_name']= $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
             // $value['supplier']['nm_vendor'] = $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
@@ -136,6 +141,83 @@ class DocumentsController extends Controller
       $data['page_title'] = 'Data Dokumen '.ucfirst($status);
       $data['doc_status'] = $status;
       return view('documents::index')->with($data);
+    }
+    public function edit(Request $request)
+    {
+      $id = $request->id;
+      $doc = $this->documents->where('documents.id','=',$id);
+      $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi')->first();
+      if(!$dt || !$this->documents->check_permission_doc($id)){
+        abort(404);
+      }
+      $pic = [];
+      $boq = [];
+      $lt = [];
+      $pasal = [];
+      if(count($dt->pic)>0){
+        foreach($dt->pic as $key => $val){
+          $pic['pic_posisi'][$key]  = $val->posisi;
+          $pic['pic_nama'][$key]    = $val->nama;
+          $pic['pic_jabatan'][$key] = $val->jabatan;
+          $pic['pic_email'][$key]   = $val->email;
+          $pic['pic_telp'][$key]    = $val->telp;
+          $pic['pic_id'][$key]      = $val->pegawai_id;
+        }
+        $dt->pic_posisi = $pic['pic_posisi'];
+        $dt->pic_nama   = $pic['pic_nama'];
+        $dt->pic_email  = $pic['pic_email'];
+        $dt->pic_jabatan= $pic['pic_jabatan'];
+        $dt->pic_telp   = $pic['pic_telp'];
+        $dt->pic_id     = $pic['pic_id'];
+      }
+      if(count($dt->boq)>0){
+        foreach($dt->boq as $key => $val){
+          $boq['hs_kode_item'][$key]  = $val->kode_item;
+          $boq['hs_item'][$key]       = $val->item;
+          $boq['hs_satuan'][$key]     = $val->satuan;
+          $boq['hs_mtu'][$key]        = $val->mtu;
+          $boq['hs_harga'][$key]      = $val->harga;
+          $boq['hs_qty'][$key]        = $val->qty;
+          $boq['hs_keterangan'][$key] = $val->keterangan;
+        }
+        $dt->hs_kode_item = $boq['hs_kode_item'];
+        $dt->hs_item   = $boq['hs_item'];
+        $dt->hs_satuan  = $boq['hs_satuan'];
+        $dt->hs_mtu= $boq['hs_mtu'];
+        $dt->hs_harga   = $boq['hs_harga'];
+        $dt->hs_qty     = $boq['hs_qty'];
+        $dt->hs_keterangan     = $boq['hs_keterangan'];
+      }
+      if(count($dt->latar_belakang)>0){
+        foreach($dt->latar_belakang as $key => $val){
+          $lt['name'][$key]  = $val->meta_name;
+          $lt['desc'][$key]       = $val->meta_desc;
+          $lt['file'][$key]     = $val->meta_file;
+        }
+        $dt->lt_file  = $lt['file'];
+        $dt->lt_desc  = $lt['desc'];
+        $dt->lt_name  = $lt['name'];
+      }
+      
+      if(count($dt->pasal)>0){
+        foreach($dt->pasal as $key => $val){
+          $lt['name'][$key]  = $val->meta_name;
+          $lt['desc'][$key]       = $val->meta_desc;
+          $lt['title'][$key]     = $val->meta_title;
+        }
+        $dt->ps_judul  = $lt['title'];
+        $dt->ps_isi  = $lt['desc'];
+        $dt->ps_pasal  = $lt['name'];
+      }
+      $dt->doc_po = $dt->doc_po_no;
+      $dt->supplier_text = $dt->supplier->bdn_usaha.'.'.$dt->supplier->nm_vendor;
+      $data['page_title'] = 'Edit Dokumen';
+      $data['doc_type'] = $dt->jenis->type;
+      $data['doc'] = $dt;
+       //dd($dt->toArray());
+      $data['pegawai'] = \App\User::get_user_pegawai();
+      $data['data'] = [];
+      return view('documents::form-edit')->with($data);
     }
     public function view(Request $request)
     {

@@ -1,5 +1,5 @@
 <div class="form-group">
-  <label class="col-sm-2 control-label">Divisi</label>
+  <label class="col-sm-2 control-label">Divisi </label>
   <div class="col-sm-6">
     <input type="text" class="form-control" name="divisi"  disabled="disabled" autocomplete="off" value="{{$pegawai->v_short_divisi}}">
   </div>

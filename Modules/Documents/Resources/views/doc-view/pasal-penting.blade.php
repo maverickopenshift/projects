@@ -6,7 +6,7 @@
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-      @if(count($meta_ps)>0)
+      @if(count($doc->pasal)>0)
       <div class="table-responsive">
         <table class="table table-condensed table-striped">
             <thead>
@@ -18,7 +18,7 @@
               </tr>
             </thead>
             <tbody>
-              @foreach ($meta_ps as $key=>$dt)
+              @foreach ($doc->pasal as $key=>$dt)
                 <tr>
                   <td>{{($key+1)}}</td>
                   <td>{{($dt->meta_name)}} </td>

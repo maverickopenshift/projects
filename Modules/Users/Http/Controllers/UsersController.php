@@ -9,9 +9,12 @@ use App\User;
 use App\Role;
 use Modules\Users\Entities\UsersAtasan as Atasan;
 use Modules\Users\Entities\UsersPegawai as Pegawai;
+use Illuminate\Support\Facades\Log;
 use Datatables;
 use Validator;
 use Response;
+use App\Mail\SendEmailUser;
+use Mail;
 
 class UsersController extends Controller
 {
@@ -152,12 +155,12 @@ class UsersController extends Controller
             $roles = $request->roles;
             $data->save ();
             $data->attachRoles($roles);
-            
+
             $peg = new Pegawai();
             $peg->users_id = $data->id;
             $peg->nik = $data->username;
             $peg->save();
-            
+
             if ($request->has(['atasan_id'])) {
                 foreach($request->atasan_id as $key=>$v){
                   $atasan = new Atasan();
@@ -166,7 +169,17 @@ class UsersController extends Controller
                   $atasan->save();
                 }
             }
-            
+
+            $sendTo = $request->email;
+            $subject = 'User Registration - Do Not Reply';
+            $email_password= $request->password;
+            $email_username = $request->username;
+
+            Log::info('Start');
+            Mail::to($sendTo)
+                ->queue(new SendEmailUser($email_password, $email_username, $subject));
+            log::info('End');
+
             return response()->json($data);
         }
     }

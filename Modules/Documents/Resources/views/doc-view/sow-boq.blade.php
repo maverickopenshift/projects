@@ -56,23 +56,33 @@
                     </tr>
                   </thead>
                   <tbody>
-                    @foreach ($boq as $key=>$dt)
+                    @if(count($doc->boq)>0)
+                      @foreach ($doc->boq as $key=>$dt)
+                        <tr>
+                          <td>{{($key+1)}}</td>
+                          <td>{{($dt->kode_item)}}</td>
+                          <td>{{($dt->item)}}</td>
+                          @if($doc_type->name!='khs')
+                          <td>{{($dt->qty)}}</td>
+                          @endif
+                          <td>{{($dt->satuan)}}</td>
+                          <td>{{($dt->mtu)}}</td>
+                          <td>{{($dt->harga)}}</td>
+                          @if($doc_type->name!='khs')
+                          <td>{{($dt->harga_total)}}</td>
+                          @endif
+                          <td>{{($dt->desc)}}</td>
+                        </tr>
+                      @endforeach
+                    @else
                       <tr>
-                        <td>{{($key+1)}}</td>
-                        <td>{{($dt->kode_item)}}</td>
-                        <td>{{($dt->item)}}</td>
                         @if($doc_type->name!='khs')
-                        <td>{{($dt->qty)}}</td>
+                          <td colspan="9" align="center">-</td>
+                        @else
+                          <td colspan="7" align="center">-</td>
                         @endif
-                        <td>{{($dt->satuan)}}</td>
-                        <td>{{($dt->mtu)}}</td>
-                        <td>{{($dt->harga)}}</td>
-                        @if($doc_type->name!='khs')
-                        <td>{{($dt->harga_total)}}</td>
-                        @endif
-                        <td>{{($dt->desc)}}</td>
                       </tr>
-                    @endforeach
+                    @endif
                   </tbody>
               </table>
           </div>

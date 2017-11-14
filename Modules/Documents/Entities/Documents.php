@@ -50,6 +50,10 @@ class Documents extends Model
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','latar_belakang');
     }
+    public function scope_perubahan()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','scope_perubahan');
+    }
     public function pasal()
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','pasal_pasal');

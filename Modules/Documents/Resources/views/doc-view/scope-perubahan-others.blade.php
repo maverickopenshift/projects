@@ -7,7 +7,7 @@
     <!-- /.box-header -->
     <div class="box-body">
         <div class="parent-pictable">
-            @if(count($meta_sc)>0)
+            @if(count($doc->scope_perubahan)>0)
             <table class="table table-condensed table-striped">
                 <thead>
                   <tr>
@@ -19,8 +19,8 @@
                   </tr>
                 </thead>
                 <tbody>
-                  
-                    @foreach ($meta_sc as $key=>$dt)
+
+                    @foreach ($doc->scope_perubahan as $key=>$dt)
                       <tr>
                         <td>{{($key+1)}}</td>
                         <td>{{($dt->meta_name)}} </td>
@@ -39,7 +39,7 @@
                     @endforeach
                 </tbody>
             </table>
-            
+
             @else
               <div class="alert alert-info text-center" role="alert">Tidak ada scope perubahan</div>
             @endif

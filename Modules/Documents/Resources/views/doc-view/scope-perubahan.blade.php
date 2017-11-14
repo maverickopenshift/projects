@@ -1,14 +1,14 @@
 <div class="box">
     <div class="box-header with-border">
       <h3 class="box-title">
-          Scoupe Perubahan
+          Scope Perubahan
       </h3>
     </div>
     <!-- /.box-header -->
     <div class="box-body">
       <div class="col-sm-10">
-        <div class="parent-pictable">
-            @if(count($meta_sc)>0)
+        <div>
+            @if(count($doc->scope_perubahan)>0)
             <table class="table table-condensed table-striped">
                 <thead>
                   <tr>
@@ -20,7 +20,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                  @foreach ($meta_sc as $key=>$dt)
+                  @foreach ($doc->scope_perubahan as $key=>$dt)
                     <tr>
                       <td>{{($key+1)}}</td>
                       <td>{{($dt->meta_name)}} </td>

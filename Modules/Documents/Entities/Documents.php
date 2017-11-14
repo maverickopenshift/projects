@@ -42,6 +42,26 @@ class Documents extends Model
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta');
     }
+    public function lampiran_ttd()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','lampiran_ttd');
+    }
+    public function latar_belakang()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','latar_belakang');
+    }
+    public function pasal()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','pasal_pasal');
+    }
+    public function asuransi()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocAsuransi');
+    }
+    public function boq()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocBoq');
+    }
     public function child()
     {
         return $this->hasMany('Modules\Documents\Entities\Documents','doc_parent_id','id');
@@ -130,5 +150,16 @@ class Documents extends Model
       else{
         return $doc_id;
       }
+    }
+    public static function check_permission_doc($doc_id){
+      $doc = self::selectRaw('documents.id,documents.user_id');
+      $doc->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
+      $doc->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
+      $doc->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id())->where('documents.id','=',$doc_id);
+      $doc = $doc->first();
+      if($doc){
+        return true;
+      }
+      return false;
     }
 }

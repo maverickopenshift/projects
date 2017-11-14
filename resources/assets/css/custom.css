@@ -255,3 +255,6 @@ table.tableLaravel thead .sorting_desc_disabled:after {
 .child-3.td-expand.minus:after{
   left: 72px;
 }
+td > .btn{
+  margin-right: 6px; 
+}

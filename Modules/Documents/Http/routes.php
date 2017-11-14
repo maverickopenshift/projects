@@ -7,6 +7,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
     Route::get('/create/{type}', ['middleware' => ['permission:tambah-kontrak'],'uses' => 'EntryDocumentController@index'])->name('doc.create');
     Route::post('/store/{type}',['middleware' => ['permission:tambah-kontrak'],'uses' => 'EntryDocumentController@store'])->name('doc.store');
     Route::get('/view/{type}/{id}/', ['middleware' => ['permission:lihat-kontrak'],'uses' => 'DocumentsController@view'])->name('doc.view');
+    Route::get('/edit/{type}/{id}/', ['middleware' => ['permission:ubah-kontrak'],'uses' => 'DocumentsController@edit'])->name('doc.edit');
     Route::post('/approve', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@approve'])->name('doc.approve');
     Route::post('/reject', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@reject'])->name('doc.reject');
     Route::get('/get-select-kontrak', 'DocumentsController@getSelectKontrak')->name('doc.get-select-kontrak');
@@ -53,9 +54,8 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
         return $response;
     })->name('doc.file');
 
-    Route::get('/file_lt/{type}/{filename}', function ($filename,$type){
-        $path = storage_path('app/documents/'.$type.'_latar_belakang/' . $filename);
-
+    Route::get('/file_lt/{type}/{filename}', function ($type,$filename){
+        $path = storage_path('app/document/'.$type.'_latar_belakang/' . $filename);
         if (!File::exists($path)) {
             abort(404);
         }

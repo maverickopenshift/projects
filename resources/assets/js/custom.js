@@ -78,6 +78,12 @@ function confimME(msg,callback) {
     }
 }
 $(function(e){
+  $.each($('.input-rupiah'),function(index, el) {
+    var val = this.value;
+    if(val!==""){
+      this.value = formatRupiah(val);
+    }
+  });
   $('.date').datepicker(datepicker_ops);
   $('.date').on('changeDate', function() {
     //  $(this).hide();

@@ -208,11 +208,5 @@
 
     $('.date').datepicker(datepicker_ops);
   });
-
-  // $(document).on('click', '.delete-asr', function(event) {
-  //   var $parent = $(this).find('.form1');;
-  //
-  //   $parent.remove();
-  // });
 </script>
 @endpush

@@ -10,8 +10,6 @@
           <div class="form-group ">
             <label class="col-sm-2 control-label">No.Kontrak </label>
             <div class="col-sm-10 text-me">{{$doc->doc_no or '-'}}</div>
-            <div style="Display:none" class="no_kontrak">{{$no_kontrak}}</div>
-            <div style="Display:none" class="no_loker">{{$no_loker}}</div>
           </div>
           <div class="form-group ">
             <label class="col-sm-2 control-label">Judul {{$doc_type['title']}}</label>

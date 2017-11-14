@@ -170,8 +170,7 @@ class UsersController extends Controller
                 }
             }
 
-            // $sendTo = $request->input('email');
-            $sendTo = 'annisadaguslita@gmail.com';
+            $sendTo = $request->email;
             $subject = 'User Registration - Do Not Reply';
             $email_password= $request->password;
             $email_username = $request->username;

@@ -56,7 +56,7 @@
             <div class="col-sm-10 text-me">{{$doc->doc_pihak2_nama}}</div>
           </div>
           <div class="form-group">
-            <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran 1 <br/><small style="font-weight:normal" class="text-info"><i>(Lembar Tanda Tangan)</i></small></label>
+            <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran 1</label>
             <div class="col-sm-5">
               <div class="parent-pictable">
                   <table class="table table-condensed table-striped">
@@ -67,7 +67,7 @@
                         </tr>
                       </thead>
                       <tbody>
-                        @if(count($doc->boq)>0)
+                        @if(count($doc->lampiran_ttd)>0)
                         @foreach ($doc->lampiran_ttd as $key=>$dt)
                           <tr>
                             <td>{{($key+1)}}</td>
@@ -169,30 +169,57 @@
           </div>
 
           @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
+            @if(count($doc->po)>0)
           <div class="form-group ">
             <label class="col-sm-2 control-label">No.PO</label>
-            <div class="col-sm-10 text-me">{{$doc->po->po_no}}</div>
+            <div class="col-sm-10 text-me">{{$doc->po->po_no or '-'}}</div>
           </div>
           <div class="form-group ">
             <label class="col-sm-2 control-label">Tanggal Buat</label>
-            <div class="col-sm-10 text-me">{{$doc->po->po_date}}</div>
+            <div class="col-sm-10 text-me">{{$doc->po->po_date or '-'}}</div>
           </div>
           <div class="form-group ">
             <label class="col-sm-2 control-label">Nama Vendor</label>
-            <div class="col-sm-10 text-me">{{$doc->po->po_vendor}}</div>
+            <div class="col-sm-10 text-me">{{$doc->po->po_vendor or '-'}}</div>
           </div>
           <div class="form-group ">
             <label class="col-sm-2 control-label">Nama Pembuat</label>
-            <div class="col-sm-10 text-me">{{$doc->po->po_pembuat}}</div>
+            <div class="col-sm-10 text-me">{{$doc->po->po_pembuat or '-'}}</div>
           </div>
           <div class="form-group ">
             <label class="col-sm-2 control-label">Nama Approval</label>
-            <div class="col-sm-10 text-me">{{$doc->po->po_approval}}</div>
+            <div class="col-sm-10 text-me">{{$doc->po->po_approval or '-'}}</div>
           </div>
           <div class="form-group ">
             <label class="col-sm-2 control-label">Nama Penandatangan</label>
-            <div class="col-sm-10 text-me">{{$doc->po->po_penandatangan}}</div>
+            <div class="col-sm-10 text-me">{{$doc->po->po_penandatangan or '-'}}</div>
           </div>
+        @else
+          <div class="form-group ">
+            <label class="col-sm-2 control-label">No.PO</label>
+            <div class="col-sm-10 text-me">-</div>
+          </div>
+          <div class="form-group ">
+            <label class="col-sm-2 control-label">Tanggal Buat</label>
+            <div class="col-sm-10 text-me">-</div>
+          </div>
+          <div class="form-group ">
+            <label class="col-sm-2 control-label">Nama Vendor</label>
+            <div class="col-sm-10 text-me">-</div>
+          </div>
+          <div class="form-group ">
+            <label class="col-sm-2 control-label">Nama Pembuat</label>
+            <div class="col-sm-10 text-me">-</div>
+          </div>
+          <div class="form-group ">
+            <label class="col-sm-2 control-label">Nama Approval</label>
+            <div class="col-sm-10 text-me">-</div>
+          </div>
+          <div class="form-group ">
+            <label class="col-sm-2 control-label">Nama Penandatangan</label>
+            <div class="col-sm-10 text-me">-</div>
+          </div>
+        @endif
           @endif
           {{-- @include('documents::partials.buttons') --}}
       </div>

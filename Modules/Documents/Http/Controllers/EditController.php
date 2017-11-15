@@ -13,6 +13,9 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Http\Controllers\AmandemenSpEditController as AmandemenSpEdit;
+use Modules\Documents\Http\Controllers\SpEditController as SpEdit;
+use Modules\Documents\Http\Controllers\AmandemenKontrakEditController as AmademenKontrakEdit;
+
 
 use App\Helpers\Helpers;
 use Validator;
@@ -20,14 +23,18 @@ use DB;
 use Auth;
 
 class EditController extends Controller
-{    
+{
   protected $documents;
   protected $amandemenSpEdit;
+  protected $spEdit;
+  protected $amademenKontrakEdit;
 
-  public function __construct(Documents $documents,AmandemenSpEdit $amandemenSpEdit)
+  public function __construct(Documents $documents,AmandemenSpEdit $amandemenSpEdit,SpEdit $spEdit, AmademenKontrakEdit $amademenKontrakEdit)
   {
       $this->documents = $documents;
       $this->amandemenSpEdit = $amandemenSpEdit;
+      $this->spEdit = $spEdit;
+      $this->amademenKontrakEdit = $amademenKontrakEdit;
   }
   public function index(Request $request)
   {
@@ -46,6 +53,15 @@ class EditController extends Controller
     if($type=='amandemen_sp'){
       $dt->parent_sp = $dt->doc_parent_id;
       $dt->parent_sp_text = $this->documents->select('doc_no')->where('id','=',$dt->doc_parent_id)->first()->doc_no;
+    }
+    if($type=='sp'){
+      $dt->parent_kontrak = $dt->doc_parent_id;
+      $dt->parent_kontrak_text = $this->documents->select('doc_no')->where('id','=',$dt->doc_parent_id)->first()->doc_no;
+    }
+    if(in_array($type,['amandemen_kontrak','adendum','side_letter'])){
+      $dt->parent_kontrak = $dt->doc_parent_id;
+      $dt->parent_kontrak_text = $this->documents->select('doc_no')->where('id','=',$dt->doc_parent_id)->first()->doc_no;
+    
     }
     if(count($dt->scope_perubahan)>0){
       foreach($dt->scope_perubahan as $key => $val){
@@ -124,7 +140,7 @@ class EditController extends Controller
       $dt->lt_desc  = $lt['desc'];
       $dt->lt_name  = $lt['name'];
     }
-    
+
     if(count($dt->pasal)>0){
       foreach($dt->pasal as $key => $val){
         $ps['name'][$key]  = $val->meta_name;
@@ -164,15 +180,15 @@ class EditController extends Controller
     if($type=='amandemen_sp'){
       return $this->amandemenSpEdit->store($request);
     }
-    // if($type=='sp'){
-    //   return $this->spCreate->store($request);
-    // }
+    if($type=='sp'){
+      return $this->spEdit->store($request);
+    }
     // if($type=='amandemen_sp'){
     //   return $this->AmandemenSpCreate->store($request);
     // }
-    // if(in_array($type,['amandemen_kontrak','adendum','side_letter'])){
-    //   return $this->AmandemenKontrakCreate->store($request);
-    // }
+    if(in_array($type,['amandemen_kontrak','adendum','side_letter'])){
+      return $this->amademenKontrakEdit->store($request);
+    }
     $doc_value = $request->doc_value;
     $request->merge(['doc_value' => Helpers::input_rupiah($request->doc_value)]);
     //$request->merge(['doc_value' => 'asdfsadfsdafsd']);
@@ -218,7 +234,7 @@ class EditController extends Controller
     $rules['hs_harga.*']       =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
     $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
     $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
-    
+
     $check_new_lampiran = false;
     foreach($request->doc_lampiran_old as $k => $v){
       if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
@@ -300,7 +316,7 @@ class EditController extends Controller
     $rule_lt_desc = (count($request['lt_desc'])>0 && count($request['lt_file'])>0)?'required':'sometimes|nullable';
     $rules['lt_desc.*']  =  $rule_lt_desc.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['lt_name.*']  =  $rule_lt_name.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-    
+
     $check_new_lt_file = false;
     foreach($request->lt_file_old as $k => $v){
       if(isset($request->lt_file[$k]) && is_object($request->lt_file[$k]) && !empty($v)){//jika ada file baru
@@ -335,7 +351,7 @@ class EditController extends Controller
 
 
     $rules['pic_posisi.*']    =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
-    
+
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
     $validator->after(function ($validator) use ($request) {
         if (!isset($request['pic_nama'][0])) {
@@ -379,9 +395,9 @@ class EditController extends Controller
     $doc->doc_sow = $request->doc_sow;
     $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
     $doc->save();
-    
 
-    
+
+
     if(count($new_lamp_up)>0){
       DocMeta::where([
         ['documents_id','=',$doc->id],
@@ -405,8 +421,8 @@ class EditController extends Controller
         }
       }
     }
-  
-  
+
+
     if(in_array($type,['turnkey','sp'])){
       if(count($request['doc_jaminan'])>0){
         DocAsuransi::where([
@@ -442,7 +458,7 @@ class EditController extends Controller
         }
       }
     }
-  
+
   if(count($request->pic_nama)>0){
     DocPic::where([
       ['documents_id','=',$doc->id]

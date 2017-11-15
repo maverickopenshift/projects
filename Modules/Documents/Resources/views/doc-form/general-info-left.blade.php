@@ -82,8 +82,9 @@
       </div>
     @endif
     @include('documents::doc-form.general-info-right')
-    <div class="form-group {{ $errors->has('doc_lampiran') ? ' has-error' : '' }}">
-      <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Lampiran 1 <br/><small style="font-weight:normal" class="text-info"><i>(Lembar Tanda Tangan)</i></small></label>
+    @include('documents::doc-form-edit.lampiran-1')
+    {{-- <div class="form-group {{ $errors->has('doc_lampiran') ? ' has-error' : '' }}">
+      <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Lampiran 1</label>
       <div class="col-sm-6">
         <div class="input-group">
           <input type="file" class="hide" name="doc_lampiran[]">
@@ -97,7 +98,7 @@
       <div class="col-sm-10 col-sm-offset-2">
         {!!Helper::error_help($errors,'doc_lampiran')!!}
       </div>
-    </div>
+    </div> --}}
     @if($doc_type->name!="sp")
       <div class="form-group {{ $errors->has('doc_proc_process') ? ' has-error' : '' }}">
         <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Cara Pengadaan</label>

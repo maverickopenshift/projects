@@ -57,6 +57,7 @@
                     </div>
                     <div class="form-group">
                     <label>Roles</label>
+                    <div class="error-roles"></div>
                       @foreach ($roles as $role)
                         <div class="form-group">
                           <div class="checkbox">
@@ -172,7 +173,6 @@
                 modal.find('.modal-body input#email').val(data.email)
                 modal.find('.modal-body input#phone').val(data.phone)
                 modal.find('.content-add').html('')
-                modal.find('.content-edit').html(contentEdit())
 
                 modal.find('.content-atasan').html('')
                 modal.find('.table-atasan').hide().find('table>tbody').html('')
@@ -204,6 +204,7 @@
                     phone    : formMe.find('.error-phone'),
                     email    : formMe.find('.error-email'),
                     password : formMe.find('.error-password'),
+                    roles : formMe.find('.error-roles'),
               };
             attError.name.html('')
             attError.name.parent().removeClass('has-error')
@@ -215,6 +216,8 @@
             attError.email.parent().removeClass('has-error')
             attError.password.html('')
             attError.password.parent().removeClass('has-error')
+            attError.roles.html('')
+            attError.roles.parent().removeClass('has-error')
             var btnSave = formMe.find('.btn-save')
             btnSave.button('loading')
             $.ajax({
@@ -245,6 +248,10 @@
                         if(_response.errors.password){
                             attError.password.html('<span class="text-danger">'+_response.errors.password+'</span>');
                             attError.password.parent().addClass('has-error')
+                        }
+                        if(_response.errors.roles){
+                            attError.roles.html('<span class="text-danger">'+_response.errors.roles+'</span>');
+                            //attError.roles.parent().addClass('has-error')
                         }
                     }
                     else{
@@ -362,79 +369,6 @@
                 }
             });
         })
-        function selectUser(attr,divisi,v_band_posisi) {
-          $(attr).select2({
-              placeholder : "Pilih PIC....",
-              dropdownParent: $(attr).parent(),
-              ajax: {
-                  url: '{!! route('users.get-select-user-telkom') !!}',
-                  dataType: 'json',
-                  delay: 350,
-                  data: function (params) {
-                      var datas =  {
-                          q: params.term, // search term
-                          page: params.page
-                      };
-                      if(divisi!==undefined && v_band_posisi!==undefined){
-                        var datas =  {
-                            q: params.term, // search term
-                            page: params.page,
-                            type:divisi,
-                            posisi:v_band_posisi
-                        };
-                      }
-                      return datas;
-
-                  },
-                  //id: function(data){ return data.store_id; },
-                  processResults: function (data, params) {
-                      // parse the results into the format expected by Select2
-                      // since we are using custom formatting functions we do not need to
-                      // alter the remote JSON data, except to indicate that infinite
-                      // scrolling can be used
-
-                      var results = [];
-
-                      $.each(data.data, function (i, v) {
-                          var o = {};
-                          o.id = v.n_nik;
-                          o.name = v.v_nama_karyawan;
-                          o.value = v.n_nik;
-                          o.username = v.n_nik;
-                          o.jabatan = v.v_short_posisi;
-                          o.email = v.n_nik+'@telkom.co.id';
-                          o.telp = '';
-                          results.push(o);
-                      })
-                      params.page = params.page || 1;
-                      return {
-                          results: data.data,
-                          pagination: {
-                              more: (data.next_page_url ? true: false)
-                          }
-                      };
-                  },
-                  cache: true
-              },
-              //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
-              minimumInputLength: 0,
-              templateResult: aoTempResult ,
-              templateSelection: aoTempSelect
-          });
-        }
-        function aoTempResult(state) {
-            if (state.id === undefined || state.id === "") { return ; }
-            var $state = $(
-                '<span>' +  state.v_nama_karyawan +' <i>('+  state.n_nik + ')</i></span>'
-            );
-            return $state;
-        }
-        function aoTempSelect(data){
-            if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
-                return;
-            }
-            return data.v_nama_karyawan +' - '+  data.n_nik ;
-        }
         $(document).on('select2:select', '#user_search', function(event) {
           event.preventDefault();
           /* Act on the event */
@@ -461,7 +395,7 @@
           $(this).val('');
           $('#select2-user_atasan-container').html('');
           console.log(data);
-          var $this = $('.table-atasan');
+          var $this = $('.table-'+$(this).data('action'));
           $this.show();
           var row = $this.find('table>tbody>tr');
           var new_row = $(templateAtasan(data)).clone();
@@ -476,7 +410,7 @@
         $(document).on('click', '.delete-atasan', function(event) {
           var tbl_t = $(this).parent().parent();
           $(this).parent().parent().remove();
-          var $this = $('.table-atasan');
+          var $this = $('.table-'+$(this).data('action'));
           var row = $this.find('table>tbody>tr');
           if(row.length==0){
             //mdf.html('');
@@ -484,6 +418,79 @@
           }
         });
     });
+    function selectUser(attr,divisi,v_band_posisi) {
+      $(attr).select2({
+          placeholder : "Pilih PIC....",
+          dropdownParent: $(attr).parent(),
+          ajax: {
+              url: '{!! route('users.get-select-user-telkom') !!}',
+              dataType: 'json',
+              delay: 350,
+              data: function (params) {
+                  var datas =  {
+                      q: params.term, // search term
+                      page: params.page
+                  };
+                  if(divisi!==undefined && v_band_posisi!==undefined){
+                    var datas =  {
+                        q: params.term, // search term
+                        page: params.page,
+                        type:divisi,
+                        posisi:v_band_posisi
+                    };
+                  }
+                  return datas;
+
+              },
+              //id: function(data){ return data.store_id; },
+              processResults: function (data, params) {
+                  // parse the results into the format expected by Select2
+                  // since we are using custom formatting functions we do not need to
+                  // alter the remote JSON data, except to indicate that infinite
+                  // scrolling can be used
+
+                  var results = [];
+
+                  $.each(data.data, function (i, v) {
+                      var o = {};
+                      o.id = v.n_nik;
+                      o.name = v.v_nama_karyawan;
+                      o.value = v.n_nik;
+                      o.username = v.n_nik;
+                      o.jabatan = v.v_short_posisi;
+                      o.email = v.n_nik+'@telkom.co.id';
+                      o.telp = '';
+                      results.push(o);
+                  })
+                  params.page = params.page || 1;
+                  return {
+                      results: data.data,
+                      pagination: {
+                          more: (data.next_page_url ? true: false)
+                      }
+                  };
+              },
+              cache: true
+          },
+          //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+          minimumInputLength: 0,
+          templateResult: aoTempResult ,
+          templateSelection: aoTempSelect
+      });
+    }
+    function aoTempResult(state) {
+        if (state.id === undefined || state.id === "") { return ; }
+        var $state = $(
+            '<span>' +  state.v_nama_karyawan +' <i>('+  state.n_nik + ')</i></span>'
+        );
+        return $state;
+    }
+    function aoTempSelect(data){
+        if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
+            return;
+        }
+        return data.v_nama_karyawan +' - '+  data.n_nik ;
+    }
     function content_password() {
       return '<div class="form-group">\
           <div class="error-global"></div>\
@@ -533,10 +540,11 @@
                   <input type="text" id="jabatan" name="jabatan" class="form-control" disabled="disabled">\
               </div>';
     }
-    function contentAtasan() {
+    function contentAtasan(attr) {
+      var attr = (attr===undefined)?'atasan':attr;
       return '<div class="form-group">\
                   <label>Pilih Atasan</label>\
-                  <select class="form-control select-user-atasan" style="width: 100%;" name="user_atasan" id="user_atasan">\
+                  <select class="form-control select-user-atasan" style="width: 100%;" name="user_atasan" id="user_atasan" data-action="'+attr+'">\
                       <option value="">Pilih Atasan</option>\
                   </select>\
                 </div>';

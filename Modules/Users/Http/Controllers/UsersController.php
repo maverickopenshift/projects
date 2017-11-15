@@ -39,7 +39,7 @@ class UsersController extends Controller
               $roles = htmlspecialchars(json_encode($data->roles), ENT_QUOTES, 'UTF-8');
               $act= '<div>';
               if(\Auth::user()->hasPermission('ubah-user')){
-                  $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'">
+                  $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal-edit"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'">
   <i class="glyphicon glyphicon-edit"></i> Edit
   </button>';
               }
@@ -66,48 +66,64 @@ class UsersController extends Controller
             ->filterColumn('created_at', function ($query, $keyword) {
                 $query->whereRaw("DATE_FORMAT(created_at,'%Y/%m/%d') like ?", ["%$keyword%"]);
             })
-            ->editColumn('updated_at', function ($data) {
-                if($data->updated_at){
-                    return $data->updated_at->format('d-m-Y H:i');
-                }
-                return;
-            })
-            ->editColumn('created_at', function ($data) {
-                if($data->created_at){
-                    return $data->created_at->format('d-m-Y H:i');
-                }
-                return;
-            })
+            // ->editColumn('updated_at', function ($data) {
+            //     if($data->updated_at){
+            //         return $data->updated_at->format('d-m-Y H:i');
+            //     }
+            //     return;
+            // })
+            // ->editColumn('created_at', function ($data) {
+            //     if($data->created_at){
+            //         return $data->created_at->format('d-m-Y H:i');
+            //     }
+            //     return;
+            // })
             ->make(true);
     }
     public function update(Request $request)
     {
+        if (!$request->ajax()) {abort(404);};
+        $id = $request->id;
           $rules = array (
               'name' => 'required|max:250|min:3',
               'username' => 'required|unique:users,username,'.$request->id.'|max:250|min:3',
               'email' => 'required|unique:users,email,'.$request->id.'|max:250|min:5',
-              'phone' => 'required|max:15|min:5',
+              // 'phone' => 'required|max:15|min:5',
+              'roles_edit.*' => 'required',
               // 'password' => 'required|confirmed|max:50|min:5',
           );
           $validator = Validator::make($request->all(), $rules);
+          $validator->after(function ($validator) use ($request) {
+              if (!isset($request->roles_edit)) {
+                  $validator->errors()->add('roles_edit', 'Roles harus dipilih');
+              }
+          });
           if ($validator->fails ())
               return Response::json (array(
                   'errors' => $validator->getMessageBag()->toArray()
               ));
           else {
-              $roles = $request->roles;
+              $roles = $request->roles_edit;
               $data = User::where('id','=',$request->id)->first();
-              $data->name = $request->name;
-              $data->username = $request->username;
-              $data->email = $request->email;
-              $data->phone = $request->phone;
+              if(!Pegawai::is_pegawai($id)){
+                $data->name = $request->name;
+                $data->username = $request->username;
+                $data->email = $request->email;
+                $data->phone = $request->phone;
+              }
               $data->save();
-              //if(count($roles)>0){
-                $data->roles()->sync($roles);
-              //}
-              // else{
-              //   $data->roles()->sync([]);
-              // }
+              $data->roles()->sync($roles);
+              
+              if (count($request->atasan_id)>0 && $request->has(['atasan_id'])) {
+                $peg = Pegawai::get_by_userid($id);  
+                  Atasan::where('users_pegawai_id',$peg->ids)->delete();
+                  foreach($request->atasan_id as $key=>$v){
+                    $atasan = new Atasan();
+                    $atasan->users_pegawai_id = $peg->ids;
+                    $atasan->nik = $v;
+                    $atasan->save();
+                  }
+              }
               return response()->json($data);
           }
     }
@@ -133,14 +149,21 @@ class UsersController extends Controller
     }
     public function add(Request $request)
     {
+      if (!$request->ajax()) {abort(404);};
         $rules = array (
             'name' => 'required|max:250|min:3',
             'username' => 'required|unique:users,username|max:250|min:3',
             'email' => 'required|unique:users,email|max:250|min:5',
             'phone' => 'sometimes|nullable|max:15|min:5',
             'password' => 'required|confirmed|max:50|min:5',
+            'roles.*' => 'required',
         );
         $validator = Validator::make($request->all(), $rules);
+        $validator->after(function ($validator) use ($request) {
+            if (!isset($request->roles)) {
+                $validator->errors()->add('roles', 'Roles harus dipilih');
+            }
+        });
         if ($validator->fails ())
             return Response::json (array(
                 'errors' => $validator->getMessageBag()->toArray()
@@ -219,5 +242,14 @@ class UsersController extends Controller
         // }
         $data = User::get_user_vendor($search)->paginate(30);
         return \Response::json($data);
+    }
+    public function getAtasanByUserid(Request $request){
+        $id = trim($request->id);
+
+        if (empty($id)) {
+            return \Response::json([]);
+        }
+        $data = Atasan::get_by_userid($id);
+        return \Response::json(['is_pegawai'=>Pegawai::is_pegawai($id),'pegawai'=>Pegawai::get_by_userid($id),'atasan'=>$data]);
     }
 }

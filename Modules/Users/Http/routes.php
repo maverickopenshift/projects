@@ -11,6 +11,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'users', 'namespace' =
     Route::get('/get-select-user-telkom', 'UsersController@getSelectUserTelkom')->name('users.get-select-user-telkom');
     Route::get('/get-select-user-telkom-by-nik', 'UsersController@getSelectUserTelkomByNik')->name('users.get-select-user-telkom-by-nik');
     Route::get('/get-select-user-vendor', 'UsersController@getSelectUserVendor')->name('users.get-select-user-vendor');
+    Route::get('/get-atasan-by-userid', 'UsersController@getAtasanByUserid')->name('users.get-atasan-by-userid');
 
 
     Route::get('/permissions', ['middleware' => ['permission:lihat-permission'],'uses' => 'PermissionsController@index'])

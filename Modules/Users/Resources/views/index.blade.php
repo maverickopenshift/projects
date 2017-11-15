@@ -47,6 +47,7 @@
 <!-- /.box-body -->
 </div>
 @include('users::_form_modal')
+@include('users::_form_modal_edit')
 @endsection
 @push('scripts')
 <script>
@@ -61,12 +62,12 @@ $(function() {
       processing: true,
       serverSide: true,
       // autoWidth : true,
-      scrollX   : true,
-      fixedColumns:   {
-            leftColumns: 2,
-            rightColumns:1
-      },
-      order : [[ 4, 'desc' ]],
+      // scrollX   : true,
+      // fixedColumns:   {
+      //       leftColumns: 2,
+      //       rightColumns:1
+      // },
+      order : [[ 5, 'desc' ]],
       pageLength: 50,
       ajax: '{!! route('users.data') !!}',
       columns: [

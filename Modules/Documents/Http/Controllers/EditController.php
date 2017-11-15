@@ -70,9 +70,17 @@ class EditController extends Controller
         $scop['akhir'][$key] = $val->meta_desc;
         $scop['file'][$key]  = $val->meta_file;
       }
-      $dt->scope_name     = $scop['name'];
-      $dt->scope_awal     = $scop['awal'];
-      $dt->scope_akhir    = $scop['akhir'];
+      if($type=='amandemen_sp'){
+        $dt->scope_name     = $scop['name'];
+        $dt->scope_awal     = $scop['awal'];
+        $dt->scope_akhir    = $scop['akhir'];
+      }
+      else{
+        $dt->scope_pasal     = $scop['name'];
+        $dt->scope_judul     = $scop['awal'];
+        $dt->scope_isi    = $scop['akhir'];
+      }
+      
       $dt->scope_file     = $scop['file'];
       $dt->scope_file_old = $scop['file'];
     }
@@ -163,7 +171,7 @@ class EditController extends Controller
     $data['page_title'] = 'Edit Dokumen';
     $data['doc_type'] = $dt->jenis->type;
     $data['doc'] = $dt;
-    // dd($dt->toArray());
+     // dd($dt->toArray());
     $data['pegawai'] = \App\User::get_user_pegawai();
     $data['action_type'] = 'edit';
     $data['action_url'] = route('doc.storeedit',['type'=>$dt->jenis->type->name,'id'=>$dt->id]);

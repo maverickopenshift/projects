@@ -64,11 +64,32 @@ class AmandemenKontrakEditController extends Controller
     $rule_scope_pasal = (count($request['scope_pasal'])>1)?'required':'sometimes|nullable';
     $rule_scope_judul = (count($request['scope_judul'])>1)?'required':'sometimes|nullable';
     $rule_scope_isi = (count($request['scope_isi'])>1)?'required':'sometimes|nullable';
-    $rules['scope_file.*']  =  'sometimes|nullable|mimes:pdf';
     $rules['scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
     $rules['scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-
+    foreach($request->scope_file_old as $k => $v){
+      if(isset($request->scope_file[$k]) && is_object($request->scope_file[$k]) && !empty($v)){//jika ada file baru
+        $new_scope_file[] = '';
+        $new_scope_file_up[] = $request->scope_file[$k];
+        $rules['scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
+      }
+      else if(empty($v)){
+        $rules['scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
+        if(!isset($request->scope_file[$k])){
+          $new_scope_file[] = $v;
+          $new_scope_file_up[] = $v;
+        }
+        else{
+          $new_scope_file[] = '';
+          $new_scope_file_up[] = $request->scope_file[$k];
+        }
+      }
+      else{
+        $new_scope_file[] = $v;
+        $new_scope_file_up[] = $v;
+      }
+    }
+    $request->merge(['scope_file' => $new_scope_file]);
 
     $rule_lt_name = (count($request['lt_name'])>1)?'required':'sometimes|nullable';
     $rule_lt_desc = (count($request['lt_desc'])>1)?'required':'sometimes|nullable';
@@ -195,8 +216,6 @@ class AmandemenKontrakEditController extends Controller
             && !empty($request['scope_judul'][$key])
             && !empty($request['scope_isi'][$key])
         ){
-          $scope_judul = $request['scope_judul'][$key];
-          $scope_isi = $request['scope_isi'][$key];
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = 'scope_perubahan';
@@ -205,11 +224,14 @@ class AmandemenKontrakEditController extends Controller
           $doc_meta->meta_desc = $request['scope_isi'][$key];
 
 
-          if(isset($request['scope_file'][$key])){
+          if(is_object($new_scope_file_up[$key])){
             $fileName   = Helpers::set_filename('doc_scope_perubahan_',strtolower($val));
-            $file = $request['scope_file'][$key];
+            $file = $new_scope_file_up[$key];
             $file->storeAs('document/'.$request->type.'_scope_perubahan', $fileName);
             $doc_meta->meta_file = $fileName;
+          }
+          else{
+            $doc_meta->meta_file = $new_scope_file_up[$key];
           }
           $doc_meta->save();
         }

@@ -273,4 +273,16 @@ public static function select_atasan($pegawai,$val=null)
       }
       return NULL;
     }
+    public static function doc_status($val,$type=false){
+      $status_arr = ['proses','selesai','draft','reject'];
+      foreach ($status_arr as $key => $st){
+        if($key==$val && $type==false){
+          return $st;
+        }
+        if($st===$val && $type==true){
+          return $key;
+        }
+      }
+      return false;
+    }
 }

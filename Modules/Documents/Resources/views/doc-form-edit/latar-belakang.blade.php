@@ -72,7 +72,7 @@
       </tbody>
       </table>
         @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter']))
-          @include('documents::partials.buttons')
+          @include('documents::partials.button-edit')
         @endif
     </div>
 

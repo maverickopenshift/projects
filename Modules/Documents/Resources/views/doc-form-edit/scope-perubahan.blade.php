@@ -40,14 +40,11 @@
                       <button class="btn btn-default click-upload" type="button">Browse</button>
                       <input type="hidden" name="scope_file_old[]" value="{{$scope_file_old[$key]}}">
                       @if(isset($scope_file_old[$key]))
-                        <a class="btn btn-primary" target="_blank" href="{{route('doc.file.scope',['filename'=>$scope_file_old[$key],'type'=>$doc_type->name])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat</a>
+                        <a class="btn btn-primary btn-file" target="_blank" href="{{route('doc.file.scope',['filename'=>$scope_file_old[$key],'type'=>$doc_type->name])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat</a>
                       @endif
                     </span>
                   </div>
                   {!!Helper::error_help($errors,'scope_file.'.$key)!!}
-                  @if(isset($scope_file[$key]))
-                    <a target="_blank" href="{{route('doc.file.scope',['filename'=>$scope_file[$key]])}}"><i class="glyphicon glyphicon-paperclip"></i> {{$scope_file[$key]}}</a>
-                  @endif
                 </td>
                 <td class="action">
                   @if(count($scope_name)>1)
@@ -99,6 +96,7 @@ $(function() {
     mdf_new_row.eq(2).find('.error').remove();
     mdf_new_row.eq(3).find('input').val('');
     mdf_new_row.eq(3).find('.error').remove();
+    mdf_new_row.eq(4).find('.btn-file').remove();
     mdf_new_row.eq(4).find('input').val('');
     mdf_new_row.eq(4).find('.error').remove();
     var id_editor = 'editor'+(row.length+1);

@@ -57,7 +57,7 @@
         </tbody>
         </table>
         @if($doc_type->name=="khs")
-              @include('documents::partials.buttons')
+              @include('documents::partials.button-edit')
         @endif
     </div>
 <!-- /.box-body -->

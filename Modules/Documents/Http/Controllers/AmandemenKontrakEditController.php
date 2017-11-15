@@ -64,6 +64,7 @@ class AmandemenKontrakEditController extends Controller
     $rule_scope_pasal = (count($request['scope_pasal'])>1)?'required':'sometimes|nullable';
     $rule_scope_judul = (count($request['scope_judul'])>1)?'required':'sometimes|nullable';
     $rule_scope_isi = (count($request['scope_isi'])>1)?'required':'sometimes|nullable';
+<<<<<<< HEAD
     $rules['scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
     $rules['scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -90,6 +91,13 @@ class AmandemenKontrakEditController extends Controller
       }
     }
     $request->merge(['scope_file' => $new_scope_file]);
+=======
+    $rules['scope_file.*']  =  'sometimes|nullable|mimes:pdf';
+    $rules['scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+
+>>>>>>> 78b23bf472de67fe8f93e851a0d2aa30fa83f647
 
     $rule_lt_name = (count($request['lt_name'])>1)?'required':'sometimes|nullable';
     $rule_lt_desc = (count($request['lt_desc'])>1)?'required':'sometimes|nullable';

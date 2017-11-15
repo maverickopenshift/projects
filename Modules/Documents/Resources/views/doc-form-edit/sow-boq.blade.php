@@ -328,5 +328,41 @@ $(document).on('keyup', '.hitung_total', function(event) {
     _this.parent().parent().find('td').eq(7).text(formatRupiah(harga_total));
   }
 });
+$(function(e){
+  var hitung_man = $('.hitung_total');
+  if(hitung_man.length>0){
+    $.each(hitung_man,function(index,el){
+      var _this = $(this),harga_total;
+      var td_length = _this.parent().parent().find('td');
+      if(td_length.length==10){
+        if(_this.attr('name')=='hs_qty[]'){
+          var qty = _this.val();
+        }
+        else{
+          var qty = _this.parent().parent().find('input[name="hs_qty[]"]').val();
+        }
+        if(_this.attr('name')=='hs_harga[]'){
+          var harga = _this.val();
+        }
+        else{
+          var harga = _this.parent().parent().find('input[name="hs_harga[]"]').val();
+        }
+        if(harga==""){
+          harga = 0
+        }
+        if(qty==""){
+          qty = 0
+        }
+        harga = backNominal(harga);
+        qty = backNominal(qty);
+        //console.log('qty => '+qty);
+        //console.log('harga => '+harga);
+        harga_total = harga*qty;
+        harga_total = convertNumber(harga_total);
+        _this.parent().parent().find('td').eq(7).text(formatRupiah(harga_total));
+      }
+    });
+  }
+});
 </script>
 @endpush

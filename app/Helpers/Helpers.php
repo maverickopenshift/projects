@@ -213,6 +213,9 @@ public static function select_atasan($pegawai,$val=null)
       return old($key,self::prop_exists($obj,$key))==$val?"selected='selected'":"";
     }
     
+    public static function prop_selected($val,$string){
+      return ($val==$string)?"selected='selected'":"";
+    }
     public static function input_rupiah($val){
       if(!empty($val)){
         $rp = preg_replace('/[^,\d]/','',$val);
@@ -248,5 +251,26 @@ public static function select_atasan($pegawai,$val=null)
         }
       }
       return $ret;
+    }
+    public static function is_json($string,$return_data = false) {
+          $data = json_decode($string);
+         return (json_last_error() == JSON_ERROR_NONE) ? ($return_data ? $data : true) : false;
+    }
+    public static function json_input($json,$new_data){
+      $response = self::is_json($json);
+      if($response){
+        $doc_data = json_decode($json,TRUE);
+        foreach($doc_data as $key=>$val){
+          if(array_key_exists($key,$new_data)){
+            $doc_data = $new_data;
+          }
+          else{
+            $doc_data += $new_data;
+          }
+        }
+        // $doc_data = json_encode($doc_data);
+        return json_encode($doc_data) ;
+      }
+      return NULL;
     }
 }

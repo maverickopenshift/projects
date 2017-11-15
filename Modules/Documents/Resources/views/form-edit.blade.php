@@ -3,7 +3,7 @@
 @section('content')
 
 
-    <form action="{{route('doc.store',['type'=>$doc_type->name])}}" class="form-kontrak" method="post" enctype="multipart/form-data">
+    <form action="{{$action_url}}" class="form-kontrak" method="post" enctype="multipart/form-data">
     {{ csrf_field() }}
     <div class="nav-tabs-custom">
       @php

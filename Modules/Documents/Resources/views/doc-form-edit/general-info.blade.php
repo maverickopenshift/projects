@@ -6,15 +6,15 @@
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-      @include('documents::doc-form.general-info-left')
+      @include('documents::doc-form-edit.general-info-left')
     </div>
 <!-- /.box-body -->
 </div>
 @push('scripts')
 <script>
 $(function() {
-  add_select('doc_lampiran');
-  delete_select('doc_lampiran');
+  // add_select('doc_lampiran');
+  // delete_select('doc_lampiran');
   var po = $('.no_po').val()
   if(po!=="" || po!==undefined){
     render_po(po);

@@ -16,8 +16,6 @@ use Modules\Documents\Entities\DocPo;
 use Modules\Documents\Http\Controllers\SpCreateController as SpCreate;
 use Modules\Documents\Http\Controllers\AmandemenSpCreateController as AmandemenSpCreate;
 use Modules\Documents\Http\Controllers\AmandemenKontrakCreateController as AmandemenKontrakCreate;
-use Modules\Documents\Http\Controllers\AdendumCreateController as AdendumCreate;
-use Modules\Documents\Http\Controllers\SideLetterCreateController as SideLetterCreate;
 
 use App\Helpers\Helpers;
 use Validator;
@@ -32,12 +30,10 @@ class EntryDocumentController extends Controller
     protected $AmandemenKontrakCreate;
     protected $AdendumCreate;
     protected $SideLetterCreate;
-    public function __construct(Request $req,SpCreate $spCreate,AmandemenSpCreate $AmandemenSpCreate,AmandemenKontrakCreate $AmandemenKontrakCreate,AdendumCreate $AdendumCreate,SideLetterCreate $SideLetterCreate){
+    public function __construct(Request $req,SpCreate $spCreate,AmandemenSpCreate $AmandemenSpCreate,AmandemenKontrakCreate $AmandemenKontrakCreate){
       $this->spCreate               = $spCreate;
       $this->AmandemenSpCreate      = $AmandemenSpCreate;
       $this->AmandemenKontrakCreate = $AmandemenKontrakCreate;
-      $this->AdendumCreate          = $AdendumCreate;
-      $this->SideLetterCreate       = $SideLetterCreate;
       $doc_id = $req->doc_id;
       $field = Documents::get_fields();
       if(!empty($doc_id)){
@@ -99,12 +95,6 @@ class EntryDocumentController extends Controller
       if(in_array($type,['amandemen_kontrak','adendum','side_letter'])){
         return $this->AmandemenKontrakCreate->store($request);
       }
-      // if($type=='adendum'){
-      //   return $this->AdendumCreate->store($request);
-      // }
-      // if($type=='side_letter'){
-      //   return $this->SideLetterCreate->store($request);
-      // }
       $doc_value = $request->doc_value;
       $request->merge(['doc_value' => Helpers::input_rupiah($request->doc_value)]);
       //$request->merge(['doc_value' => 'asdfsadfsdafsd']);

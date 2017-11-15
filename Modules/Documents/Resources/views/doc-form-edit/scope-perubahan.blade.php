@@ -23,20 +23,25 @@
           $scope_awal = Helper::old_prop_each($doc,'scope_awal');
           $scope_akhir = Helper::old_prop_each($doc,'scope_akhir');
           $scope_file = Helper::old_prop_each($doc,'scope_file');
+          $scope_file_old = Helper::old_prop_each($doc,'scope_file_old');
         @endphp
         @if(count($scope_name)>0)
           @foreach ($scope_name as $key => $value)
             <tr>
                 <td>{{$key+1}}</td>
                 <td class="{{ $errors->has('scope_name.'.$key) ? ' has-error' : '' }}"><input type="text" class="form-control" name="scope_name[]" autocomplete="off" value="{{$value}}" placeholder="Masukan Scope Perubahan">{!!Helper::error_help($errors,'scope_name.'.$key)!!}</td>
-                <td class="{{ $errors->has('scope_awal.'.$key) ? ' has-error' : '' }}"><input type="text" class="form-control" name="scope_awal[]" autocomplete="off" value="{{$value}}">{!!Helper::error_help($errors,'scope_awal.'.$key)!!}</td>
-                <td class="{{ $errors->has('scope_akhir.'.$key) ? ' has-error' : '' }}"><input type="text" class="form-control" name="scope_akhir[]" autocomplete="off" value="{{$value}}">{!!Helper::error_help($errors,'scope_akhir.'.$key)!!}</td>
+                <td class="{{ $errors->has('scope_awal.'.$key) ? ' has-error' : '' }}"><input type="text" class="form-control" name="scope_awal[]" autocomplete="off" value="{{$scope_awal[$key]}}">{!!Helper::error_help($errors,'scope_awal.'.$key)!!}</td>
+                <td class="{{ $errors->has('scope_akhir.'.$key) ? ' has-error' : '' }}"><input type="text" class="form-control" name="scope_akhir[]" autocomplete="off" value="{{$scope_akhir[$key]}}">{!!Helper::error_help($errors,'scope_akhir.'.$key)!!}</td>
                 <td class="{{ $errors->has('scope_file.'.$key) ? ' has-error' : '' }}">
                   <div class="input-group">
                     <input type="file" class="hide" name="scope_file[]">
                     <input class="form-control" type="text" disabled>
                     <span class="input-group-btn">
                       <button class="btn btn-default click-upload" type="button">Browse</button>
+                      <input type="hidden" name="scope_file_old[]" value="{{$scope_file_old[$key]}}">
+                      @if(isset($scope_file_old[$key]))
+                        <a class="btn btn-primary" target="_blank" href="{{route('doc.file.scope',['filename'=>$scope_file_old[$key],'type'=>$doc_type->name])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat</a>
+                      @endif
                     </span>
                   </div>
                   {!!Helper::error_help($errors,'scope_file.'.$key)!!}
@@ -57,15 +62,16 @@
               <td><input type="text" class="form-control" name="scope_name[]" autocomplete="off" placeholder="Masukan Scope Perubahan"></td>
               <td><input type="text" class="form-control" name="scope_awal[]" autocomplete="off"></td>
               <td><input type="text" class="form-control" name="scope_akhir[]" autocomplete="off"></td>
-              <td><div class="col-sm-10">
+              <td>
                 <div class="input-group">
                   <input type="file" class="hide" name="scope_file[]">
                   <input class="form-control" type="text" disabled>
                   <span class="input-group-btn">
                     <button class="btn btn-default click-upload" type="button">Browse</button>
+                    <input type="hidden" name="scope_file_old[]">
                   </span>
                 </div>
-              </div></td>
+              </td>
               <td class="action"></td>
           </tr>
           @endif

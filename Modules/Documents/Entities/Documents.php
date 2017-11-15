@@ -159,11 +159,14 @@ class Documents extends Model
         return $doc_id;
       }
     }
-    public static function check_permission_doc($doc_id){
+    public static function check_permission_doc($doc_id,$type){
       $doc = self::selectRaw('documents.id,documents.user_id');
       $doc->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
       $doc->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
       $doc->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id())->where('documents.id','=',$doc_id);
+      if(!empty($type)){
+        $doc->where('documents.doc_type',$type);
+      }
       $doc = $doc->first();
       if($doc){
         return true;

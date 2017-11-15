@@ -7,7 +7,8 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
     Route::get('/create/{type}', ['middleware' => ['permission:tambah-kontrak'],'uses' => 'EntryDocumentController@index'])->name('doc.create');
     Route::post('/store/{type}',['middleware' => ['permission:tambah-kontrak'],'uses' => 'EntryDocumentController@store'])->name('doc.store');
     Route::get('/view/{type}/{id}/', ['middleware' => ['permission:lihat-kontrak'],'uses' => 'DocumentsController@view'])->name('doc.view');
-    Route::get('/edit/{type}/{id}/', ['middleware' => ['permission:ubah-kontrak'],'uses' => 'DocumentsController@edit'])->name('doc.edit');
+    Route::get('/edit/{type}/{id}/', ['middleware' => ['permission:ubah-kontrak'],'uses' => 'EditController@index'])->name('doc.edit');
+    Route::post('/storeedit/{type}/{id}/', ['middleware' => ['permission:ubah-kontrak'],'uses' => 'EditController@store'])->name('doc.storeedit');
     Route::post('/approve', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@approve'])->name('doc.approve');
     Route::post('/reject', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@reject'])->name('doc.reject');
     Route::get('/get-select-kontrak', 'DocumentsController@getSelectKontrak')->name('doc.get-select-kontrak');
@@ -68,5 +69,48 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
 
         return $response;
     })->name('doc.file.latarbelakang');
+    Route::get('/file_lampiran/{type}/{filename}', function ($type,$filename){
+        $path = storage_path('app/document/'.$type.'_lampiran_ttd/' . $filename);
+        if (!File::exists($path)) {
+            abort(404);
+        }
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
+    })->name('doc.file.lampiran');
+    Route::get('/file_asuransi/{type}/{filename}', function ($type,$filename){
+        $path = storage_path('app/document/'.$type.'_asuransi/' . $filename);
+        if (!File::exists($path)) {
+            abort(404);
+        }
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
+    })->name('doc.file.asuransi');
+    
+    Route::get('/file_scope/{type}/{filename}', function ($type,$filename){
+        $path = storage_path('app/document/'.$type.'_scope_perubahan/' . $filename);
+        if (!File::exists($path)) {
+            abort(404);
+        }
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
+    })->name('doc.file.scope');
 
 });

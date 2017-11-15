@@ -12,7 +12,7 @@
           <th width="30">No. </th>
           <th width="300">Judul</th>
           <th>Isi</th>
-          <th width="250">File <small class="text-danger" style="font-style:italic;font-weight:normal;">(optional)</small></th>
+          <th width="350">File <small class="text-danger" style="font-style:italic;font-weight:normal;">(optional)</small></th>
           <th  width="70"><button type="button" class="btn btn-success btn-xs add-latar"><i class="glyphicon glyphicon-plus"></i> tambah</button></th>
         </tr>
       </thead>
@@ -20,6 +20,7 @@
           @php
             $lt_name = Helper::old_prop_each($doc,'lt_name');
             $lt_file = Helper::old_prop_each($doc,'lt_file');
+            $lt_file_old = Helper::old_prop_each($doc,'lt_file_old');
             $lt_desc = Helper::old_prop_each($doc,'lt_desc');
           @endphp
           @if(count($lt_name)>0)
@@ -35,12 +36,13 @@
                       <input class="form-control" type="text" disabled>
                       <span class="input-group-btn">
                         <button class="btn btn-default click-upload" type="button">Browse</button>
+                        <input type="hidden" name="lt_file_old[]" value="{{$lt_file_old[$key]}}">
+                        @if(isset($lt_file_old[$key]))
+                          <a class="btn btn-primary" target="_blank" href="{{route('doc.file.latarbelakang',['filename'=>$lt_file_old[$key],'type'=>$doc_type->name])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat</a>
+                        @endif
                       </span>
                     </div>
                     {!!Helper::error_help($errors,'lt_file.'.$key)!!}
-                    @if(isset($lt_file[$key]))
-                      <a target="_blank" href="{{route('doc.file.latarbelakang',['filename'=>$lt_file[$key],'type'=>$doc_type->name])}}"><i class="glyphicon glyphicon-paperclip"></i> File {{$value}}</a>
-                    @endif
                   </td>
                   <td class="action">
                     @if(count($lt_name)>1)
@@ -60,6 +62,7 @@
                     <input class="form-control" type="text" disabled>
                     <span class="input-group-btn">
                       <button class="btn btn-default click-upload" type="button">Browse</button>
+                      <input type="hidden" name="lt_file_old[]">
                     </span>
                   </div>
                 </td>
@@ -94,6 +97,7 @@ $(function() {
     mdf_new_row.eq(2).find('.error').remove();
     mdf_new_row.eq(3).find('input').val('');
     mdf_new_row.eq(3).find('.error').remove();
+    mdf_new_row.eq(3).find('a').remove();
     var id_editor = 'editor'+(row.length+1);
     $this.find('tbody').prepend(new_row);
     var row = $this.find('tbody>tr');

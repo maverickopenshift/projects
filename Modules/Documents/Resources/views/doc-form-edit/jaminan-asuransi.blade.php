@@ -1,153 +1,198 @@
 <div class="box">
-    <div class="box-header with-border">
+    <div class="box-header with-border" style="padding-bottom: 14px;">
       <h3 class="box-title">
-          Jaminan dan Asuransi
+          
       </h3>
+      <div class="pull-right box-tools">
+        <button type="button" class="btn btn-success add-ao-jas"><i class="glyphicon glyphicon-plus"></i> tambah</button>
+      </div>
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-      <table class="table table-bordered table-asr">
-        <thead>
-          <tr>
-            <th width="30">No. </th>
-            <th width="150">Jenis Jaminan</th>
-            <th width="150">Nama Asuransi</th>
-            <th width="150">Nilai Jaminan</th>
-            <th width="100">Tanggal Mulai</th>
-            <th width="100">Tanggal Akhir</th>
-            <th width="200">Keterangan</th>
-            <th width="150">File <small class="text-danger" style="font-style:italic;font-weight:normal;">(optional)</small></th>
-            <th  width="30"><button type="button" class="btn btn-success btn-xs add-asr"><i class="glyphicon glyphicon-plus"></i> tambah</button></th>
-          </tr>
-      </thead>
-      <tbody>
-          @php
-            $doc_jaminan = Helper::old_prop_each($doc,'doc_jaminan');
-            $doc_asuransi = Helper::old_prop_each($doc,'doc_asuransi');
-            $doc_jaminan_nilai = Helper::old_prop_each($doc,'doc_jaminan_nilai');
-            $doc_jaminan_startdate = Helper::old_prop_each($doc,'doc_jaminan_startdate');
-            $doc_jaminan_enddate = Helper::old_prop_each($doc,'doc_jaminan_enddate');
-            $doc_jaminan_desc = Helper::old_prop_each($doc,'doc_jaminan_desc');
-            $doc_jaminan_file = Helper::old_prop_each($doc,'doc_jaminan_file');
-          @endphp
-          @if(count($doc_asuransi)>0)
-            @foreach ($doc_asuransi as $key => $value)
-              <tr>
-                  <td>{{$key+1}}</td>
-                  <td class="{{ $errors->has('doc_jaminan.'.$key) ? ' has-error' : '' }}">
+      @php
+        $doc_jaminan = Helper::old_prop_each($doc,'doc_jaminan');
+        $doc_asuransi = Helper::old_prop_each($doc,'doc_asuransi');
+        $doc_jaminan_nilai = Helper::old_prop_each($doc,'doc_jaminan_nilai');
+        $doc_jaminan_startdate = Helper::old_prop_each($doc,'doc_jaminan_startdate');
+        $doc_jaminan_enddate = Helper::old_prop_each($doc,'doc_jaminan_enddate');
+        $doc_jaminan_desc = Helper::old_prop_each($doc,'doc_jaminan_desc');
+        $doc_jaminan_file = Helper::old_prop_each($doc,'doc_jaminan_file');
+        $doc_jaminan_file_old = Helper::old_prop_each($doc,'doc_jaminan_file_old');
+      @endphp
+      @if(count($doc_asuransi)>0)
+        @foreach ($doc_asuransi as $key => $value)
+            <div class="form-horizontal ao-jas" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+                <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
+                  <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Jaminan dan Asuransi <span class="total_asu">{{$key+1}}</span></div>
+                  @if(count($doc_asuransi)>1)
+                    <button type="button" class="btn btn-danger delete-ao-jas" style="position: absolute;right: 5px;top: -10px;border-radius: 0;"><i class="glyphicon glyphicon-trash"></i></button>
+                  @endif
+                </div>
+                <div class="form-group {{ $errors->has('doc_jaminan.'.$key) ? ' has-error' : '' }}">
+                  <label for="doc_jaminan" class="col-sm-2 control-label">Jenis Jaminan</label>
+                  <div class="col-sm-4">
                     <select class="form-control" name="doc_jaminan[]">
-                      <option value="{{$doc_jaminan[$key]}}" {!!Helper::old_prop_selected($doc,'doc_jaminan','PL'.$key)!!}>Pelaksanaan</option>
-                      <option value="{{$doc_jaminan[$key]}}" {!!Helper::old_prop_selected($doc,'doc_jaminan','PM'.$key)!!}>Pemeliharaan</option>
+                      <option value="" {!!Helper::prop_selected($doc_jaminan[$key],"")!!}>Pilih Jenis Jaminan</option>
+                      <option value="PL" {!!Helper::prop_selected($doc_jaminan[$key],"PL")!!}>Pelaksanaan</option>
+                      <option value="PM" {!!Helper::prop_selected($doc_jaminan[$key],"PM")!!}>Pemeliharaan</option>
                     </select>
+                  </div>
+                  <div class="col-sm-10 col-sm-offset-2">
                     {!!Helper::error_help($errors,'doc_jaminan.'.$key)!!}
-                  </td>
-                  <td class="{{ $errors->has('doc_asuransi.'.$key) ? ' has-error' : '' }}">
-                    <input type="text" class="form-control" name="doc_asuransi[]" value="{{$value}}"  placeholder="Masukan Nama Asuransi" autocomplete="off">
+                  </div>
+                </div>
+                <div class="form-group {{ $errors->has('doc_asuransi.'.$key) ? ' has-error' : '' }}">
+                  <label for="doc_asuransi" class="col-sm-2 control-label">Nama Asuransi</label>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control" name="doc_asuransi[]" placeholder="Masukan Nama Asuransi" autocomplete="off" value="{{$value}}">
+                  </div>
+                  <div class="col-sm-10 col-sm-offset-2">
                     {!!Helper::error_help($errors,'doc_asuransi.'.$key)!!}
-                  </td>
-                  <td class="{{ $errors->has('doc_jaminan_nilai.'.$key) ? ' has-error' : '' }}">
+                  </div>
+                </div>
+                <div class="form-group {{ $errors->has('doc_jaminan_nilai.'.$key) ? ' has-error' : '' }}">
+                  <label for="doc_jaminan_nilai" class="col-sm-2 control-label">Nilai Jaminan</label>
+                  <div class="col-sm-4">
                     <div class="input-group">
                       <div class="input-group-addon mtu-set">
                       </div>
-                      <input type="text" class="form-control input-rupiah" name="doc_jaminan_nilai[]" value="{{$doc_jaminan_nilai[$key]}}"  placeholder="Masukan Nilai Jaminan" autocomplete="off">
+                      <input type="text" class="form-control input-rupiah" name="doc_jaminan_nilai[]" placeholder="Masukan Nilai Jaminan" autocomplete="off" value="{{$doc_jaminan_nilai[$key]}}">
                     </div>
+                  </div>
+                  <div class="col-sm-10 col-sm-offset-2">
                     {!!Helper::error_help($errors,'doc_jaminan_nilai.'.$key)!!}
-                  </td>
-                  <td class="{{ $errors->has('doc_jaminan_startdate.'.$key) ? ' has-error' : '' }}">
+                  </div>
+                </div>
+                <div class="form-group {{ $errors->has('doc_jaminan_startdate.'.$key) ? ' has-error' : '' }}">
+                  <label for="doc_jaminan_startdate" class="col-sm-2 control-label">Tanggal Mulai</label>
+                  <div class="col-sm-4">
                     <div class="input-group date" data-provide="datepicker">
                         <div class="input-group-addon">
                             <span class="fa fa-calendar"></span>
                         </div>
-                        <input type="text" class="form-control formatTanggal" name="doc_jaminan_startdate[]" value="{{$doc_jaminan_startdate[$key]}}" autocomplete="off">
+                        <input type="text" class="form-control" name="doc_jaminan_startdate[]" autocomplete="off" value="{{$doc_jaminan_startdate[$key]}}">
                     </div>
+                  </div>
+                  <div class="col-sm-10 col-sm-offset-2">
                     {!!Helper::error_help($errors,'doc_jaminan_startdate.'.$key)!!}
-                  </td>
-                  <td class="{{ $errors->has('doc_jaminan_enddate.'.$key) ? ' has-error' : '' }}">
+                  </div>
+                </div>
+                <div class="form-group {{ $errors->has('doc_jaminan_enddate.'.$key) ? ' has-error' : '' }}">
+                  <label for="doc_jaminan_enddate" class="col-sm-2 control-label">Tanggal Akhir</label>
+                  <div class="col-sm-4">
                     <div class="input-group date" data-provide="datepicker">
                       <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                       </div>
-                      <input type="text" class="form-control formatTanggal" name="doc_jaminan_enddate[]" value="{{$doc_jaminan_enddate[$key]}}" autocomplete="off">
+                      <input type="text" class="form-control" name="doc_jaminan_enddate[]" autocomplete="off" value="{{$doc_jaminan_enddate[$key]}}">
                     </div>
-                    {!!Helper::error_help($errors,'doc_jaminan_enddate.'.$key)!!}
-                  </td>
-                  <td class="{{ $errors->has('doc_jaminan_desc.'.$key) ? ' has-error' : '' }}">
+                  </div>
+                  <div class="col-sm-10 col-sm-offset-2">
+                    {!!Helper::error_help($errors,'doc_jaminan_startdate.'.$key)!!}
+                  </div>
+                </div>
+                <div class="form-group {{ $errors->has('doc_jaminan_desc.'.$key) ? ' has-error' : '' }}">
+                  <label for="doc_jaminan_desc" class="col-sm-2 control-label">Keterangan</label>
+                  <div class="col-sm-10">
                     <textarea class="form-control" rows="4" name="doc_jaminan_desc[]" placeholder="">{{$doc_jaminan_desc[$key]}}</textarea>
                     {!!Helper::error_help($errors,'doc_jaminan_desc.'.$key)!!}
-                  </td>
-                  <td {{ $errors->has('doc_jaminan_file.'.$key) ? ' has-error' : '' }}>
+                  </div>
+                </div>
+                <div class="form-group {{ $errors->has('doc_jaminan_file.'.$key) ? ' has-error' : '' }}">
+                  <label for="doc_jaminan_file" class="col-sm-2 control-label">File <br/><small class="text-danger" style="font-style:italic;font-weight:normal;">(optional)</small></label>
+                  <div class="col-sm-4">
                     <div class="input-group">
                       <input type="file" class="hide" name="doc_jaminan_file[]">
                       <input class="form-control" type="text" disabled>
                       <span class="input-group-btn">
                         <button class="btn btn-default click-upload" type="button">Browse</button>
+                        <input type="hidden" name="doc_jaminan_file_old[]" value="{{$doc_jaminan_file_old[$key]}}">
+                        @if(isset($doc_jaminan_file_old[$key]))
+                          <a target="_blank" class="btn btn-primary btn-lihat" href="{{route('doc.file.asuransi',['filename'=>$doc_jaminan_file_old[$key],'type'=>$doc_type->name])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat</a>
+                        @endif
                       </span>
                     </div>
+                  </div>
+                  <div class="col-sm-10 col-sm-offset-2">
                     {!!Helper::error_help($errors,'doc_jaminan_file.'.$key)!!}
-                  </td>
-                    @if(isset($doc_jaminan_file[$key]))
-                      <a target="_blank" href="{{route('supplier.legaldokumen.file',['filename'=>$doc_jaminan_file[$key]])}}"><i class="glyphicon glyphicon-paperclip"></i> {{$doc_jaminan_file[$key]}}</a>
-                    @endif
-                  </td>
-                  <td class="action">
-                    @if(count($doc_asuransi)>1)
-                      <button type="button" class="btn btn-danger btn-xs delete-lt"><i class="glyphicon glyphicon-remove"></i> hapus</button>
-                    @endif
-                  </td>
-              </tr>
-            @endforeach
-          @else
-            <tr>
-                <td>1</td>
-                <td>
-                  <select class="form-control" name="doc_jaminan[]">
-                    <option value="PL">Pelaksanaan</option>
-                    <option value="PM">Pemeliharaan</option>
-                  </select>
-                </td>
-                <td>
-                  <input type="text" class="form-control" name="doc_asuransi[]"  placeholder="Masukan Nama Asuransi" autocomplete="off">
-                </td>
-                <td>
-                  <div class="input-group">
-                    <div class="input-group-addon mtu-set">
-                    </div>
-                    <input type="text" class="form-control input-rupiah" name="doc_jaminan_nilai[]" placeholder="Masukan Nilai Jaminan" autocomplete="off">
                   </div>
-                </td>
-                <td>
-                  <div class="input-group date" data-provide="datepicker">
-                      <div class="input-group-addon">
-                          <span class="fa fa-calendar"></span>
-                      </div>
-                      <input type="text" class="form-control" name="doc_jaminan_startdate[]" autocomplete="off">
+                </div>
+            </div>
+        @endforeach
+      @else
+      <div class="form-horizontal ao-jas" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+          <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
+            <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Jaminan dan Asuransi <span class="total_asu">1</span></div>
+          </div>
+          <div class="form-group">
+            <label for="doc_jaminan" class="col-sm-2 control-label">Jenis Jaminan</label>
+            <div class="col-sm-4">
+              <select class="form-control" name="doc_jaminan[]">
+                <option value="">Pilih Jenis Jaminan</option>
+                <option value="PL">Pelaksanaan</option>
+                <option value="PM">Pemeliharaan</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="doc_asuransi" class="col-sm-2 control-label">Nama Asuransi</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" name="doc_asuransi[]" placeholder="Masukan Nama Asuransi" autocomplete="off">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="doc_jaminan_nilai" class="col-sm-2 control-label">Nilai Jaminan</label>
+            <div class="col-sm-4">
+              <div class="input-group">
+                <div class="input-group-addon mtu-set">
+                </div>
+                <input type="text" class="form-control input-rupiah" name="doc_jaminan_nilai[]" placeholder="Masukan Nilai Jaminan" autocomplete="off">
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="doc_jaminan_startdate" class="col-sm-2 control-label">Tanggal Mulai</label>
+            <div class="col-sm-4">
+              <div class="input-group date" data-provide="datepicker">
+                  <div class="input-group-addon">
+                      <span class="fa fa-calendar"></span>
                   </div>
-                </td>
-                <td>
-                  <div class="input-group date" data-provide="datepicker">
-                    <div class="input-group-addon">
-                        <span class="fa fa-calendar"></span>
-                    </div>
-                    <input type="text" class="form-control" name="doc_jaminan_enddate[]" autocomplete="off">
-                  </div>
-                </td>
-                <td>
-                  <textarea class="form-control" rows="4" name="doc_jaminan_desc[]" placeholder=""></textarea>
-                </td>
-                <td>
-                  <div class="input-group">
-                    <input type="file" class="hide" name="doc_jaminan_file[]">
-                    <input class="form-control" type="text" disabled>
-                    <span class="input-group-btn">
-                      <button class="btn btn-default click-upload" type="button">Browse</button>
-                    </span>
-                  </div>
-                </td>
-                <td class="action"></td>
-            </tr>
-          @endif
-      </tbody>
-      </table>
+                  <input type="text" class="form-control" name="doc_jaminan_startdate[]" autocomplete="off">
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="doc_jaminan_enddate" class="col-sm-2 control-label">Tanggal Akhir</label>
+            <div class="col-sm-4">
+              <div class="input-group date" data-provide="datepicker">
+                <div class="input-group-addon">
+                    <span class="fa fa-calendar"></span>
+                </div>
+                <input type="text" class="form-control" name="doc_jaminan_enddate[]" autocomplete="off">
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="doc_jaminan_desc" class="col-sm-2 control-label">Keterangan</label>
+            <div class="col-sm-10">
+              <textarea class="form-control" rows="4" name="doc_jaminan_desc[]" placeholder=""></textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="doc_jaminan_file" class="col-sm-2 control-label">File <br/><small class="text-danger" style="font-style:italic;font-weight:normal;">(optional)</small></label>
+            <div class="col-sm-4">
+              <div class="input-group">
+                <input type="file" class="hide" name="doc_jaminan_file[]">
+                <input class="form-control" type="text" disabled>
+                <span class="input-group-btn">
+                  <button class="btn btn-default click-upload" type="button">Browse</button>
+                  <input type="hidden" name="doc_jaminan_file_old[]">
+                </span>
+              </div>
+            </div>
+          </div>
+      </div>
+      @endif
       @include('documents::partials.buttons')
     </div>
 
@@ -161,17 +206,18 @@ $(function() {
   //       dateFormat: 'Y-m-d'
   //   });
 
-  $(document).on('click', '.add-asr', function(event) {
+  $(document).on('click', '.add-ao-jas', function(event) {
     event.preventDefault();
-    var btn_del = '<button type="button" class="btn btn-danger btn-xs delete-asr"><i class="glyphicon glyphicon-remove"></i> hapus</button>';
+    var btn_del = '<button type="button" class="btn btn-danger delete-ao-jas" style="position: absolute;right: 5px;top: -10px;border-radius: 0;"><i class="glyphicon glyphicon-trash"></i></button>';
     /* Act on the event */
-    var $this = $('.table-asr');
-    var row = $this.find('tbody>tr');
-    var new_row = row.eq(0).clone();
-    var mdf_new_row = new_row.find('td');
+    var $this = $('.ao-jas');
+    var new_row = $this.eq(0).clone();
+    new_row.find('.has-error').removeClass('has-error');
+    var mdf_new_row = new_row.find('.form-group');
 
-    mdf_new_row.eq(0).html(row.length+1);
-    mdf_new_row.eq(1).find('input').val('');      //jenisjaminan
+    mdf_new_row.eq(0).find('.total_asu').text($this+1);//title and button
+    
+    mdf_new_row.eq(1).find('select').val('');      //jenisjaminan
     mdf_new_row.eq(1).find('.error').remove();    //jenisjaminan
 
     mdf_new_row.eq(2).find('input').val('');   //namaasuransi
@@ -192,34 +238,31 @@ $(function() {
     mdf_new_row.eq(7).find('input').val('');    //file
     mdf_new_row.eq(7).find('.error').remove();
 
-
-    var id_editor = 'editor'+(row.length+1);
-    $this.find('tbody').prepend(new_row);
+    $this.parent().prepend(new_row);
     $('.date').datepicker(datepicker_ops);
-    var row = $this.find('tbody>tr');
+    var row = $('.ao-jas');
     $.each(row,function(index, el) {
-      var mdf = $(this).find('.action');
-      var mdf_new_row = $(this).find('td');
-      mdf_new_row.eq(0).html(index+1);
+      var mdf = $(this).find('.delete-ao-jas');
+      var mdf_new_row = $(this).find('.form-group');
+      mdf_new_row.eq(0).find('.total_asu').text(index+1);
       if(row.length==1){
-        mdf.html('');
+        mdf.remove();
       }
       else{
-        mdf.html(btn_del);
+        mdf_new_row.eq(0).append(btn_del)
       }
     });
   });
 
-  $(document).on('click', '.delete-asr', function(event) {
+  $(document).on('click', '.delete-ao-jas', function(event) {
     $(this).parent().parent().remove();
-    var $this = $('.table-asr');
-    var row = $this.find('tbody>tr');
-    $.each(row,function(index, el) {
-      var mdf_new_row = $(this).find('td');
-      mdf_new_row.eq(0).html(index+1);
-      var mdf = $(this).find('.action');
-      if(row.length==1){
-        mdf.html('');
+    var $this = $('.ao-jas');
+    $.each($this,function(index, el) {
+      var mdf_new_row = $(this).find('.form-group');
+      mdf_new_row.eq(0).find('.total_asu').text(index+1);
+      var mdf = $(this).find('.delete-ao-jas');
+      if($this.length==1){
+        mdf.remove();
       }
     });
   });

@@ -206,5 +206,19 @@
 
     $('.date').datepicker(datepicker_ops);
   });
+
+  $(document).on('click', '.delete-asr', function(event) {
+    $(this).parent().parent().remove();
+    var $this = $('.table-latar');
+    var row = $this.find('tbody>tr');
+    $.each(row,function(index, el) {
+      var mdf_new_row = $(this).find('td');
+      mdf_new_row.eq(0).html(index+1);
+      var mdf = $(this).find('.action');
+      if(row.length==1){
+        mdf.html('');
+      }
+    });
+  });
 </script>
 @endpush

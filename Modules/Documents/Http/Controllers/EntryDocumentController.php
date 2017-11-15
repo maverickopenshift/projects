@@ -12,6 +12,7 @@ use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
+use Modules\Documents\Entities\DocPo;
 use Modules\Documents\Http\Controllers\SpCreateController as SpCreate;
 use Modules\Documents\Http\Controllers\AmandemenSpCreateController as AmandemenSpCreate;
 use Modules\Documents\Http\Controllers\AmandemenKontrakCreateController as AmandemenKontrakCreate;
@@ -86,7 +87,8 @@ class EntryDocumentController extends Controller
      */
     public function store(Request $request)
     {
-      // dd($request);
+      // dd($request->po_no);
+    
       $type = $request->type;
       if($type=='sp'){
         return $this->spCreate->store($request);
@@ -248,6 +250,19 @@ class EntryDocumentController extends Controller
       $doc->doc_type = $request->type;
       $doc->doc_signing = $request->statusButton;
       $doc->save();
+
+      if(in_array($type,['turnkey','sp'])){
+          $doc_po = new DocPo();
+          $doc_po->documents_id = $doc->id;
+          $doc_po->po_no = $request->po_no;
+          $doc_po->po_date = $request->po_date;
+          $doc_po->po_vendor = $request->po_vendor;
+          $doc_po->po_pembuat = $request->po_pembuat;
+          $doc_po->po_nik = $request->po_nik;
+          $doc_po->po_approval = $request->po_approval;
+          $doc_po->po_penandatangan = $request->po_penandatangan;
+          $doc_po->save();
+        }
 
       if(count($request->doc_lampiran)>0){
         foreach($request->doc_lampiran as $key => $val){

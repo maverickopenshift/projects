@@ -54,6 +54,10 @@ class Documents extends Model
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','scope_perubahan');
     }
+    public function po()
+    {
+        return $this->hasOne('Modules\Documents\Entities\DocPo');
+    }
     public function pasal()
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','pasal_pasal');

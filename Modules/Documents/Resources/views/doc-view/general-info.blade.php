@@ -171,15 +171,27 @@
           @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
           <div class="form-group ">
             <label class="col-sm-2 control-label">No.PO</label>
-            <div class="col-sm-10 text-me">{{$doc->doc_po_no}}</div>
-          </div>
-          <div class="form-group ">
-            <label class="col-sm-2 control-label">Nama Pembuat</label>
-            <div class="col-sm-10 text-me">{{$doc->doc_po_name}}</div>
+            <div class="col-sm-10 text-me">{{$doc->po->po_no}}</div>
           </div>
           <div class="form-group ">
             <label class="col-sm-2 control-label">Tanggal Buat</label>
-            <div class="col-sm-10 text-me">{{$doc->doc_po_tgl}}</div>
+            <div class="col-sm-10 text-me">{{$doc->po->po_date}}</div>
+          </div>
+          <div class="form-group ">
+            <label class="col-sm-2 control-label">Nama Vendor</label>
+            <div class="col-sm-10 text-me">{{$doc->po->po_vendor}}</div>
+          </div>
+          <div class="form-group ">
+            <label class="col-sm-2 control-label">Nama Pembuat</label>
+            <div class="col-sm-10 text-me">{{$doc->po->po_pembuat}}</div>
+          </div>
+          <div class="form-group ">
+            <label class="col-sm-2 control-label">Nama Approval</label>
+            <div class="col-sm-10 text-me">{{$doc->po->po_approval}}</div>
+          </div>
+          <div class="form-group ">
+            <label class="col-sm-2 control-label">Nama Penandatangan</label>
+            <div class="col-sm-10 text-me">{{$doc->po->po_penandatangan}}</div>
           </div>
           @endif
           {{-- @include('documents::partials.buttons') --}}

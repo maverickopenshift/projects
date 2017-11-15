@@ -74,15 +74,20 @@ class SpCreateController
       $rules['hs_keterangan.*']  =  'sometimes|nullable|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
 
-      // $doc_jaminan_nilai = $request->doc_jaminan_nilai;
-      // $request->merge(['doc_jaminan_nilai.*' => Helpers::input_rupiah($request->doc_jaminan_nilai)]);
-      // $rules['doc_jaminan.*']           = 'required|in:PL,PM';
-      // $rules['doc_asuransi.*']          = 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-      // $rules['doc_jaminan_nilai.*']     = 'required|max:500|min:3|regex:/^[0-9 .]+$/i';
-      // $rules['doc_jaminan_startdate.*'] = 'required|date_format:"Y-m-d"';
-      // $rules['doc_jaminan_enddate.*']   = 'required|date_format:"Y-m-d"';
-      // $rules['doc_jaminan_desc.*']      = 'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_po']                = 'sometimes|nullable|po_exists|regex:/^[a-z0-9 .\-]+$/i';
+      $rule_doc_jaminan = (count($request['doc_jaminan'])>1)?'required':'sometimes|nullable';
+      $rule_doc_asuransi = (count($request['doc_asuransi'])>1)?'required':'sometimes|nullable';
+      $rule_doc_jaminan_nilai = (count($request['doc_jaminan_nilai'])>1)?'required':'sometimes|nullable';
+      $rule_doc_jaminan_startdate = (count($request['doc_jaminan_startdate'])>1)?'required':'sometimes|nullable';
+      $rule_doc_jaminan_enddate = (count($request['doc_jaminan_enddate'])>1)?'required':'sometimes|nullable';
+      $rule_doc_jaminan_desc = (count($request['doc_jaminan_desc'])>1)?'required':'sometimes|nullable';
+      $rules['doc_jaminan.*']           = $rule_doc_jaminan.'|in:PL,PM';
+      $rules['doc_asuransi.*']          = $rule_doc_asuransi.'|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['doc_jaminan_nilai.*']     = $rule_doc_jaminan_nilai.'|max:500|min:3|regex:/^[0-9 .]+$/i';
+      $rules['doc_jaminan_startdate.*'] = $rule_doc_jaminan_startdate.'|date_format:"Y-m-d"'; //|date_format:"Y-m-d"
+      $rules['doc_jaminan_enddate.*']   = $rule_doc_jaminan_enddate.'|date_format:"Y-m-d"'; //
+      $rules['doc_jaminan_desc.*']      = $rule_doc_jaminan_desc.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_jaminan_file.*']      = 'sometimes|nullable|mimes:pdf';
+      $rules['doc_po']                  = 'sometimes|nullable|po_exists|regex:/^[a-z0-9 .\-]+$/i';
 
 
 
@@ -98,9 +103,9 @@ class SpCreateController
             $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
         }
       });
-      if(isset($doc_jaminan_nilai)){
-        $request->merge(['doc_jaminan_nilai.*' => $doc_jaminan_nilai]);
-      }
+      // if(isset($doc_jaminan_nilai)){
+      //   $request->merge(['doc_jaminan_nilai.*' => $doc_jaminan_nilai]);
+      // }
 
       if(isset($hs_harga) && count($hs_harga)>0){
         $request->merge(['hs_harga'=>$hs_harga]);
@@ -173,24 +178,6 @@ class SpCreateController
       $doc->doc_parent_id = Documents::get_id_parent_sp($request->parent_kontrak);
       $doc->save();
 
-      foreach($request['doc_asuransi'] as $key => $val){
-        $asr = new DocAsuransi();
-        $asr->documents_id = $doc->id;
-        $asr->doc_jaminan = $request['doc_jaminan'][$key];
-        $asr->doc_jaminan_name = $request['doc_asuransi'][$key];
-        $asr->doc_jaminan_nilai = Helpers::input_rupiah($request['doc_jaminan_nilai'][$key]);
-        $asr->doc_jaminan_startdate = $request['doc_jaminan_startdate'][$key];
-        $asr->doc_jaminan_enddate = $request['doc_jaminan_enddate'][$key];
-        $asr->doc_jaminan_desc = $request['doc_jaminan_desc'][$key];
-        if(isset($request['doc_jaminan_file'][$key])){
-          $fileName   = Helpers::set_filename('doc_',strtolower($val));
-          $file = $request['doc_jaminan_file'][$key];
-          $file->storeAs('document/'.$request->type.'_asuransi', $fileName);
-          $asr->doc_jaminan_file = $fileName;
-        }
-        // $asr->save();
-      }
-
       if(count($request->doc_lampiran)>0){
         foreach($request->doc_lampiran as $key => $val){
           if(!empty($val)
@@ -208,6 +195,28 @@ class SpCreateController
           }
         }
       }
+
+
+        foreach($request['doc_asuransi'] as $key => $val){
+          $asr = new DocAsuransi();
+          $asr->documents_id = $doc->id;
+          $asr->doc_jaminan = $request['doc_jaminan'][$key];
+          $asr->doc_jaminan_name = $request['doc_asuransi'][$key];
+          $asr->doc_jaminan_nilai = Helpers::input_rupiah($request['doc_jaminan_nilai'][$key]);
+          $asr->doc_jaminan_startdate = $request['doc_jaminan_startdate'][$key];
+          $asr->doc_jaminan_enddate = $request['doc_jaminan_enddate'][$key];
+          $asr->doc_jaminan_desc = $request['doc_jaminan_desc'][$key];
+          // dd($asr);
+          if(isset($request['doc_jaminan_file'][$key])){
+            $fileName   = Helpers::set_filename('doc_',strtolower($val));
+            $file = $request['doc_jaminan_file'][$key];
+            $file->storeAs('document/'.$request->type.'_asuransi', $fileName);
+            $asr->doc_jaminan_file = $fileName;
+          }
+          $asr->save();
+        }
+
+
       if(count($request->pic_nama)>0){
       foreach($request['pic_nama'] as $key => $val){
         $pic = new DocPic();

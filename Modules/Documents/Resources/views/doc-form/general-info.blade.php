@@ -169,27 +169,32 @@ function ParentPO() {
   return '<tr>\
             <td width="150">No PO </td>\
             <td width="10">:</td>\
-            <td>'+nopo+'</td>\
+            <td>'+nopo+'<input type="hidden" name="po_no" value="'+nopo+'"></td>\
           </tr>\
           <tr>\
             <td>Tanggal PO</td>\
             <td> : </td>\
-            <td>27 Agustus 2017</td>\
+            <td>27 Agustus 2017<input type="hidden" name="po_date" value="2017-08-27"></td>\
           </tr>\
           <tr>\
             <td>Nama Vendor</td>\
             <td> : </td>\
-            <td>PT Jaya Makmur Sentosa</td>\
+            <td>PT Jaya Makmur Sentosa<input type="hidden" name="po_vendor" value="PT Jaya Makmur Sentosa"></td>\
           </tr>\
           <tr>\
             <td>Nama Pembuat/nik</td>\
             <td> : </td>\
-            <td>SUMARNI/123456</td>\
+            <td>SUMARNI/123456<input type="hidden" name="po_pembuat" value="SUMARNI"><input type="hidden" name="po_nik" value="123456"></td>\
           </tr>\
           <tr>\
             <td>Nama Approval PO</td>\
             <td> : </td>\
-            <td>Purwiro</td>\
+            <td>Purwiro<input type="hidden" name="po_approval" value="Purwiro"></td>\
+          </tr>\
+          <tr>\
+            <td>Nama Penandatangan PO</td>\
+            <td> : </td>\
+            <td>Januar <input type="hidden" name="po_penandatangan" value="Januar"></td>\
           </tr>';
 }
   @php

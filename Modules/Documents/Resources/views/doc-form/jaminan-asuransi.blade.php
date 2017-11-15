@@ -22,7 +22,7 @@
         <div class="form-group text-right top10 tombol">
           </div>
           <div class="form-group {{ $errors->has('doc_jaminan.'.$key) ? ' has-error' : '' }}">
-            <label for="doc_jaminan" class="col-sm-2 control-label"><span class="text-red">*</span> Jenis Jaminan</label>
+            <label for="doc_jaminan" class="col-sm-2 control-label"> Jenis Jaminan</label>
             <div class="col-sm-10">
               <select class="form-control" name="doc_jaminan[]">
                 <option value="{{$doc_jaminan[$key]}}" {!!Helper::old_prop_selected($doc,'doc_jaminan','PL'.$key)!!}>Pelaksanaan</option>
@@ -34,7 +34,7 @@
             </div>
           </div>
           <div class="form-group {{ $errors->has('doc_asuransi.'.$key) ? ' has-error' : '' }}">
-            <label for="doc_asuransi" class="col-sm-2 control-label"><span class="text-red">*</span> Nama Asuransi</label>
+            <label for="doc_asuransi" class="col-sm-2 control-label"> Nama Asuransi</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="doc_asuransi[]" value="{{$value}}"  placeholder="Masukan Nama Asuransi" autocomplete="off">
             </div>
@@ -43,7 +43,7 @@
             </div>
           </div>
           <div class="form-group {{ $errors->has('doc_jaminan_nilai.'.$key) ? ' has-error' : '' }}">
-            <label for="doc_jaminan_nilai" class="col-sm-2 control-label"><span class="text-red">*</span> Nilai Jaminan</label>
+            <label for="doc_jaminan_nilai" class="col-sm-2 control-label">Nilai Jaminan</label>
             <div class="col-sm-4">
               <div class="input-group">
                 <div class="input-group-addon mtu-set">
@@ -56,7 +56,7 @@
             </div>
           </div>
           <div class="form-group {{ $errors->has('doc_jaminan_startdate.'.$key) ? ' has-error' : '' }}">
-            <label for="doc_jaminan_startdate" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Mulai</label>
+            <label for="doc_jaminan_startdate" class="col-sm-2 control-label">Tanggal Mulai</label>
             <div class="col-sm-4">
               <div class="input-group date" data-provide="datepicker">
                   <div class="input-group-addon">
@@ -70,7 +70,7 @@
             </div>
           </div>
           <div class="form-group {{ $errors->has('doc_jaminan_enddate.'.$key) ? ' has-error' : '' }}">
-            <label for="doc_jaminan_enddate" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Akhir</label>
+            <label for="doc_jaminan_enddate" class="col-sm-2 control-label">Tanggal Akhir</label>
             <div class="col-sm-4">
               <div class="input-group date" data-provide="datepicker">
                 <div class="input-group-addon">
@@ -115,7 +115,7 @@
       <div class="form-group text-right top10 tombol">
         </div>
         <div class="form-group">
-          <label for="doc_jaminan" class="col-sm-2 control-label"><span class="text-red">*</span> Jenis Jaminan</label>
+          <label for="doc_jaminan" class="col-sm-2 control-label">Jenis Jaminan</label>
           <div class="col-sm-10">
             <select class="form-control" name="doc_jaminan[]">
               <option value="PL">Pelaksanaan</option>
@@ -124,13 +124,13 @@
           </div>
         </div>
         <div class="form-group">
-          <label for="doc_asuransi" class="col-sm-2 control-label"><span class="text-red">*</span> Nama Asuransi</label>
+          <label for="doc_asuransi" class="col-sm-2 control-label">Nama Asuransi</label>
           <div class="col-sm-10">
             <input type="text" class="form-control" name="doc_asuransi[]" placeholder="Masukan Nama Asuransi" autocomplete="off">
           </div>
         </div>
         <div class="form-group">
-          <label for="doc_jaminan_nilai" class="col-sm-2 control-label"><span class="text-red">*</span> Nilai Jaminan</label>
+          <label for="doc_jaminan_nilai" class="col-sm-2 control-label">Nilai Jaminan</label>
           <div class="col-sm-4">
             <div class="input-group">
               <div class="input-group-addon mtu-set">
@@ -140,7 +140,7 @@
           </div>
         </div>
         <div class="form-group">
-          <label for="doc_jaminan_startdate" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Mulai</label>
+          <label for="doc_jaminan_startdate" class="col-sm-2 control-label">Tanggal Mulai</label>
           <div class="col-sm-4">
             <div class="input-group date" data-provide="datepicker">
                 <div class="input-group-addon">
@@ -151,7 +151,7 @@
           </div>
         </div>
         <div class="form-group">
-          <label for="doc_jaminan_enddate" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Akhir</label>
+          <label for="doc_jaminan_enddate" class="col-sm-2 control-label">Tanggal Akhir</label>
           <div class="col-sm-4">
             <div class="input-group date" data-provide="datepicker">
               <div class="input-group-addon">
@@ -193,8 +193,6 @@
     var new_row = row.clone();
     var $clone_btn = $this.clone();
     var btn_del = '<button type="button" class="btn btn-danger btn-xs delete-asr"><i class="glyphicon glyphicon-remove"></i> hapus</button>';
-
-
 
     new_row.find('input[type="text"]').val('');
     new_row.find('input[type="text"]').val('');

@@ -146,7 +146,7 @@ class DocumentsController extends Controller
     {
       $id = $request->id;
       $doc = $this->documents->where('documents.id','=',$id);
-      $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan')->first();
+      $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po')->first();
       if(!$dt || !$this->documents->check_permission_doc($id)){
         abort(404);
       }
@@ -223,11 +223,12 @@ class DocumentsController extends Controller
     {
       $id = $request->id;
       $doc_type = DocType::where('name','=',$request->type)->first();
-      $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan')->first();
+      $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po')->first();
+
 
       // dd($meta);
-      $no_kontrak=$this->documents->create_no_kontrak($dt->doc_template_id,$id);
-      $loker=$this->documents->get_loker($id);
+      // $no_kontrak=$this->documents->create_no_kontrak($dt->doc_template_id,$id);
+      // $loker=$this->documents->get_loker($id);
       // dd($loker);
       if(!$doc_type || !$dt){
         abort(404);
@@ -236,8 +237,10 @@ class DocumentsController extends Controller
       $data['page_title'] = 'View Kontrak - '.$doc_type['title'];
       $data['doc'] = $dt;
       $data['id'] = $id;
-      $data['no_kontrak'] = $no_kontrak;
-      $data['no_loker'] = $loker;
+      // $data['no_kontrak'] = $no_kontrak;
+      // $data['no_loker'] = $loker;
+      $data['no_kontrak'] = "-";
+      $data['no_loker'] = "-";
       $data['pegawai'] = \App\User::get_user_pegawai();
 
       return view('documents::view')->with($data);

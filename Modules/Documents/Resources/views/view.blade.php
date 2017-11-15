@@ -12,7 +12,7 @@
       <ul class="nav nav-tabs">
         <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
 
-        @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak']))
+        @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter']))
           <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
         @else
           <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
@@ -32,10 +32,10 @@
         <div class="tab-content">
           <div class="tab-pane active" id="tab_1">
             @include('documents::partials.alert-errors')
-            @if($doc_type['title'] == "Amandemen SP" || $doc_type['title'] == "Amandemen Kontrak")
-              @include('documents::doc-view.amademen')
-            @else
+            @if(in_array($doc_type->name,['turnkey','sp','khs']))
               @include('documents::doc-view.general-info')
+            @else
+              @include('documents::doc-view.amademen')
             @endif
             <div class="clearfix"></div>
             <div class="row">

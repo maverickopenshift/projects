@@ -31,6 +31,7 @@
           <label for="ttd_pihak2" class="col-sm-2 control-label">Penandatangan Pihak II</label>
           <div class="col-sm-10 text-me">{{$doc->doc_pihak2_nama}}</div>
         </div>
+        @include('documents::doc-view.general-info-right')
         <div class="form-group">
           <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran 1 <br/><small style="font-weight:normal" class="text-info"><i>(Lembar Tanda Tangan)</i></small></label>
           <div class="col-sm-5">

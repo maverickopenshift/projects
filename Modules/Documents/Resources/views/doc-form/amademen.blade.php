@@ -52,11 +52,12 @@
             <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Lampiran 1 <br/><small style="font-weight:normal" class="text-info"><i>(Lembar Tanda Tangan)</i></small></label>
             <div class="col-sm-6">
               <div class="input-group">
-                <input type="file" class="hide" name="doc_lampiran">
-                <input class="form-control" type="text" disabled>
-                <span class="input-group-btn">
+                <input type="file" class="hide" name="doc_lampiran[]">
+                <input class="form-control" type="text" name="name_lampiran[]" val="lampiran" disabled>
+                <div class="input-group-btn">
                   <button class="btn btn-default click-upload" type="button">Browse</button>
-                </span>
+                  <button type="button" class="btn btn-default add-doc_lampiran"><i class="glyphicon glyphicon-plus"></i></button>
+                </div>
               </div>
             </div>
             <div class="col-sm-10 col-sm-offset-2">
@@ -71,6 +72,47 @@
 @push('scripts')
 <script>
 $(function() {
+  add_select('doc_lampiran');
+  delete_select('doc_lampiran');
+
+  function add_select(attr) {
+    $(document).on('click','.add-'+attr,function(){
+      var _this = $(this);
+      var content = _this.parent().parent();
+      var btnDelete = content.find('.delete-'+attr);
+      if(btnDelete.length==0){
+        content.find('.input-group-btn').append('<button type="button" class="btn btn-default delete-'+attr+'"><i class="glyphicon glyphicon-trash"></i></button>');
+      }
+      content.after(create_content(attr));
+    });
+  }
+  function delete_select(attr) {
+    $(document).on('click','.delete-'+attr,function(){
+      var _this = $(this);
+      var content = _this.parent().parent();
+      content.remove();
+      var attrNya = $('.'+attr);
+      if(attrNya.length==1){
+        attrNya.parent().find('.delete-'+attr).remove();
+      }
+    });
+  }
+  function create_content(attr){
+    var content = $('.'+attr),btnDelete;
+    //console.log(content.length)
+    if(content.length>0){
+      btnDelete = '<button type="button" class="btn btn-default delete-'+attr+'"><i class="glyphicon glyphicon-trash"></i></button>'
+    }
+    return '<div class="input-group">\
+      <input type="file" class="hide" name="'+attr+'[]">\
+      <input class="form-control" type="text" name="name_lampiran[]" val="lampiran"  disabled>\
+      <div class="input-group-btn">\
+        <button class="btn btn-default click-upload" type="button">Browse</button>\
+        <button type="button" class="btn btn-default add-'+attr+'"><i class="glyphicon glyphicon-plus"></i></button>\
+        '+btnDelete+'\
+      </div>\
+    </div>';
+  }
   var selectUserVendor = $(".select-user-vendor").select2({
       placeholder : "Pilih Pihak II....",
       ajax: {

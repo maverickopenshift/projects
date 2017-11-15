@@ -1,5 +1,5 @@
 <div class="form-group">
-  <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Lampiran 1 <br/><small style="font-weight:normal" class="text-info"><i>(Lembar Tanda Tangan)</i></small></label>
+  <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Lampiran 1</label>
   <div class="col-sm-6">
     @php
       $lampiran_old = Helper::old_prop_each($doc,'doc_lampiran_old');

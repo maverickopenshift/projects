@@ -38,15 +38,6 @@
               {!!Helper::error_help($errors,'doc_date')!!}
             </div>
           </div>
-          <div class="form-group {{ $errors->has('doc_pihak1') ? ' has-error' : '' }}">
-            <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Pihak I</label>
-            <div class="col-sm-6">
-              <input type="text" class="form-control" name="doc_pihak1" id="pihak1" value="{{old('doc_pihak1',Helper::prop_exists($doc,'doc_pihak1'))}}" autocomplete="off">
-            </div>
-            <div class="col-sm-10 col-sm-offset-2">
-              {!!Helper::error_help($errors,'doc_pihak1')!!}
-            </div>
-          </div>
           @include('documents::doc-form.general-info-right')
           <div class="form-group {{ $errors->has('doc_lampiran') ? ' has-error' : '' }}">
             <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Lampiran 1 <br/><small style="font-weight:normal" class="text-info"><i>(Lembar Tanda Tangan)</i></small></label>

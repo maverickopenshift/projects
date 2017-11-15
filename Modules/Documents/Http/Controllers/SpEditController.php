@@ -1,6 +1,10 @@
 <?php
 namespace Modules\Documents\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Response;
+
 use Modules\Documents\Entities\DocType;
 use Modules\Documents\Entities\Documents;
 use Modules\Documents\Entities\DocBoq;
@@ -8,12 +12,13 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocAsuransi;
+
 use App\Helpers\Helpers;
 use Validator;
 use DB;
 use Auth;
 
-class SpCreateController
+class SpEditController extends Controller
 {
     public function __construct()
     {
@@ -21,7 +26,10 @@ class SpCreateController
     }
     public function store($request)
     {
+      // dd($request);
       $type = $request->type;
+      $id = $request->id;
+      // dd($id);
       $doc_nilai_material = $request->doc_nilai_material;
       $doc_nilai_jasa = $request->doc_nilai_jasa;
       $request->merge(['doc_nilai_material' => Helpers::input_rupiah($request->doc_nilai_material)]);
@@ -49,7 +57,6 @@ class SpCreateController
       }
       $rules = [];
 
-      if($request->statusButton == '0'){
       $rules['parent_kontrak']   =  'required|kontrak_exists';
       $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
@@ -120,19 +127,9 @@ class SpCreateController
                     ->withErrors($validator);
       }
 
-    }else{
-        $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-        $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
-        if ($validator->fails ()){
-          return redirect()->back()
-                      ->withInput($request->input())
-                      ->withErrors($validator);
-        }
-
-    }
       // dd('berhasil');
-      $doc = new Documents();
+      $doc = Documents::where('id',$id)->first();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
       $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
@@ -141,7 +138,7 @@ class SpCreateController
       $doc->doc_pihak1 = $request->doc_pihak1;
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
-      $doc->user_id = Auth::id();
+      // $doc->user_id = Auth::id();
       $doc->supplier_id = $request->supplier_id;
 
       // if(isset($request->doc_lampiran)){
@@ -174,11 +171,29 @@ class SpCreateController
       $doc->doc_sow = $request->doc_sow;
       $doc->doc_type = $request->type;
       $doc->doc_parent = 0;
-      $doc->doc_signing = $request->statusButton;
-      $doc->doc_parent_id = Documents::get_id_parent_sp($request->parent_kontrak);
+      // $doc->doc_signing = $request->statusButton;
+      $doc->doc_parent_id = $request->parent_kontrak;
+      $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
       $doc->save();
 
+      if(count($request->doc_po_no)>0){
+        $doc_po = DocPo::where('id',$id)->first();
+        // $doc_po->documents_id = $doc->id;
+        $doc_po->po_no = $request->po_no;
+        $doc_po->po_date = $request->po_date;
+        $doc_po->po_vendor = $request->po_vendor;
+        $doc_po->po_pembuat = $request->po_pembuat;
+        $doc_po->po_nik = $request->po_nik;
+        $doc_po->po_approval = $request->po_approval;
+        $doc_po->po_penandatangan = $request->po_penandatangan;
+        $doc_po->save();
+      }
+
       if(count($request->doc_lampiran)>0){
+        DocMeta::where([
+          ['documents_id','=',$doc->id],
+          ['meta_type','=','lampiran_ttd']
+          ])->delete();
         foreach($request->doc_lampiran as $key => $val){
           if(!empty($val)
           ){
@@ -197,6 +212,9 @@ class SpCreateController
       }
 
       if(count($request->doc_asuransi)>0){
+        DocAsuransi::where([
+          ['documents_id','=',$doc->id]
+          ])->delete();
         foreach($request['doc_asuransi'] as $key => $val){
           if(!empty($val)
           ){
@@ -222,19 +240,30 @@ class SpCreateController
 
 
       if(count($request->pic_nama)>0){
-      foreach($request['pic_nama'] as $key => $val){
-        $pic = new DocPic();
-        $pic->documents_id = $doc->id;
-        $pic->pegawai_id = $request['pic_id'][$key];
-        $pic->nama = $val;
-        $pic->email = $request['pic_email'][$key];
-        $pic->jabatan = $request['pic_jabatan'][$key];
-        $pic->telp = $request['pic_telp'][$key];
-        $pic->posisi = $request['pic_posisi'][$key];
-        $pic->save();
+          DocPic::where([
+            ['documents_id','=',$doc->id]
+            ])->delete();
+        foreach($request['pic_nama'] as $key => $val){
+          if(!empty($val)
+          ){
+            $pic = new DocPic();
+            $pic->documents_id = $doc->id;
+            $pic->pegawai_id = $request['pic_id'][$key];
+            $pic->nama = $val;
+            $pic->email = $request['pic_email'][$key];
+            $pic->jabatan = $request['pic_jabatan'][$key];
+            $pic->telp = $request['pic_telp'][$key];
+            $pic->posisi = $request['pic_posisi'][$key];
+            $pic->save();
+          }
+        }
       }
-    }
+
       if(count($request->lt_name)>0){
+        DocMeta::where([
+          ['documents_id','=',$doc->id],
+          ['meta_type','=','latar_belakang']
+          ])->delete();
         foreach($request->lt_name as $key => $val){
           if(!empty($val)
               && !empty($request['lt_desc'][$key])
@@ -254,7 +283,11 @@ class SpCreateController
           }
         }
       }
+
       if(count($request->hs_harga)>0){
+        DocBoq::where([
+          ['documents_id','=',$doc->id]
+          ])->delete();
         foreach($request->hs_harga as $key => $val){
           if(!empty($val)
               && !empty($request['hs_kode_item'][$key])
@@ -287,11 +320,6 @@ class SpCreateController
 
       //dd($request->input());
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
-      if($request->statusButton == '0'){
-      return redirect()->route('doc',['status'=>'proses']);
-      }else{
-        return redirect()->route('doc',['status'=>'draft']);
-      }
+      return redirect()->back();
     }
-
 }

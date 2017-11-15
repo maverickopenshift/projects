@@ -49,7 +49,7 @@
           </div>
           @include('documents::doc-form.general-info-right')
           @include('documents::doc-form-edit.lampiran-1')
-          
+
           {{-- @include('documents::partials.buttons') --}}
       </div>
     </div>

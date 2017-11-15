@@ -84,7 +84,7 @@ class EntryDocumentController extends Controller
     public function store(Request $request)
     {
       // dd($request->po_no);
-    
+
       $type = $request->type;
       if($type=='sp'){
         return $this->spCreate->store($request);
@@ -144,7 +144,30 @@ class EntryDocumentController extends Controller
       $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
-      $rules['doc_lampiran.*']   =  'required|mimes:pdf';
+      $check_new_lampiran = false;
+      foreach($request->doc_lampiran_old as $k => $v){
+        if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
+          $new_lamp[] = '';
+          $new_lamp_up[] = $request->doc_lampiran[$k];
+          $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+        }
+        else if(empty($v)){
+          $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+          if(!isset($request->doc_lampiran[$k])){
+            $new_lamp[] = $v;
+            $new_lamp_up[] = $v;
+          }
+          else{
+            $new_lamp[] = '';
+            $new_lamp_up[] = $request->doc_lampiran[$k];
+          }
+        }
+        else{
+          $new_lamp[] = $v;
+          $new_lamp_up[] = $v;
+        }
+      }
+      $request->merge(['doc_lampiran' => $new_lamp]);
 
       if(in_array($type,['turnkey','sp'])){
           // $doc_jaminan_nilai = $request->doc_jaminan_nilai;
@@ -210,6 +233,8 @@ class EntryDocumentController extends Controller
     $rules['doc_template_id']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
     $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
     $rules['pic_posisi.*']    =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
     if ($validator->fails ()){
@@ -242,6 +267,7 @@ class EntryDocumentController extends Controller
       $doc->save();
 
       if(in_array($type,['turnkey','sp'])){
+        if(count($request->doc_po_no)>0){
           $doc_po = new DocPo();
           $doc_po->documents_id = $doc->id;
           $doc_po->po_no = $request->po_no;
@@ -253,6 +279,7 @@ class EntryDocumentController extends Controller
           $doc_po->po_penandatangan = $request->po_penandatangan;
           $doc_po->save();
         }
+      }
 
       if(count($request->doc_lampiran)>0){
         foreach($request->doc_lampiran as $key => $val){
@@ -272,25 +299,29 @@ class EntryDocumentController extends Controller
         }
       }
 
-
       if(in_array($type,['turnkey','sp'])){
-        foreach($request['doc_asuransi'] as $key => $val){
-          $asr = new DocAsuransi();
-          $asr->documents_id = $doc->id;
-          $asr->doc_jaminan = $request['doc_jaminan'][$key];
-          $asr->doc_jaminan_name = $request['doc_asuransi'][$key];
-          $asr->doc_jaminan_nilai = Helpers::input_rupiah($request['doc_jaminan_nilai'][$key]);
-          $asr->doc_jaminan_startdate = $request['doc_jaminan_startdate'][$key];
-          $asr->doc_jaminan_enddate = $request['doc_jaminan_enddate'][$key];
-          $asr->doc_jaminan_desc = $request['doc_jaminan_desc'][$key];
-          // dd($asr);
-          if(isset($request['doc_jaminan_file'][$key])){
-            $fileName   = Helpers::set_filename('doc_',strtolower($val));
-            $file = $request['doc_jaminan_file'][$key];
-            $file->storeAs('document/'.$request->type.'_asuransi', $fileName);
-            $asr->doc_jaminan_file = $fileName;
+        if(count($request->doc_asuransi)>0){
+          foreach($request['doc_asuransi'] as $key => $val){
+            if(!empty($val)
+            ){
+              $asr = new DocAsuransi();
+              $asr->documents_id = $doc->id;
+              $asr->doc_jaminan = $request['doc_jaminan'][$key];
+              $asr->doc_jaminan_name = $request['doc_asuransi'][$key];
+              $asr->doc_jaminan_nilai = Helpers::input_rupiah($request['doc_jaminan_nilai'][$key]);
+              $asr->doc_jaminan_startdate = $request['doc_jaminan_startdate'][$key];
+              $asr->doc_jaminan_enddate = $request['doc_jaminan_enddate'][$key];
+              $asr->doc_jaminan_desc = $request['doc_jaminan_desc'][$key];
+              // dd($asr);
+              if(isset($request['doc_jaminan_file'][$key])){
+                $fileName   = Helpers::set_filename('doc_',strtolower($val));
+                $file = $request['doc_jaminan_file'][$key];
+                $file->storeAs('document/'.$request->type.'_asuransi', $fileName);
+                $asr->doc_jaminan_file = $fileName;
+              }
+              $asr->save();
+            }
           }
-          $asr->save();
         }
       }
 

@@ -150,20 +150,23 @@ class DocumentsController extends Controller
 
 
       // dd($meta);
-      // $no_kontrak=$this->documents->create_no_kontrak($dt->doc_template_id,$id);
-      // $loker=$this->documents->get_loker($id);
+      $no_kontrak=$this->documents->create_no_kontrak($dt->doc_template_id,$id);
+      $loker=$this->documents->get_loker($id);
       // dd($loker);
       if(!$doc_type || !$dt){
+        abort(404);
+      }
+      if(!$this->documents->check_permission_doc($id,$doc_type->name)){
         abort(404);
       }
       $data['doc_type'] = $doc_type;
       $data['page_title'] = 'View Kontrak - '.$doc_type['title'];
       $data['doc'] = $dt;
       $data['id'] = $id;
-      // $data['no_kontrak'] = $no_kontrak;
-      // $data['no_loker'] = $loker;
-      $data['no_kontrak'] = "-";
-      $data['no_loker'] = "-";
+      $data['no_kontrak'] = $no_kontrak;
+      $data['no_loker'] = $loker;
+      // $data['no_kontrak'] = "-";
+      // $data['no_loker'] = "-";
       $data['pegawai'] = \App\User::get_user_pegawai();
 
       return view('documents::view')->with($data);

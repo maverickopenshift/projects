@@ -46,7 +46,7 @@
                   </div>
                   {!!Helper::error_help($errors,'scope_file.'.$key)!!}
                   @if(isset($scope_file[$key]))
-                    <a target="_blank" href="{{route('supplier.legaldokumen.file',['filename'=>$scope_file[$key]])}}"><i class="glyphicon glyphicon-paperclip"></i> {{$scope_file[$key]}}</a>
+                    <a target="_blank" href="{{route('doc.file.scope',['filename'=>$scope_file[$key]])}}"><i class="glyphicon glyphicon-paperclip"></i> {{$scope_file[$key]}}</a>
                   @endif
                 </td>
                 <td class="action">

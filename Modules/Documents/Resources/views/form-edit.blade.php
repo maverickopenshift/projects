@@ -24,7 +24,7 @@
         <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
 
         @if(in_array($doc_type->name,['khs','turnkey']))
-          <li><a href="#tab_4" data-toggle="tab">PASAL PENTING</a></li>
+          <li><a href="#tab_4" data-toggle="tab">PASAL KHUSUS</a></li>
         @endif
 
         @if(in_array($doc_type->name,['turnkey','sp']))
@@ -36,7 +36,7 @@
           <div class="tab-pane active" id="tab_1">
             @include('documents::partials.alert-errors')
             @if(in_array($doc_type->name,['turnkey','sp','khs']))
-              @include('documents::doc-form-edit.general-info')  
+              @include('documents::doc-form-edit.general-info')
             @else
               @include('documents::doc-form-edit.amademen')
             @endif

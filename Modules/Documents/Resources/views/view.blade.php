@@ -21,7 +21,7 @@
         <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
 
         @if(in_array($doc_type->name,['turnkey','khs']))
-          <li><a href="#tab_4" data-toggle="tab">PASAL PENTING</a></li>
+          <li><a href="#tab_4" data-toggle="tab">PASAL KHUSUS</a></li>
         @endif
 
         @if(in_array($doc_type->name,['turnkey','sp']))

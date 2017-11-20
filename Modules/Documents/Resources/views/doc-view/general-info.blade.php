@@ -91,7 +91,7 @@
             <div class="form-group">
               <label for="prinsipal_st" class="col-sm-2 control-label">Cara Pengadaan</label>
               <div class="col-sm-10 text-me">
-                {{($doc->doc_proc_process=='P')?'Pelanggan':''}}
+                {{($doc->doc_proc_process=='P')?'Pelelangan':''}}
                 {{($doc->doc_proc_process=='PL')?'Pemilihan Langsung':''}}
                 {{($doc->doc_proc_process=='TL')?'Penunjukan Langsung':''}}
               </div>
@@ -101,7 +101,7 @@
               <label class="col-sm-2 control-label">Mata Uang</label>
               <div class="col-sm-10 text-me">{{$doc->doc_mtu}}</div>
             </div>
-          @if($doc_type->name!="sp")
+          @if($doc_type->name!="sp" && $doc_type->name!="khs")
             <div class="form-group">
               <label for="bdn_usaha" class="col-sm-2 control-label">Nilai Kontrak</label>
               <div class="col-sm-10 text-me">{{$doc->doc_value}}</div>

@@ -13,7 +13,8 @@
         }
       @endphp
       <ul class="nav nav-tabs">
-        <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
+        <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a>
+        <input type="hidden" id="statusButton" name="statusButton"></li>
 
         @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter']))
           <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
@@ -36,7 +37,7 @@
           <div class="tab-pane active" id="tab_1">
             @include('documents::partials.alert-errors')
             @if(in_array($doc_type->name,['turnkey','sp','khs']))
-              @include('documents::doc-form.general-info')  
+              @include('documents::doc-form.general-info')
             @else
               @include('documents::doc-form.amademen')
             @endif
@@ -114,6 +115,16 @@ $(function () {
   });
   $('.btnPrevious').click(function(){
    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
+  });
+
+  $(document).on('click', '#btn-draft', function(event) {
+    $('#statusButton').val('2');
+    // var sttaus = $('#statusButton').val();
+    // alert(sttaus);die();
+  });
+
+  $(document).on('click', '#btn-submit', function(event) {
+    $('#statusButton').val('0');
   });
 });
 </script>

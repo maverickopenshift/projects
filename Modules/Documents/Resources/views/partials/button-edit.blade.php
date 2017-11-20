@@ -9,7 +9,7 @@
   @if($doc->doc_signing==1)
     <button type="submit" class="btn btn-success" style="padding:5px 20px;font-weight:bold;font-size:16px;" id="btn-simpan">SIMPAN</button>
   @endif --}}
-  <button type="submit" class="btn btn-success" style="padding:5px 20px;font-weight:bold;font-size:16px;">SIMPAN</button>
+  <button type="submit" class="btn btn-success" style="padding:5px 20px;font-weight:bold;font-size:16px;">SUBMIT</button>
 </div>
 @push('scripts')
 <script>
@@ -17,18 +17,18 @@
 //   // $('.formatTanggal').datepicker({
 //   //       dateFormat: 'Y-m-d'
 //   //   });
-// 
+//
 //   $(document).on('click', '#btn-draft', function(event) {
 //     $('#statusButton2').val('2');
 //   });
-// 
+//
 //   $(document).on('click', '#btn-submit', function(event) {
 //     $('#statusButton2').val('0');
 //   });
 //   $(document).on('click', '#btn-simpan', function(event) {
 //     $('#statusButton2').val('1');
 //   });
-// 
+//
 // });
 </script>
 @endpush

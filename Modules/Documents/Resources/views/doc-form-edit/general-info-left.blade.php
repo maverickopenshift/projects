@@ -104,7 +104,7 @@
         <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Cara Pengadaan</label>
         <div class="col-sm-6">
           <select class="form-control" name="doc_proc_process">
-            <option value="P" {!!Helper::old_prop_selected($doc,'doc_proc_process','P')!!}>Pelanggan</option>
+            <option value="P" {!!Helper::old_prop_selected($doc,'doc_proc_process','P')!!}>Pelelangan</option>
             <option value="PL" {!!Helper::old_prop_selected($doc,'doc_proc_process','PL')!!}>Pemilihan Langsung</option>
             <option value="TL" {!!Helper::old_prop_selected($doc,'doc_proc_process','TL')!!}>Penunjukan Langsung</option>
           </select>
@@ -126,7 +126,7 @@
           {!!Helper::error_help($errors,'doc_mtu')!!}
         </div>
       </div>
-    @if($doc_type->name!="sp")
+    @if($doc_type->name!="sp" && $doc_type->name!="khs")
       <div class="form-group {{ $errors->has('doc_value') ? ' has-error' : '' }}">
         <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Nilai Kontrak</label>
         <div class="col-sm-3">

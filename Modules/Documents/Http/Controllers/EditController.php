@@ -61,7 +61,7 @@ class EditController extends Controller
     if(in_array($type,['amandemen_kontrak','adendum','side_letter'])){
       $dt->parent_kontrak = $dt->doc_parent_id;
       $dt->parent_kontrak_text = $this->documents->select('doc_no')->where('id','=',$dt->doc_parent_id)->first()->doc_no;
-    
+
     }
     if(count($dt->scope_perubahan)>0){
       foreach($dt->scope_perubahan as $key => $val){
@@ -80,7 +80,7 @@ class EditController extends Controller
         $dt->scope_judul     = $scop['awal'];
         $dt->scope_isi    = $scop['akhir'];
       }
-      
+
       $dt->scope_file     = $scop['file'];
       $dt->scope_file_old = $scop['file'];
     }
@@ -232,7 +232,9 @@ class EditController extends Controller
     $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
     $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
-    $rules['doc_value']        =  'required|max:500|min:3|regex:/^[0-9 .]+$/i';
+    if($type!='khs'){
+      $rules['doc_value']        =  'required|max:500|min:3|regex:/^[0-9 .]+$/i';
+    }
     $rules['doc_sow']          =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
     $rules['hs_kode_item.*']   =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
@@ -320,10 +322,10 @@ class EditController extends Controller
         $request->merge(['doc_jaminan_file' => $new_jfile]);
    }
 
-    $rule_lt_name = (count($request['lt_name'])>0 && count($request['lt_file'])>0)?'required':'sometimes|nullable';
-    $rule_lt_desc = (count($request['lt_desc'])>0 && count($request['lt_file'])>0)?'required':'sometimes|nullable';
-    $rules['lt_desc.*']  =  $rule_lt_desc.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['lt_name.*']  =  $rule_lt_name.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    // $rule_lt_name = (count($request['lt_name'])>0 && count($request['lt_file'])>0)?'required':'sometimes|nullable';
+    // $rule_lt_desc = (count($request['lt_desc'])>0 && count($request['lt_file'])>0)?'required':'sometimes|nullable';
+    $rules['lt_desc.*']  =  'required|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['lt_name.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
     $check_new_lt_file = false;
     foreach($request->lt_file_old as $k => $v){

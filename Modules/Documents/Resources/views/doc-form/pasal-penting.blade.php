@@ -1,7 +1,7 @@
 <div class="box">
     <div class="box-header with-border">
       <h3 class="box-title">
-          Pasal Penting
+          Pasal Khusus
       </h3>
     </div>
     <!-- /.box-header -->
@@ -56,9 +56,9 @@
             @endif
         </tbody>
         </table>
-        @if($doc_type->name=="khs")
+        {{-- @if($doc_type->name=="khs") --}}
               @include('documents::partials.buttons')
-        @endif
+        {{-- @endif --}}
     </div>
 <!-- /.box-body -->
 </div>

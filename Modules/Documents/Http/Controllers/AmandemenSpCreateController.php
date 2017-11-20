@@ -63,11 +63,35 @@ class AmandemenSpCreateController
     $rules['scope_awal.*']  =  $rule_scope_awal.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
     $rules['scope_akhir.*']  =  $rule_scope_akhir.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
-    $rule_lt_name = (count($request['lt_name'])>1)?'required':'sometimes|nullable';
-    $rule_lt_desc = (count($request['lt_desc'])>1)?'required':'sometimes|nullable';
-    $rules['lt_file.*']  =  'sometimes|nullable|mimes:pdf';
-    $rules['lt_desc.*']  =  $rule_lt_desc.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['lt_name.*']  =  $rule_lt_name.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    // $rule_lt_name = (count($request['lt_name'])>1)?'required':'sometimes|nullable';
+    // $rule_lt_desc = (count($request['lt_desc'])>1)?'required':'sometimes|nullable';
+    $rules['lt_desc.*']  =  'required|date_format:"Y-m-d"';
+    $rules['lt_name.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
+
+    $check_new_file = false;
+    foreach($request->lt_file_old as $k => $v){
+      if(isset($request->lt_file[$k]) && is_object($request->lt_file[$k]) && !empty($v)){//jika ada file baru
+        $new_file[] = '';
+        $new_file_up[] = $request->lt_file[$k];
+        $rules['lt_file.'.$k] = 'required|mimes:pdf';
+      }
+      else if(empty($v)){
+        $rules['lt_file.'.$k] = 'required|mimes:pdf';
+        if(!isset($request->lt_file[$k])){
+          $new_file[] = $v;
+          $new_file_up[] = $v;
+        }
+        else{
+          $new_file[] = '';
+          $new_file_up[] = $request->lt_file[$k];
+        }
+      }
+      else{
+        $new_file[] = $v;
+        $new_file_up[] = $v;
+      }
+    }
+    $request->merge(['lt_file' => $new_file]);
 
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 

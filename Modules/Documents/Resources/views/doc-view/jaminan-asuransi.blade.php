@@ -9,7 +9,10 @@
       </div>
       <div class="form-group">
         <label for="doc_jaminan" class="col-sm-2 control-label">Jenis Jaminan</label>
-        <div class="col-sm-10 text-me">{{$dt->doc_jaminan or '-'}}</div>
+        <div class="col-sm-10 text-me">
+          {{($dt->doc_jaminan=='PL')?'Pelaksanaan':''}}
+          {{($dt->doc_jaminan=='PM')?'Pemeliharaan':''}}
+        </div>
       </div>
       <div class="form-group">
         <label for="doc_asuransi" class="col-sm-2 control-label">Nama Asuransi</label>

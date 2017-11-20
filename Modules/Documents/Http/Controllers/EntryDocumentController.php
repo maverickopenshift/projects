@@ -83,6 +83,7 @@ class EntryDocumentController extends Controller
      */
     public function store(Request $request)
     {
+      // dd($request->input());
       // dd($request->po_no);
 
       $type = $request->type;
@@ -120,7 +121,6 @@ class EntryDocumentController extends Controller
       }
 
       $rules = [];
-
       if($request->statusButton == '0'){
 
       $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
@@ -133,7 +133,9 @@ class EntryDocumentController extends Controller
       $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
       $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['doc_value']        =  'required|max:500|min:3|regex:/^[0-9 .]+$/i';
+      if($type!='khs'){
+        $rules['doc_value']        =  'required|max:500|min:3|regex:/^[0-9 .]+$/i';
+      }
       $rules['doc_sow']          =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
       $rules['hs_kode_item.*']   =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
@@ -189,11 +191,35 @@ class EntryDocumentController extends Controller
           $rules['doc_po']                  = 'sometimes|nullable|po_exists|regex:/^[a-z0-9 .\-]+$/i';
      }
 
-      $rule_lt_name = (count($request['lt_name'])>1)?'required':'sometimes|nullable';
-      $rule_lt_desc = (count($request['lt_desc'])>1)?'required':'sometimes|nullable';
-      $rules['lt_file.*']  =  'sometimes|nullable|mimes:pdf';
-      $rules['lt_desc.*']  =  $rule_lt_desc.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['lt_name.*']  =  $rule_lt_name.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+      // $rule_lt_name = (count($request['lt_name'])>1)?'required':'required';
+      // $rule_lt_desc = (count($request['lt_desc'])>1)?'required':'required';
+      $rules['lt_desc.*']  =  'required|date_format:"Y-m-d"';
+      $rules['lt_name.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
+
+      $check_new_file = false;
+      foreach($request->lt_file_old as $k => $v){
+        if(isset($request->lt_file[$k]) && is_object($request->lt_file[$k]) && !empty($v)){//jika ada file baru
+          $new_file[] = '';
+          $new_file_up[] = $request->lt_file[$k];
+          $rules['lt_file.'.$k] = 'required|mimes:pdf';
+        }
+        else if(empty($v)){
+          $rules['lt_file.'.$k] = 'required|mimes:pdf';
+          if(!isset($request->lt_file[$k])){
+            $new_file[] = $v;
+            $new_file_up[] = $v;
+          }
+          else{
+            $new_file[] = '';
+            $new_file_up[] = $request->lt_file[$k];
+          }
+        }
+        else{
+          $new_file[] = $v;
+          $new_file_up[] = $v;
+        }
+      }
+      $request->merge(['lt_file' => $new_file]);
 
       $rule_ps_pasal = (count($request['ps_pasal'])>1)?'required':'sometimes|nullable';
       $rule_ps_judul = (count($request['ps_judul'])>1)?'required':'sometimes|nullable';
@@ -244,6 +270,7 @@ class EntryDocumentController extends Controller
     }
 
 }
+// dd("masuk");
       $doc = new Documents();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;

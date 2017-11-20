@@ -1,7 +1,7 @@
 <div class="box">
     <div class="box-header with-border">
       <h3 class="box-title">
-          Scoupe Perubahan
+          Scope Perubahan
       </h3>
     </div>
     <!-- /.box-header -->
@@ -71,7 +71,7 @@
           @endif
       </tbody>
       </table>
-    {{-- @include('documents::partials.buttons') --}}
+    @include('documents::partials.buttons')
     </div>
 <!-- /.box-body -->
 </div>

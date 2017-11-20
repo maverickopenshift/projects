@@ -91,11 +91,11 @@ class AmandemenKontrakEditController extends Controller
     }
     $request->merge(['scope_file' => $new_scope_file]);
 
-    $rule_lt_name = (count($request['lt_name'])>1)?'required':'sometimes|nullable';
-    $rule_lt_desc = (count($request['lt_desc'])>1)?'required':'sometimes|nullable';
+    // $rule_lt_name = (count($request['lt_name'])>1)?'required':'sometimes|nullable';
+    // $rule_lt_desc = (count($request['lt_desc'])>1)?'required':'sometimes|nullable';
     // $rules['lt_file.*']  =  'sometimes|nullable|mimes:pdf';
-    $rules['lt_desc.*']  =  $rule_lt_desc.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['lt_name.*']  =  $rule_lt_name.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['lt_desc.*']  =  'required|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['lt_name.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
     foreach($request->lt_file_old as $k => $v){
       if(isset($request->lt_file[$k]) && is_object($request->lt_file[$k]) && !empty($v)){//jika ada file baru

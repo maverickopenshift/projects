@@ -38,6 +38,7 @@ class DocumentsListController extends Controller
         $documents = $this->documents
             ->latest('documents.updated_at')
         ;
+        $documents->selectRaw('DISTINCT (documents.id) , documents.*');
         $documents->whereRaw('(documents.`doc_signing`='.$status_no.')');
         if(!empty($request->q)){
           $documents->where(function($q) use ($search) {
@@ -88,7 +89,6 @@ class DocumentsListController extends Controller
           // $value->doc_title = $value->doc_title.' <i>'.$value->supplier_id.'</i>';
           return $value;
         });
-
         return Response::json($documents);
     }
     $data['page_title'] = 'Data Dokumen '.ucfirst($status);

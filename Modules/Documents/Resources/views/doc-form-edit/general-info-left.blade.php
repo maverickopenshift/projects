@@ -36,7 +36,7 @@
         </div>
       </div>
     @endif
-    @if($doc_type->name=="sp")
+    @if($doc_type->name=="sp" || $doc_type->name=="khs" || $doc_type->name=="turnkey")
       <div class="form-group {{ $errors->has('doc_startdate') ? ' has-error' : '' }}">
         <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Mulai {{$doc_type['title']}}</label>
         <div class="col-sm-6">

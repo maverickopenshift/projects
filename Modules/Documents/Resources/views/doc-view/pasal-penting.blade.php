@@ -33,9 +33,10 @@
       <div class="alert alert-info text-center" role="alert">Tidak ada data</div>
     @endif
 
-        @if($doc_type->name=="khs")
+        {{-- @if($doc_type->name=="khs")
               @include('documents::partials.buttons-view')
-        @endif
+        @endif --}}
+        @include('documents::partials.buttons-view')
     </div>
 <!-- /.box-body -->
 </div>

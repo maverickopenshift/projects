@@ -50,7 +50,7 @@
           @include('documents::doc-form.general-info-right')
           @include('documents::doc-form-edit.lampiran-1')
 
-          {{-- @include('documents::partials.buttons') --}}
+          @include('documents::partials.button-edit')
       </div>
     </div>
 <!-- /.box-body -->

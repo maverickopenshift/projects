@@ -56,9 +56,10 @@
             @endif
         </tbody>
         </table>
-        @if($doc_type->name=="khs")
+        {{-- @if($doc_type->name=="khs")
               @include('documents::partials.button-edit')
-        @endif
+        @endif --}}
+        @include('documents::partials.button-edit')
     </div>
 <!-- /.box-body -->
 </div>

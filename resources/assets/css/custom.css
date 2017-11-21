@@ -258,3 +258,48 @@ table.tableLaravel thead .sorting_desc_disabled:after {
 td > .btn{
   margin-right: 6px; 
 }
+.direct-chat-primary .other > .direct-chat-text {
+    background: #3c8dbc;
+    border-color: #3c8dbc;
+    color: #ffffff;
+}
+.direct-chat-primary .other > .direct-chat-text:after, 
+.direct-chat-primary .other > .direct-chat-text:before {
+    border-right-color: #3c8dbc;
+}
+/*.direct-chat-primary .other .direct-chat-img{
+  border:2px solid #3c8dbc;
+}*/
+.direct-chat-primary  .direct-chat-img{
+  border:2px solid #d2d6de;
+}
+.direct-chat-messages{
+  height: auto;
+  max-height : 400px;
+  min-height: 70px;
+}
+.direct-chat-text{
+  margin: 5px 0 0 0;
+}
+.relative{
+  position: relative;
+}
+.loading-ao{
+  background-color: rgba(255,255,255,0.5);
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: url('../images/loader.gif');
+  background-position: center center;
+  background-repeat: no-repeat;
+  z-index:1000;
+  display: none;
+}
+.direct-chat-info{
+  font-size: 14px;
+}
+}
+.direct-chat-text:after, 
+.direct-chat-text:before {
+    border: 0px none;
+}

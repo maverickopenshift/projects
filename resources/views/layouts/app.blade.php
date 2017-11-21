@@ -96,6 +96,20 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 
 <script src="{{ mix('js/all.js') }}"></script>
+<script>
+var is_admin = function(){
+  var roles = {!!\Auth::user()->roles!!};
+  var admin = false;
+  if(roles.length>0){
+    $.each(roles,function(index, el) {
+      if(this.name=='admin'){
+        admin = true
+      }
+    });
+  }
+  return admin;
+}
+</script>
 @stack('scripts')
 </body>
 </html>

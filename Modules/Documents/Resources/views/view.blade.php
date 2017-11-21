@@ -96,6 +96,7 @@
           </div>
         </div>
         <!-- /.tab-content -->
+        @include('documents::partials.comments')
       </div>
 @endsection
 @push('scripts')

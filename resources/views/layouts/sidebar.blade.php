@@ -41,10 +41,10 @@
                   @if(!Laratrust::hasRole('approver'))
                     <li class="{{Request::is("documents/status/draft")?'active':''}}" ><a href="{{route('doc',['status'=>'draft'])}}">Draft</a></li>
                   @endif
-                  <li class="{{Request::is("documents/status/selesai")?'active':''}}" ><a href="{{route('doc',['status'=>'selesai'])}}">Perlu Diproses Proses</a></li>
+                  <li class="{{Request::is("documents/status/proses")?'active':''}}" ><a href="{{route('doc',['status'=>'proses'])}}">Perlu Diproses</a></li>
                 @endpermission
                 @permission('lihat-kontrak')
-                  <li class="{{Request::is("documents/status/proses")?'active':''}}" ><a href="{{route('doc',['status'=>'proses'])}}">Tracking Proses</a></li>
+                  <li class="{{Request::is("documents/status/tracking")?'active':''}}" ><a href="{{route('doc',['status'=>'tracking'])}}">Tracking Proses</a></li>
                   <li class="{{Request::is("documents/status/selesai")?'active':''}}" ><a href="{{route('doc',['status'=>'selesai'])}}">Selesai</a></li>
                 @endpermission
                 @permission('lihat-template-pasal-pasal')

@@ -112,12 +112,13 @@ $(function () {
 $(document).on('click', '.btn-reject', function(event) {
   event.preventDefault();
   /* Act on the event */
+  var btn = $(this);
   swal({
     // html: '<div class="form-group">\
     //         <label class="text-left">Masukan Alasan</label>\
     //         <textarea rows="6" class="form-control reason-text"></textarea>\
     //       </div>',
-    title:'Masukan Alasan',
+    title:'Masukan Komentar',
     input:'textarea',
     showCancelButton: true,
     confirmButtonColor: '#3085d6',
@@ -139,7 +140,11 @@ $(document).on('click', '.btn-reject', function(event) {
          })
          .done(function(data) {
            if(data.status){
-             $('meta[name="csrf-token"]').attr('content',data.csrf_token)
+             $('meta[name="csrf-token"]').attr('content',data.csrf_token);
+             $('.direct-chat-messages').find('.alert').remove();
+             btn.parent().find('.btn-setuju').remove();
+             btn.remove();
+             $('.direct-chat-messages').append(template_comment(data.data));
              resolve();
            }
            else{

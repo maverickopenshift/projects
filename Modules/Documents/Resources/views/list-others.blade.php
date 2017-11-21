@@ -27,9 +27,7 @@
             {!!Helper::select_unit('unit_bisnis')!!}
           </div>
           <div class="form-group">
-            <select class="form-control" id="select-posisi">
-              <option value="">Pilih Jabatan</option>
-            </select>
+            {!! Helper::select_type2('doc_type') !!}
           </div>
           <button type="button" class="btn btn-success search">Cari</button>
           <button type="button" class="btn btn-danger reset">Reset</button>
@@ -41,32 +39,6 @@
 @endsection
 @push('scripts')
 <script>
-$(document).on('change', '#unit_bisnis', function(event) {
-  event.preventDefault();
-  /* Act on the event */
-  var unit = this.value;
-  //if(unit!==""){
-    $('#select-posisi').find('option').not('option[value=""]').remove();
-    $.ajax({
-      url: '{!!route('doc.get-posisi')!!}',
-      type: 'GET',
-      dataType: 'json',
-      data: {unit: unit}
-    })
-    .done(function(data) {
-      if(data.length>0){
-        $.each(data,function(index, el) {
-          $('#select-posisi').append('<option value="'+this.id+'">'+this.title+'</option>');
-        });
-      }
-    });
-  //}
-});
-$(function(e){
-  if($('#unit_bisnis').val()!==""){
-    $('#unit_bisnis').change();
-  }
-});
 $.fn.tableOke = function(options) {
     options.tableAttr = this;
     options.tableClass = 'table table-condensed table-striped';
@@ -78,6 +50,7 @@ $.fn.tableOke = function(options) {
     options.qAttr = options.tableAttr.find('.cari-judul');
     options.unitAttr = options.tableAttr.find('#unit_bisnis');
     options.posisiAttr = options.tableAttr.find('#select-posisi');
+    options.jenisAttr = options.tableAttr.find('#doc_type');
     options.q = options.qAttr.val();
     options.posisi = options.posisiAttr.val();
     options.unit = options.unitAttr.val();
@@ -234,7 +207,7 @@ $.fn.tableOke = function(options) {
     }
     options.pagination = function(data){
       var render_pg='';
-      var url = '&limit='+options.limit+'&q='+options.q+'&unit='+options.unit+'&posisi='+options.posisi;
+      var url = '&limit='+options.limit+'&q='+options.q+'&unit='+options.unit+'&jenis='+options.jenis;
       if(data.last_page>1){
         render_pg += '<ul class="pagination">';
           if(data.current_page != 1 && data.last_page >=5){
@@ -300,6 +273,7 @@ $.fn.tableOke = function(options) {
     options.q = options.getParams('q',options.q);
     options.unit = options.getParams('unit',options.unit);
     options.posisi = options.getParams('posisi',options.posisi);
+    options.jenis = options.getParams('jenis',options.jenis);
     options.ajaxPro = function(){
       $.ajax({
         url: options.url,
@@ -310,11 +284,13 @@ $.fn.tableOke = function(options) {
           q : (options.q!==undefined)?options.q:'',
           posisi : (options.posisi!==undefined)?options.posisi:'',
           unit : (options.unit!==undefined)?options.unit:'',
+          jenis : (options.jenis!==undefined)?options.jenis:'',
           limit : options.limit
         }
       })
       .done(function(data) {
-        options.posisiAttr.val(options.posisi);
+        options.unitAttr.val(options.unit);
+        options.jenisAttr.val(options.jenis);
         if(data.data.length>0){
           options.tableAttr.find('.empty-data').remove();
           var render;
@@ -366,6 +342,7 @@ $.fn.tableOke = function(options) {
           q : (options.q!==undefined)?options.q:'',
           posisi : (options.posisi!==undefined)?options.posisi:'',
           unit : (options.unit!==undefined)?options.unit:'',
+          jenis : (options.jenis!==undefined)?options.jenis:'',
         }
       })
       .done(function(data) {
@@ -422,7 +399,8 @@ $.fn.tableOke = function(options) {
         options.q = options.qAttr.val();
         options.posisi = options.posisiAttr.val();
         options.unit = options.unitAttr.val();
-        var urls = options.url+'?page='+options.page+'&limit='+options.limit+'&q='+options.q+'&unit='+options.unit+'&posisi='+options.posisi;
+        options.jenis = options.jenisAttr.val();
+        var urls = options.url+'?page='+options.page+'&limit='+options.limit+'&q='+options.q+'&unit='+options.unit+'&jenis='+options.jenis;
         window.history.pushState({}, "", urls);
         options.ajaxPro();
     });
@@ -434,10 +412,12 @@ $.fn.tableOke = function(options) {
         options.q = "";
         options.posisi = "";
         options.unit = "";
+        options.jenis = "";
         $('#select-posisi').find('option').not('option[value=""]').remove();
         options.qAttr.val('');
         options.posisiAttr.val('');
         options.unitAttr.val('');
+        options.jenisAttr.val('');
         window.history.pushState({}, "", options.url);
         options.ajaxPro();
     });
@@ -540,18 +520,20 @@ $.expr[":"].contains = $.expr.createPseudo(function(arg) {
     };
 });
 function yellowBro(string){
-  $('*:contains('+string+')').each(function(){
-   if($(this).children().length < 1) {
-     var strs = $(this).text().toUpperCase();
-     var strings = string.toUpperCase();
-     $(this).html( 
-           strs.replace(
-               new RegExp(strings, "g")
-               ,'<span style="background-color:yellow;">'+strings+'</span>' 
-          )  
-      ) 
-   }
-  });
+  if(string!=""){
+    $('.table-kontrak').find(':contains('+string+')').each(function(){
+     if($(this).children().length < 1) {
+       //var strs = $(this).text().toUpperCase();
+       var strings = string.toUpperCase();
+       $(this).html( 
+             $(this).text().replace(
+                 new RegExp(strings, "g")
+                 ,'<span style="background-color:yellow;">'+strings+'</span>' 
+            )  
+        ) 
+     }
+    });
+  }
 }
 $(document).on('click', '.btn-reject', function(event) {
   event.preventDefault();

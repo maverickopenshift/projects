@@ -74,6 +74,7 @@
                   <i class="fa fa-trash fa-stack-1x fa-inverse"></i>\
                 </span>\
               </a>';
+    var lable = (data.status==1)?' <span class="label label-danger">returned</span>':'';          
     var oe = (user_un==user_dt)?'':'other';
     var btn = (user_un==user_dt || is_admin())?btn:'';
     var full_n = data.user.name+'('+data.user.username+')';
@@ -85,6 +86,7 @@
                       <i class="fa fa-user fa-stack-1x fa-inverse"></i>\
                     </span>\
                     <span class="direct-chat-name">'+full_n+'</span>\
+                    '+lable+'\
                   </div>\
                   <div class="pull-right">\
                     '+btn+'\

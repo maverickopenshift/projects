@@ -12,16 +12,20 @@ use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
+use Modules\Documents\Entities\DocComment as Comments;
+use Modules\Documents\Http\Controllers\DocumentsListController as DocList;
 use App\Helpers\Helpers;
 use Validator;
 
 class DocumentsController extends Controller
 {
     protected $documents;
+    protected $docList;
 
-    public function __construct(Documents $documents)
+    public function __construct(Documents $documents,DocList $docList)
     {
         $this->documents = $documents;
+        $this->docList = $docList;
     }
     /**
      * Display a listing of the resource.
@@ -30,7 +34,7 @@ class DocumentsController extends Controller
     public function index(Request $request)
     {
       $status = $request->status;
-      $status_arr = ['proses','selesai','draft','reject'];
+      $status_arr = ['proses','selesai','draft','tracking'];
       if(!in_array($status,$status_arr)){
         abort(404);
       }
@@ -38,6 +42,9 @@ class DocumentsController extends Controller
         if($status==$st){
           $status_no = $key;
         }
+      }
+      if($status!=='selesai'){
+        return $this->docList->list($request,$status_no);
       }
       if ($request->ajax()) {
           $limit = 25;
@@ -136,13 +143,13 @@ class DocumentsController extends Controller
             $value['total_child']=$this->documents->total_child($value['id'],$status_no);
             $edit = '';
             if($value['doc_signing']==0 && \Laratrust::can('approve-kontrak')){
-              $view = '<a class="btn btn-xs btn-success" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'">Setujui</a>';
+              $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-eye"></i> LIHAT</a>';
             }
             else{
-              $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'">Lihat</a>';
+              $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-eye"></i> LIHAT</a>';
             }
             if(!\Laratrust::hasRole('approver') ){
-              $edit = '<a class="btn btn-xs btn-info" href="'.route('doc.edit',['type'=>$value['doc_type'],'id'=>$value['id']]).'">Edit</a>';
+              $edit = '<a class="btn btn-xs btn-info" href="'.route('doc.edit',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-edit"></i> EDIT</a>';
             }
             $value['link'] = $view.$edit;
             $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason']);
@@ -158,7 +165,7 @@ class DocumentsController extends Controller
      }
       $data['page_title'] = 'Data Dokumen '.ucfirst($status);
       $data['doc_status'] = $status;
-      return view('documents::index')->with($data);
+      return view('documents::list-selesai')->with($data);
     }
     public function view(Request $request)
     {
@@ -238,13 +245,22 @@ class DocumentsController extends Controller
             return Response::json(['status'=>false,'msg'=>$validator->errors()->first()]);
           }
           else{
-            $doc->doc_status = 1;
+            $doc->doc_status = 0;
+            $doc->doc_signing = 3;
             $doc->doc_signing_date   = \DB::raw('NOW()');
             $doc->doc_signing_reason = $request->reason;
             $doc->doc_data =  json_encode(['rejected_by_userid'=>\Auth::id()]);
             $doc->save();
+            
+            $comment = new Comments();
+            $comment->content = $request->reason;
+            $comment->documents_id = $request->id;
+            $comment->users_id = \Auth::id();
+            $comment->status = 1;
+            $comment->save();
+            $dt_c = Comments::where('id',$comment->id)->with('user')->first();
             //$request->session()->flash('alert-success', 'Data berhasil disetujui!');
-            return Response::json(['status'=>true,'doc_no'=>$doc->doc_no,'csrf_token'=>csrf_token()]);
+            return Response::json(['status'=>true,'doc_no'=>$doc->doc_no,'csrf_token'=>csrf_token(),'data'=>$dt_c]);
           }
         }
         return Response::json(['status'=>false,'msg'=>'Dokumen tidak ditemukan']);

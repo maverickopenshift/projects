@@ -137,9 +137,10 @@ $.fn.tableOke = function(options) {
       return eval(str_t+name);
       //console.log(str_t+name);
     }
+    var tbl_resp = $('<div/>',{class:'table-responsive'});
     options.tableHTML=$('<table/>', {class: options.tableClass+' tableLaravel'});
     options.tableHTML.append(options.renderHeader()).append('<tbody></tbody>');
-    options.tableAttr.append(options.tableHTML);
+    options.tableAttr.append(tbl_resp.append(options.tableHTML));
     options.tableAttr.prepend(options.loadingHtml);
     options.renderData = function(data,no){
       var render = '<tr data-total-child="'+data['total_child']+'" data-id="'+data['id']+'" class="row-parent row-'+data['id']+'">';
@@ -184,6 +185,7 @@ $.fn.tableOke = function(options) {
         if(this.name!==false && this.html===undefined){
           var class_a = '';
           if(index==0){
+            if(data['doc_type']=='sp'){child = 2;}
             class_a = 'class="child-'+child+' '+expandable+'"';
           }
           var rend_dt = options.splitName(data,this.name);
@@ -192,6 +194,7 @@ $.fn.tableOke = function(options) {
         else{
           var class_a = '';
           if(index==0){
+            if(data['doc_type']=='sp'){child = 2;}
             class_a = 'class="child-'+child+' '+expandable+'"';
           }
           if(this.name===false && this.html!==undefined){
@@ -326,6 +329,7 @@ $.fn.tableOke = function(options) {
             return options.tableAttr.append(options.pagination(data));
           };
           $.when( wait_render() ).done(function() {
+            yellowBro(options.q);
             // var tr = options.tableAttr.find('tbody>tr.row-parent');
             // $.each(tr,function(index, el) {
             //     var row_id = $(this).data('id');
@@ -358,7 +362,10 @@ $.fn.tableOke = function(options) {
         dataType: 'json',
         data : {
           child     : child,
-          parent_id : parent_id
+          parent_id : parent_id,
+          q : (options.q!==undefined)?options.q:'',
+          posisi : (options.posisi!==undefined)?options.posisi:'',
+          unit : (options.unit!==undefined)?options.unit:'',
         }
       })
       .done(function(data) {
@@ -374,6 +381,7 @@ $.fn.tableOke = function(options) {
             $.when( wait_render2() ).done(function() {
               attr.parent().find('.'+options.trLoadingClass+'.row-'+tr_id).remove();
               attr.find('td.td-expand').removeClass('plus').addClass('minus');
+              yellowBro(options.q);
               // var tr = options.tableAttr.find('tbody>tr.row-child-1');
               // $.each(tr,function(index, el) {
               //     var row_id = $(this).data('id');
@@ -385,6 +393,7 @@ $.fn.tableOke = function(options) {
               // });
             });
           }
+          attr.parent().find('.'+options.trLoadingClass+'.row-'+tr_id).remove();
       });
     }
     options.ajaxPro();
@@ -455,12 +464,12 @@ $.fn.tableOke = function(options) {
           if(parseInt(get_tr.data('total-child'))>0){
             var new_tr = get_tr.find('.td-expand');
             if(new_tr.hasClass('minus')){
-              get_tr.find('.td-expand').trigger('click');
+              //get_tr.find('.td-expand').trigger('click');
             }
             else if(new_tr.hasClass('plus')){
               var check = get_tr.parent().find('.row-parent-'+get_tr.data('id'));
               if(check.length>0){
-                get_tr.find('.td-expand').trigger('click');
+                //get_tr.find('.td-expand').trigger('click');
               }
             }
           }
@@ -512,8 +521,7 @@ $(function () {
     url : '{!!route('doc',['status'=>$doc_status])!!}',
     with_number : true,
     data : [
-      { name : 'doc_title' , title  : 'Judul',orderable:true},
-      { name : 'doc_no' , title : 'No Kontrak',orderable:true},
+      { name : 'title' , title  : 'Judul - No Kontrak',orderable:true},
       { name : 'sup_name' , title  : 'Vendor',orderable:true},
       // { name : 'supplier.nm_vendor' , title  : 'Vendor',orderable:true},
       { name : 'status' , title  : 'Status',orderable:true},
@@ -526,6 +534,25 @@ $(function () {
   };
   var tbl = $('.table-kontrak').tableOke(options);
 });
+$.expr[":"].contains = $.expr.createPseudo(function(arg) {
+    return function( elem ) {
+        return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
+    };
+});
+function yellowBro(string){
+  $('*:contains('+string+')').each(function(){
+   if($(this).children().length < 1) {
+     var strs = $(this).text().toUpperCase();
+     var strings = string.toUpperCase();
+     $(this).html( 
+           strs.replace(
+               new RegExp(strings, "g")
+               ,'<span style="background-color:yellow;">'+strings+'</span>' 
+          )  
+      ) 
+   }
+  });
+}
 $(document).on('click', '.btn-reject', function(event) {
   event.preventDefault();
   /* Act on the event */

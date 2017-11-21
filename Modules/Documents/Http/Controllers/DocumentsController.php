@@ -58,6 +58,16 @@ class DocumentsController extends Controller
               $documents->where('documents.doc_parent_id',$request->parent_id);
               $documents->whereRaw('(child.`doc_signing`='.$status_no.' OR child2.`doc_signing`='.$status_no.' OR documents.`doc_signing`='.$status_no.')');
               $documents->selectRaw('DISTINCT (documents.id) , documents.*');
+              // if(!empty($request->q)){
+              //   $documents->where(function($q) use ($search) {
+              //       $q->orWhere('documents.doc_no', 'like', '%'.$search.'%');
+              //       $q->orWhere('documents.doc_title', 'like', '%'.$search.'%');
+              //           $q->orWhere('child.doc_no', 'like', '%'.$search.'%');
+              //           $q->orWhere('child.doc_title', 'like', '%'.$search.'%');
+              //               $q->orWhere('child2.doc_no', 'like', '%'.$search.'%');
+              //               $q->orWhere('child2.doc_title', 'like', '%'.$search.'%');
+              //   });
+              // }
           }
           else{
             $documents = $this->documents
@@ -75,6 +85,12 @@ class DocumentsController extends Controller
               $documents->where(function($q) use ($search) {
                   $q->orWhere('documents.doc_no', 'like', '%'.$search.'%');
                   $q->orWhere('documents.doc_title', 'like', '%'.$search.'%');
+                      $q->orWhere('child.doc_no', 'like', '%'.$search.'%');
+                      $q->orWhere('child.doc_title', 'like', '%'.$search.'%');
+                          $q->orWhere('child2.doc_no', 'like', '%'.$search.'%');
+                          $q->orWhere('child2.doc_title', 'like', '%'.$search.'%');
+                              $q->orWhere('child3.doc_no', 'like', '%'.$search.'%');
+                              $q->orWhere('child3.doc_title', 'like', '%'.$search.'%');
                   // $q->whereHas(
                   //       'child', function ($q) use ($search) {
                   //                 $q->orWhere('doc_no', 'like', '%'.$search.'%');
@@ -131,6 +147,8 @@ class DocumentsController extends Controller
             $value['link'] = $view.$edit;
             $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason']);
             $value['sup_name']= $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
+            $doc_no = (!empty($value->doc_no))?' - '.$value->doc_no:'';
+            $value['title'] = $value->doc_title.$doc_no;
             // $value['supplier']['nm_vendor'] = $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
             // $value->doc_title = $value->doc_title.' <i>'.$value->supplier_id.'</i>';
             return $value;

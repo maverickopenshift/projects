@@ -7,6 +7,7 @@
     <!-- /.box-header -->
     <div class="box-body">
       @include('documents::doc-form-edit.general-info-left')
+      @include('documents::partials.button-edit')
     </div>
 <!-- /.box-body -->
 </div>

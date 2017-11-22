@@ -25,7 +25,7 @@ class Helpers
     }
     public static function select_unit($name,$val=null)
     {
-      $unit = \App\User::get_unit_by_disivi()->get();
+      $unit = \App\User::get_unit_by_disivi()->orderBy('title')->get();
       $select  = '<select class="form-control" id="'.$name.'" name="'.$name.'">';
       $select .= '<option value="">Pilih Unit</option>';
       foreach ($unit as $dt) {
@@ -150,6 +150,21 @@ public static function select_atasan($pegawai,$val=null)
       $select .= '</select>';
       return $select;
     }
+    public static function select_type2($name='doc_type',$val=null)
+    {
+      $cat = DocType::all();
+      $select  = '<select class="form-control" id="'.$name.'" name="'.$name.'">';
+      $select .= '<option value="">Semua Jenis Dokumen</option>';
+      foreach ($cat as $dt) {
+        $selected = '';
+        if($val==$dt['name']){
+          $selected = 'selected="selected"';
+        }
+        $select .= '<option value="'.$dt['name'].'" '.$selected.'>'.$dt['title'].'</option>';
+      }
+      $select .= '</select>';
+      return $select;
+    }
     public static function select_badan_usaha($val=null,$name='bdn_usaha')
     {
       $ubis = BadanUsaha::get();
@@ -243,12 +258,15 @@ public static function select_atasan($pegawai,$val=null)
       else if($val==1){
         $ret ='<span class="label label-success">selesai</span>';
       }
+      else if($val==3){
+        $ret ='<span class="label label-danger">return</span>';
+      }
       else{
         $ret ='<span class="label label-info">proses</span>';
-        if($status==1)//reject
-        {
-          $ret ='<button type="button" class="btn btn-xs btn-danger btn-reject" data-msg="'.$message.'">reject</button>';
-        }
+        // if($status==1)//reject
+        // {
+        //   $ret ='<button type="button" class="btn btn-xs btn-danger btn-reject" data-msg="'.$message.'">reject</button>';
+        // }
       }
       return $ret;
     }

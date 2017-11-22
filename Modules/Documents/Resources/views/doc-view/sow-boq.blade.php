@@ -97,7 +97,7 @@
               </div>
             </div>
           @endif
-          {{-- @include('documents::partials.buttons') --}}
+          @include('documents::partials.buttons-view')
       </div>
     </div>
 <!-- /.box-body -->

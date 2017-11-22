@@ -74,7 +74,7 @@
           @endif
       </tbody>
       </table>
-    {{-- @include('documents::partials.buttons') --}}
+    @include('documents::partials.button-edit')
     </div>
 <!-- /.box-body -->
 </div>

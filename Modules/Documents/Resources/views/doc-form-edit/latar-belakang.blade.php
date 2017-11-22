@@ -55,7 +55,7 @@
                       <span class="input-group-btn">
                         <button class="btn btn-default click-upload" type="button">Browse</button>
                         <input type="hidden" name="lt_file_old[]" value="{{$lt_file_old[$key]}}">
-                        @if(isset($lt_file_old[$key]))                                
+                        @if(isset($lt_file_old[$key]))
                           <a target="_blank" class="btn btn-primary btn-lihat" href="{{route('doc.file',['filename'=>$lt_file_old[$key],'type'=>$doc_type->name.'_latar_belakang'])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat</a>
                         @endif
                       </span>
@@ -142,7 +142,7 @@
             </div>
         </div>
       @endif
-      @include('documents::partials.buttons')
+      @include('documents::partials.button-edit')
     </div>
 
 

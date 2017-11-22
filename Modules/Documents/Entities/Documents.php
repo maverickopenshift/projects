@@ -163,7 +163,10 @@ class Documents extends Model
       $doc = self::selectRaw('documents.id,documents.user_id');
       $doc->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
       $doc->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
-      $doc->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id())->where('documents.id','=',$doc_id);
+      if(!\Laratrust::hasRole('admin')){
+        $doc->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+      }
+      $doc->where('documents.id','=',$doc_id);
       if(!empty($type)){
         $doc->where('documents.doc_type',$type);
       }

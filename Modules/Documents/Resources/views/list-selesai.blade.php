@@ -21,7 +21,7 @@
       <div class="table-kontrak">
         <div class="form-inline bottom25">
           <div class="form-group">
-            <input type="text" class="form-control cari-judul" placeholder="Judul Kontrak">
+            <input  style="width:290px;" type="text" class="form-control cari-judul" placeholder="Judul/Nomor Kontrak">
           </div>
           <div class="form-group">
             {!!Helper::select_unit('unit_bisnis')!!}
@@ -530,7 +530,7 @@ $(function () {
       { name : 'title' , title  : 'Judul - No Kontrak',orderable:true},
       { name : 'sup_name' , title  : 'Vendor',orderable:true},
       // { name : 'supplier.nm_vendor' , title  : 'Vendor',orderable:true},
-      { name : 'status' , title  : 'Status',orderable:true},
+      // { name : 'status' , title  : 'Status',orderable:true},
       { name : 'jenis.type.title' , title  : 'Type',orderable:true},
       { name : 'link' , title  : 'Action'},
     ],
@@ -546,18 +546,20 @@ $.expr[":"].contains = $.expr.createPseudo(function(arg) {
     };
 });
 function yellowBro(string){
-  $('.table-kontrak').find('*:contains('+string+')').each(function(){
-   if($(this).children().length < 1) {
-     //var strs = $(this).text().toUpperCase();
-     var strings = string.toUpperCase();
-     $(this).html( 
-           $(this).text().replace(
-               new RegExp(strings, "g")
-               ,'<span style="background-color:yellow;">'+strings+'</span>' 
-          )  
-      ) 
-   }
-  });
+  if(string!=""){
+    $('.table-kontrak').find(':contains('+string+')').each(function(){
+     if($(this).children().length < 1) {
+       //var strs = $(this).text().toUpperCase();
+       var strings = string.toUpperCase();
+       $(this).html( 
+             $(this).text().replace(
+                 new RegExp(strings, "g")
+                 ,'<span style="background-color:yellow;">'+strings+'</span>' 
+            )  
+        ) 
+     }
+    });
+  }
 }
 $(document).on('click', '.btn-reject', function(event) {
   event.preventDefault();

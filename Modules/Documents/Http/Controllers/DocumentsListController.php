@@ -32,6 +32,7 @@ class DocumentsListController extends Controller
         $search = $request->q;
         $unit = $request->unit;
         $posisi = $request->posisi;
+        $jenis = $request->jenis;
         if(!empty($request->limit)){
           $limit = $request->limit;
         }
@@ -53,6 +54,9 @@ class DocumentsListController extends Controller
             $documents->where('g.objidposisi',$posisi);
           }
           $documents->where('g.objidunit',$unit);
+        }
+        if(!empty($jenis)){
+          $documents->where('documents.doc_type',$jenis);
         }
 //          echo $search;
 //          echo $status_no;
@@ -79,12 +83,7 @@ class DocumentsListController extends Controller
           $value['link'] = $view.$edit;
           $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason']);
           $value['sup_name']= $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
-          $doc_parent = '';
-          if($value->doc_parent == 0 && !empty($value->doc_parent_id)){
-            $get = Documents::where('id',$value->doc_parent_id)->first();
-            $doc_parent = ' - '.$get->doc_title;
-          }
-          $value['title'] = $value->doc_title.$doc_parent;
+          $value['title'] = $value->doc_title.Documents::get_parent_title($value);
           // $value['supplier']['nm_vendor'] = $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
           // $value->doc_title = $value->doc_title.' <i>'.$value->supplier_id.'</i>';
           return $value;

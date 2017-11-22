@@ -176,4 +176,28 @@ class Documents extends Model
       }
       return false;
     }
+    public static function get_parent_doc($value){
+      if($value->doc_parent == 0 && !empty($value->doc_parent_id)){
+        $get = Documents::where('id',$value->doc_parent_id)->first();
+        return $get;
+      }
+      return false;
+    }
+    public static function get_parent_doc_first($value){
+      if($value->doc_parent == 0 && !empty($value->doc_parent_id)){
+        $get = Documents::where('id',$value->doc_parent_id)->first();
+        if($get->doc_parent == 0 && !empty($get->doc_parent_id)){
+          return self::get_parent_doc_first($get);
+        }
+        return $get;
+      }
+      return false;
+    }
+    public static function get_parent_title($value){
+      $dt = self::get_parent_doc_first($value);
+      if($dt){
+        return ' - '.$dt->doc_title;
+      }
+      return '';
+    }
 }

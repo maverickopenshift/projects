@@ -23,7 +23,7 @@
             <label for="akte_awal_tg" class="col-sm-2 control-label">Jenis {{$doc_type['title']}}</label>
             <div class="col-sm-10 text-me">{{$doc->jenis->category->title}}</div>
           </div>
-          @if($doc_type->name=="sp")
+          @if($doc_type->name=="sp" || $doc_type->name=="khs" || $doc_type->name=="turnkey")
             <div class="form-group">
               <label for="akte_awal_tg" class="col-sm-2 control-label">Tanggal Mulai {{$doc_type['title']}}</label>
               <div class="col-sm-10 text-me">{{Carbon\Carbon::parse($doc->doc_startdate)->format('l, d F Y')}}</div>
@@ -221,7 +221,7 @@
           </div>
         @endif
           @endif
-          {{-- @include('documents::partials.buttons') --}}
+          @include('documents::partials.buttons-view')
       </div>
     </div>
 <!-- /.box-body -->

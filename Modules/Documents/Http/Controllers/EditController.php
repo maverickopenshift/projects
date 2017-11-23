@@ -155,9 +155,9 @@ class EditController extends Controller
         $ps['desc'][$key]       = $val->meta_desc;
         $ps['title'][$key]     = $val->meta_title;
       }
-      $dt->ps_judul  = $ps['title'];
-      $dt->ps_isi  = $ps['desc'];
-      $dt->ps_pasal  = $ps['name'];
+      $dt->ps_judul      = $ps['name'];
+      $dt->ps_isi        = $ps['desc'];
+      $dt->ps_judul_new  = $ps['title'];
     }
     if(count($dt->lampiran_ttd)>0){
       foreach($dt->lampiran_ttd as $key => $val){
@@ -180,6 +180,7 @@ class EditController extends Controller
   }
   public function store(Request $request)
   {
+    // dd($request->input());
     $id = $request->id;
     $type = $request->type;
     if(!$this->documents->check_permission_doc($id ,$type)){
@@ -225,7 +226,8 @@ class EditController extends Controller
     $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
     $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_template_id']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-    $rules['doc_date']         =  'required|date_format:"Y-m-d"';
+    $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
+    $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
     $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     //$rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
@@ -352,12 +354,23 @@ class EditController extends Controller
     }
     $request->merge(['lt_file' => $new_lt_file]);
 
-    $rule_ps_pasal = (count($request['ps_pasal'])>1)?'required':'sometimes|nullable';
     $rule_ps_judul = (count($request['ps_judul'])>1)?'required':'sometimes|nullable';
+    // $rule_ps_judul_new = (count($request['ps_judul_new'])>1)?'required_if:ps_judul,Lainnya':'sometimes|nullable';
     $rule_ps_isi = (count($request['ps_isi'])>1)?'required':'sometimes|nullable';
-    $rules['ps_pasal.*']  =  $rule_ps_pasal.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-    $rules['ps_judul.*']  =  $rule_ps_isi.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-    $rules['ps_isi.*']    =  $rule_ps_judul.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['ps_judul.*']      =  $rule_ps_judul.'|in:Jangka Waktu Penerbitan Surat Pesanan,Jangka Waktu Penyerahan Pekerjaan,Tata Cara Pembayaran,Tanggal Efektif dan Masa Laku Perjanjian,Jaminan Pelaksanaan,Jaminan Uang Muka,Jaminan Pemeliharaan,Masa Laku Jaminan,Harga Kontrak,Lainnya';
+    // $rules['ps_judul_new.*']  =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['ps_isi.*']        =  $rule_ps_isi.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+
+    foreach($request->ps_judul as $k => $v){
+      if(isset($request->ps_judul[$k]) && $request->ps_judul[$k]=="Lainnya" && !empty($v)){//jika ada file baru
+        $new_pasal[] = $request->ps_judul_new[$k];
+        $rules['ps_judul_new.'.$k] = 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+      }
+      else{
+        $new_pasal[] = $v;
+      }
+    }
+    $request->merge(['ps_judul_new' => $new_pasal]);
 
 
     $rules['pic_posisi.*']    =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
@@ -389,7 +402,8 @@ class EditController extends Controller
     $doc->doc_title = $request->doc_title;
     $doc->doc_desc = $request->doc_desc;
     $doc->doc_template_id = $request->doc_template_id;
-    $doc->doc_date = $request->doc_date;
+    $doc->doc_startdate = $request->doc_startdate;
+    $doc->doc_enddate = $request->doc_enddate;
     $doc->doc_pihak1 = $request->doc_pihak1;
     $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
     $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
@@ -407,7 +421,24 @@ class EditController extends Controller
     $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
     $doc->save();
 
-
+    if(count($request->ps_judul)>0){
+      DocMeta::where([
+        ['documents_id','=',$doc->id],
+        ['meta_type','=','pasal_pasal'],
+        ])->delete();
+      foreach($request->ps_judul as $key => $val){
+        if(!empty($val)
+        ){
+          $doc_meta2 = new DocMeta();
+          $doc_meta2->documents_id = $doc->id;
+          $doc_meta2->meta_type = 'pasal_pasal';
+          $doc_meta2->meta_name = $val;
+          $doc_meta2->meta_title =$request['ps_judul_new'][$key];
+          $doc_meta2->meta_desc = $request['ps_isi'][$key];
+          $doc_meta2->save();
+        }
+      }
+    }
 
     if(count($new_lamp_up)>0){
       DocMeta::where([
@@ -518,26 +549,7 @@ class EditController extends Controller
         }
       }
     }
-    if(count($request->ps_pasal)>0){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','pasal_pasal'],
-        ])->delete();
-      foreach($request->ps_pasal as $key => $val){
-        if(!empty($val)
-            && !empty($request['ps_judul'][$key])
-            && !empty($request['ps_isi'][$key])
-        ){
-          $doc_meta2 = new DocMeta();
-          $doc_meta2->documents_id = $doc->id;
-          $doc_meta2->meta_type = 'pasal_pasal';
-          $doc_meta2->meta_name = $val;
-          $doc_meta2->meta_title =$request['ps_judul'][$key];
-          $doc_meta2->meta_desc = $request['ps_isi'][$key];
-          $doc_meta2->save();
-        }
-      }
-    }
+
     if(count($request->hs_harga)>0){
       DocBoq::where([
         ['documents_id','=',$doc->id]

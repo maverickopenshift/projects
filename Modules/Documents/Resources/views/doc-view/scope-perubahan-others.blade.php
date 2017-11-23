@@ -44,7 +44,7 @@
               <div class="alert alert-info text-center" role="alert">Tidak ada scope perubahan</div>
             @endif
       </div>
-    {{-- @include('documents::partials.buttons') --}}
+    @include('documents::partials.buttons-view')
     </div>
 <!-- /.box-body -->
 </div>

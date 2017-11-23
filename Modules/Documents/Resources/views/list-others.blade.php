@@ -21,7 +21,7 @@
       <div class="table-kontrak">
         <div class="form-inline bottom25">
           <div class="form-group">
-            <input type="text" class="form-control cari-judul" placeholder="Judul Kontrak">
+            <input style="width:290px;" type="text" class="form-control cari-judul" placeholder="Judul/Nomor Kontrak">
           </div>
           <div class="form-group">
             {!!Helper::select_unit('unit_bisnis')!!}
@@ -504,7 +504,7 @@ $(function () {
       { name : 'title' , title  : 'Judul - No Kontrak',orderable:true},
       { name : 'sup_name' , title  : 'Vendor',orderable:true},
       // { name : 'supplier.nm_vendor' , title  : 'Vendor',orderable:true},
-      { name : 'status' , title  : 'Status',orderable:true},
+      // { name : 'status' , title  : 'Status',orderable:true},
       { name : 'jenis.type.title' , title  : 'Type',orderable:true},
       { name : 'link' , title  : 'Action'},
     ],

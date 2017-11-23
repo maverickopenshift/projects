@@ -16,13 +16,17 @@
         <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a>
         <input type="hidden" id="statusButton" name="statusButton"></li>
 
+
         @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter']))
+          <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
           <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
         @else
           <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
         @endif
 
+        @if(!in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter']))
         <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
+        @endif
 
         @if(in_array($doc_type->name,['khs','turnkey']))
           <li><a href="#tab_4" data-toggle="tab">PASAL KHUSUS</a></li>

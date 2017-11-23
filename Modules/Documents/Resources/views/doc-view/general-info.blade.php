@@ -45,7 +45,7 @@
           </div>
           <div class="form-group">
             <label for="ttd_pihak1" class="col-sm-2 control-label">Penandatangan Pihak I</label>
-            <div class="col-sm-10 text-me nama_ttd">{{$doc->doc_pihak1_nama}}</div>
+            <div class="col-sm-10 text-me">{{$doc->doc_pihak1_nama}}</div>
           </div>
           <div class="form-group">
             <label for="akte_awal_tg" class="col-sm-2 control-label">Pihak II</label>

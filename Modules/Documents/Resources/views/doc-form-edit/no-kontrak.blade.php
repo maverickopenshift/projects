@@ -1,5 +1,5 @@
 <div class="form-group  {{ $errors->has('parent_kontrak') ? ' has-error' : '' }}">
-  <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> No Kontrak</label>
+  <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> No Kontrak Induk</label>
   <div class="col-sm-10">
     <input type="hidden" class="select-kontrak-text" name="parent_kontrak_text" value="{{Helper::old_prop($doc,'parent_kontrak_text')}}">
     <select class="form-control select-kontrak" style="width: 100%;" name="parent_kontrak" data-id="{{Helper::old_prop($doc,'parent_kontrak')}}">
@@ -44,10 +44,14 @@
 
               $.each(data.data, function (i, v) {
                   var o = {};
+                  var startdate=(v.doc_startdate!==null)?$.format.date(v.doc_startdate+" 10:54:50", "dd-MM-yyyy"):'-';
+                  var enddate=(v.doc_enddate!==null)?$.format.date(v.doc_enddate+" 10:54:50", "dd-MM-yyyy"):'-';
                   o.id = v.id;
                   o.name = v.doc_title;
                   o.value = v.doc_no;
                   o.date = $.format.date(v.doc_date+" 10:54:50", "ddd, dd MMMM yyyy");
+                  o.date_start = startdate;
+                  o.date_end = enddate;
                   o.type = v.type;
                   o.jenis = v.jenis;
                   results.push(o);
@@ -62,10 +66,10 @@
           },
           cache: true
       },
-      //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+      escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
       minimumInputLength: 0,
       templateResult: function (state) {
-          if (state.id === undefined || state.id === "") { return ; }
+          if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching....' ; }
           var $state = $(
               '<span>' +  state.name +' <i>('+  state.value + ')</i></span>'
           );
@@ -73,7 +77,7 @@
       },
       templateSelection: function (data) {
           if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
-              return;
+              return "Cari Nomor/Judul Kontrak";
           }
           var render = data.value;
           if(data.value === undefined){
@@ -106,10 +110,14 @@
         var o = {};
         $.each(data.data, function (i, v) {
             //var o = {};
+            var startdate=(v.doc_startdate!==null)?$.format.date(v.doc_startdate+" 10:54:50", "dd-MM-yyyy"):'-';
+            var enddate=(v.doc_enddate!==null)?$.format.date(v.doc_enddate+" 10:54:50", "dd-MM-yyyy"):'-';
             o.id = v.id;
             o.name = v.doc_title;
             o.value = v.doc_no;
             o.date = $.format.date(v.doc_date+" 10:54:50", "ddd, dd MMMM yyyy");
+            o.date_start = startdate;
+            o.date_end = enddate;
             o.type = v.type;
             o.jenis = v.jenis;
         })
@@ -137,7 +145,8 @@
                     <tbody>\
                       <tr>\
                             <td>'+data.name+'</td>\
-                            <td>'+data.date+'</td>\
+                            <td>'+data.date_start+'</td>\
+                            <td>'+data.date_end+'</td>\
                             <td>'+data.jenis.type.title+'</td>\
                       </tr>\
                     </tbody>\
@@ -149,14 +158,19 @@
                                 <th>Judul</th>\
                                 <th>Tanggal Mulai</th>\
                                 <th>Tanggal Akhir</th>\
+                                <th></th>\
                           </tr>\
                         </thead>\
                         <tbody>';
                         $.each(s_type,function(index, el) {
+                          var s_start = (this.doc_startdate!==null)?$.format.date(this.doc_startdate+" 10:54:50", "dd-MM-yyyy"):'-';
+                          var s_end = (this.doc_enddate!==null)?$.format.date(this.doc_enddate+" 10:54:50", "dd-MM-yyyy"):'-';
+                          var parent = (this.parent_title!==null && this.parent_title!==undefined)?this.parent_title:'-'
                           t_type += '<tr>\
                                           <td>'+this.doc_title+'</td>\
-                                          <td>'+$.format.date(this.doc_startdate+" 10:54:50", "dd MMMM yyyy")+'</td>\
-                                          <td>'+$.format.date(this.doc_enddate+" 10:54:50", "dd MMMM yyyy")+'</td>\
+                                          <td>'+s_start+'</td>\
+                                          <td>'+s_end+'</td>\
+                                          <td>'+parent+'</td>\
                                     </tr>';
                         });
           t_type +=    '</tbody>\

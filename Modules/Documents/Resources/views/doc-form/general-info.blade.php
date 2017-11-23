@@ -63,13 +63,13 @@ $(function() {
           },
           cache: true
       },
-      //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+      escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
       minimumInputLength: 0,
       templateResult: templateResultVendor,
       templateSelection: templateSelectionVendor
   });
   function templateResultVendor(state) {
-    if (state.id === undefined || state.id === "") { return ; }
+    if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching....' ; }
     var $state = $(
         '<span>' +  state.bdn_usaha+'.'+state.name +' <i>('+  state.username + ')</i></span>'
     );
@@ -77,7 +77,7 @@ $(function() {
   }
   function templateSelectionVendor(data) {
     if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
-        return;
+        return "Pilih Pihak II....";
     }
     var render = data.bdn_usaha+'.'+data.name +' - '+  data.username ;
     if(data.bdn_usaha === undefined){

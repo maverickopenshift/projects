@@ -176,6 +176,7 @@ class EditController extends Controller
     $data['action_type'] = 'edit';
     $data['action_url'] = route('doc.storeedit',['type'=>$dt->jenis->type->name,'id'=>$dt->id]);
     $data['data'] = [];
+    $data['id'] = $dt->id;
     return view('documents::form-edit')->with($data);
   }
   public function store(Request $request)

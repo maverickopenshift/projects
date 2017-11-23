@@ -20,7 +20,7 @@
     $pic_telp    = Helper::old_prop_each($doc,'pic_telp');
     $pic_id    = Helper::old_prop_each($doc,'pic_id');
 @endphp
-<table class="table table-bordered table-pic" style="display:{!! count($pic_nama)>0?'blok':'none'  !!};">
+<table class="table table-bordered table-pic">
   <thead>
   <tr>
     <th width="40">No.</th>
@@ -63,6 +63,16 @@
             </td>
         </tr>
       @endforeach
+    @else
+      <tr>
+          <td>1</td>
+          <td><input type="text" class="form-control" name="pic_nama[]" autocomplete="off"></td>
+          <td><input type="text" class="form-control" name="pic_jabatan[]" autocomplete="off"></td>
+          <td><input type="text" class="form-control" name="pic_email[]" autocomplete="off"></td>
+          <td><input type="text" class="form-control" name="pic_telp[]" autocomplete="off"></td>
+          <td>{!!Helper::select_posisi()!!}</td>
+          <td class="action"><input type="hidden" name="pic_id[]"><button type="button" class="btn btn-danger btn-xs delete-pic"><i class="glyphicon glyphicon-remove"></i> hapus</button></td>
+      </tr>
     @endif
 </tbody>
 </table>
@@ -146,10 +156,10 @@ $(function() {
           },
           cache: true
       },
-      //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+      escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
       minimumInputLength: 0,
       templateResult: function (state) {
-          if (state.id === undefined || state.id === "") { return ; }
+          if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching....' ; }
           var $state = $(
               '<span>' +  state.name +' <i>('+  state.username + ')</i></span>'
           );
@@ -157,7 +167,7 @@ $(function() {
       },
       templateSelection: function (data) {
           if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
-              return;
+              return "Pilih PIC....";
           }
           return data.name +' - '+  data.username ;
       }

@@ -74,6 +74,10 @@ class Documents extends Model
     {
         return $this->hasMany('Modules\Documents\Entities\Documents','doc_parent_id','id');
     }
+    public function parent()
+    {
+        return $this->hasOne('Modules\Documents\Entities\Documents','doc_parent_id','id');
+    }
     public function pic()
     {
         return $this->hasMany('Modules\Documents\Entities\DocPic')->with('pegawai');

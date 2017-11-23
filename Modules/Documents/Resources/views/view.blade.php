@@ -171,55 +171,66 @@ $(document).on('click', '.btn-setuju', function(event) {
   event.preventDefault();
   var content = $('.content-view');
   var loading = content.find('.loading2');
-  var nama_ttd = content.find('.nama_ttd').text();
-  bootbox.confirm({
-    title:"Pemberitahuan",
-    message: "Anda yakin sudah mengecek semua data?<br><br>"+
-    "Nomor Kontrak: <strong>"+'{!!$no_kontrak!!}'+"</strong><br>"+
-    "Nama Penandatangan: <strong>"+nama_ttd+"</strong><br>"+
-    "Nomor Loker: <strong>"+'{!!$no_loker!!}'+"</strong><br>",
-        buttons: {
-            confirm: {
-                label: 'Yakin',
-                className: 'btn-success btn-sm'
+  $.ajax({
+    url: '{!!route('doc.getKontrak')!!}',
+    type: 'GET',
+    dataType: 'JSON',
+    data: {id: '{!!$id!!}',}
+  }).done(function(data) {
+    if(data.status){
+      bootbox.confirm({
+        size:"large",
+        title:"Konfirmasi",
+        message: "Pastikan Data Yang Anda Masukkan Sudah Benar.<br><br>"+
+        "Nomor Kontrak: <strong>"+data.doc_no+"</strong><br>"+
+        "Judul Kontrak: <strong>"+data.data.judul+"</strong><br>"+
+        "Nama Penandatangan/NIK/Jabatan: <strong>"+data.data.nama_pgw+"/"+data.data.nik+"/"+data.data.jabatan+"</strong><br>"+
+        "Loker: <strong>"+data.data.loker+"/"+data.data.nama_loker+"</strong><br>",
+            buttons: {
+                confirm: {
+                    label: 'Yakin',
+                    className: 'btn-success btn-sm'
+                },
+                cancel: {
+                    label: 'Tidak',
+                    className: 'btn-danger btn-sm'
+                }
             },
-            cancel: {
-                label: 'Tidak',
-                className: 'btn-danger btn-sm'
-            }
-        },
-        callback: function (result) {
-            if(result){
-              loading.show();
-              $.ajaxSetup({
-                headers: {
-                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                  }
-              });
-              $.ajax({
-                url: '{!!route('doc.approve')!!}',
-                type: 'POST',
-                dataType: 'JSON',
-                data: {id: '{!!$id!!}',}
-              })
-              .done(function(data) {
-                if(data.status){
-                  bootbox.alert({
-                      title:"Pemberitahuan",
-                      message: "Data berhasil disetujui",
-                      callback: function (result) {
-                          window.location = '{!!route('doc',['status'=>'selesai'])!!}'
+            callback: function (result) {
+                if(result){
+                  loading.show();
+                  $.ajaxSetup({
+                    headers: {
+                          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                       }
                   });
+                  $.ajax({
+                    url: '{!!route('doc.approve')!!}',
+                    type: 'POST',
+                    dataType: 'JSON',
+                    data: {id: '{!!$id!!}',}
+                  })
+                  .done(function(data) {
+                    if(data.status){
+                      bootbox.alert({
+                          title:"Pemberitahuan",
+                          message: "Data berhasil disetujui",
+                          callback: function (result) {
+                              window.location = '{!!route('doc',['status'=>'selesai'])!!}'
+                          }
+                      });
+                    }
+                    loading.hide();
+                  })
+                  .always(function(){
+                    loading.hide();
+                  });
                 }
-                loading.hide();
-              })
-              .always(function(){
-                loading.hide();
-              });
             }
-        }
-  });
+      });
+    }
+    loading.hide();
+  })
 });
 </script>
 @endpush

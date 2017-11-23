@@ -172,11 +172,6 @@ class DocumentsController extends Controller
       $id = $request->id;
       $doc_type = DocType::where('name','=',$request->type)->first();
       $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po')->first();
-
-
-      // dd($meta);
-      $no_kontrak=$this->documents->create_no_kontrak($dt->doc_template_id,$id);
-      $loker=$this->documents->get_loker($id);
       // dd($loker);
       if(!$doc_type || !$dt){
         abort(404);
@@ -188,8 +183,6 @@ class DocumentsController extends Controller
       $data['page_title'] = 'View Kontrak - '.$doc_type['title'];
       $data['doc'] = $dt;
       $data['id'] = $id;
-      $data['no_kontrak'] = $no_kontrak;
-      $data['no_loker'] = $loker;
       // $data['no_kontrak'] = "-";
       // $data['no_loker'] = "-";
       $data['pegawai'] = \App\User::get_user_pegawai();
@@ -216,6 +209,35 @@ class DocumentsController extends Controller
           ->addIndexColumn()
           ->make(true);
     }
+
+    public function getKontrak(Request $request)
+    {
+      if ($request->ajax()) {
+
+        $doc = $this->documents->where('documents.id',$request->id)->whereNull('doc_no')
+                               ->join('pegawai', 'documents.doc_pihak1_nama', '=', 'pegawai.n_nik')
+                               ->select('documents.*', 'pegawai.n_nik', 'pegawai.v_nama_karyawan', 'pegawai.v_short_posisi', 'pegawai.c_kode_unit', 'pegawai.v_short_unit')
+                               ->first();
+        if($doc){
+          $no_kontrak=$this->documents->create_no_kontrak($doc->doc_template_id,$doc->id);
+          $loker=$this->documents->get_loker($doc->id);
+
+          $data['judul'] = $doc->doc_title;
+          $data['nik'] = $doc->n_nik;
+          $data['nama_pgw'] = $doc->v_nama_karyawan;
+          $data['jabatan'] = $doc->v_short_posisi;
+          $data['loker'] = $doc->c_kode_unit;
+          $data['nama_loker'] = $doc->v_short_unit;
+          // dd($jdl_kontrak);
+
+          return Response::json(['status'=>true,'doc_no'=>$no_kontrak, 'doc_loker'=>$loker, 'data'=>$data]);
+        }
+        return Response::json(['status'=>false]);
+      }
+      abort(500);
+      // dd("hai");
+    }
+
     public function approve(Request $request)
     {
       if ($request->ajax()) {
@@ -228,7 +250,7 @@ class DocumentsController extends Controller
           $doc->doc_data =  json_encode(['signing_by_userid'=>\Auth::id()]);
           $doc->save();
           //$request->session()->flash('alert-success', 'Data berhasil disetujui!');
-          return Response::json(['status'=>true,'doc_no'=>$doc->doc_no,'csrf_token'=>csrf_token()]);
+          return Response::json(['status'=>true,'hai'=>'haloo','doc_no'=>$doc->doc_no,'csrf_token'=>csrf_token()]);
         }
         return Response::json(['status'=>false]);
       }
@@ -251,7 +273,7 @@ class DocumentsController extends Controller
             $doc->doc_signing_reason = $request->reason;
             $doc->doc_data =  json_encode(['rejected_by_userid'=>\Auth::id()]);
             $doc->save();
-            
+
             $comment = new Comments();
             $comment->content = $request->reason;
             $comment->documents_id = $request->id;

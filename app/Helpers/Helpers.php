@@ -223,11 +223,11 @@ public static function select_atasan($pegawai,$val=null)
     public static function old_prop($obj,$val){
       return old($val,self::prop_exists($obj,$val));
     }
-    
+
     public static function old_prop_selected($obj,$key,$val){
       return old($key,self::prop_exists($obj,$key))==$val?"selected='selected'":"";
     }
-    
+
     public static function prop_selected($val,$string){
       return ($val==$string)?"selected='selected'":"";
     }
@@ -292,7 +292,7 @@ public static function select_atasan($pegawai,$val=null)
       return NULL;
     }
     public static function doc_status($val,$type=false){
-      $status_arr = ['proses','selesai','draft','reject'];
+      $status_arr = ['proses','selesai','draft','tracking'];
       foreach ($status_arr as $key => $st){
         if($key==$val && $type==false){
           return $st;

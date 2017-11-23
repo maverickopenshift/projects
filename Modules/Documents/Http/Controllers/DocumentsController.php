@@ -51,6 +51,7 @@ class DocumentsController extends Controller
           $search = $request->q;
           $unit = $request->unit;
           $posisi = $request->posisi;
+          $jenis = $request->jenis;
           if(!empty($request->limit)){
             $limit = $request->limit;
           }
@@ -106,7 +107,14 @@ class DocumentsController extends Controller
                   //   );
               });
             }
-
+            if(!empty($jenis)){
+              $documents->where(function($q) use ($jenis) {
+                  $q->orWhere('documents.doc_type',$jenis);
+                  $q->orWhere('child.doc_type',$jenis);
+                  $q->orWhere('child2.doc_type',$jenis);
+                  $q->orWhere('child3.doc_type',$jenis);
+              });
+            }
           }
           if(!empty($unit)){
             $documents->join('users_pegawai as up','up.users_id','=','documents.user_id');
@@ -116,6 +124,7 @@ class DocumentsController extends Controller
             }
             $documents->where('g.objidunit',$unit);
           }
+          
 //          echo $search;
 //          echo $status_no;
 //          echo($documents->toSql());exit;

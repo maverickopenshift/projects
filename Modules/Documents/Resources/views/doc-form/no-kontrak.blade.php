@@ -50,6 +50,7 @@
                   o.date = $.format.date(v.doc_date+" 10:54:50", "ddd, dd MMMM yyyy");
                   o.type = v.type;
                   o.jenis = v.jenis;
+                  o.nama_supplier = v.supplier.nm_vendor;
                   results.push(o);
               })
               params.page = params.page || 1;
@@ -112,6 +113,7 @@
             o.date = $.format.date(v.doc_date+" 10:54:50", "ddd, dd MMMM yyyy");
             o.type = v.type;
             o.jenis = v.jenis;
+            o.nama_supplier = v.supplier.nm_vendor;
         })
         templateKontrakSelect(o);
         //console.log(JSON.stringify(o));
@@ -126,6 +128,7 @@
     table.html('');
     var s_type = JSON.parse(data.type);
     console.log(JSON.stringify(s_type.length));
+    $('#nama_supplier').val(data.nama_supplier);
     var t_table = '<table class="table">\
                     <thead>\
                       <tr >\
@@ -136,7 +139,7 @@
                     </thead>\
                     <tbody>\
                       <tr>\
-                            <td>'+data.name+'</td>\
+                            <td>'+data.name+ '</td>\
                             <td>'+data.date+'</td>\
                             <td>'+data.jenis.type.title+'</td>\
                       </tr>\

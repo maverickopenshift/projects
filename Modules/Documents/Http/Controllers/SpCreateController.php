@@ -156,6 +156,7 @@ class SpCreateController
 
     }
       // dd('berhasil');
+
       $doc = new Documents();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
@@ -166,7 +167,7 @@ class SpCreateController
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       $doc->user_id = Auth::id();
-      $doc->supplier_id = $request->supplier_id;
+      
 
       // if(isset($request->doc_lampiran)){
       //   $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($request->doc_title));
@@ -200,6 +201,7 @@ class SpCreateController
       $doc->doc_parent = 0;
       $doc->doc_signing = $request->statusButton;
       $doc->doc_parent_id = Documents::get_id_parent_sp($request->parent_kontrak);
+      $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
       $doc->save();
 
       if(count($request->doc_lampiran)>0){

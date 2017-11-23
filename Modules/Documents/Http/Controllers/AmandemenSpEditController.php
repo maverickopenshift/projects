@@ -139,9 +139,10 @@ class AmandemenSpEditController extends Controller
     $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
     $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
     //$doc->user_id = Auth::id();
-    $doc->supplier_id = $request->supplier_id;
+    //$doc->supplier_id = $request->supplier_id;
     $doc->doc_parent = 0;
     $doc->doc_parent_id = $request->parent_sp;
+    $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
     // $doc->doc_signing = $request->statusButton;
     $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
     $doc->save();

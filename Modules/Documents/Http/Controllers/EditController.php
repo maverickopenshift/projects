@@ -228,7 +228,7 @@ class EditController extends Controller
     $rules['doc_date']         =  'required|date_format:"Y-m-d"';
     $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+    //$rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
     $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
     $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
@@ -394,7 +394,8 @@ class EditController extends Controller
     $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
     $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
     //$doc->user_id = Auth::id();
-    $doc->supplier_id = $request->supplier_id;
+    $doc->supplier_id = Documents::where('id',$id)->first()->supplier_id;
+    //$doc->supplier_id = $request->supplier_id;
 
     if(in_array($type,['turnkey','sp'])){
       $doc->doc_po_no = $request->doc_po;

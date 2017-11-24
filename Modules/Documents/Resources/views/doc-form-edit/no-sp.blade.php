@@ -1,5 +1,5 @@
 <div class="form-group  {{ $errors->has('parent_sp') ? ' has-error' : '' }}">
-  <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> No SP</label>
+  <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> No SP Induk</label>
   <div class="col-sm-10">
     <input type="hidden" class="select-sp-text" name="parent_sp_text" value="{{Helper::old_prop($doc,'parent_sp_text')}}">
     <select class="form-control select-sp" style="width: 100%;" name="parent_sp" data-id="{{Helper::old_prop($doc,'parent_sp')}}">
@@ -65,10 +65,10 @@
           },
           cache: true
       },
-      //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+      escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
       minimumInputLength: 0,
       templateResult: function (state) {
-          if (state.id === undefined || state.id === "") { return ; }
+          if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching....' ; }
           var $state = $(
               '<span>'+state.name+' - '+  state.parent_title +' <i>('+  state.value + ')</i></span>'
           );
@@ -76,7 +76,7 @@
       },
       templateSelection: function (data) {
           if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
-              return;
+              return "Cari Nomor/Judul SP";
           }
           var render = data.value;
           if(data.value === undefined){

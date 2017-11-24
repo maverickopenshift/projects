@@ -103,6 +103,7 @@
           </div>
         </div>
         <!-- /.tab-content -->
+        @include('documents::partials.comments')
       </div>
   </form>
 @endsection

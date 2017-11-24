@@ -20,6 +20,7 @@
               @if(count($lampiran)>1)
                 <button type="button" class="btn btn-danger delete-lampiran"><i class="glyphicon glyphicon-trash"></i></button>
               @endif
+
             </div>
           </div>
           {!!Helper::error_help($errors,'doc_lampiran.'.$key)!!}
@@ -38,9 +39,9 @@
       </div>
     @endif
   </div>
-  <div class="clearfix"></div>
-  <div class="col-sm-6 col-sm-offset-2">
-    <button type="button" class="btn btn-success add-lampiran"><i class="glyphicon glyphicon-plus"></i> Tambah Lampiran</button>
+  <!-- <div class="clearfix"></div>-->
+  <div class="col-sm-3 align-bottom">
+    <button type="button" class="btn btn-success add-lampiran align-bottom""><i class="glyphicon glyphicon-plus"></i> Tambah Lampiran</button>
   </div>
 </div>
 @push('scripts')
@@ -49,6 +50,7 @@ $(function() {
   $(document).on('click', '.add-lampiran', function(event) {
     event.preventDefault();
     var btn_del = '<button type="button" class="btn btn-danger delete-lampiran"><i class="glyphicon glyphicon-trash"></i></button>';
+
     /* Act on the event */
     var $this = $('.input-lampiran');
     var new_row = $this.eq(0).clone();
@@ -65,6 +67,7 @@ $(function() {
       }
       else{
         $(this).find('.delete-lampiran').remove();
+        $(this).find('.add-lampiran').remove();
         $(this).find('.input-group-btn').append(btn_del);
       }
     });

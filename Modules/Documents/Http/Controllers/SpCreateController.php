@@ -58,7 +58,7 @@ class SpCreateController
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      //$rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_lampiran_teknis']     =  'sometimes|nullable|mimes:pdf';
       $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
@@ -182,6 +182,7 @@ class SpCreateController
 
     }
       // dd('berhasil');
+
       $doc = new Documents();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
@@ -193,7 +194,7 @@ class SpCreateController
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       $doc->user_id = Auth::id();
-      $doc->supplier_id = $request->supplier_id;
+      
 
       if(isset($request->doc_lampiran_teknis)){
         $fileName   = Helpers::set_filename('doc_lampiran_teknis_',strtolower($request->doc_title));
@@ -221,6 +222,7 @@ class SpCreateController
       $doc->doc_parent = 0;
       $doc->doc_signing = $request->statusButton;
       $doc->doc_parent_id = Documents::get_id_parent_sp($request->parent_kontrak);
+      $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
       $doc->save();
 
 

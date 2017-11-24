@@ -34,7 +34,7 @@ class AmandemenKontrakEditController extends Controller
     $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+    //$rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
     $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     // $rules['doc_lampiran.*']     =  'required|mimes:pdf';
 
@@ -143,7 +143,7 @@ class AmandemenKontrakEditController extends Controller
     $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
     $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
     // $doc->user_id = Auth::id();
-    $doc->supplier_id = $request->supplier_id;
+    //$doc->supplier_id = $request->supplier_id;
 
     // if(isset($request->doc_lampiran)){
     //   $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($request->doc_title));
@@ -153,6 +153,7 @@ class AmandemenKontrakEditController extends Controller
 
     $doc->doc_parent = 0;
     $doc->doc_parent_id = $request->parent_kontrak;
+    $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
     // $doc->doc_signing = $request->statusButton;
     $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
     $doc->save();

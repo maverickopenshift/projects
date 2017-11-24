@@ -7,6 +7,7 @@
     <!-- /.box-header -->
     <div class="box-body">
       <div class="form-horizontal">
+        <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group ">
             <label class="col-sm-2 control-label">No.Kontrak </label>
             <div class="col-sm-10 text-me">{{$doc->doc_no or '-'}}</div>
@@ -26,11 +27,19 @@
           @if($doc_type->name=="sp" || $doc_type->name=="khs" || $doc_type->name=="turnkey")
             <div class="form-group">
               <label for="akte_awal_tg" class="col-sm-2 control-label">Tanggal Mulai {{$doc_type['title']}}</label>
-              <div class="col-sm-10 text-me">{{Carbon\Carbon::parse($doc->doc_startdate)->format('l, d F Y')}}</div>
+              <div class="col-sm-10 text-me">
+                @if(isset($doc->doc_startdate))
+                {{Carbon\Carbon::parse($doc->doc_startdate)->format('l, d F Y')}}
+                @else - @endif
+              </div>
             </div>
             <div class="form-group">
               <label for="akte_awal_tg" class="col-sm-2 control-label">Tanggal Akhir {{$doc_type['title']}}</label>
-              <div class="col-sm-10 text-me">{{Carbon\Carbon::parse($doc->doc_enddate)->format('l, d F Y')}}</div>
+              <div class="col-sm-10 text-me">
+                @if(isset($doc->doc_enddate))
+                  {{Carbon\Carbon::parse($doc->doc_enddate)->format('l, d F Y')}}
+                @else - @endif
+              </div>
             </div>
           @else
             <div class="form-group">
@@ -38,6 +47,8 @@
               <div class="col-sm-10 text-me">{{Carbon\Carbon::parse($doc->doc_date)->format('l, d F Y')}}</div>
             </div>
           @endif
+        </div>
+        <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           @include('documents::doc-view.general-info-right')
           <div class="form-group">
             <label class="col-sm-2 control-label">Pihak I </label>
@@ -87,6 +98,8 @@
                 </div>
             </div>
           </div>
+        </div>
+        <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           @if($doc_type->name!="sp")
             <div class="form-group">
               <label for="prinsipal_st" class="col-sm-2 control-label">Cara Pengadaan</label>
@@ -136,6 +149,8 @@
               </div>
             </div>
           @endif
+        </div>
+        <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group">
             <label for="prinsipal_st" class="col-sm-2 control-label">Unit Penanggungjawab PIC</label>
             <div class="col-sm-10">
@@ -167,8 +182,11 @@
                 </div>
             </div>
           </div>
+        </div>
+
 
           @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
+          <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             @if(count($doc->po)>0)
           <div class="form-group ">
             <label class="col-sm-2 control-label">No.PO</label>
@@ -220,6 +238,7 @@
             <div class="col-sm-10 text-me">-</div>
           </div>
         @endif
+      </div>
           @endif
           @include('documents::partials.buttons-view')
       </div>

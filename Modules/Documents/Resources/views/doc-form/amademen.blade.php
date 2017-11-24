@@ -7,6 +7,7 @@
     <!-- /.box-header -->
     <div class="box-body">
       <div class="form-horizontal">
+        <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           @if($doc_type->name=='amandemen_sp')
             @include('documents::doc-form.no-sp')
           @else
@@ -24,22 +25,39 @@
               @endif
             </div>
           </div>
-          <div class="form-group {{ $errors->has('doc_date') ? ' has-error' : '' }}">
-            <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal {{$doc_type['title']}}</label>
+          <div class="form-group {{ $errors->has('doc_startdate') ? ' has-error' : '' }}">
+            <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Mulai {{$doc_type['title']}}</label>
             <div class="col-sm-6">
               <div class="input-group date" data-provide="datepicker">
                   <div class="input-group-addon">
                       <span class="fa fa-calendar"></span>
                   </div>
-                  <input type="text" class="form-control" name="doc_date" value="{{old('doc_date',Helper::prop_exists($doc,'doc_date'))}}" autocomplete="off">
+                  <input type="text" class="form-control" name="doc_startdate" value="{{old('doc_startdate',Helper::prop_exists($doc,'doc_startdate'))}}" autocomplete="off">
               </div>
             </div>
             <div class="col-sm-10 col-sm-offset-2">
-              {!!Helper::error_help($errors,'doc_date')!!}
+              {!!Helper::error_help($errors,'doc_startdate')!!}
             </div>
           </div>
+          <div class="form-group {{ $errors->has('doc_enddate') ? ' has-error' : '' }}">
+            <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Akhir {{$doc_type['title']}}</label>
+            <div class="col-sm-6">
+              <div class="input-group date" data-provide="datepicker">
+                  <div class="input-group-addon">
+                      <span class="fa fa-calendar"></span>
+                  </div>
+                  <input type="text" class="form-control" name="doc_enddate" value="{{old('doc_enddate',Helper::prop_exists($doc,'doc_enddate'))}}" autocomplete="off">
+              </div>
+            </div>
+            <div class="col-sm-10 col-sm-offset-2">
+              {!!Helper::error_help($errors,'doc_enddate')!!}
+            </div>
+          </div>
+        </div>
+        <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           @include('documents::doc-form.general-info-right')
           @include('documents::doc-form-edit.lampiran-1')
+        </div>
           @include('documents::partials.buttons')
       </div>
     </div>

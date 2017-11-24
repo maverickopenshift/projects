@@ -334,10 +334,10 @@ class EditController extends Controller
       if(isset($request->lt_file[$k]) && is_object($request->lt_file[$k]) && !empty($v)){//jika ada file baru
         $new_lt_file[] = '';
         $new_lt_file_up[] = $request->lt_file[$k];
-        $rules['lt_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
+        $rules['lt_file.'.$k]  =  'required|mimes:pdf';
       }
       else if(empty($v)){
-        $rules['lt_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
+        $rules['lt_file.'.$k]  =  'required|mimes:pdf';
         if(!isset($request->lt_file[$k])){
           $new_lt_file[] = $v;
           $new_lt_file_up[] = $v;
@@ -402,6 +402,7 @@ class EditController extends Controller
     $doc->doc_title = $request->doc_title;
     $doc->doc_desc = $request->doc_desc;
     $doc->doc_template_id = $request->doc_template_id;
+    $doc->doc_date = $request->doc_startdate;
     $doc->doc_startdate = $request->doc_startdate;
     $doc->doc_enddate = $request->doc_enddate;
     $doc->doc_pihak1 = $request->doc_pihak1;

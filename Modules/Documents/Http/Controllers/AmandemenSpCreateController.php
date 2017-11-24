@@ -21,10 +21,12 @@ class AmandemenSpCreateController
   }
   public function store($request)
   {
+    // dd("hai");
     $type = $request->type;
     $rules = [];
     if($request->statusButton == '0'){
-    $rules['doc_date']         =  'required|date_format:"Y-m-d"';
+    $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
+    $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
     $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -115,7 +117,9 @@ class AmandemenSpCreateController
     // dd($request->input());
     $doc = new Documents();
     $doc->doc_title = $request->doc_title;
-    $doc->doc_date = $request->doc_date;
+    $doc->doc_date = $request->doc_startdate;
+    $doc->doc_startdate = $request->doc_startdate;
+    $doc->doc_enddate = $request->doc_enddate;
     $doc->doc_desc = $request->doc_desc;
     $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
     $doc->doc_pihak1 = $request->doc_pihak1;
@@ -123,12 +127,6 @@ class AmandemenSpCreateController
     $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
     $doc->user_id = Auth::id();
     $doc->supplier_id = $request->supplier_id;
-
-    // if(isset($request->doc_lampiran)){
-    //   $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($request->doc_title));
-    //   $request->doc_lampiran->storeAs('document/'.$request->type, $fileName);
-    //   $doc->doc_lampiran = $fileName;
-    // }
 
     $doc->doc_type = $request->type;
     $doc->doc_parent = 0;

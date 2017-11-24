@@ -6,6 +6,7 @@ use Modules\Documents\Entities\Documents;
 use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
+use Modules\Documents\Entities\DocPo;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocAsuransi;
 use App\Helpers\Helpers;
@@ -21,6 +22,7 @@ class SpCreateController
     }
     public function store($request)
     {
+      // dd($request->po_no);
       $type = $request->type;
       $doc_nilai_material = $request->doc_nilai_material;
       $doc_nilai_jasa = $request->doc_nilai_jasa;
@@ -58,9 +60,33 @@ class SpCreateController
       $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_lampiran.*']     =  'required|mimes:pdf';
       $rules['doc_lampiran_teknis']     =  'sometimes|nullable|mimes:pdf';
       $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
+
+      $check_new_lampiran = false;
+      foreach($request->doc_lampiran_old as $k => $v){
+        if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
+          $new_lamp[] = '';
+          $new_lamp_up[] = $request->doc_lampiran[$k];
+          $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+        }
+        else if(empty($v)){
+          $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+          if(!isset($request->doc_lampiran[$k])){
+            $new_lamp[] = $v;
+            $new_lamp_up[] = $v;
+          }
+          else{
+            $new_lamp[] = '';
+            $new_lamp_up[] = $request->doc_lampiran[$k];
+          }
+        }
+        else{
+          $new_lamp[] = $v;
+          $new_lamp_up[] = $v;
+        }
+      }
+      $request->merge(['doc_lampiran' => $new_lamp]);
 
       $rules['doc_nilai_material']   =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['doc_nilai_jasa']       =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
@@ -160,6 +186,7 @@ class SpCreateController
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
       $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
+      $doc->doc_date = $request->doc_startdate;
       $doc->doc_startdate = $request->doc_startdate;
       $doc->doc_enddate = $request->doc_enddate;
       $doc->doc_pihak1 = $request->doc_pihak1;
@@ -167,12 +194,6 @@ class SpCreateController
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       $doc->user_id = Auth::id();
       $doc->supplier_id = $request->supplier_id;
-
-      // if(isset($request->doc_lampiran)){
-      //   $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($request->doc_title));
-      //   $request->doc_lampiran->storeAs('document/'.$request->type, $fileName);
-      //   $doc->doc_lampiran = $fileName;
-      // }
 
       if(isset($request->doc_lampiran_teknis)){
         $fileName   = Helpers::set_filename('doc_lampiran_teknis_',strtolower($request->doc_title));
@@ -201,6 +222,21 @@ class SpCreateController
       $doc->doc_signing = $request->statusButton;
       $doc->doc_parent_id = Documents::get_id_parent_sp($request->parent_kontrak);
       $doc->save();
+
+
+        if(isset($request->doc_po)){
+          $doc_po = new DocPo();
+          $doc_po->documents_id = $doc->id;
+          $doc_po->po_no = $request->po_no;
+          $doc_po->po_date = $request->po_date;
+          $doc_po->po_vendor = $request->po_vendor;
+          $doc_po->po_pembuat = $request->po_pembuat;
+          $doc_po->po_nik = $request->po_nik;
+          $doc_po->po_approval = $request->po_approval;
+          $doc_po->po_penandatangan = $request->po_penandatangan;
+          $doc_po->save();
+        }
+
 
       if(count($request->doc_lampiran)>0){
         foreach($request->doc_lampiran as $key => $val){

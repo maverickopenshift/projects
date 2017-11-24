@@ -62,7 +62,7 @@
                     @if($doc_type->name!='khs')
                       <th style="width:100px;">Harga Total</th>
                     @endif
-                    <th>Keterangan</th>
+                    <th>Keterangan {{$doc->doc_lampiran_teknis}}</th>
                     <th><button type="button" class="btn btn-success btn-xs add-harga_satuan"><i class="glyphicon glyphicon-plus"></i> tambah</button></th>
                 </tr>
                 </thead>
@@ -135,7 +135,40 @@
             </table>
           </div>
           @if($doc_type['title']=="SP")
-            <div class="form-group  {{ $errors->has('doc_lampiran_teknis') ? ' has-error' : '' }}">
+            {{-- @if (isset($doc->doc_lampiran_teknis)) --}}
+              <div class="form-group {{ $errors->has('doc_lampiran_teknis') ? ' has-error' : '' }}">
+                <label for="doc_lampiran_teknis" class="col-sm-2 control-label">Lampiran Teknis</label>
+                <div class="col-sm-6">
+                  <div class="input-group">
+                    <input type="file" class="hide" name="doc_lampiran_teknis" multiple="multiple">
+                    <input class="form-control" type="text" disabled>
+                    <div class="input-group-btn">
+                      <button class="btn btn-default click-upload" type="button">Browse</button>
+                        <input type="hidden" name="doc_lampiran_teknis_old" value="{{$doc->doc_lampiran_teknis}}">
+                      @if(isset($doc->doc_lampiran_teknis))
+                        <a target="_blank" class="btn btn-primary btn-lihat" href="{{route('doc.file',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat</a>
+                      @endif
+                    </div>
+                  </div>
+                </div>
+                {!!Helper::error_help($errors,'doc_lampiran_teknis')!!}
+              </div>
+            {{-- @else
+              <div class="form-group">
+                <label for="doc_lampiran_teknis" class="col-sm-2 control-label">Lampiran Teknis</label>
+                <div class="col-sm-6">
+                  <div class="input-group">
+                    <input type="file" class="hide" name="doc_lampiran_teknis">
+                    <input class="form-control" type="text" disabled>
+                    <div class="input-group-btn">
+                      <button class="btn btn-default click-upload" type="button">Browse</button>
+                      <input type="hidden" name="doc_lampiran_teknis_old">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            @endif --}}
+            {{-- <div class="form-group  {{ $errors->has('doc_lampiran_teknis') ? ' has-error' : '' }}">
               <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran Teknis</label>
               <div class="col-sm-6">
                 <div class="input-group">
@@ -149,7 +182,7 @@
               <div class="col-sm-10 col-sm-offset-2">
                 {!!Helper::error_help($errors,'doc_lampiran_teknis')!!}
               </div>
-            </div>
+            </div> --}}
           @endif
           @include('documents::partials.button-edit')
       </div>

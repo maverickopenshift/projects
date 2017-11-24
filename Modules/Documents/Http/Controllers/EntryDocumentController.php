@@ -287,6 +287,7 @@ class EntryDocumentController extends Controller
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
       $doc->doc_template_id = $request->doc_template_id;
+      $doc->doc_date = $request->doc_startdate;
       $doc->doc_startdate = $request->doc_startdate;
       $doc->doc_enddate = $request->doc_enddate;
       $doc->doc_pihak1 = $request->doc_pihak1;

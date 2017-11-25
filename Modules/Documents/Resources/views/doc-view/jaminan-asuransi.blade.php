@@ -44,7 +44,13 @@
       </div>
       <div class="form-group">
         <label for="doc_jaminan_file" class="col-sm-2 control-label">File</label>
-        @if(!empty($dt->doc_jaminan_file))<a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->doc_jaminan_file,'type'=>$doc_type['name'].'_asuransi'])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
+        @if(!empty($dt->doc_jaminan_file))
+        <!--
+        <a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->doc_jaminan_file,'type'=>$doc_type['name'].'_asuransi'])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
+        -->
+        <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->doc_jaminan_file,'type'=>$doc_type['name'].'_asuransi'])}}">
+        <i class="glyphicon glyphicon-paperclip"></i>  Lihat
+        </a>
         @else
         -
       @endif

@@ -29,7 +29,13 @@
                 @endphp
                 @if(!empty($old_file_sd[$k]))
                   <span class="help-block">
+                  <!--
                     <a target="_blank" href="{{route('supplier.sertifikat.file',['filename'=>$old_file_sd[$k]])}}"><i class="glyphicon glyphicon-paperclip"></i> {{$old_file_sd[$k]}}</a>
+                  -->
+
+                    <a href="#" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('supplier.sertifikat.file',['filename'=>$old_file_sd[$k]])}}">
+                    <i class="glyphicon glyphicon-paperclip"></i>{{$old_file_sd[$k]}}</a>
+                      
                     <input type="hidden" class="hide" name="file_old_sd[]" value="{{$old_file_sd[$k]}}">
                   </span>
                 @endif

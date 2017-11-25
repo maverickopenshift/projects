@@ -523,6 +523,7 @@ $(function () {
     limit : 25,
     q : '',
   };
+  console.log(options);
   var tbl = $('.table-kontrak').tableOke(options);
 });
 $.expr[":"].contains = $.expr.createPseudo(function(arg) {

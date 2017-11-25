@@ -186,19 +186,14 @@
       </div>
     @endif
   </div>
-<<<<<<< HEAD
+
   
   @if($doc_type->name!="surat_pengikatan" and $doc_type->name!="mou")
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
     @include('documents::doc-form.pic')
   </div>
   @endif
-
-=======
-  <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-    @include('documents::doc-form.pic')
-  </div>
->>>>>>> e8c02bcb8221bbef2a564614439df0e77451a7fa
+  
     @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
     <div class="form-group {{ $errors->has('doc_po') ? ' has-error' : '' }}">

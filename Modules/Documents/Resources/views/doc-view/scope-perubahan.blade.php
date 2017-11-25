@@ -6,7 +6,7 @@
     </div>
     <!-- /.box-header -->
     <div class="box-body">
-      <div class="col-sm-10">
+      <div class="col-sm-12">
         <div>
             @if(count($doc->scope_perubahan)>0)
             <table class="table table-condensed table-striped">
@@ -35,12 +35,13 @@
                 </tbody>
             </table>
             @else
-              <div class="alert alert-info text-center" role="alert">Tidak ada scope perubahan</div>
+            <div class="alert alert-info text-center" role="alert">Tidak ada scope perubahan</div>
             @endif
           </div>
+          @include('documents::partials.buttons-view')
       </div>
-    @include('documents::partials.buttons-view')
     </div>
+
 <!-- /.box-body -->
 </div>
 @push('scripts')

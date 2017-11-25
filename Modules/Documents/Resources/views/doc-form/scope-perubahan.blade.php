@@ -29,8 +29,8 @@
             <tr>
                 <td>{{$key+1}}</td>
                 <td class="{{ $errors->has('scope_name.'.$key) ? ' has-error' : '' }}"><input type="text" class="form-control" name="scope_name[]" autocomplete="off" value="{{$value}}" placeholder="Masukan Scope Perubahan">{!!Helper::error_help($errors,'scope_name.'.$key)!!}</td>
-                <td class="{{ $errors->has('scope_awal.'.$key) ? ' has-error' : '' }}"><input type="text" class="form-control" name="scope_awal[]" autocomplete="off" value="{{$value}}">{!!Helper::error_help($errors,'scope_awal.'.$key)!!}</td>
-                <td class="{{ $errors->has('scope_akhir.'.$key) ? ' has-error' : '' }}"><input type="text" class="form-control" name="scope_akhir[]" autocomplete="off" value="{{$value}}">{!!Helper::error_help($errors,'scope_akhir.'.$key)!!}</td>
+                <td class="{{ $errors->has('scope_awal.'.$key) ? ' has-error' : '' }}"><input type="text" class="form-control" name="scope_awal[]" autocomplete="off" value="{{$scope_awal[$key]}}">{!!Helper::error_help($errors,'scope_awal.'.$key)!!}</td>
+                <td class="{{ $errors->has('scope_akhir.'.$key) ? ' has-error' : '' }}"><input type="text" class="form-control" name="scope_akhir[]" autocomplete="off" value="{{$scope_akhir[$key]}}">{!!Helper::error_help($errors,'scope_akhir.'.$key)!!}</td>
                 <td class="{{ $errors->has('scope_file.'.$key) ? ' has-error' : '' }}">
                   <div class="input-group">
                     <input type="file" class="hide" name="scope_file[]">

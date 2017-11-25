@@ -14,6 +14,7 @@ use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocComment as Comments;
 use Modules\Documents\Http\Controllers\DocumentsListController as DocList;
+use Modules\Documents\Entities\DocChildLatest;
 use App\Helpers\Helpers;
 use Validator;
 
@@ -181,11 +182,6 @@ class DocumentsController extends Controller
       $id = $request->id;
       $doc_type = DocType::where('name','=',$request->type)->first();
       $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po')->first();
-
-
-      // dd($meta);
-      $no_kontrak=$this->documents->create_no_kontrak($dt->doc_template_id,$id);
-      $loker=$this->documents->get_loker($id);
       // dd($loker);
       if(!$doc_type || !$dt){
         abort(404);
@@ -197,15 +193,12 @@ class DocumentsController extends Controller
       $data['page_title'] = 'View Kontrak - '.$doc_type['title'];
       $data['doc'] = $dt;
       $data['id'] = $id;
-      $data['no_kontrak'] = $no_kontrak;
-      $data['no_loker'] = $loker;
       // $data['no_kontrak'] = "-";
       // $data['no_loker'] = "-";
       $data['pegawai'] = \App\User::get_user_pegawai();
 
       return view('documents::view')->with($data);
     }
-
     public function getPo(Request $request){
       $search = trim($request->po);
 
@@ -226,6 +219,35 @@ class DocumentsController extends Controller
           ->addIndexColumn()
           ->make(true);
     }
+
+    public function getKontrak(Request $request)
+    {
+      if ($request->ajax()) {
+
+        $doc = $this->documents->where('documents.id',$request->id)->whereNull('doc_no')
+                               ->join('pegawai', 'documents.doc_pihak1_nama', '=', 'pegawai.n_nik')
+                               ->select('documents.*', 'pegawai.n_nik', 'pegawai.v_nama_karyawan', 'pegawai.v_short_posisi', 'pegawai.c_kode_unit', 'pegawai.v_short_unit')
+                               ->first();
+        if($doc){
+          $no_kontrak=$this->documents->create_no_kontrak($doc->doc_template_id,$doc->id);
+          $loker=$this->documents->get_loker($doc->id);
+
+          $data['judul'] = $doc->doc_title;
+          $data['nik'] = $doc->n_nik;
+          $data['nama_pgw'] = $doc->v_nama_karyawan;
+          $data['jabatan'] = $doc->v_short_posisi;
+          $data['loker'] = $doc->c_kode_unit;
+          $data['nama_loker'] = $doc->v_short_unit;
+          // dd($jdl_kontrak);
+
+          return Response::json(['status'=>true,'doc_no'=>$no_kontrak, 'doc_loker'=>$loker, 'data'=>$data]);
+        }
+        return Response::json(['status'=>false]);
+      }
+      abort(500);
+      // dd("hai");
+    }
+
     public function approve(Request $request)
     {
       if ($request->ajax()) {
@@ -238,7 +260,7 @@ class DocumentsController extends Controller
           $doc->doc_data =  json_encode(['signing_by_userid'=>\Auth::id()]);
           $doc->save();
           //$request->session()->flash('alert-success', 'Data berhasil disetujui!');
-          return Response::json(['status'=>true,'doc_no'=>$doc->doc_no,'csrf_token'=>csrf_token()]);
+          return Response::json(['status'=>true,'hai'=>'haloo','doc_no'=>$doc->doc_no,'csrf_token'=>csrf_token()]);
         }
         return Response::json(['status'=>false]);
       }
@@ -261,7 +283,7 @@ class DocumentsController extends Controller
             $doc->doc_signing_reason = $request->reason;
             $doc->doc_data =  json_encode(['rejected_by_userid'=>\Auth::id()]);
             $doc->save();
-            
+
             $comment = new Comments();
             $comment->content = $request->reason;
             $comment->documents_id = $request->id;
@@ -284,7 +306,7 @@ class DocumentsController extends Controller
         if (empty($type)) {
             return \Response::json([]);
         }
-        $data = $this->documents->select('documents.id','documents.doc_no','documents.doc_date','documents.doc_title','documents.doc_template_id','documents.supplier_id')
+        $data = $this->documents->select('documents.id','documents.doc_no','documents.doc_date','documents.doc_title','documents.doc_template_id','documents.doc_startdate','documents.doc_enddate','documents.supplier_id')
         ->with('jenis','supplier','pic')->whereNotNull('documents.doc_no')->where('documents.doc_parent',1);
         if($type=='sp'){
           $data->where('documents.doc_type','khs');
@@ -306,10 +328,20 @@ class DocumentsController extends Controller
           $types=DocType::select('id')->where('name',$type)->first();
           $temp = DocTemplate::select('id')->where('id_doc_type', $types->id)->first();
           if($type=='sp'){
-            $doc = Documents::where('doc_parent', 0)->where('doc_type','sp')->where('doc_template_id', $temp->id)->get();
+            $doc = Documents::selectRaw('documents.*,parent.doc_title as parent_title')
+                        ->where('documents.doc_parent', 0)
+                        ->where('documents.doc_type','sp')
+                        ->where('documents.doc_template_id', $temp->id)
+                        ->leftJoin('documents as parent','parent.doc_parent_id','=','documents.id')
+                        ->where('documents.doc_parent_id', $value['id'])
+                        ->get();
           }
           else{
-           $doc = Documents::where('doc_parent', 0)->where('doc_parent_id', $value['id'])->where('doc_template_id', $temp->id)->get();
+           $doc = Documents::selectRaw('documents.*')
+                      ->where('documents.doc_parent', 0)
+                      ->where('documents.doc_parent_id', $value['id'])
+                      ->where('documents.doc_template_id', $temp->id)
+                      ->get();
           }
 
           $value['type'] = json_encode($doc->toArray());
@@ -326,32 +358,44 @@ class DocumentsController extends Controller
         if (empty($type)) {
             return \Response::json([]);
         }
-        $data = $this->documents
-                     ->select('documents.id','documents.doc_no','documents.doc_startdate','documents.doc_enddate','documents.doc_parent_id','documents.doc_title','documents.doc_template_id','documents.supplier_id')
-                     ->with('jenis','supplier','pic')
-                      ->where('documents.doc_type','sp')
-                      ->whereNotNull('documents.doc_no')
-                      ->where('documents.doc_parent',0);
+
+        $data = DocChildLatest::selectRaw('doc_child_latest.*')
+                ->with('jenis')
+                ->where('doc_child_latest.doc_type','sp')
+                ->whereNotNull('doc_child_latest.doc_no')
+                ->where('doc_child_latest.doc_parent',0);
         if(!empty($search)){
           $data->where(function($q) use ($search) {
-              $q->orWhere('documents.doc_no', 'like', '%'.$search.'%');
-              $q->orWhere('documents.doc_title', 'like', '%'.$search.'%');
+              $q->orWhere('doc_child_latest.doc_no', 'like', '%'.$search.'%');
+              $q->orWhere('doc_child_latest.doc_title', 'like', '%'.$search.'%');
           });
         }
         if(!\Auth::user()->hasRole('admin')){
-          $data->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
+          $data->join('users_pegawai','users_pegawai.users_id','=','doc_child_latest.user_id');
           $data->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
           $data->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
         }
+        $data->orderBy('doc_child_latest.created_at','DESC');
+        // dd($data->toSql());exit;
         $data = $data->paginate(30);
         // dd($data);
         $data->getCollection()->transform(function ($value) use ($type){
           $type=DocType::select('id')->where('name',$type)->first();
           $temp = DocTemplate::select('id')->where('id_doc_type', $type->id)->first();
           $doc = Documents::where('doc_parent', 0)->where('doc_parent_id', $value['id'])->where('doc_template_id', $temp->id)->get();
-          $doc_parent = Documents::select('doc_title','doc_date')->where('id', $value['doc_parent_id'])->first();
+          $doc_parent = Documents::select('doc_title','doc_date','doc_parent_id','doc_no','doc_startdate','doc_enddate')->where('id', $value['doc_parent_id'])->first();
+          $doc_parent_first = Documents::select('doc_title','doc_date','doc_no','doc_startdate','doc_enddate')->where('id', $doc_parent->doc_parent_id)->first();
           $value['parent_title'] = $doc_parent->doc_title;
+          $parent_first = null;
+          $parent_no = null;
+          if($doc_parent_first){
+            $parent_first = $doc_parent_first->doc_title;
+            $parent_no = $doc_parent_first->doc_no;
+          }
+          $value['parent_title_first'] = $parent_first;
+          $value['parent_no_first'] = $parent_no;
           $value['parent_date'] = $doc_parent->doc_date;
+          $value['parent_no'] = $doc_parent->doc_no;
           $value['type'] = json_encode($doc->toArray());
           return $value;
         });

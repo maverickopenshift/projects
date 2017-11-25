@@ -152,7 +152,7 @@
                 {!!Helper::error_help($errors,'doc_lampiran_teknis')!!}
               </div>
             </div>
-          @endif          
+          @endif
           @endif
           @include('documents::partials.buttons')
       </div>

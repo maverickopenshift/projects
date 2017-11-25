@@ -12,8 +12,8 @@ use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
-use Modules\Documents\Http\Controllers\MouEditController as MouEdit;
 use Modules\Documents\Http\Controllers\SuratPengikatanEditController as SuratPengikatanEdit;
+use Modules\Documents\Http\Controllers\MouEditController as MouEdit;
 use Modules\Documents\Http\Controllers\AmandemenSpEditController as AmandemenSpEdit;
 use Modules\Documents\Http\Controllers\SpEditController as SpEdit;
 use Modules\Documents\Http\Controllers\AmandemenKontrakEditController as AmademenKontrakEdit;
@@ -27,22 +27,21 @@ use Auth;
 class EditController extends Controller
 {
   protected $documents;
+  protected $SuratPengikatanEdit;
   protected $MouEdit;
   protected $amandemenSpEdit;
   protected $spEdit;
   protected $amademenKontrakEdit;
 
-  public function __construct(Documents $documents,MouEdit $MouEdit, SuratPengikatanEdit $SuratPengikatanEdit,AmandemenSpEdit $amandemenSpEdit,SpEdit $spEdit, AmademenKontrakEdit $amademenKontrakEdit)
+  public function __construct(Documents $documents,SuratPengikatanEdit $SuratPengikatanEdit,MouEdit $MouEdit,AmandemenSpEdit $amandemenSpEdit,SpEdit $spEdit, AmademenKontrakEdit $amademenKontrakEdit)
   {
-
       $this->documents = $documents;
-      $this->MouEdit  = $MouEdit;
-      $this->SuratPengikatanEdit  = $SuratPengikatanEdit;
+      $this->SuratPengikatanEdit = $SuratPengikatanEdit;
+      $this->MouEdit = $MouEdit;
       $this->amandemenSpEdit = $amandemenSpEdit;
       $this->spEdit = $spEdit;
       $this->amademenKontrakEdit = $amademenKontrakEdit;
   }
-
   public function index(Request $request)
   {
     $id = $request->id;
@@ -57,12 +56,11 @@ class EditController extends Controller
     $lt = [];
     $pasal = [];
     $lampiran = [];
-
-    if(in_array($type,['amandemen_sp'])){
+    if($type=='amandemen_sp'){
       $dt->parent_sp = $dt->doc_parent_id;
       $dt->parent_sp_text = $this->documents->select('doc_no')->where('id','=',$dt->doc_parent_id)->first()->doc_no;
     }
-    if(in_array($type,['sp'])){
+    if($type=='sp'){
       $dt->parent_kontrak = $dt->doc_parent_id;
       $dt->parent_kontrak_text = $this->documents->select('doc_no')->where('id','=',$dt->doc_parent_id)->first()->doc_no;
     }
@@ -92,7 +90,6 @@ class EditController extends Controller
       $dt->scope_file     = $scop['file'];
       $dt->scope_file_old = $scop['file'];
     }
-
     if(count($dt->pic)>0){
       foreach($dt->pic as $key => $val){
         $pic['pic_posisi'][$key]  = $val->posisi;
@@ -109,7 +106,6 @@ class EditController extends Controller
       $dt->pic_telp   = $pic['pic_telp'];
       $dt->pic_id     = $pic['pic_id'];
     }
-
     if(count($dt->boq)>0){
       foreach($dt->boq as $key => $val){
         $boq['hs_kode_item'][$key]  = $val->kode_item;
@@ -128,7 +124,6 @@ class EditController extends Controller
       $dt->hs_qty     = $boq['hs_qty'];
       $dt->hs_keterangan     = $boq['hs_keterangan'];
     }
-
     if(count($dt->asuransi)>0){
       foreach($dt->asuransi as $key => $val){
         $jas['doc_jaminan'][$key]           = $val->doc_jaminan;
@@ -148,7 +143,6 @@ class EditController extends Controller
       $dt->doc_jaminan_file      = $jas['doc_jaminan_file'];
       $dt->doc_jaminan_file_old  = $jas['doc_jaminan_file'];
     }
-
     if(count($dt->latar_belakang)>0){
       foreach($dt->latar_belakang as $key => $val){
         $lt['name'][$key]  = $val->meta_name;
@@ -171,7 +165,6 @@ class EditController extends Controller
       $dt->ps_isi        = $ps['desc'];
       $dt->ps_judul_new  = $ps['title'];
     }
-
     if(count($dt->lampiran_ttd)>0){
       foreach($dt->lampiran_ttd as $key => $val){
         $lampiran['file'][$key]  = $val->meta_file;
@@ -179,7 +172,6 @@ class EditController extends Controller
       $dt->doc_lampiran  = $lampiran['file'];
       $dt->doc_lampiran_old  = $lampiran['file'];
     }
-
     $dt->doc_po = $dt->doc_po_no;
     $dt->supplier_text = $dt->supplier->bdn_usaha.'.'.$dt->supplier->nm_vendor;
     $data['page_title'] = 'Edit Dokumen';
@@ -190,7 +182,7 @@ class EditController extends Controller
     $data['action_type'] = 'edit';
     $data['action_url'] = route('doc.storeedit',['type'=>$dt->jenis->type->name,'id'=>$dt->id]);
     $data['data'] = [];
-    //dd($data);
+    $data['id'] = $dt->id;
     return view('documents::form-edit')->with($data);
   }
   public function store(Request $request)
@@ -355,10 +347,10 @@ class EditController extends Controller
       if(isset($request->lt_file[$k]) && is_object($request->lt_file[$k]) && !empty($v)){//jika ada file baru
         $new_lt_file[] = '';
         $new_lt_file_up[] = $request->lt_file[$k];
-        $rules['lt_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
+        $rules['lt_file.'.$k]  =  'required|mimes:pdf';
       }
       else if(empty($v)){
-        $rules['lt_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
+        $rules['lt_file.'.$k]  =  'required|mimes:pdf';
         if(!isset($request->lt_file[$k])){
           $new_lt_file[] = $v;
           $new_lt_file_up[] = $v;
@@ -423,6 +415,7 @@ class EditController extends Controller
     $doc->doc_title = $request->doc_title;
     $doc->doc_desc = $request->doc_desc;
     $doc->doc_template_id = $request->doc_template_id;
+    $doc->doc_date = $request->doc_startdate;
     $doc->doc_startdate = $request->doc_startdate;
     $doc->doc_enddate = $request->doc_enddate;
     $doc->doc_pihak1 = $request->doc_pihak1;

@@ -14,7 +14,7 @@
         $ps_judul = Helper::old_prop_each($doc,'ps_judul');
         $ps_isi   = Helper::old_prop_each($doc,'ps_isi');
       @endphp
-      @if(count($ps_judul)>0)
+      @if(count($ps_judul)>1)
         @foreach ($ps_judul as $key => $value)
             <div class="form-horizontal pasal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
                 <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">

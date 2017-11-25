@@ -497,17 +497,28 @@ $.fn.tableOke = function(options) {
     return this;
 }
 $(function () {
+  var doc_type = '{!!$doc_status!!}';
+  if(doc_type!=='draft'){
+    var opt_data = [
+      { name : 'title' , title  : 'Judul - No Kontrak',orderable:true},
+      { name : 'sup_name' , title  : 'Vendor',orderable:true},
+      { name : 'status' , title  : 'Status',orderable:true},
+      { name : 'jenis.type.title' , title  : 'Type',orderable:true},
+      { name : 'link' , title  : 'Action'},
+    ];
+  }
+  else{
+    var opt_data = [
+      { name : 'title' , title  : 'Judul - No Kontrak',orderable:true},
+      { name : 'sup_name' , title  : 'Vendor',orderable:true},
+      { name : 'jenis.type.title' , title  : 'Type',orderable:true},
+      { name : 'link' , title  : 'Action'},
+    ];
+  }
   var options = {
     url : '{!!route('doc',['status'=>$doc_status])!!}',
     with_number : true,
-    data : [
-      { name : 'title' , title  : 'Judul - No Kontrak',orderable:true},
-      { name : 'sup_name' , title  : 'Vendor',orderable:true},
-      // { name : 'supplier.nm_vendor' , title  : 'Vendor',orderable:true},
-      // { name : 'status' , title  : 'Status',orderable:true},
-      { name : 'jenis.type.title' , title  : 'Type',orderable:true},
-      { name : 'link' , title  : 'Action'},
-    ],
+    data : opt_data,
     page : 1,
     limit : 25,
     q : '',

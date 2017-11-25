@@ -40,7 +40,7 @@
     @endif
   </div>
   <!-- <div class="clearfix"></div>-->
-  <div class="col-sm-3">
+  <div class="col-sm-3 align-bottom">
     <button type="button" class="btn btn-success add-lampiran align-bottom""><i class="glyphicon glyphicon-plus"></i> Tambah Lampiran</button>
   </div>
 </div>

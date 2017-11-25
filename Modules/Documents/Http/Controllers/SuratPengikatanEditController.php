@@ -273,7 +273,8 @@ class SuratPengikatanEditController extends Controller
         }
       }
     }
-
+    
+    /*
     if(count($request->hs_harga)>0){
       DocBoq::where([
         ['documents_id','=',$doc->id]
@@ -307,7 +308,7 @@ class SuratPengikatanEditController extends Controller
         }
       }
     }
-
+    */
 
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     if($request->statusButton == '0'){

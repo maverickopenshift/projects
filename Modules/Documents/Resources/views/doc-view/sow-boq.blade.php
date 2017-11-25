@@ -11,14 +11,12 @@
     <!-- /.box-header -->
     <div class="box-body">
       <div class="form-horizontal">
-
         @if($doc_type['title']!="SP")
           <div class="form-group ">
             <label class="col-sm-2 control-label">Lingkup Pekerjaan</label>
             <div class="col-sm-10 text-me">{{$doc->doc_sow or '-'}}</div>
           </div>
         @endif
-        @if(!in_array($doc_type->name,['mou']))
             @php
               $kode_item = Helper::old_prop_each($doc,'hs_kode_item');
               $item = Helper::old_prop_each($doc,'hs_item');
@@ -100,7 +98,6 @@
             </div>
           @endif
           @include('documents::partials.buttons-view')
-        @endif
       </div>
     </div>
 <!-- /.box-body -->

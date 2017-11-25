@@ -7,6 +7,7 @@
     <!-- /.box-header -->
     <div class="box-body">
       <div class="form-horizontal">
+        <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group ">
             <label class="col-sm-2 control-label">No.Kontrak </label>
             <div class="col-sm-10 text-me">{{$doc->doc_no or '-'}}</div>
@@ -26,11 +27,19 @@
           @if($doc_type->name=="sp" || $doc_type->name=="khs" || $doc_type->name=="turnkey" || $doc_type->name=="surat_pengikatan" || $doc_type->name=="mou")
             <div class="form-group">
               <label for="akte_awal_tg" class="col-sm-2 control-label">Tanggal Mulai {{$doc_type['title']}}</label>
-              <div class="col-sm-10 text-me">{{Carbon\Carbon::parse($doc->doc_startdate)->format('l, d F Y')}}</div>
+              <div class="col-sm-10 text-me">
+                @if(isset($doc->doc_startdate))
+                {{Carbon\Carbon::parse($doc->doc_startdate)->format('l, d F Y')}}
+                @else - @endif
+              </div>
             </div>
             <div class="form-group">
               <label for="akte_awal_tg" class="col-sm-2 control-label">Tanggal Akhir {{$doc_type['title']}}</label>
-              <div class="col-sm-10 text-me">{{Carbon\Carbon::parse($doc->doc_enddate)->format('l, d F Y')}}</div>
+              <div class="col-sm-10 text-me">
+                @if(isset($doc->doc_enddate))
+                  {{Carbon\Carbon::parse($doc->doc_enddate)->format('l, d F Y')}}
+                @else - @endif
+              </div>
             </div>
           @else
             <div class="form-group">
@@ -38,6 +47,8 @@
               <div class="col-sm-10 text-me">{{Carbon\Carbon::parse($doc->doc_date)->format('l, d F Y')}}</div>
             </div>
           @endif
+        </div>
+        <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           @include('documents::doc-view.general-info-right')
           <div class="form-group">
             <label class="col-sm-2 control-label">Pihak I </label>
@@ -45,7 +56,7 @@
           </div>
           <div class="form-group">
             <label for="ttd_pihak1" class="col-sm-2 control-label">Penandatangan Pihak I</label>
-            <div class="col-sm-10 text-me nama_ttd">{{$doc->doc_pihak1_nama}}</div>
+            <div class="col-sm-10 text-me">{{$doc->doc_pihak1_nama}}</div>
           </div>
           <div class="form-group">
             <label for="akte_awal_tg" class="col-sm-2 control-label">Pihak II</label>
@@ -87,6 +98,8 @@
                 </div>
             </div>
           </div>
+        </div>
+        <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           @if($doc_type->name!="sp")
             <div class="form-group">
               <label for="prinsipal_st" class="col-sm-2 control-label">Cara Pengadaan</label>
@@ -136,42 +149,47 @@
               </div>
             </div>
           @endif
+        </div>
 
-          @if($doc_type->name!="surat_pengikatan" and $doc_type->name!="mou")
-            <div class="form-group">
-              <label for="prinsipal_st" class="col-sm-2 control-label">Unit Penanggungjawab PIC</label>
-              <div class="col-sm-10">
-                <div class="parent-pictable">
-                    <table class="table table-condensed table-striped">
-                        <thead>
+        @if($doc_type->name=="surat_pengikatan" and $doc_type->name=="mou")        
+        <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+          <div class="form-group">
+            <label for="prinsipal_st" class="col-sm-2 control-label">Unit Penanggungjawab PIC</label>
+            <div class="col-sm-10">
+              <div class="parent-pictable">
+                  <table class="table table-condensed table-striped">
+                      <thead>
+                        <tr>
+                          <th width="40">No.</th>
+                          <th  width="200">Nama</th>
+                          <th  width="250">Jabatan</th>
+                          <th  width="150">Email</th>
+                          <th  width="150">No.Telp</th>
+                          <th>Posisi</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @foreach ($doc->pic as $key=>$dt)
                           <tr>
-                            <th width="40">No.</th>
-                            <th  width="200">Nama</th>
-                            <th  width="250">Jabatan</th>
-                            <th  width="150">Email</th>
-                            <th  width="150">No.Telp</th>
-                            <th>Posisi</th>
+                            <td>{{($key+1)}}</td>
+                            <td>{{($dt->nama)}}</td>
+                            <td>{{($dt->jabatan)}}</td>
+                            <td>{{($dt->email)}}</td>
+                            <td>{{($dt->telp)}}</td>
+                            <td>{{($dt->posisi)}}</td>
                           </tr>
-                        </thead>
-                        <tbody>
-                          @foreach ($doc->pic as $key=>$dt)
-                            <tr>
-                              <td>{{($key+1)}}</td>
-                              <td>{{($dt->nama)}}</td>
-                              <td>{{($dt->jabatan)}}</td>
-                              <td>{{($dt->email)}}</td>
-                              <td>{{($dt->telp)}}</td>
-                              <td>{{($dt->posisi)}}</td>
-                            </tr>
-                          @endforeach
-                        </tbody>
-                    </table>
-                  </div>
-              </div>
+                        @endforeach
+                      </tbody>
+                  </table>
+                </div>
             </div>
-          @endif
-          
+          </div>
+        </div>
+        @endif
+
+
           @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
+          <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             @if(count($doc->po)>0)
           <div class="form-group ">
             <label class="col-sm-2 control-label">No.PO</label>
@@ -223,6 +241,7 @@
             <div class="col-sm-10 text-me">-</div>
           </div>
         @endif
+      </div>
           @endif
           @include('documents::partials.buttons-view')
       </div>

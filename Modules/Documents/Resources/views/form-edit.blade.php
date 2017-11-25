@@ -13,17 +13,17 @@
         }
       @endphp
       <ul class="nav nav-tabs">
-        <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO</a></li>
+        <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
 
         @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter']))
           <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
-        @elseif(in_array($doc_type->name,['surat_pengikatan']))
-          <!-- kosong -->
         @else
-          <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
+          @if(!in_array($doc_type->name,['surat_pengikatan']))
+            <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
+          @endif
         @endif
 
-        @if(!in_array($doc_type->name,['mou']))
+        @if(!in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter','mou']) )
         <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
         @endif
 
@@ -66,7 +66,11 @@
           </div>
           <div class="tab-pane ok" id="tab_3">
             @include('documents::partials.alert-errors')
-            @include('documents::doc-form-edit.latar-belakang')
+            @if(in_array($doc_type->name,['surat_pengikatan']))
+              @include('documents::doc-form-edit.surat_pengikatan-latar-belakang')
+            @else
+              @include('documents::doc-form-edit.latar-belakang')
+            @endif
             <div class="clearfix"></div>
             <div class="row">
               <div class="col-sm-12">
@@ -75,9 +79,8 @@
               </div>
             </div>
           </div>
-          
+          @if(in_array($doc_type->name,['khs','turnkey','surat_pengikatan','mou']))
           <div class="tab-pane" id="tab_4">
-            @if(in_array($doc_type->name,['khs','turnkey','surat_pengikatan','mou']))
             @include('documents::partials.alert-errors')
             @include('documents::doc-form-edit.pasal-penting')
             <div class="clearfix"></div>
@@ -87,9 +90,8 @@
                 <a class="btn btn-info btnNext pull-right" >Selanjutnya <i class="glyphicon glyphicon-arrow-right"></i></a>
               </div>
             </div>
-            @endif
           </div>
-          
+          @endif
           <div class="tab-pane" id="tab_5">
             @include('documents::partials.alert-errors')
             @if(in_array($doc_type->name,['amandemen_sp']))
@@ -109,6 +111,7 @@
           </div>
         </div>
         <!-- /.tab-content -->
+        @include('documents::partials.comments')
       </div>
   </form>
 @endsection

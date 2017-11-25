@@ -1,16 +1,15 @@
 <div class="form-group  {{ $errors->has('parent_sp') ? ' has-error' : '' }}">
-  <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> No SP</label>
+  <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> No SP Induk</label>
   <div class="col-sm-10">
     <input type="hidden" class="select-sp-text" name="parent_sp_text" value="{{Helper::old_prop($doc,'parent_sp_text')}}">
     <select class="form-control select-sp" style="width: 100%;" name="parent_sp" data-id="{{Helper::old_prop($doc,'parent_sp')}}">
-        <option value="">Pilih SP</option>
     </select>
     @if ($errors->has('parent_sp'))
         <span class="help-block">
             <strong>{{ $errors->first('parent_sp') }}</strong>
         </span>
     @endif
-    <div class="result-sp"></div>
+    <div class="result-sp top15"></div>
   </div>
 </div>
 <div class="form-group judul-man" style="display:none;">
@@ -47,13 +46,15 @@
                   o.id = v.id;
                   o.name = v.doc_title;
                   o.parent_title = v.parent_title;
+                  o.parent_no = v.parent_no;
+                  o.parent_title_first = v.parent_title_first;
+                  o.parent_no_first = v.parent_no_first;
                   o.value = v.doc_no;
-                  o.parent_date = $.format.date(v.parent_date+" 10:54:50", "dd MMMM yyyy");
-                  o.datestart = $.format.date(v.doc_startdate+" 10:54:50", "dd MMMM yyyy");
-                  o.dateend = $.format.date(v.doc_enddate+" 10:54:50", "dd MMMM yyyy");
+                  o.parent_date = $.format.date(v.parent_date+" 10:54:50", "dd-MM-yyyy");
+                  o.datestart = $.format.date(v.doc_startdate+" 10:54:50", "dd-MM-yyyy");
+                  o.dateend = $.format.date(v.doc_enddate+" 10:54:50", "dd-MM-yyyy");
                   o.type = v.type;
                   o.jenis = v.jenis;
-                  o.nama_supplier = v.supplier.bdn_usaha + "." + v.supplier.nm_vendor;
                   results.push(o);
               })
               params.page = params.page || 1;
@@ -66,10 +67,10 @@
           },
           cache: true
       },
-      //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+      escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
       minimumInputLength: 0,
       templateResult: function (state) {
-          if (state.id === undefined || state.id === "") { return ; }
+          if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching....' ; }
           var $state = $(
               '<span>'+state.name+' - '+  state.parent_title +' <i>('+  state.value + ')</i></span>'
           );
@@ -77,7 +78,7 @@
       },
       templateSelection: function (data) {
           if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
-              return;
+              return 'Cari Nomor/Judul SP';
           }
           var render = data.value;
           if(data.value === undefined){
@@ -113,10 +114,13 @@
             o.id = v.id;
             o.name = v.doc_title;
             o.parent_title = v.parent_title;
+            o.parent_no = v.parent_no;
+            o.parent_title_first = v.parent_title_first;
+            o.parent_no_first = v.parent_no_first;
             o.value = v.doc_no;
-            o.datestart = $.format.date(v.doc_startdate+" 10:54:50", "dd MMMM yyyy");
-            o.dateend = $.format.date(v.doc_enddate+" 10:54:50", "dd MMMM yyyy");
-            o.parent_date = $.format.date(v.parent_date+" 10:54:50", "dd MMMM yyyy");
+            o.datestart = $.format.date(v.doc_startdate+" 10:54:50", "dd-MM-yyyy");
+            o.dateend = $.format.date(v.doc_enddate+" 10:54:50", "dd-MM-yyyy");
+            o.parent_date = $.format.date(v.parent_date+" 10:54:50", "dd-MM-yyyy");
             o.type = v.type;
             o.jenis = v.jenis;
         })
@@ -132,12 +136,16 @@
     //console.log(JSON.stringify(data));
     table.html('');
     var s_type = JSON.parse(data.type);
-    $('#nama_supplier').val(data.nama_supplier);
-    console.log(JSON.stringify(s_type.length));
+    //console.log(JSON.stringify(s_type.length));
+    var parent_no_first = '',parent_title_first='';
+    var p_title = data.parent_title+' <small> <i>('+data.parent_no+')</i></small>';
+    if(data.parent_title_first!==null){
+      p_title = data.parent_title_first+' <small> <i>('+data.parent_no_first+')</i></small><div class="top10">'+p_title+'</div>';
+    }
     var t_table = '<table class="table">\
                     <thead>\
                       <tr >\
-                            <th width="300">Judul Kontrak</th>\
+                            <th width="320">Kontrak Induk</th>\
                             <th width="150">Tanggal Kontrak</th>\
                             <th>Judul SP</th>\
                             <th  width="150">Tanggal Mulai SP</th>\
@@ -147,7 +155,7 @@
                     </thead>\
                     <tbody>\
                       <tr>\
-                            <td>'+data.parent_title+'</td>\
+                            <td>'+p_title+'</td>\
                             <td>'+data.parent_date+'</td>\
                             <td>'+data.name+'</td>\
                             <td>'+data.datestart+'</td>\
@@ -170,7 +178,7 @@
                           t_type += '<tr>\
                                           <td>'+this.doc_title+'</td>\
                                           <td>'+((this.doc_no==null)?'-':this.doc_no)+'</td>\
-                                          <td>'+$.format.date(this.doc_date+" 10:54:50", "dd MMMM yyyy")+'</td>\
+                                          <td>'+$.format.date(this.doc_date+" 10:54:50", "dd-MM-yyyy")+'</td>\
                                     </tr>';
                         });
           t_type +=    '</tbody>\

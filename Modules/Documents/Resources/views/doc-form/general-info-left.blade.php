@@ -1,6 +1,6 @@
 <div class="form-horizontal">
-
-    @if(!in_array($doc_type->name,["khs","turnkey","surat_pengikatan","mou"]))
+  <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+    @if(!in_array($doc_type->name,['khs','turnkey','surat_pengikatan','mou']))
       @include('documents::doc-form.no-kontrak')
     @else
     <div class="form-group  {{ $errors->has('doc_title') ? ' has-error' : '' }}">
@@ -15,7 +15,6 @@
       </div>
     </div>
     @endif
-
     <div class="form-group {{ $errors->has('doc_desc') ? ' has-error' : '' }}">
       <label for="deskripsi_kontrak" class="col-sm-2 control-label">Deskripsi {{$doc_type['title']}}</label>
       <div class="col-sm-10">
@@ -27,7 +26,6 @@
         @endif
       </div>
     </div>
-
     @if(in_array($doc_type->name,['khs','turnkey']))
       <div class="form-group {{ $errors->has('doc_template_id') ? ' has-error' : '' }}">
         <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Jenis {{$doc_type['title']}}</label>
@@ -39,8 +37,7 @@
         </div>
       </div>
     @endif
-    
-    @if($doc_type->name=="sp" || $doc_type->name=="khs" || $doc_type->name=="turnkey"  || $doc_type->name=="surat_pengikatan" || $doc_type->name=="mou")
+    @if($doc_type->name=="sp" || $doc_type->name=="khs" || $doc_type->name=="turnkey" || $doc_type->name=="surat_pengikatan" || $doc_type->name=="mou")
       <div class="form-group {{ $errors->has('doc_startdate') ? ' has-error' : '' }}">
         <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Mulai {{$doc_type['title']}}</label>
         <div class="col-sm-6">
@@ -85,8 +82,11 @@
         </div>
       </div>
     @endif
+  </div>
+  <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
     @include('documents::doc-form.general-info-right')
-    @include('documents::doc-form.lampiran-1')
+    @include('documents::doc-form-edit.lampiran-1')
+  </div>
     {{-- <div class="form-group {{ $errors->has('doc_lampiran') ? ' has-error' : '' }}">
       <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Lampiran 1</label>
       <div class="col-sm-6">
@@ -103,6 +103,7 @@
         {!!Helper::error_help($errors,'doc_lampiran')!!}
       </div>
     </div> --}}
+  <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
     @if($doc_type->name!="sp")
       <div class="form-group {{ $errors->has('doc_proc_process') ? ' has-error' : '' }}">
         <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Cara Pengadaan</label>
@@ -184,11 +185,16 @@
         </div>
       </div>
     @endif
-    @if($doc_type->name!="surat_pengikatan" and $doc_type->name!="mou")
-      @include('documents::doc-form.pic')
-    @endif
+  </div>
 
+  @if($doc_type->name!="surat_pengikatan" and $doc_type->name!="mou")
+  <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">    
+      @include('documents::doc-form.pic')
+  </div>
+  @endif
+  
     @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
+    <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
     <div class="form-group {{ $errors->has('doc_po') ? ' has-error' : '' }}">
       <label for="prinsipal_st" class="col-sm-2 control-label"> PO</label>
       <div class="col-sm-3">
@@ -231,6 +237,8 @@
           </tbody>
       </table>
     </div>
+  </div>
     @endif
+
     {{-- @include('documents::partials.buttons') --}}
 </div>

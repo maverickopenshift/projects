@@ -29,7 +29,7 @@ class SuratPengikatanCreateController extends Controller
 
     public function store(Request $request)
     {
-      dd($request);
+      //dd($request);
       $type = $request->type;
       $doc_value = $request->doc_value;
       $request->merge(['doc_value' => Helpers::input_rupiah($request->doc_value)]);
@@ -351,7 +351,7 @@ class SuratPengikatanCreateController extends Controller
         }
       }
 
-
+      /*
       if(count($request->hs_harga)>0){
         foreach($request->hs_harga as $key => $val){
           if(!empty($val)
@@ -382,7 +382,8 @@ class SuratPengikatanCreateController extends Controller
           }
         }
       }
-
+      */
+      
       // dd($request->input());
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
       if($request->statusButton == '0'){

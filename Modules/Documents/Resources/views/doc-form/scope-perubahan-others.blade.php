@@ -29,8 +29,8 @@
             <tr>
                 <td>{{$key+1}}</td>
                 <td class="{{ $errors->has('scope_pasal.'.$key) ? ' has-error' : '' }}"><input type="text" class="form-control" name="scope_pasal[]" autocomplete="off" value="{{$value}}">{!!Helper::error_help($errors,'scope_pasal.'.$key)!!}</td>
-                <td class="{{ $errors->has('scope_judul.'.$key) ? ' has-error' : '' }}"><input type="text" class="form-control" name="scope_judul[]" autocomplete="off" value="{{$value}}">{!!Helper::error_help($errors,'scope_judul.'.$key)!!}</td>
-                <td class="{{ $errors->has('scope_isi.'.$key) ? ' has-error' : '' }}"><textarea rows="5" class="form-control" name="scope_isi[]">{{$value}}</textarea>{!!Helper::error_help($errors,'scope_isi.'.$key)!!}</td>
+                <td class="{{ $errors->has('scope_judul.'.$key) ? ' has-error' : '' }}"><input type="text" class="form-control" name="scope_judul[]" autocomplete="off" value="{{$scope_judul[$key]}}">{!!Helper::error_help($errors,'scope_judul.'.$key)!!}</td>
+                <td class="{{ $errors->has('scope_isi.'.$key) ? ' has-error' : '' }}"><textarea rows="5" class="form-control" name="scope_isi[]">{{$scope_isi[$key]}}</textarea>{!!Helper::error_help($errors,'scope_isi.'.$key)!!}</td>
                 <td class="{{ $errors->has('scope_file.'.$key) ? ' has-error' : '' }}">
                   <div class="input-group">
                     <input type="file" class="hide" name="scope_file[]">

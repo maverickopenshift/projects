@@ -24,13 +24,39 @@ class AmandemenKontrakCreateController
     $type = $request->type;
     $rules = [];
     if($request->statusButton == '0'){
-    $rules['doc_date']         =  'required|date_format:"Y-m-d"';
+    $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
+    $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
     $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     //$rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
     $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['doc_lampiran.*']     =  'required|mimes:pdf';
+
+
+    $check_new_lampiran = false;
+    foreach($request->doc_lampiran_old as $k => $v){
+      if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
+        $new_lamp[] = '';
+        $new_lamp_up[] = $request->doc_lampiran[$k];
+        $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+      }
+      else if(empty($v)){
+        $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+        if(!isset($request->doc_lampiran[$k])){
+          $new_lamp[] = $v;
+          $new_lamp_up[] = $v;
+        }
+        else{
+          $new_lamp[] = '';
+          $new_lamp_up[] = $request->doc_lampiran[$k];
+        }
+      }
+      else{
+        $new_lamp[] = $v;
+        $new_lamp_up[] = $v;
+      }
+    }
+    $request->merge(['doc_lampiran' => $new_lamp]);
 
     $rule_scope_pasal = (count($request['scope_pasal'])>1)?'required':'sometimes|nullable';
     $rule_scope_judul = (count($request['scope_judul'])>1)?'required':'sometimes|nullable';
@@ -80,7 +106,7 @@ class AmandemenKontrakCreateController
                   ->withErrors($validator);
     }
   }else{
-      //$rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
       if ($validator->fails ()){
@@ -93,7 +119,9 @@ class AmandemenKontrakCreateController
     // dd($request->input());
     $doc = new Documents();
     $doc->doc_title = $request->doc_title;
-    $doc->doc_date = $request->doc_date;
+    $doc->doc_date = $request->doc_startdate;
+    $doc->doc_startdate = $request->doc_startdate;
+    $doc->doc_enddate = $request->doc_enddate;
     $doc->doc_desc = $request->doc_desc;
     $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
     $doc->doc_pihak1 = $request->doc_pihak1;
@@ -102,11 +130,6 @@ class AmandemenKontrakCreateController
     $doc->user_id = Auth::id();
     //$doc->supplier_id = $request->supplier_id;
 
-    // if(isset($request->doc_lampiran)){
-    //   $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($request->doc_title));
-    //   $request->doc_lampiran->storeAs('document/'.$request->type, $fileName);
-    //   $doc->doc_lampiran = $fileName;
-    // }
 
     $doc->doc_type = $request->type;
     $doc->doc_parent = 0;

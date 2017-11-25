@@ -7,14 +7,29 @@
     <!-- /.box-header -->
     <div class="box-body">
       <div class="form-horizontal">
+        <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
         <div class="form-group ">
           <label class="col-sm-2 control-label">Nomer {{$doc_type['title']}}</label>
           <div class="col-sm-10 text-me">{{$doc->doc_no or '-'}}</div>
         </div>
-        <div class="form-group ">
-          <label class="col-sm-2 control-label">Tanggal {{$doc_type['title']}}</label>
-          <div class="col-sm-10 text-me">{{$doc->doc_date or '-'}}</div>
+        <div class="form-group">
+          <label for="akte_awal_tg" class="col-sm-2 control-label">Tanggal Mulai {{$doc_type['title']}}</label>
+          <div class="col-sm-10 text-me">
+            @if(isset($doc->doc_startdate))
+            {{Carbon\Carbon::parse($doc->doc_startdate)->format('l, d F Y')}}
+            @else - @endif
+          </div>
         </div>
+        <div class="form-group">
+          <label for="akte_awal_tg" class="col-sm-2 control-label">Tanggal Akhir {{$doc_type['title']}}</label>
+          <div class="col-sm-10 text-me">
+            @if(isset($doc->doc_enddate))
+              {{Carbon\Carbon::parse($doc->doc_enddate)->format('l, d F Y')}}
+            @else - @endif
+          </div>
+        </div>
+      </div>
+      <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
         <div class="form-group">
           <label class="col-sm-2 control-label">Pihak I</label>
           <div class="col-sm-10 text-me">{{$doc->doc_pihak1}}</div>
@@ -44,6 +59,7 @@
                       </tr>
                     </thead>
                     <tbody>
+                      @if(count($doc->lampiran_ttd)>0)
                       @foreach ($doc->lampiran_ttd as $key=>$dt)
                         <tr>
                           <td>{{($key+1)}}</td>
@@ -53,11 +69,17 @@
                         @endif</td>
                         </tr>
                       @endforeach
+                      @else
+                        <tr>
+                            <td colspan="2" align="center">-</td>
+                        </tr>
+                      @endif
                     </tbody>
                 </table>
               </div>
           </div>
         </div>
+      </div>
           @include('documents::partials.buttons-view')
       </div>
     </div>

@@ -11,18 +11,19 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
     Route::post('/storeedit/{type}/{id}/', ['middleware' => ['permission:ubah-kontrak'],'uses' => 'EditController@store'])->name('doc.storeedit');
     Route::post('/approve', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@approve'])->name('doc.approve');
     Route::post('/reject', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@reject'])->name('doc.reject');
+    Route::get('/getKontrak', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@getKontrak'])->name('doc.getKontrak');
     Route::get('/get-select-kontrak', 'DocumentsController@getSelectKontrak')->name('doc.get-select-kontrak');
     Route::get('/get-select-sp', 'DocumentsController@getSelectSp')->name('doc.get-select-sp');
     Route::get('/get-po', 'DocumentsController@getPo')->name('doc.get-po');
     Route::get('/get-pic', 'DocumentsController@getPic')->name('doc.get-pic');
     Route::get('/get-posisi', 'DocumentsController@getPosisi')->name('doc.get-posisi');
-    
+
     Route::get('/comments', ['middleware' => ['permission:lihat-kontrak|ubah-kontrak|'],'uses' => 'DocCommentController@comments'])->name('doc.comments');
-    
+
     Route::post('/comments/{id}/add', ['middleware' => ['permission:lihat-kontrak|ubah-kontrak|'],'uses' => 'DocCommentController@add'])->name('doc.comment.add');
-    
+
     Route::post('/comments/{id}/edit', ['middleware' => ['permission:lihat-kontrak|ubah-kontrak|'],'uses' => 'DocCommentController@edit'])->name('doc.comment.edit');
-    
+
     Route::delete('/comments/delete', ['middleware' => ['permission:lihat-kontrak|ubah-kontrak|'],'uses' => 'DocCommentController@delete'])->name('doc.comment.delete');
 
     Route::get('/doc-template', ['middleware' => ['permission:lihat-template-pasal-pasal'],'uses' => 'DocTemplateController@index'])->name('doc.template');
@@ -105,7 +106,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
 
         return $response;
     })->name('doc.file.asuransi');
-    
+
     Route::get('/file_scope/{type}/{filename}', function ($type,$filename){
         $path = storage_path('app/document/'.$type.'_scope_perubahan/' . $filename);
         if (!File::exists($path)) {

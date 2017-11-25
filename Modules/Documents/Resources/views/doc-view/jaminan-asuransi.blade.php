@@ -24,11 +24,19 @@
       </div>
       <div class="form-group">
         <label for="doc_jaminan_startdate" class="col-sm-2 control-label">Tanggal Mulai</label>
-        <div class="col-sm-10 text-me">{{Carbon\Carbon::parse($dt->doc_jaminan_startdate)->format('l, d F Y')}}</div>
+        <div class="col-sm-10 text-me">
+          @if(isset($dt->doc_jaminan_startdate))
+            {{Carbon\Carbon::parse($dt->doc_jaminan_startdate)->format('l, d F Y')}}
+          @else - @endif
+        </div>
       </div>
       <div class="form-group">
         <label for="doc_jaminan_enddate" class="col-sm-2 control-label">Tanggal Akhir</label>
-        <div class="col-sm-10 text-me">{{Carbon\Carbon::parse($dt->doc_jaminan_enddate)->format('l, d F Y')}}</div>
+        <div class="col-sm-10 text-me">
+          @if(isset($dt->doc_jaminan_enddate))
+            {{Carbon\Carbon::parse($dt->doc_jaminan_enddate)->format('l, d F Y')}}
+          @else - @endif
+        </div>
       </div>
       <div class="form-group">
         <label for="doc_jaminan_desc" class="col-sm-2 control-label">Keterangan</label>

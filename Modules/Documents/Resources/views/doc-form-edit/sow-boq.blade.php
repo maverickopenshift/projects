@@ -20,7 +20,6 @@
               </div>
             </div>
           @endif
-
           @if(!in_array($doc_type->name,['mou']))
             @php
               $kode_item = Helper::old_prop_each($doc,'hs_kode_item');
@@ -39,120 +38,153 @@
                 $tm_download = 'boq';
               }
             @endphp
-            <div class="form-group top20">
-              <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
-              <div class="col-sm-10">
-                <input type="file" name="daftar_harga" class="daftar_harga hide"/>
-                <button class="btn btn-primary btn-sm upload-daftar_harga" type="button"><i class="fa fa-upload"></i> Upload {{$title_hs}}</button>
-                <a href="{{route('doc.template.download',['filename'=>$tm_download])}}" class="btn btn-info  btn-sm" title="Download Sample Template"><i class="glyphicon glyphicon-download-alt"></i> Download sample template</a>
-                <span class="error error-daftar_harga text-danger"></span>
+          <div class="form-group top20">
+            <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
+            <div class="col-sm-10">
+              <input type="file" name="daftar_harga" class="daftar_harga hide"/>
+              <button class="btn btn-primary btn-sm upload-daftar_harga" type="button"><i class="fa fa-upload"></i> Upload {{$title_hs}}</button>
+              <a href="{{route('doc.template.download',['filename'=>$tm_download])}}" class="btn btn-info  btn-sm" title="Download Sample Template"><i class="glyphicon glyphicon-download-alt"></i> Download sample template</a>
+              <span class="error error-daftar_harga text-danger"></span>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-condensed table-striped" id="table-hargasatuan">
+                <thead>
+                <tr>
+                    <th style="width:50px;">No.</th>
+                    <th>Kode Item</th>
+                    <th>Item</th>
+                    @if($doc_type->name!='khs')
+                      <th  style="width:70px;">Qty</th>
+                    @endif
+                    <th style="width:100px;">Satuan</th>
+                    <th style="width:70px;">Currency</th>
+                    <th>Harga</th>
+                    @if($doc_type->name!='khs')
+                      <th style="width:100px;">Harga Total</th>
+                    @endif
+                    <th>Keterangan {{$doc->doc_lampiran_teknis}}</th>
+                    <th><button type="button" class="btn btn-success btn-xs add-harga_satuan"><i class="glyphicon glyphicon-plus"></i> tambah</button></th>
+                </tr>
+                </thead>
+                @if(isset($kode_item) && count($kode_item)>0)
+                      <tbody>
+                        @foreach ($kode_item as $key => $value)
+                          <tr>
+                            <td>{{$key+1}}</td>
+                            <td class="{{ $errors->has('hs_kode_item.'.$key) ? ' has-error' : '' }}">
+                              <input type="text" class="form-control" name="hs_kode_item[]" value="{{$value}}" />
+                              {!!Helper::error_help($errors,'hs_kode_item.'.$key)!!}
+                            </td>
+                            <td class="{{ $errors->has('hs_item.'.$key) ? ' has-error' : '' }}">
+                              <input type="text" class="form-control" name="hs_item[]" value="{{$item[$key]}}" />
+                              {!!Helper::error_help($errors,'hs_item.'.$key)!!}
+                            </td>
+                            @if($doc_type->name!='khs')
+                              <td class="{{ $errors->has('hs_qty.'.$key) ? ' has-error' : '' }}">
+                                <input type="text" class="form-control input-rupiah hitung_total" name="hs_qty[]" value="{{$qty[$key]}}" />
+                                {!!Helper::error_help($errors,'hs_qty.'.$key)!!}
+                              </td>
+                            @endif
+                            <td class="{{ $errors->has('hs_satuan.'.$key) ? ' has-error' : '' }}">
+                              <input type="text" class="form-control" name="hs_satuan[]" value="{{$satuan[$key]}}" />
+                              {!!Helper::error_help($errors,'hs_satuan.'.$key)!!}
+                            </td>
+                            <td  class="{{ $errors->has('hs_mtu.'.$key) ? ' has-error' : '' }}">
+                              <input type="text" class="form-control" name="hs_mtu[]" value="{{$mtu[$key]}}" />
+                              {!!Helper::error_help($errors,'hs_mtu.'.$key)!!}
+                            </td>
+                            <td class="{{ $errors->has('hs_harga.'.$key) ? ' has-error' : '' }}">
+                              <input type="text" class="form-control input-rupiah text-right hitung_total" name="hs_harga[]" value="{{$harga[$key]}}" />
+                              {!!Helper::error_help($errors,'hs_harga.'.$key)!!}
+                            </td>
+                            @if($doc_type->name!='khs')
+                              <td class="text-right" style="vertical-align: middle;">0</td>
+                            @endif
+                            <td class="{{ $errors->has('hs_keterangan.'.$key) ? ' has-error' : '' }}">
+                              <input type="text" class="form-control" name="hs_keterangan[]" value="{{$keterangan[$key]}}" />
+                              {!!Helper::error_help($errors,'hs_keterangan.'.$key)!!}
+                            </td>
+                            <td class="action">
+                              @if(count($kode_item)>1)
+                                <button type="button" class="btn btn-danger btn-xs delete-hs"><i class="glyphicon glyphicon-remove"></i> hapus</button>
+                              @endif
+                            </td>
+                          </tr>
+                        @endforeach
+                      </tbody>
+                @else
+                  <tbody>
+                      <tr>
+                        <td>1</td>
+                        <td><input type="text" class="form-control" name="hs_kode_item[]" /></td>
+                        <td><input type="text" class="form-control" name="hs_item[]" /></td>
+                        @if($doc_type->name!='khs')
+                          <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_qty[]" /></td>
+                        @endif
+                        <td><input type="text" class="form-control" name="hs_satuan[]" /></td>
+                        <td><input type="text" class="form-control" name="hs_mtu[]" /></td>
+                        <td><input type="text" class="form-control input-rupiah text-right hitung_total" name="hs_harga[]" /></td>
+                        @if($doc_type->name!='khs')
+                          <td class="text-right" style="vertical-align: middle;">0</td>
+                        @endif
+                        <td><input type="text" class="form-control" name="hs_keterangan[]" /></td>
+                        <td class="action"></td>
+                      </tr>
+                  </tbody>
+                @endif
+            </table>
+          </div>
+          @if($doc_type['title']=="SP")
+            {{-- @if (isset($doc->doc_lampiran_teknis)) --}}
+              <div class="form-group {{ $errors->has('doc_lampiran_teknis') ? ' has-error' : '' }}">
+                <label for="doc_lampiran_teknis" class="col-sm-2 control-label">Lampiran Teknis</label>
+                <div class="col-sm-6">
+                  <div class="input-group">
+                    <input type="file" class="hide" name="doc_lampiran_teknis" multiple="multiple">
+                    <input class="form-control" type="text" disabled>
+                    <div class="input-group-btn">
+                      <button class="btn btn-default click-upload" type="button">Browse</button>
+                        <input type="hidden" name="doc_lampiran_teknis_old" value="{{$doc->doc_lampiran_teknis}}">
+                      @if(isset($doc->doc_lampiran_teknis))
+                        <a target="_blank" class="btn btn-primary btn-lihat" href="{{route('doc.file',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat</a>
+                      @endif
+                    </div>
+                  </div>
+                </div>
+                {!!Helper::error_help($errors,'doc_lampiran_teknis')!!}
               </div>
-            </div>
-            <div class="table-responsive">
-              <table class="table table-condensed table-striped" id="table-hargasatuan">
-                  <thead>
-                  <tr>
-                      <th style="width:50px;">No.</th>
-                      <th>Kode Item</th>
-                      <th>Item</th>
-                      @if($doc_type->name!='khs')
-                        <th  style="width:70px;">Qty</th>
-                      @endif
-                      <th style="width:100px;">Satuan</th>
-                      <th style="width:70px;">Currency</th>
-                      <th>Harga</th>
-                      @if($doc_type->name!='khs')
-                        <th style="width:100px;">Harga Total</th>
-                      @endif
-                      <th>Keterangan</th>
-                      <th><button type="button" class="btn btn-success btn-xs add-harga_satuan"><i class="glyphicon glyphicon-plus"></i> tambah</button></th>
-                  </tr>
-                  </thead>
-                  @if(isset($kode_item) && count($kode_item)>0)
-                        <tbody>
-                          @foreach ($kode_item as $key => $value)
-                            <tr>
-                              <td>{{$key+1}}</td>
-                              <td class="{{ $errors->has('hs_kode_item.'.$key) ? ' has-error' : '' }}">
-                                <input type="text" class="form-control" name="hs_kode_item[]" value="{{$value}}" />
-                                {!!Helper::error_help($errors,'hs_kode_item.'.$key)!!}
-                              </td>
-                              <td class="{{ $errors->has('hs_item.'.$key) ? ' has-error' : '' }}">
-                                <input type="text" class="form-control" name="hs_item[]" value="{{$item[$key]}}" />
-                                {!!Helper::error_help($errors,'hs_item.'.$key)!!}
-                              </td>
-                              @if($doc_type->name!='khs')
-                                <td class="{{ $errors->has('hs_qty.'.$key) ? ' has-error' : '' }}">
-                                  <input type="text" class="form-control input-rupiah hitung_total" name="hs_qty[]" value="{{$qty[$key]}}" />
-                                  {!!Helper::error_help($errors,'hs_qty.'.$key)!!}
-                                </td>
-                              @endif
-                              <td class="{{ $errors->has('hs_satuan.'.$key) ? ' has-error' : '' }}">
-                                <input type="text" class="form-control" name="hs_satuan[]" value="{{$satuan[$key]}}" />
-                                {!!Helper::error_help($errors,'hs_satuan.'.$key)!!}
-                              </td>
-                              <td  class="{{ $errors->has('hs_mtu.'.$key) ? ' has-error' : '' }}">
-                                <input type="text" class="form-control" name="hs_mtu[]" value="{{$mtu[$key]}}" />
-                                {!!Helper::error_help($errors,'hs_mtu.'.$key)!!}
-                              </td>
-                              <td class="{{ $errors->has('hs_harga.'.$key) ? ' has-error' : '' }}">
-                                <input type="text" class="form-control input-rupiah text-right hitung_total" name="hs_harga[]" value="{{$harga[$key]}}" />
-                                {!!Helper::error_help($errors,'hs_harga.'.$key)!!}
-                              </td>
-                              @if($doc_type->name!='khs')
-                                <td class="text-right" style="vertical-align: middle;">0</td>
-                              @endif
-                              <td class="{{ $errors->has('hs_keterangan.'.$key) ? ' has-error' : '' }}">
-                                <input type="text" class="form-control" name="hs_keterangan[]" value="{{$keterangan[$key]}}" />
-                                {!!Helper::error_help($errors,'hs_keterangan.'.$key)!!}
-                              </td>
-                              <td class="action">
-                                @if(count($kode_item)>1)
-                                  <button type="button" class="btn btn-danger btn-xs delete-hs"><i class="glyphicon glyphicon-remove"></i> hapus</button>
-                                @endif
-                              </td>
-                            </tr>
-                          @endforeach
-                        </tbody>
-                  @else
-                    <tbody>
-                        <tr>
-                          <td>1</td>
-                          <td><input type="text" class="form-control" name="hs_kode_item[]" /></td>
-                          <td><input type="text" class="form-control" name="hs_item[]" /></td>
-                          @if($doc_type->name!='khs')
-                            <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_qty[]" /></td>
-                          @endif
-                          <td><input type="text" class="form-control" name="hs_satuan[]" /></td>
-                          <td><input type="text" class="form-control" name="hs_mtu[]" /></td>
-                          <td><input type="text" class="form-control input-rupiah text-right hitung_total" name="hs_harga[]" /></td>
-                          @if($doc_type->name!='khs')
-                            <td class="text-right" style="vertical-align: middle;">0</td>
-                          @endif
-                          <td><input type="text" class="form-control" name="hs_keterangan[]" /></td>
-                          <td class="action"></td>
-                        </tr>
-                    </tbody>
-                  @endif
-              </table>
-            </div>
-            @if($doc_type['title']=="SP")
-              <div class="form-group  {{ $errors->has('doc_lampiran_teknis') ? ' has-error' : '' }}">
-                <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran Teknis</label>
+            {{-- @else
+              <div class="form-group">
+                <label for="doc_lampiran_teknis" class="col-sm-2 control-label">Lampiran Teknis</label>
                 <div class="col-sm-6">
                   <div class="input-group">
                     <input type="file" class="hide" name="doc_lampiran_teknis">
                     <input class="form-control" type="text" disabled>
-                    <span class="input-group-btn">
+                    <div class="input-group-btn">
                       <button class="btn btn-default click-upload" type="button">Browse</button>
-                    </span>
+                      <input type="hidden" name="doc_lampiran_teknis_old">
+                    </div>
                   </div>
                 </div>
-                <div class="col-sm-10 col-sm-offset-2">
-                  {!!Helper::error_help($errors,'doc_lampiran_teknis')!!}
+              </div>
+            @endif --}}
+            {{-- <div class="form-group  {{ $errors->has('doc_lampiran_teknis') ? ' has-error' : '' }}">
+              <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran Teknis</label>
+              <div class="col-sm-6">
+                <div class="input-group">
+                  <input type="file" class="hide" name="doc_lampiran_teknis">
+                  <input class="form-control" type="text" disabled>
+                  <span class="input-group-btn">
+                    <button class="btn btn-default click-upload" type="button">Browse</button>
+                  </span>
                 </div>
               </div>
-            @endif
+              <div class="col-sm-10 col-sm-offset-2">
+                {!!Helper::error_help($errors,'doc_lampiran_teknis')!!}
+              </div>
+            </div> --}}
+          @endif
           @endif
           @include('documents::partials.button-edit')
       </div>

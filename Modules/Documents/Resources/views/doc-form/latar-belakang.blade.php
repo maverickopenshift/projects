@@ -79,7 +79,6 @@
                 <input type="text" class="form-control" name="lt_name[]" style="Display:none" autocomplete="off" value="Surat Penetapan Pemenang">
               </div>
             </div>
-            
             <div class="form-group">
               <label for="lt_desc" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal</label>
               <div class="col-sm-4">

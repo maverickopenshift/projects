@@ -55,6 +55,10 @@
             <div class="col-sm-10 text-me">{{$doc->doc_pihak1}}</div>
           </div>
           <div class="form-group">
+            <label class="col-sm-2 control-label">Approver</label>
+            <div class="col-sm-10 text-me">{{Helper::get_approver_by_id($doc->user_id)}}</div>
+          </div>
+          <div class="form-group">
             <label for="ttd_pihak1" class="col-sm-2 control-label">Penandatangan Pihak I</label>
             <div class="col-sm-10 text-me">{{$doc->doc_pihak1_nama}}</div>
           </div>

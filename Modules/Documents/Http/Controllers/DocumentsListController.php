@@ -78,7 +78,9 @@ class DocumentsListController extends Controller
             $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-eye"></i> LIHAT</a>';
           }
           if(!\Laratrust::hasRole('approver') ){
-            $edit = '<a class="btn btn-xs btn-info" href="'.route('doc.edit',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-edit"></i> EDIT</a>';
+            $edit = '<a class="btn btn-xs btn-info" href="'.route('doc.edit',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-edit"></i> EDIT</a>
+              <a class="btn btn-xs btn-danger" data-id="'.$value['id'].'" data-toggle="modal" data-target="#modal-delete"><i class="fa fa-trash"></i></a>
+            ';
           }
           $value['link'] = $view.$edit;
           $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason']);

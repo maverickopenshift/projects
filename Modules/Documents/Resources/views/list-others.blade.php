@@ -36,6 +36,27 @@
     </div>
 <!-- /.box-body -->
 </div>
+
+<div class="modal modal-danger fade" id="modal-delete">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span></button>
+                <h4 class="modal-title">Confirm Delete</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this data</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline btn-delete" data-loading-text="Please wait..."><i class="glyphicon glyphicon-trash"></i> Delete</button>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
 @endsection
 @push('scripts')
 <script>
@@ -555,5 +576,37 @@ $(document).on('click', '.btn-reject', function(event) {
     'error'
   );
 });
+
+var modalDelete = $('#modal-delete');
+modalDelete.on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget) // Button that triggered the modal
+    var id = button.data('id')
+    var modal = $(this)
+    var btnDelete = modal.find('.btn-delete')
+    btnDelete.attr('data-id',button.data('id'))
+    btnDelete.attr('data-type',button.data('type'))
+    btnDelete.button('reset')
+})
+
+$(document).on('click','.btn-delete',function (event) {
+    event.preventDefault();
+    var btnDelete = $(this)
+    btnDelete.button('loading')
+    alert($(this).attr('data-id'));
+    
+    $.ajax({
+        url: '{!! route('doc.hapus') !!}',
+        type: 'post',
+        dataType: 'JSON',
+        data: {_token:'{!! csrf_token() !!}',id:$(this).attr('data-id')},
+        success: function( _response ){
+            //location.reload(); 
+            modalDelete.modal('hide')
+        },
+        error: function( _response ){
+            modalDelete.modal('hide')
+        }
+    });
+})
 </script>
 @endpush

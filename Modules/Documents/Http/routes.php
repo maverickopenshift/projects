@@ -11,6 +11,9 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
     Route::post('/storeedit/{type}/{id}/', ['middleware' => ['permission:ubah-kontrak'],'uses' => 'EditController@store'])->name('doc.storeedit');
     Route::post('/approve', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@approve'])->name('doc.approve');
     Route::post('/reject', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@reject'])->name('doc.reject');
+    
+    Route::post('/hapus', ['middleware' => ['permission:hapus-kontrak'],'uses' => 'DocumentsController@hapus'])->name('doc.hapus');
+
     Route::get('/getKontrak', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@getKontrak'])->name('doc.getKontrak');
     Route::get('/get-select-kontrak', 'DocumentsController@getSelectKontrak')->name('doc.get-select-kontrak');
     Route::get('/get-select-sp', 'DocumentsController@getSelectSp')->name('doc.get-select-sp');

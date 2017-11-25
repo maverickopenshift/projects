@@ -188,6 +188,7 @@
         @endif
 
 
+
           @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
           <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             @if(count($doc->po)>0)

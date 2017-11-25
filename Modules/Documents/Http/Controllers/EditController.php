@@ -12,6 +12,8 @@ use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
+use Modules\Documents\Http\Controllers\SuratPengikatanEditController as SuratPengikatanEdit;
+use Modules\Documents\Http\Controllers\MouEditController as MouEdit;
 use Modules\Documents\Http\Controllers\AmandemenSpEditController as AmandemenSpEdit;
 use Modules\Documents\Http\Controllers\SpEditController as SpEdit;
 use Modules\Documents\Http\Controllers\AmandemenKontrakEditController as AmademenKontrakEdit;
@@ -25,13 +27,17 @@ use Auth;
 class EditController extends Controller
 {
   protected $documents;
+  protected $SuratPengikatanEdit;
+  protected $MouEdit;
   protected $amandemenSpEdit;
   protected $spEdit;
   protected $amademenKontrakEdit;
 
-  public function __construct(Documents $documents,AmandemenSpEdit $amandemenSpEdit,SpEdit $spEdit, AmademenKontrakEdit $amademenKontrakEdit)
+  public function __construct(Documents $documents,SuratPengikatanEdit $SuratPengikatanEdit,MouEdit $MouEdit,AmandemenSpEdit $amandemenSpEdit,SpEdit $spEdit, AmademenKontrakEdit $amademenKontrakEdit)
   {
       $this->documents = $documents;
+      $this->SuratPengikatanEdit = $SuratPengikatanEdit;
+      $this->MouEdit = $MouEdit;
       $this->amandemenSpEdit = $amandemenSpEdit;
       $this->spEdit = $spEdit;
       $this->amademenKontrakEdit = $amademenKontrakEdit;
@@ -192,6 +198,12 @@ class EditController extends Controller
     }
     if($type=='sp'){
       return $this->spEdit->store($request);
+    }
+    if($type=='surat_pengikatan'){
+      return $this->SuratPengikatanEdit->store($request);
+    }
+    if($type=='mou'){
+      return $this->MouEdit->store($request);
     }
     // if($type=='amandemen_sp'){
     //   return $this->AmandemenSpCreate->store($request);

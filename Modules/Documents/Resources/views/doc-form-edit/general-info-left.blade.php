@@ -1,6 +1,6 @@
 <div class="form-horizontal">
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-    @if(!in_array($doc_type->name,['khs','turnkey']))
+    @if(!in_array($doc_type->name,['khs','turnkey','surat_pengikatan','mou']))
       @include('documents::doc-form.no-kontrak')
     @else
     <div class="form-group  {{ $errors->has('doc_title') ? ' has-error' : '' }}">
@@ -37,7 +37,7 @@
         </div>
       </div>
     @endif
-    @if($doc_type->name=="sp" || $doc_type->name=="khs" || $doc_type->name=="turnkey")
+    @if($doc_type->name=="sp" || $doc_type->name=="khs" || $doc_type->name=="turnkey" || $doc_type->name=="surat_pengikatan" || $doc_type->name=="mou")
       <div class="form-group {{ $errors->has('doc_startdate') ? ' has-error' : '' }}">
         <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Mulai {{$doc_type['title']}}</label>
         <div class="col-sm-6">
@@ -186,9 +186,19 @@
       </div>
     @endif
   </div>
+<<<<<<< HEAD
+  
+  @if($doc_type->name!="surat_pengikatan" and $doc_type->name!="mou")
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
     @include('documents::doc-form.pic')
   </div>
+  @endif
+
+=======
+  <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+    @include('documents::doc-form.pic')
+  </div>
+>>>>>>> e8c02bcb8221bbef2a564614439df0e77451a7fa
     @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
     <div class="form-group {{ $errors->has('doc_po') ? ' has-error' : '' }}">

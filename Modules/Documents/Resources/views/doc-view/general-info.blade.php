@@ -24,7 +24,7 @@
             <label for="akte_awal_tg" class="col-sm-2 control-label">Jenis {{$doc_type['title']}}</label>
             <div class="col-sm-10 text-me">{{$doc->jenis->category->title}}</div>
           </div>
-          @if($doc_type->name=="sp" || $doc_type->name=="khs" || $doc_type->name=="turnkey")
+          @if($doc_type->name=="sp" || $doc_type->name=="khs" || $doc_type->name=="turnkey" || $doc_type->name=="surat_pengikatan" || $doc_type->name=="mou")
             <div class="form-group">
               <label for="akte_awal_tg" class="col-sm-2 control-label">Tanggal Mulai {{$doc_type['title']}}</label>
               <div class="col-sm-10 text-me">
@@ -150,6 +150,8 @@
             </div>
           @endif
         </div>
+
+        @if($doc_type->name=="surat_pengikatan" and $doc_type->name=="mou")        
         <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group">
             <label for="prinsipal_st" class="col-sm-2 control-label">Unit Penanggungjawab PIC</label>
@@ -183,6 +185,8 @@
             </div>
           </div>
         </div>
+        @endif
+
 
 
           @if($doc_type->name=="turnkey" || $doc_type->name=="sp")

@@ -13,6 +13,8 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocPo;
+use Modules\Documents\Http\Controllers\SuratPengikatanCreateController as SuratPengikatanCreate;
+use Modules\Documents\Http\Controllers\MouCreateController as MouCreate;
 use Modules\Documents\Http\Controllers\SpCreateController as SpCreate;
 use Modules\Documents\Http\Controllers\AmandemenSpCreateController as AmandemenSpCreate;
 use Modules\Documents\Http\Controllers\AmandemenKontrakCreateController as AmandemenKontrakCreate;
@@ -25,12 +27,16 @@ use Auth;
 class EntryDocumentController extends Controller
 {
     protected $fields=[];
+    protected $SuratPengikatanCreate;
     protected $spCreate;
+    protected $MouCreate;
     protected $AmandemenSpCreate;
     protected $AmandemenKontrakCreate;
     protected $AdendumCreate;
     protected $SideLetterCreate;
-    public function __construct(Request $req,SpCreate $spCreate,AmandemenSpCreate $AmandemenSpCreate,AmandemenKontrakCreate $AmandemenKontrakCreate){
+    public function __construct(Request $req,MouCreate $MouCreate,SuratPengikatanCreate $SuratPengikatanCreate,SpCreate $spCreate,AmandemenSpCreate $AmandemenSpCreate,AmandemenKontrakCreate $AmandemenKontrakCreate){
+      $this->SuratPengikatanCreate  = $SuratPengikatanCreate;
+      $this->MouCreate              = $MouCreate;
       $this->spCreate               = $spCreate;
       $this->AmandemenSpCreate      = $AmandemenSpCreate;
       $this->AmandemenKontrakCreate = $AmandemenKontrakCreate;
@@ -87,6 +93,12 @@ class EntryDocumentController extends Controller
       // dd($request->po_no);
 
       $type = $request->type;
+      if($type=='surat_pengikatan'){
+        return $this->SuratPengikatanCreate->store($request);
+      }
+      if($type=='mou'){
+        return $this->MouCreate->store($request);
+      }
       if($type=='sp'){
         return $this->spCreate->store($request);
       }

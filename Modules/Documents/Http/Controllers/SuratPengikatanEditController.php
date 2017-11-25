@@ -86,7 +86,9 @@ class SuratPengikatanEditController extends Controller
     $rules['hs_harga.*']       =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
     $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
     $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
-
+    if(\Laratrust::hasRole('admin')){
+      $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+    }
     //////////////////////////
     
     $check_new_lampiran = false;
@@ -197,7 +199,11 @@ class SuratPengikatanEditController extends Controller
     $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
     $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
     $doc->supplier_id = $request->supplier_id;
-
+    
+    if((\Laratrust::hasRole('admin'))){
+      $doc->user_id  = $request->user_id;
+    }
+    
     $doc->doc_proc_process = $request->doc_proc_process;
     $doc->doc_mtu = $request->doc_mtu;
     $doc->doc_value = Helpers::input_rupiah($request->doc_value);

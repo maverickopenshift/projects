@@ -90,6 +90,9 @@
     selectKontrak.on('select2:select', function (e) {
         var data = e.params.data;
         templateKontrakSelect(data);
+        if(set_content_reset!==undefined){
+          set_content_reset();
+        }
     });
     var kontrak_set = $(".select-kontrak");
     if(kontrak_set.data('id')!==""){

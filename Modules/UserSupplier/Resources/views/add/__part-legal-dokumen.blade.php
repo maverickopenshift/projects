@@ -29,7 +29,12 @@
                 @endphp
                 @if(!empty($old_file[$k]))
                   <span class="help-block">
+                    <!--
                     <a target="_blank" href="{{route('supplier.legaldokumen.file',['filename'=>$old_file[$k]])}}"><i class="glyphicon glyphicon-paperclip"></i> {{$old_file[$k]}}</a>
+                    -->
+                    <a href="#" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('supplier.legaldokumen.file',['filename'=>$old_file[$k]])}}">
+                    <i class="glyphicon glyphicon-paperclip"></i>{{$old_file[$k]}}</a>
+
                     <input type="hidden" class="hide" name="file_old_ld[]" value="{{$old_file[$k]}}">
                   </span>
                 @endif

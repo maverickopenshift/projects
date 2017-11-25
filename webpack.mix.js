@@ -91,6 +91,12 @@ let mix = require('laravel-mix');
             'node_modules/vue-resource/dist/vue-resource.min.js',
         ], 'public/js/vue.js', './')
         .scripts([
+            'resources/assets/js/pdfjs/pdf.worker.js',
+        ], 'public/js/pdf.worker.js', './')
+        .scripts([
+            'resources/assets/js/pdfjs/pdf.js',
+        ], 'public/js/pdf.js', './')
+        .scripts([
             'node_modules/admin-lte/plugins/jQuery/jquery-2.2.3.min.js',
             'node_modules/admin-lte/bootstrap/js/bootstrap.js',
             'node_modules/admin-lte/plugins/iCheck/icheck.js',

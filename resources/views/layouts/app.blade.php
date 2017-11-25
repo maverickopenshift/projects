@@ -34,6 +34,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
+    <style type="text/css">
+      .canvasattr{
+        display: block;
+      }
+    </style>
     <script>
         window.Laravel = <?php echo json_encode([
             'csrfToken' => csrf_token(),
@@ -110,6 +115,25 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </div>
 </div><!-- ./wrapper -->
 
+<!-- modal-preview-pdf -->
+<div class="modal fade" id="ModalPDF" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h4 class="modal-title" id="myModalLabel"></h4> 
+      </div>
+      <div class="modal-body">
+        <div style=" max-height: 500px; overflow: auto;" style="text-align: center;" id="holder">   
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <script src="{{ mix('js/all.js') }}"></script>
 <script>
@@ -126,6 +150,52 @@ var is_admin = function(){
   return admin;
 }
 </script>
+
+<!-- Javascript Preview PDF -->
+<script src="{{asset('js/pdf.js')}}"></script>
+
+<script type="text/javascript">
+function renderPDF(url, canvasContainer, options) {
+    var options = options || { scale: 1 };
+        
+    function renderPage(page) {
+        var viewport = page.getViewport(options.scale);
+        var canvas = document.createElement('canvas');
+        var canvasattr = document.createAttribute("class");   
+        canvasattr.value = "canvasattr";                      
+        canvas.setAttributeNode(canvasattr); 
+        var ctx = canvas.getContext('2d');
+        var renderContext = {
+          canvasContext: ctx,
+          viewport: viewport
+        };
+        
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        canvasContainer.appendChild(canvas);
+        
+        page.render(renderContext);
+    }
+    
+    function renderPages(pdfDoc) {
+        for(var num = 1; num <= pdfDoc.numPages; num++)
+            pdfDoc.getPage(num).then(renderPage);
+    }
+    PDFJS.disableWorker = true;
+    PDFJS.getDocument(url).then(renderPages);
+}   
+</script> 
+
+<script type="text/javascript">
+
+  $('#ModalPDF').on('show.bs.modal', function (e) {
+    var url = $(e.relatedTarget).data('load-url');
+    $(this).find('#holder').html('');
+    renderPDF(url, document.getElementById('holder'));  
+  });
+  
+</script>
+
 @stack('scripts')
 </body>
 </html>

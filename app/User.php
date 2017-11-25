@@ -55,12 +55,22 @@ class User extends Authenticatable
       $data->where('v_band_posisi','<',$posisi);
       return $data->orderBy('v_band_posisi','asc')->get();
     }
-    public static function get_divisi_by_user_id(){
+    public static function get_divisi_by_user_id($id=null){
+      if(is_null($id)){
+        $id = \Auth::id();
+      }
       $data = \DB::table('users_pegawai')->select('*');  
       $data->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');  
-      $data->where('users_pegawai.users_id',\Auth::id())->orderBy('users_pegawai.users_id','desc');
+      $data->where('users_pegawai.users_id',$id)->orderBy('users_pegawai.users_id','desc');
       $data = $data->first();
       return $data->objiddivisi;
+    }
+    public static function get_pegawai_by_id($id){
+      $data = \DB::table('users_pegawai')->select('*');  
+      $data->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');  
+      $data->where('users_pegawai.users_id',$id)->orderBy('users_pegawai.users_id','desc');
+      $data = $data->first();
+      return $data;
     }
     public static function get_unit_by_disivi(){
       $data = \DB::table('rptom')->selectRaw('objidunit as id,v_short_unit as title,count(objidposisi) as total_posisi');
@@ -96,5 +106,15 @@ class User extends Authenticatable
                 ->join('pegawai', 'pegawai.n_nik', '=', 'users_pegawai.nik')
                 ->where('users_pegawai.users_id',\Auth::id());
       return $data->first();
+    }
+    public static function get_user_by_role($role){
+      $data = \DB::table('role_user')
+                ->join('users', 'users.id', '=', 'role_user.user_id')
+                ->selectRaw('users.id as id,pegawai.v_nama_karyawan as name,pegawai.n_nik as nik,pegawai.objiddivisi as divisi,pegawai.v_short_divisi as divisi_name,pegawai.objidunit as unit,pegawai.v_short_unit as unit_name,pegawai.objidposisi as posisi,pegawai.v_short_posisi as posisi_name')
+                ->join('roles', 'roles.id', '=', 'role_user.role_id')
+                ->join('users_pegawai', 'users_pegawai.users_id', '=', 'users.id')
+                ->join('pegawai', 'pegawai.n_nik', '=', 'users_pegawai.nik')
+                ->where('roles.name',$role);
+      return $data;
     }
 }

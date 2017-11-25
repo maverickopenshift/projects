@@ -69,7 +69,9 @@ class AmandemenSpCreateController
     // $rule_lt_desc = (count($request['lt_desc'])>1)?'required':'sometimes|nullable';
     $rules['lt_desc.*']  =  'required|date_format:"Y-m-d"';
     $rules['lt_name.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-
+    if(\Laratrust::hasRole('admin')){
+      $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+    }
     $check_new_file = false;
     foreach($request->lt_file_old as $k => $v){
       if(isset($request->lt_file[$k]) && is_object($request->lt_file[$k]) && !empty($v)){//jika ada file baru
@@ -105,6 +107,9 @@ class AmandemenSpCreateController
     }
   }else{
       $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      if(\Laratrust::hasRole('admin')){
+        $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      }
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
       if ($validator->fails ()){
@@ -125,7 +130,7 @@ class AmandemenSpCreateController
     $doc->doc_pihak1 = $request->doc_pihak1;
     $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
     $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
-    $doc->user_id = Auth::id();
+    $doc->user_id = (\Laratrust::hasRole('admin'))?$request->user_id:Auth::id();
     //$doc->supplier_id = $request->supplier_id;
 
     $doc->doc_type = $request->type;

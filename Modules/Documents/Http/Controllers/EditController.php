@@ -47,7 +47,7 @@ class EditController extends Controller
     $id = $request->id;
     $type = $request->type;
     $doc = $this->documents->where('documents.id','=',$id);
-    $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan')->first();
+    $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','users')->first();
     if(!$dt || !$this->documents->check_permission_doc($id,$type)){
       abort(404);
     }
@@ -174,6 +174,7 @@ class EditController extends Controller
     }
     $dt->doc_po = $dt->doc_po_no;
     $dt->supplier_text = $dt->supplier->bdn_usaha.'.'.$dt->supplier->nm_vendor;
+    $dt->konseptor_text = $dt->users->name.' - '.$dt->users->username;
     $data['page_title'] = 'Edit Dokumen';
     $data['doc_type'] = $dt->jenis->type;
     $data['doc'] = $dt;
@@ -259,7 +260,9 @@ class EditController extends Controller
     $rules['hs_harga.*']       =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
     $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
     $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
-
+    if(\Laratrust::hasRole('admin')){
+      $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+    }
     $check_new_lampiran = false;
     foreach($request->doc_lampiran_old as $k => $v){
       if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
@@ -422,6 +425,9 @@ class EditController extends Controller
     $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
     $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
     //$doc->user_id = Auth::id();
+    if((\Laratrust::hasRole('admin'))){
+      $doc->user_id = $request->user_id;
+    }
     $doc->supplier_id = Documents::where('id',$id)->first()->supplier_id;
     //$doc->supplier_id = $request->supplier_id;
 

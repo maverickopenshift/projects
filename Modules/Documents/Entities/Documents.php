@@ -25,7 +25,7 @@ class Documents extends Model
       return $fields_r;
     }
     public function users(){
-      return $this->hasOne('App\User');
+      return $this->hasOne('App\User','id','user_id');
     }
     public function jenis(){
       return $this->hasOne('Modules\Documents\Entities\DocTemplate','id','doc_template_id')->with('category','type');

@@ -55,6 +55,10 @@
             <div class="col-sm-10 text-me">{{$doc->doc_pihak1}}</div>
           </div>
           <div class="form-group">
+            <label class="col-sm-2 control-label">Approver</label>
+            <div class="col-sm-10 text-me">{{Helper::get_approver_by_id($doc->user_id)}}</div>
+          </div>
+          <div class="form-group">
             <label for="ttd_pihak1" class="col-sm-2 control-label">Penandatangan Pihak I</label>
             <div class="col-sm-10 text-me">{{$doc->doc_pihak1_nama}}</div>
           </div>
@@ -82,7 +86,13 @@
                         @foreach ($doc->lampiran_ttd as $key=>$dt)
                           <tr>
                             <td>{{($key+1)}}</td>
-                            <td>@if(!empty($dt->meta_file))<a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
+                            <td>@if(!empty($dt->meta_file))
+                            <!--  
+                            <a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
+                            -->
+                            <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
+                            <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
+                            </a>
                             @else
                             -
                           @endif</td>

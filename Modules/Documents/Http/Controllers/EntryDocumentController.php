@@ -89,7 +89,7 @@ class EntryDocumentController extends Controller
      */
     public function store(Request $request)
     {
-      // dd($request->input());
+      //dd($request->input());
       // dd($request->po_no);
 
       $type = $request->type;
@@ -158,7 +158,9 @@ class EntryDocumentController extends Controller
       $rules['hs_harga.*']       =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
-
+      if(\Laratrust::hasRole('admin')){
+        $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      }
       $check_new_lampiran = false;
       foreach($request->doc_lampiran_old as $k => $v){
         if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
@@ -284,6 +286,9 @@ class EntryDocumentController extends Controller
     $rules['pic_posisi.*']    =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
     $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    if(\Laratrust::hasRole('admin')){
+      $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+    }
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
     if ($validator->fails ()){
@@ -305,7 +310,7 @@ class EntryDocumentController extends Controller
       $doc->doc_pihak1 = $request->doc_pihak1;
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
-      $doc->user_id = Auth::id();
+      $doc->user_id = (\Laratrust::hasRole('admin'))?$request->user_id:Auth::id();
       $doc->supplier_id = $request->supplier_id;
 
       if(in_array($type,['turnkey','sp'])){

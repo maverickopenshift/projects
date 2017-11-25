@@ -15,7 +15,44 @@
               <button class="btn btn-default click-upload" type="button">Browse</button>
                 <input type="hidden" name="doc_lampiran_old[]" value="{{$lampiran_old[$key]}}">
               @if(isset($lampiran_old[$key]))
+                <!--
                 <a target="_blank" class="btn btn-primary btn-lihat" href="{{route('doc.file.lampiran',['filename'=>$lampiran_old[$key],'type'=>$doc_type->name])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat</a>
+                
+                -->
+
+                <!--
+                <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#myModal">
+                <i class="glyphicon glyphicon-paperclip"></i>  Lihat
+                </a>
+                
+
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myModalLabel">Modal title</h4> 
+                      </div>
+                      <div class="modal-body">
+                        <div style="text-align: center;">
+                          <iframe src="{{route('doc.file.lampiran',['filename'=>$lampiran_old[$key],'type'=>$doc_type->name])}}" 
+                          style="width:500px; height:500px;" frameborder="0"></iframe>
+                          </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                -->
+                
+                <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file.lampiran',['filename'=>$lampiran_old[$key],'type'=>$doc_type->name])}}">
+                <i class="glyphicon glyphicon-paperclip"></i>  Lihat
+                </a>
+                
+                
               @endif
               @if(count($lampiran)>1)
                 <button type="button" class="btn btn-danger delete-lampiran"><i class="glyphicon glyphicon-trash"></i></button>

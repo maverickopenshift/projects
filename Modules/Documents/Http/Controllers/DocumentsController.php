@@ -205,6 +205,7 @@ class DocumentsController extends Controller
 
       return view('documents::view')->with($data);
     }
+
     public function getPo(Request $request){
       $search = trim($request->po);
 

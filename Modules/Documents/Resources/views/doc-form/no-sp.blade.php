@@ -53,6 +53,7 @@
                   o.dateend = $.format.date(v.doc_enddate+" 10:54:50", "dd MMMM yyyy");
                   o.type = v.type;
                   o.jenis = v.jenis;
+                  o.nama_supplier = v.supplier.bdn_usaha + "." + v.supplier.nm_vendor;
                   results.push(o);
               })
               params.page = params.page || 1;
@@ -131,6 +132,7 @@
     //console.log(JSON.stringify(data));
     table.html('');
     var s_type = JSON.parse(data.type);
+    $('#nama_supplier').val(data.nama_supplier);
     console.log(JSON.stringify(s_type.length));
     var t_table = '<table class="table">\
                     <thead>\

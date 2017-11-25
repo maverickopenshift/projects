@@ -13,6 +13,8 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocPo;
+use Modules\Documents\Http\Controllers\MouCreateController as MouCreate;
+use Modules\Documents\Http\Controllers\SuratPengikatanCreateController as SuratPengikatanCreate;
 use Modules\Documents\Http\Controllers\SpCreateController as SpCreate;
 use Modules\Documents\Http\Controllers\AmandemenSpCreateController as AmandemenSpCreate;
 use Modules\Documents\Http\Controllers\AmandemenKontrakCreateController as AmandemenKontrakCreate;
@@ -25,12 +27,16 @@ use Auth;
 class EntryDocumentController extends Controller
 {
     protected $fields=[];
+    protected $SuratPengikatanCreate;
     protected $spCreate;
     protected $AmandemenSpCreate;
     protected $AmandemenKontrakCreate;
     protected $AdendumCreate;
     protected $SideLetterCreate;
-    public function __construct(Request $req,SpCreate $spCreate,AmandemenSpCreate $AmandemenSpCreate,AmandemenKontrakCreate $AmandemenKontrakCreate){
+    public function __construct(Request $req,MouCreate $MouCreate, SuratPengikatanCreate $SuratPengikatanCreate,SpCreate $spCreate,AmandemenSpCreate $AmandemenSpCreate,AmandemenKontrakCreate $AmandemenKontrakCreate){
+      
+      $this->MouCreate  = $MouCreate;
+      $this->SuratPengikatanCreate  = $SuratPengikatanCreate;
       $this->spCreate               = $spCreate;
       $this->AmandemenSpCreate      = $AmandemenSpCreate;
       $this->AmandemenKontrakCreate = $AmandemenKontrakCreate;
@@ -83,10 +89,21 @@ class EntryDocumentController extends Controller
      */
     public function store(Request $request)
     {
+      
       // dd($request->input());
       // dd($request->po_no);
 
       $type = $request->type;
+      //dd($request);
+      if($type=='surat_pengikatan'){
+        return $this->SuratPengikatanCreate->store($request);
+      }
+
+      if($type=='mou'){
+        //dd();
+        return $this->MouCreate->store($request);
+      }
+
       if($type=='sp'){
         return $this->spCreate->store($request);
       }
@@ -96,17 +113,20 @@ class EntryDocumentController extends Controller
       if(in_array($type,['amandemen_kontrak','adendum','side_letter'])){
         return $this->AmandemenKontrakCreate->store($request);
       }
+
       $doc_value = $request->doc_value;
       $request->merge(['doc_value' => Helpers::input_rupiah($request->doc_value)]);
       //$request->merge(['doc_value' => 'asdfsadfsdafsd']);
       $m_hs_harga=[];
       $m_hs_qty=[];
+      
       if(isset($request['hs_harga']) && count($request['hs_harga'])>0){
         foreach($request['hs_harga'] as $key => $val){
           $hs_harga[] = $val;
           $m_hs_harga[$key] = Helpers::input_rupiah($val);
         }
       }
+      
       if(count($m_hs_harga)>0){
         $request->merge(['hs_harga'=>$m_hs_harga]);
       }

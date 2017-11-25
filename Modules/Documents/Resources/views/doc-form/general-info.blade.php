@@ -6,6 +6,7 @@
     </div>
     <!-- /.box-header -->
     <div class="box-body">
+
       @include('documents::doc-form.general-info-left')
       @include('documents::partials.buttons')
     </div>

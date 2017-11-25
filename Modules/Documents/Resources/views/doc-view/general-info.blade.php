@@ -23,7 +23,7 @@
             <label for="akte_awal_tg" class="col-sm-2 control-label">Jenis {{$doc_type['title']}}</label>
             <div class="col-sm-10 text-me">{{$doc->jenis->category->title}}</div>
           </div>
-          @if($doc_type->name=="sp" || $doc_type->name=="khs" || $doc_type->name=="turnkey")
+          @if($doc_type->name=="sp" || $doc_type->name=="khs" || $doc_type->name=="turnkey" || $doc_type->name=="surat_pengikatan" || $doc_type->name=="mou")
             <div class="form-group">
               <label for="akte_awal_tg" class="col-sm-2 control-label">Tanggal Mulai {{$doc_type['title']}}</label>
               <div class="col-sm-10 text-me">{{Carbon\Carbon::parse($doc->doc_startdate)->format('l, d F Y')}}</div>
@@ -136,38 +136,41 @@
               </div>
             </div>
           @endif
-          <div class="form-group">
-            <label for="prinsipal_st" class="col-sm-2 control-label">Unit Penanggungjawab PIC</label>
-            <div class="col-sm-10">
-              <div class="parent-pictable">
-                  <table class="table table-condensed table-striped">
-                      <thead>
-                        <tr>
-                          <th width="40">No.</th>
-                          <th  width="200">Nama</th>
-                          <th  width="250">Jabatan</th>
-                          <th  width="150">Email</th>
-                          <th  width="150">No.Telp</th>
-                          <th>Posisi</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @foreach ($doc->pic as $key=>$dt)
-                          <tr>
-                            <td>{{($key+1)}}</td>
-                            <td>{{($dt->nama)}}</td>
-                            <td>{{($dt->jabatan)}}</td>
-                            <td>{{($dt->email)}}</td>
-                            <td>{{($dt->telp)}}</td>
-                            <td>{{($dt->posisi)}}</td>
-                          </tr>
-                        @endforeach
-                      </tbody>
-                  </table>
-                </div>
-            </div>
-          </div>
 
+          @if($doc_type->name!="surat_pengikatan" and $doc_type->name!="mou")
+            <div class="form-group">
+              <label for="prinsipal_st" class="col-sm-2 control-label">Unit Penanggungjawab PIC</label>
+              <div class="col-sm-10">
+                <div class="parent-pictable">
+                    <table class="table table-condensed table-striped">
+                        <thead>
+                          <tr>
+                            <th width="40">No.</th>
+                            <th  width="200">Nama</th>
+                            <th  width="250">Jabatan</th>
+                            <th  width="150">Email</th>
+                            <th  width="150">No.Telp</th>
+                            <th>Posisi</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @foreach ($doc->pic as $key=>$dt)
+                            <tr>
+                              <td>{{($key+1)}}</td>
+                              <td>{{($dt->nama)}}</td>
+                              <td>{{($dt->jabatan)}}</td>
+                              <td>{{($dt->email)}}</td>
+                              <td>{{($dt->telp)}}</td>
+                              <td>{{($dt->posisi)}}</td>
+                            </tr>
+                          @endforeach
+                        </tbody>
+                    </table>
+                  </div>
+              </div>
+            </div>
+          @endif
+          
           @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
             @if(count($doc->po)>0)
           <div class="form-group ">

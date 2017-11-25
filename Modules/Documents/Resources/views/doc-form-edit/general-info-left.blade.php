@@ -1,6 +1,7 @@
 <div class="form-horizontal">
-    @if(!in_array($doc_type->name,['khs','turnkey']))
-      @include('documents::doc-form.no-kontrak')
+
+    @if(!in_array($doc_type->name,['khs','turnkey','surat_pengikatan','mou']))
+      @include('documents::doc-form-edit.no-kontrak')
     @else
     <div class="form-group  {{ $errors->has('doc_title') ? ' has-error' : '' }}">
       <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Judul {{$doc_type['title']}}</label>
@@ -36,7 +37,8 @@
         </div>
       </div>
     @endif
-    @if($doc_type->name=="sp" || $doc_type->name=="khs" || $doc_type->name=="turnkey")
+    
+    @if($doc_type->name=="sp" || $doc_type->name=="khs" || $doc_type->name=="turnkey" || $doc_type->name=="surat_pengikatan" || $doc_type->name=="mou")
       <div class="form-group {{ $errors->has('doc_startdate') ? ' has-error' : '' }}">
         <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Mulai {{$doc_type['title']}}</label>
         <div class="col-sm-6">
@@ -180,7 +182,9 @@
         </div>
       </div>
     @endif
-    @include('documents::doc-form.pic')
+    @if($doc_type->name!="surat_pengikatan" and $doc_type->name!="mou")
+      @include('documents::doc-form.pic')
+    @endif
     @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
     <div class="form-group {{ $errors->has('doc_po') ? ' has-error' : '' }}">
       <label for="prinsipal_st" class="col-sm-2 control-label"> PO</label>

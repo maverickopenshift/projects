@@ -11,7 +11,7 @@
     <!-- /.box-header -->
     <div class="box-body">
       <div class="form-horizontal">
-          @if(in_array($doc_type->name,['turnkey','khs']))
+          @if(in_array($doc_type->name,['turnkey','khs','mou']))
             <div class="form-group {{ $errors->has('doc_sow') ? ' has-error' : '' }}">
               <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label>
               <div class="col-sm-10">
@@ -20,6 +20,8 @@
               </div>
             </div>
           @endif
+
+          @if(!in_array($doc_type->name,['mou']))
             @php
               $kode_item = Helper::old_prop_each($doc,'hs_kode_item');
               $item = Helper::old_prop_each($doc,'hs_item');
@@ -150,6 +152,7 @@
                 {!!Helper::error_help($errors,'doc_lampiran_teknis')!!}
               </div>
             </div>
+          @endif          
           @endif
           @include('documents::partials.buttons')
       </div>

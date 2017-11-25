@@ -26,13 +26,15 @@
                   <li class="treeview {{Request::is("documents/create/*")?'active':''}}">
                     <a href="#"><span>Buat Baru</span> <i class="fa fa-angle-left pull-right"></i></a>
                     <ul class="treeview-menu ">
+                      <li class="{{Request::is("documents/create/surat_pengikatan")?'active':''}}" ><a href="{{route('doc.create',['type'=>'surat_pengikatan'])}}">Surat Pengikatan</a></li>
                       <li class="{{Request::is("documents/create/khs")?'active':''}}" ><a href="{{route('doc.create',['type'=>'khs'])}}">KHS</a></li>
                       <li class="{{Request::is("documents/create/turnkey")?'active':''}}" ><a href="{{route('doc.create',['type'=>'turnkey'])}}">Turnkey</a></li>
                       <li class="{{Request::is("documents/create/sp")?'active':''}}" ><a href="{{route('doc.create',['type'=>'sp'])}}">Surat Pesanan (SP)</a></li>
                       <li class="{{Request::is("documents/create/amandemen_sp")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_sp'])}}">Amandemen (SP)</a></li>
                       <li class="{{Request::is("documents/create/amandemen_kontrak")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_kontrak'])}}">Amandemen Kontrak</a></li>
-                      <li class="{{Request::is("documents/create/adendum")?'active':''}}" ><a href="{{route('doc.create',['type'=>'adendum'])}}">Adendum</a></li>
+                      <li class="{{Request::is("documents/create/adendum")?'active':''}}" ><a href="{{route('doc.create',['type'=>'adendum'])}}">Addendum</a></li>
                       <li class="{{Request::is("documents/create/side_letter")?'active':''}}" ><a href="{{route('doc.create',['type'=>'side_letter'])}}">Side Letter</a></li>
+                      <li class="{{Request::is("documents/create/mou")?'active':''}}" ><a href="{{route('doc.create',['type'=>'mou'])}}">MoU</a></li>
                     </ul>
                   </li>
                 @endpermission

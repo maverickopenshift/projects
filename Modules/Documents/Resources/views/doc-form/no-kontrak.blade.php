@@ -1,5 +1,5 @@
 <div class="form-group  {{ $errors->has('parent_kontrak') ? ' has-error' : '' }}">
-  <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> No Kontrak</label>
+  <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> No Kontrak </label>
   <div class="col-sm-10">
     <input type="hidden" class="select-kontrak-text" name="parent_kontrak_text" value="{{Helper::old_prop($doc,'parent_kontrak_text')}}">
     <select class="form-control select-kontrak" style="width: 100%;" name="parent_kontrak" data-id="{{Helper::old_prop($doc,'parent_kontrak')}}">
@@ -50,7 +50,7 @@
                   o.date = $.format.date(v.doc_date+" 10:54:50", "ddd, dd MMMM yyyy");
                   o.type = v.type;
                   o.jenis = v.jenis;
-                  o.nama_supplier = v.supplier.nm_vendor;
+                  o.nama_supplier = v.supplier.bdn_usaha + "." + v.supplier.nm_vendor;
                   results.push(o);
               })
               params.page = params.page || 1;
@@ -113,7 +113,7 @@
             o.date = $.format.date(v.doc_date+" 10:54:50", "ddd, dd MMMM yyyy");
             o.type = v.type;
             o.jenis = v.jenis;
-            o.nama_supplier = v.supplier.nm_vendor;
+            o.nama_supplier = v.supplier.bdn_usaha + "." + v.supplier.nm_vendor;
         })
         templateKontrakSelect(o);
         //console.log(JSON.stringify(o));

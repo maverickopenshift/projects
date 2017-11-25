@@ -145,7 +145,7 @@ class SpCreateController
       }
 
     }else{
-        $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+        //$rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
         if ($validator->fails ()){

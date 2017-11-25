@@ -38,8 +38,8 @@
       </div>
     @endif
   </div>
-  <div class="clearfix"></div>
-  <div class="col-sm-6 col-sm-offset-2">
+  <!-- <div class="clearfix"></div> -->
+  <div class="col-sm-3">
     <button type="button" class="btn btn-success add-lampiran"><i class="glyphicon glyphicon-plus"></i> Tambah Lampiran</button>
   </div>
 </div>

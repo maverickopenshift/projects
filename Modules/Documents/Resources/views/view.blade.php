@@ -15,12 +15,16 @@
         @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter']))
           <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
         @else
-          <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
+          @if(!in_array($doc_type->name,['surat_pengikatan']))
+            <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
+          @endif
         @endif
 
+        @if(!in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter','mou']) )
         <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
+        @endif
 
-        @if(in_array($doc_type->name,['turnkey','khs']))
+        @if(in_array($doc_type->name,['turnkey','khs','surat_pengikatan','mou']))
           <li><a href="#tab_4" data-toggle="tab">PASAL KHUSUS</a></li>
         @endif
 
@@ -32,7 +36,7 @@
         <div class="tab-content">
           <div class="tab-pane active" id="tab_1">
             @include('documents::partials.alert-errors')
-            @if(in_array($doc_type->name,['turnkey','sp','khs']))
+            @if(in_array($doc_type->name,['turnkey','sp','khs','surat_pengikatan','mou']))
               @include('documents::doc-view.general-info')
             @else
               @include('documents::doc-view.amademen')

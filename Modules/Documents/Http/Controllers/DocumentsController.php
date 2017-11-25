@@ -266,6 +266,28 @@ class DocumentsController extends Controller
       }
       abort(500);
     }
+    public function hapus(Request $request)
+    {      
+      if ($request->ajax()) {        
+        if(\Laratrust::hasRole('admin')){
+          $doc = $this->documents
+              ->where('id',$request->id)
+              ->first();
+        }else{
+          $doc = $this->documents
+              ->where('id',$request->id)
+              ->where('user_id',Auth::id())
+              ->first();
+        }
+        if($doc){
+          $doc->doc_signing = 4;
+          $doc->doc_data =  json_encode(['hapus_by_userid'=>\Auth::id()]);
+          $doc->save();
+          return Response::json(['status'=>true]);
+        }
+        return Response::json(['status'=>false]);
+      }
+    }
     public function reject(Request $request)
     {
       if ($request->ajax()) {

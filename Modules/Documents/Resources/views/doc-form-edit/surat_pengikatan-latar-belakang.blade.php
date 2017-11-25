@@ -1,4 +1,4 @@
-<div class="box">
+ <div class="box">
     <div class="box-header with-border" style="padding-bottom: 14px;">
       <h3 class="box-title">
 
@@ -70,7 +70,7 @@
       @else
         <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_lt">1</span></div>
+              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_lt">1</span><small class="text-danger"><i> (Wajib di isi) </i></small></div>
             </div>
             <div class="form-group">
               <label for="lt_name" class="col-sm-2 control-label"><span class="text-red">*</span> Judul</label>
@@ -110,7 +110,7 @@
               <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_lt">2</span></div>
             </div>
             <div class="form-group">
-              <label for="lt_name" class="col-sm-2 control-label"><span class="text-red">*</span> Judul</label>
+              <label for="lt_name" class="col-sm-2 control-label"> Judul</label>
               <div class="col-sm-4">
                 <input type="text" class="form-control" name="" disabled="true" autocomplete="off" value="BAP">
                 <input type="text" class="form-control" name="lt_name[]" style="Display:none" autocomplete="off" value="BAP">
@@ -118,7 +118,7 @@
 
             </div>
             <div class="form-group">
-              <label for="lt_desc" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal</label>
+              <label for="lt_desc" class="col-sm-2 control-label"> Tanggal</label>
               <div class="col-sm-4">
                 <div class="input-group date" data-provide="datepicker">
                     <div class="input-group-addon">
@@ -129,7 +129,7 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="lt_file" class="col-sm-2 control-label"><span class="text-red">*</span> File</label>
+              <label for="lt_file" class="col-sm-2 control-label"> File</label>
               <div class="col-sm-4">
                 <div class="input-group">
                   <input type="file" class="hide" name="lt_file[]">
@@ -145,10 +145,10 @@
 
         <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_lt">2</span></div>
+              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_lt">3</span></div>
             </div>
             <div class="form-group">
-              <label for="lt_name" class="col-sm-2 control-label"><span class="text-red">*</span> Judul</label>
+              <label for="lt_name" class="col-sm-2 control-label"> Judul</label>
               <div class="col-sm-4">
                 <input type="text" class="form-control" name="" disabled="true" autocomplete="off" value="BAK">
                 <input type="text" class="form-control" name="lt_name[]" style="Display:none" autocomplete="off" value="BAK">
@@ -156,7 +156,7 @@
 
             </div>
             <div class="form-group">
-              <label for="lt_desc" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal</label>
+              <label for="lt_desc" class="col-sm-2 control-label"> Tanggal</label>
               <div class="col-sm-4">
                 <div class="input-group date" data-provide="datepicker">
                     <div class="input-group-addon">
@@ -167,7 +167,7 @@
               </div>
             </div>
             <div class="form-group">
-              <label for="lt_file" class="col-sm-2 control-label"><span class="text-red">*</span> File</label>
+              <label for="lt_file" class="col-sm-2 control-label"> File</label>
               <div class="col-sm-4">
                 <div class="input-group">
                   <input type="file" class="hide" name="lt_file[]">
@@ -183,7 +183,7 @@
 
         <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_lt">2</span></div>
+              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_lt">4</span><small class="text-danger"><i> (Wajib di isi) </i></small></div>
             </div>
             <div class="form-group">
               <label for="lt_name" class="col-sm-2 control-label"><span class="text-red">*</span> Judul</label>
@@ -221,7 +221,7 @@
 
         <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_lt">2</span></div>
+              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_lt">5</span><small class="text-danger"><i> (Wajib di isi) </i></small></div>
             </div>
             <div class="form-group">
               <label for="lt_name" class="col-sm-2 control-label"><span class="text-red">*</span> Judul</label>

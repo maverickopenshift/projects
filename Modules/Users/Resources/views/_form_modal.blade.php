@@ -1,4 +1,4 @@
-<div class="modal fade" role="dialog" id="form-modal">
+ <div class="modal fade" role="dialog" id="form-modal">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <form id="form-me" action="#" method="post">

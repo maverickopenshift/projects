@@ -9,12 +9,14 @@ use App\User;
 use App\Role;
 use Modules\Users\Entities\UsersAtasan as Atasan;
 use Modules\Users\Entities\UsersPegawai as Pegawai;
+use Modules\Documents\Entities\Documents as Doc;
 use Illuminate\Support\Facades\Log;
 use Datatables;
 use Validator;
 use Response;
 use App\Mail\SendEmailUser;
 use Mail;
+use App\Helpers\Helpers as Helper;
 
 class UsersController extends Controller
 {
@@ -241,6 +243,38 @@ class UsersController extends Controller
         //     return \Response::json([]);
         // }
         $data = User::get_user_vendor($search)->paginate(30);
+        return \Response::json($data);
+    }
+    public function getSelectKonseptor(Request $request){
+        $search = trim($request->q);
+        $id = trim($request->id);
+        $parent = trim($request->parent);
+        $data = User::get_user_by_role('konseptor');
+        if(!empty($search)){
+          $data->where(function($q) use ($search) {
+              $q->orWhere('users.username', 'like', '%'.$search.'%');
+              $q->orWhere('users.name', 'like', '%'.$search.'%');
+          });
+        }
+        if(!empty($parent)){
+          $userid = Doc::select('user_id')->where('id',$parent)->first();
+          $divisi = User::get_divisi_by_user_id($userid->user_id);
+          $data->where('pegawai.objiddivisi',$divisi);
+        }
+        if(!empty($id)){
+          $data->where('users.id',$id);
+          $data = $data->first();
+          $data->approver = Helper::get_approver_by_id($data->id);
+          $data->pihak1 = Helper::get_pihak1_by_id($data->id);
+        }
+        else{
+          $data = $data->paginate(30);
+          $data->getCollection()->transform(function ($value) {
+            $value->approver = Helper::get_approver_by_id($value->id);
+            $value->pihak1 = Helper::get_pihak1_by_id($value->id);
+            return $value;
+          });
+        }
         return \Response::json($data);
     }
     public function getAtasanByUserid(Request $request){

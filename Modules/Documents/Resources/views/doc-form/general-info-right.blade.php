@@ -1,3 +1,6 @@
+@role('admin')
+  @include('documents::doc-form.general-info-right-admin')
+@endrole
 <div class="form-group">
   <label class="col-sm-2 control-label">Divisi </label>
   <div class="col-sm-6">
@@ -7,13 +10,13 @@
 <div class="form-group">
   <label class="col-sm-2 control-label">Loker</label>
   <div class="col-sm-6">
-    <input type="text" class="form-control" name="divisi"  disabled="disabled" autocomplete="off" value="{{$pegawai->v_short_unit}}">
+    <input type="text" class="form-control" name="loker"  disabled="disabled" autocomplete="off" value="{{$pegawai->v_short_unit}}">
   </div>
 </div>
 <div class="form-group">
   <label class="col-sm-2 control-label">Jabatan</label>
   <div class="col-sm-6">
-    <input type="text" class="form-control" name="divisi"  disabled="disabled" autocomplete="off" value="{{$pegawai->v_short_posisi}}">
+    <input type="text" class="form-control" name="jabatan"  disabled="disabled" autocomplete="off" value="{{$pegawai->v_short_posisi}}">
   </div>
 </div>
 <div class="form-group {{ $errors->has('doc_pihak1') ? ' has-error' : '' }}">
@@ -23,6 +26,12 @@
   </div>
   <div class="col-sm-10 col-sm-offset-2">
     {!!Helper::error_help($errors,'doc_pihak1')!!}
+  </div>
+</div>
+<div class="form-group">
+  <label class="col-sm-2 control-label">Approver</label>
+  <div class="col-sm-6">
+    <textarea class="form-control" name="approver" disabled="disabled">{{Helper::get_approver($pegawai)}}</textarea>
   </div>
 </div>
 {{-- <div class="form-group {{ $errors->has('doc_pihak1_nama') ? ' has-error' : '' }}">
@@ -37,7 +46,13 @@
 <div class="form-group {{ $errors->has('doc_pihak1_nama') ? ' has-error' : '' }}">
   <label class="col-sm-2 control-label"><span class="text-red">*</span>Penandatangan Pihak I</label>
   <div class="col-sm-6">
+    @if(Laratrust::hasRole('admin'))
+      <select class="form-control" id="doc_pihak1_nama" name="doc_pihak1_nama" data-val='{{old('doc_pihak1_nama',Helper::prop_exists($doc,'doc_pihak1_nama'))}}'>
+        <option value="">Pilih Penandatangan Pihak 1</option>
+      </select>
+    @else
     {!!Helper::select_atasan($pegawai,old('doc_pihak1_nama',Helper::prop_exists($doc,'doc_pihak1_nama')))!!}
+    @endif
   </div>
   <div class="col-sm-10 col-sm-offset-2">
     {!!Helper::error_help($errors,'doc_pihak1_nama')!!}

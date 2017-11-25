@@ -108,7 +108,12 @@
                         <button class="btn btn-default click-upload" type="button">Browse</button>
                         <input type="hidden" name="doc_jaminan_file_old[]" value="{{$doc_jaminan_file_old[$key]}}">
                         @if(isset($doc_jaminan_file_old[$key]))
+                        <!--
                           <a target="_blank" class="btn btn-primary btn-lihat" href="{{route('doc.file.asuransi',['filename'=>$doc_jaminan_file_old[$key],'type'=>$doc_type->name])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat</a>
+                        -->
+                          <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file.asuransi',['filename'=>$doc_jaminan_file_old[$key],'type'=>$doc_type->name])}}">
+                          <i class="glyphicon glyphicon-paperclip"></i>  Lihat
+                          </a>
                         @endif
                       </span>
                     </div>

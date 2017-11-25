@@ -82,7 +82,13 @@
                         @foreach ($doc->lampiran_ttd as $key=>$dt)
                           <tr>
                             <td>{{($key+1)}}</td>
-                            <td>@if(!empty($dt->meta_file))<a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
+                            <td>@if(!empty($dt->meta_file))
+                            <!--  
+                            <a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
+                            -->
+                            <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
+                            <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
+                            </a>
                             @else
                             -
                           @endif</td>

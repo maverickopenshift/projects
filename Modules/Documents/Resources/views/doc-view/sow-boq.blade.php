@@ -92,7 +92,11 @@
               <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran Teknis</label>
               <div class="col-sm-10 text-me">
                 @if(!empty($doc->doc_lampiran_teknis))
+                <!--
                     <a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
+                -->
+                    <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}">
+                    <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran </a>    
                 @endif
               </div>
             </div>

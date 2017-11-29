@@ -5,7 +5,7 @@
 @foreach ($doc->pasal as $key=>$dt)
   <div class="form-horizontal ao-jas" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
       <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-        <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Pasal Khusus <span class="total_asu">{{$key+1}}</span></div>
+        <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Pasal Khusus #<span class="total_asu">{{$key+1}}</span></div>
       </div>
       <div class="form-group">
         <label for="doc_jaminan" class="col-sm-2 control-label">Judul Pasal</label>

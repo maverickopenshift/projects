@@ -592,7 +592,6 @@ $(document).on('click','.btn-delete',function (event) {
     event.preventDefault();
     var btnDelete = $(this)
     btnDelete.button('loading')
-    alert($(this).attr('data-id'));
     
     $.ajax({
         url: '{!! route('doc.hapus') !!}',
@@ -600,7 +599,7 @@ $(document).on('click','.btn-delete',function (event) {
         dataType: 'JSON',
         data: {_token:'{!! csrf_token() !!}',id:$(this).attr('data-id')},
         success: function( _response ){
-            //location.reload(); 
+            location.reload(); 
             modalDelete.modal('hide')
         },
         error: function( _response ){

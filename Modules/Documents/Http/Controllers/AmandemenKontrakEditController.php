@@ -25,7 +25,7 @@ class AmandemenKontrakEditController extends Controller
   }
   public function store($request)
   {
-    // dd("hai");
+    //dd($request->input());
     $type = $request->type;
     $id = $request->id;
     $rules = [];
@@ -162,6 +162,37 @@ class AmandemenKontrakEditController extends Controller
     // $doc->doc_signing = $request->statusButton;
     $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
     $doc->save();
+
+    if(count($request->f_judul)>0){
+      DocMeta::where([
+        ['documents_id','=',$doc->id],
+        ['meta_type','=','sow_boq']
+        ])->delete();
+      foreach($request->f_judul as $key => $val){
+        if(!empty($val)){          
+
+          if($val=="Harga"){
+            $f_name="harga";
+            $desc=$request->f_harga[$key];
+          }elseif($val=="Jangka Waktu"){
+            $f_name="jangka_waktu";
+            $desc=$request->f_tanggal1[$key] ." - ". $request->f_tanggal2[$key];
+          }elseif($val=="Lainnya"){
+            $f_name="lainnya";
+            $desc=$request->f_isi[$key];
+          }
+          
+          $doc_meta = new DocMeta();
+          $doc_meta->documents_id = $doc->id;
+          $doc_meta->meta_type = 'sow_boq';
+          $doc_meta->meta_name = $f_name;
+          $doc_meta->meta_title = $val;
+          $doc_meta->meta_desc = $desc;
+
+          $doc_meta->save();
+        }
+      }
+    }
 
     if(count($new_lamp_up)>0){
       DocMeta::where([

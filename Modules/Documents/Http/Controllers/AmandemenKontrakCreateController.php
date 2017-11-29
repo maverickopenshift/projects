@@ -21,6 +21,7 @@ class AmandemenKontrakCreateController
   }
   public function store($request)
   {
+
     $type = $request->type;
     $rules = [];
     if($request->statusButton == '0'){
@@ -134,14 +135,39 @@ class AmandemenKontrakCreateController
     $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
     $doc->user_id = (\Laratrust::hasRole('admin'))?$request->user_id:Auth::id();
     //$doc->supplier_id = $request->supplier_id;
-
-
     $doc->doc_type = $request->type;
     $doc->doc_parent = 0;
     $doc->doc_parent_id = $request->parent_kontrak;
     $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
     $doc->doc_signing = $request->statusButton;
     $doc->save();
+
+    if(count($request->f_judul)>0){
+      foreach($request->f_judul as $key => $val){
+        if(!empty($val)){          
+
+          if($val=="Harga"){
+            $f_name="harga";
+            $desc=$request->f_harga[$key];
+          }elseif($val=="Jangka Waktu"){
+            $f_name="jangka_waktu";
+            $desc=$request->f_tanggal1[$key] ." - ". $request->f_tanggal2[$key];
+          }elseif($val=="Lainnya"){
+            $f_name="lainnya";
+            $desc=$request->f_isi[$key];
+          }
+          
+          $doc_meta = new DocMeta();
+          $doc_meta->documents_id = $doc->id;
+          $doc_meta->meta_type = 'sow_boq';
+          $doc_meta->meta_name = $f_name;
+          $doc_meta->meta_title = $val;
+          $doc_meta->meta_desc = $desc;
+
+          $doc_meta->save();
+        }
+      }
+    }
 
     if(count($request->doc_lampiran)>0){
       foreach($request->doc_lampiran as $key => $val){
@@ -209,11 +235,10 @@ class AmandemenKontrakCreateController
       }
     }
 
-
     //dd($request->input());
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     if($request->statusButton == '0'){
-    return redirect()->route('doc',['status'=>'proses']);
+      return redirect()->route('doc',['status'=>'proses']);
     }else{
       return redirect()->route('doc',['status'=>'draft']);
     }

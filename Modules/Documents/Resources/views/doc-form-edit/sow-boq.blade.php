@@ -3,6 +3,8 @@
       <h3 class="box-title">
         @if($doc_type['title']=="Turnkey" || $doc_type['title']=="SP")
           SOW,BOQ
+        @elseif($doc_type['title']=="MoU")
+          Ruang Lingkup Kerjasama
         @else
           Daftar Harga satuan
         @endif

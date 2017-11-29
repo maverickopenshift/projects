@@ -5,7 +5,13 @@
 @foreach ($doc->latar_belakang as $key=>$dt)
   <div class="form-horizontal ao-jas" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
       <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-        <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="">{{$key+1}}</span></div>
+        <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">
+        @if($doc_type->name=="surat_pengikatan")
+          {{ $dt->meta_name }} <span class=""></span>
+        @else
+          Latar Belakang <span class="">{{$key+1}}</span>
+        @endif
+        </div>
       </div>
       <div class="form-group">
         <label for="doc_jaminan" class="col-sm-2 control-label">Judul</label>

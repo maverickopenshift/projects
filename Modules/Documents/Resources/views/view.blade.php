@@ -7,13 +7,24 @@
         $title_sow = 'SOW,BOQ';
         if($doc_type->name=='khs'){
           $title_sow = 'DAFTAR HARGA SATUAN';
+        }elseif($doc_type->name=='mou'){
+          $title_sow = 'RUANG LINGKUP';
         }
+        
       @endphp
       <ul class="nav nav-tabs">
         <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
 
         @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter']))
-          <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
+          @if(in_array($doc_type->name,['amandemen_kontrak']))
+            <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
+            <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
+            <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
+          @else
+            <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
+            <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
+          @endif
+          <!-- <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li> -->
         @else
           @if(!in_array($doc_type->name,['surat_pengikatan']))
             <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
@@ -50,7 +61,11 @@
           </div>
           <div class="tab-pane" id="tab_2">
             @include('documents::partials.alert-errors')
-            @include('documents::doc-view.sow-boq')
+            @if(in_array($doc_type->name,['turnkey','sp','khs','mou']))
+              @include('documents::doc-view.sow-boq')
+            @elseif(in_array($doc_type->name,['amandemen_kontrak']))
+              @include('documents::doc-view.amandemen_kontrak-sow-boq')
+            @endif
             <div class="clearfix"></div>
             <div class="row">
               <div class="col-sm-12">

@@ -181,7 +181,7 @@ class DocumentsController extends Controller
     {
       $id = $request->id;
       $doc_type = DocType::where('name','=',$request->type)->first();
-      $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po')->first();
+      $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po','sow_boq')->first();
       // dd($loker);
       if(!$doc_type || !$dt){
         abort(404);
@@ -196,7 +196,7 @@ class DocumentsController extends Controller
       // $data['no_kontrak'] = "-";
       // $data['no_loker'] = "-";
       $data['pegawai'] = \App\User::get_user_pegawai();
-
+      
       return view('documents::view')->with($data);
     }
     public function getPo(Request $request){

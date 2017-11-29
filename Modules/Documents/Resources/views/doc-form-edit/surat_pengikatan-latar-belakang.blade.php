@@ -19,10 +19,18 @@
         @foreach ($lt_name as $key => $value)
             <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
                 <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-                  <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_lt">{{$key+1}}</span></div>
+                  <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">{{$lt_name[$key]}} <span class="total_lt"></span>
+                    @if(in_array($key,['0','3','4']))
+                      <small class="text-danger"><i> (Wajib di isi) </i></small>
+                    @endif
+                  </div>
                 </div>
                 <div class="form-group {{ $errors->has('lt_name.'.$key) ? ' has-error' : '' }}">
-                  <label for="lt_name" class="col-sm-2 control-label"><span class="text-red">*</span> Judul</label>
+                  <label for="lt_name" class="col-sm-2 control-label">
+                    @if(in_array($key,['0','3','4']))
+                      <span class="text-red">*</span> 
+                    @endif
+                   Judul</label>
                   <div class="col-sm-4">
                     <input type="text" class="form-control" name="" disabled="true" autocomplete="off" value="{{$value}}">
                     <input type="text" class="form-control" name="lt_name[]"  style="Display:none" autocomplete="off" value="{{$value}}">
@@ -33,7 +41,11 @@
                 </div>
 
                 <div class="form-group {{ $errors->has('lt_desc.'.$key) ? ' has-error' : '' }}">
-                  <label for="lt_desc" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal</label>
+                  <label for="lt_desc" class="col-sm-2 control-label">
+                    @if(in_array($key,['0','3','4']))
+                      <span class="text-red">*</span> 
+                    @endif
+                   Tanggal</label>
                   <div class="col-sm-4">
                     <div class="input-group date" data-provide="datepicker">
                         <div class="input-group-addon">
@@ -47,7 +59,11 @@
                   </div>
                 </div>
                 <div class="form-group {{ $errors->has('lt_file.'.$key) ? ' has-error' : '' }}">
-                  <label for="lt_file" class="col-sm-2 control-label"><span class="text-red">*</span> File</label>
+                  <label for="lt_file" class="col-sm-2 control-label">
+                    @if(in_array($key,['0','3','4']))
+                      <span class="text-red">*</span> 
+                    @endif
+                   File</label>
                   <div class="col-sm-4">
                     <div class="input-group">
                       <input type="file" class="hide" name="lt_file[]" multiple="multiple">
@@ -75,7 +91,7 @@
       @else
         <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_lt">1</span><small class="text-danger"><i> (Wajib di isi) </i></small></div>
+              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">RKS <span class="total_lt">1</span><small class="text-danger"><i> (Wajib di isi) </i></small></div>
             </div>
             <div class="form-group">
               <label for="lt_name" class="col-sm-2 control-label"><span class="text-red">*</span> Judul</label>
@@ -112,7 +128,7 @@
 
         <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_lt">2</span></div>
+              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">BAP <span class="total_lt">2</span></div>
             </div>
             <div class="form-group">
               <label for="lt_name" class="col-sm-2 control-label"> Judul</label>
@@ -150,7 +166,7 @@
 
         <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_lt">3</span></div>
+              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">BAK <span class="total_lt"></span></div>
             </div>
             <div class="form-group">
               <label for="lt_name" class="col-sm-2 control-label"> Judul</label>
@@ -188,7 +204,7 @@
 
         <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_lt">4</span><small class="text-danger"><i> (Wajib di isi) </i></small></div>
+              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Ketetapan Pemenang <span class="total_lt"></span><small class="text-danger"><i> (Wajib di isi) </i></small></div>
             </div>
             <div class="form-group">
               <label for="lt_name" class="col-sm-2 control-label"><span class="text-red">*</span> Judul</label>
@@ -226,7 +242,7 @@
 
         <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_lt">5</span><small class="text-danger"><i> (Wajib di isi) </i></small></div>
+              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Kesanggupan Mitra <span class="total_lt"></span><small class="text-danger"><i> (Wajib di isi) </i></small></div>
             </div>
             <div class="form-group">
               <label for="lt_name" class="col-sm-2 control-label"><span class="text-red">*</span> Judul</label>

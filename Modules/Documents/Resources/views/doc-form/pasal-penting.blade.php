@@ -18,7 +18,7 @@
         @foreach ($ps_judul as $key => $value)
             <div class="form-horizontal pasal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
                 <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-                  <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Pasal Khusus <span class="total_pasal">{{$key+1}}</span></div>
+                  <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Pasal Khusus #<span class="total_pasal">{{$key+1}}</span></div>
                   @if(count($ps_judul)>1)
                     <button type="button" class="btn btn-danger delete-pasal" style="position: absolute;right: 5px;top: -10px;border-radius: 0;"><i class="glyphicon glyphicon-trash"></i></button>
                   @endif
@@ -75,7 +75,7 @@
       @else
       <div class="form-horizontal pasal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-            <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Pasal Khusus <span class="total_pasal">1</span></div>
+            <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Pasal Khusus #<span class="total_pasal">1</span></div>
           </div>
           <div class="form-group">
             <label for="ps_judul" class="col-sm-2 control-label">Judul</label>

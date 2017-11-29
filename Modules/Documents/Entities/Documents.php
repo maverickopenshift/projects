@@ -62,6 +62,10 @@ class Documents extends Model
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','pasal_pasal');
     }
+    public function sow_boq()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','sow_boq');
+    }    
     public function asuransi()
     {
         return $this->hasMany('Modules\Documents\Entities\DocAsuransi');

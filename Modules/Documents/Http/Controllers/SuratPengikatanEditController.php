@@ -35,7 +35,7 @@ class SuratPengikatanEditController extends Controller
   public function store(Request $request)
   {
     
-    // dd($request->input());
+    //dd($request->input());
     $id = $request->id;
     $type = $request->type;
 

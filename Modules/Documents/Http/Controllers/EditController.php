@@ -47,7 +47,7 @@ class EditController extends Controller
     $id = $request->id;
     $type = $request->type;
     $doc = $this->documents->where('documents.id','=',$id);
-    $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','users')->first();
+    $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','sow_boq','scope_perubahan','users')->first();
     if(!$dt || !$this->documents->check_permission_doc($id,$type)){
       abort(404);
     }
@@ -184,6 +184,7 @@ class EditController extends Controller
     $data['action_url'] = route('doc.storeedit',['type'=>$dt->jenis->type->name,'id'=>$dt->id]);
     $data['data'] = [];
     $data['id'] = $dt->id;
+    //dd($data);
     return view('documents::form-edit')->with($data);
   }
   public function store(Request $request)

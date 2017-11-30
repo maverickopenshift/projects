@@ -329,7 +329,7 @@ class DocumentsController extends Controller
             return \Response::json([]);
         }
         $data = $this->documents->select('documents.id','documents.doc_no','documents.doc_date','documents.doc_title','documents.doc_template_id','documents.doc_startdate','documents.doc_enddate','documents.supplier_id')
-        ->with('jenis','supplier','pic')->whereNotNull('documents.doc_no')->where('documents.doc_parent',1);
+        ->with('jenis','supplier','pic')->whereNotNull('documents.doc_no')->where('documents.doc_parent',1)->where('documents.doc_signing', 1);
         if($type=='sp'){
           $data->where('documents.doc_type','khs');
         }
@@ -353,6 +353,7 @@ class DocumentsController extends Controller
             $doc = Documents::selectRaw('documents.*,parent.doc_title as parent_title')
                         ->where('documents.doc_parent', 0)
                         ->where('documents.doc_type','sp')
+                        ->where('documents.doc_signing', 1)
                         ->where('documents.doc_template_id', $temp->id)
                         ->leftJoin('documents as parent','parent.doc_parent_id','=','documents.id')
                         ->where('documents.doc_parent_id', $value['id'])
@@ -361,6 +362,7 @@ class DocumentsController extends Controller
           else{
            $doc = Documents::selectRaw('documents.*')
                       ->where('documents.doc_parent', 0)
+                      ->where('documents.doc_signing', 1)
                       ->where('documents.doc_parent_id', $value['id'])
                       ->where('documents.doc_template_id', $temp->id)
                       ->get();
@@ -372,6 +374,57 @@ class DocumentsController extends Controller
         return \Response::json($data);
     }
 
+    // public function getSelectSp(Request $request){
+    //     $search = trim($request->q);
+    //     $type = trim($request->type);//sp,amandemen,adendum dll
+    //     $type_id = trim($request->type_id);//sp,amandemen,adendum dll
+    // 
+    //     if (empty($type)) {
+    //         return \Response::json([]);
+    //     }
+    // 
+    //     $data = DocChildLatest::selectRaw('doc_child_latest.*')
+    //             ->with('jenis')
+    //             ->where('doc_child_latest.doc_type','sp')
+    //             ->whereNotNull('doc_child_latest.doc_no')
+    //             ->where('doc_child_latest.doc_parent',0);
+    //     if(!empty($search)){
+    //       $data->where(function($q) use ($search) {
+    //           $q->orWhere('doc_child_latest.doc_no', 'like', '%'.$search.'%');
+    //           $q->orWhere('doc_child_latest.doc_title', 'like', '%'.$search.'%');
+    //       });
+    //     }
+    //     if(!\Auth::user()->hasRole('admin')){
+    //       $data->join('users_pegawai','users_pegawai.users_id','=','doc_child_latest.user_id');
+    //       $data->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
+    //       $data->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+    //     }
+    //     $data->orderBy('doc_child_latest.created_at','DESC');
+    //     // dd($data->toSql());exit;
+    //     $data = $data->paginate(30);
+    //     // dd($data);
+    //     $data->getCollection()->transform(function ($value) use ($type){
+    //       $type=DocType::select('id')->where('name',$type)->first();
+    //       $temp = DocTemplate::select('id')->where('id_doc_type', $type->id)->first();
+    //       $doc = Documents::where('doc_parent', 0)->where('doc_parent_id', $value['id'])->where('doc_template_id', $temp->id)->get();
+    //       $doc_parent = Documents::select('doc_title','doc_date','doc_parent_id','doc_no','doc_startdate','doc_enddate')->where('id', $value['doc_parent_id'])->first();
+    //       $doc_parent_first = Documents::select('doc_title','doc_date','doc_no','doc_startdate','doc_enddate')->where('id', $doc_parent->doc_parent_id)->first();
+    //       $value['parent_title'] = $doc_parent->doc_title;
+    //       $parent_first = null;
+    //       $parent_no = null;
+    //       if($doc_parent_first){
+    //         $parent_first = $doc_parent_first->doc_title;
+    //         $parent_no = $doc_parent_first->doc_no;
+    //       }
+    //       $value['parent_title_first'] = $parent_first;
+    //       $value['parent_no_first'] = $parent_no;
+    //       $value['parent_date'] = $doc_parent->doc_date;
+    //       $value['parent_no'] = $doc_parent->doc_no;
+    //       $value['type'] = json_encode($doc->toArray());
+    //       return $value;
+    //     });
+    //     return \Response::json($data);
+    // }
     public function getSelectSp(Request $request){
         $search = trim($request->q);
         $type = trim($request->type);//sp,amandemen,adendum dll
@@ -380,46 +433,45 @@ class DocumentsController extends Controller
         if (empty($type)) {
             return \Response::json([]);
         }
-
-        $data = DocChildLatest::selectRaw('doc_child_latest.*')
-                ->with('jenis')
-                ->where('doc_child_latest.doc_type','sp')
-                ->whereNotNull('doc_child_latest.doc_no')
-                ->where('doc_child_latest.doc_parent',0);
+        $data = $this->documents
+                     ->select('documents.id','documents.doc_no','documents.doc_startdate','documents.doc_enddate','documents.doc_parent_id','documents.doc_title','documents.doc_template_id','documents.supplier_id')
+                     ->with('jenis','supplier','pic')
+                      ->where('documents.doc_type','sp')
+                      ->whereNotNull('documents.doc_no')
+                      ->where('documents.doc_signing', 1)
+                      ->where('documents.doc_parent',0);
         if(!empty($search)){
           $data->where(function($q) use ($search) {
-              $q->orWhere('doc_child_latest.doc_no', 'like', '%'.$search.'%');
-              $q->orWhere('doc_child_latest.doc_title', 'like', '%'.$search.'%');
+              $q->orWhere('documents.doc_no', 'like', '%'.$search.'%');
+              $q->orWhere('documents.doc_title', 'like', '%'.$search.'%');
           });
         }
         if(!\Auth::user()->hasRole('admin')){
-          $data->join('users_pegawai','users_pegawai.users_id','=','doc_child_latest.user_id');
+          $data->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
           $data->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
           $data->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
         }
-        $data->orderBy('doc_child_latest.created_at','DESC');
-        // dd($data->toSql());exit;
         $data = $data->paginate(30);
         // dd($data);
         $data->getCollection()->transform(function ($value) use ($type){
-          $type=DocType::select('id')->where('name',$type)->first();
-          $temp = DocTemplate::select('id')->where('id_doc_type', $type->id)->first();
-          $doc = Documents::where('doc_parent', 0)->where('doc_parent_id', $value['id'])->where('doc_template_id', $temp->id)->get();
-          $doc_parent = Documents::select('doc_title','doc_date','doc_parent_id','doc_no','doc_startdate','doc_enddate')->where('id', $value['doc_parent_id'])->first();
-          $doc_parent_first = Documents::select('doc_title','doc_date','doc_no','doc_startdate','doc_enddate')->where('id', $doc_parent->doc_parent_id)->first();
-          $value['parent_title'] = $doc_parent->doc_title;
-          $parent_first = null;
-          $parent_no = null;
-          if($doc_parent_first){
-            $parent_first = $doc_parent_first->doc_title;
-            $parent_no = $doc_parent_first->doc_no;
-          }
-          $value['parent_title_first'] = $parent_first;
-          $value['parent_no_first'] = $parent_no;
-          $value['parent_date'] = $doc_parent->doc_date;
-          $value['parent_no'] = $doc_parent->doc_no;
-          $value['type'] = json_encode($doc->toArray());
-          return $value;
+                $type=DocType::select('id')->where('name',$type)->first();
+                $temp = DocTemplate::select('id')->where('id_doc_type', $type->id)->first();
+                $doc = Documents::where('doc_parent', 0)->where('doc_parent_id', $value['id'])->where('doc_signing', 1)->where('doc_template_id', $temp->id)->get();
+                $doc_parent = Documents::select('doc_title','doc_date','doc_parent_id','doc_no','doc_startdate','doc_enddate')->where('id', $value['doc_parent_id'])->first();
+                $doc_parent_first = Documents::select('doc_title','doc_date','doc_no','doc_startdate','doc_enddate')->where('id', $doc_parent->doc_parent_id)->first();
+                $value['parent_title'] = $doc_parent->doc_title;
+                $parent_first = null;
+                $parent_no = null;
+                if($doc_parent_first){
+                  $parent_first = $doc_parent_first->doc_title;
+                  $parent_no = $doc_parent_first->doc_no;
+                }
+                $value['parent_title_first'] = $parent_first;
+                $value['parent_no_first'] = $parent_no;
+                $value['parent_date'] = $doc_parent->doc_date;
+                $value['parent_no'] = $doc_parent->doc_no;
+                $value['type'] = json_encode($doc->toArray());
+                return $value;
         });
         return \Response::json($data);
     }

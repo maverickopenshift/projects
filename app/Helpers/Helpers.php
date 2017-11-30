@@ -329,7 +329,7 @@ public static function select_atasan($pegawai,$val=null)
         $ret ='<span class="label label-danger">return</span>';
       }
       else{
-        $ret ='<span class="label label-info">proses</span>';
+        $ret ='<span class="label label-info">in-progress</span>';
         // if($status==1)//reject
         // {
         //   $ret ='<button type="button" class="btn btn-xs btn-danger btn-reject" data-msg="'.$message.'">reject</button>';

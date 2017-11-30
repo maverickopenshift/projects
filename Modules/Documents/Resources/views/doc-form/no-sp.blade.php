@@ -28,7 +28,6 @@
           data: function (params) {
               return {
                   q: params.term, // search term
-                  parent_id : $(".select-kontrak-sp").val(),
                   type:'{!!$doc_type->name!!}',
                   page: params.page
               };

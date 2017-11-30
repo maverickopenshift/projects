@@ -237,6 +237,10 @@ class AmandemenSpEditController extends Controller
     }
 
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
-    return redirect()->back();
+    if($request->statusButton == '0'){
+      return redirect()->route('doc',['status'=>'tracking']);
+    }else{
+      return redirect()->route('doc',['status'=>'draft']);
+    }
   }
 }

@@ -262,7 +262,7 @@ class MouCreateController extends Controller
       // dd($request->input());
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
       if($request->statusButton == '0'){
-      return redirect()->route('doc',['status'=>'proses']);
+        return redirect()->route('doc',['status'=>'tracking']);
       }else{
         return redirect()->route('doc',['status'=>'draft']);
       }

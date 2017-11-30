@@ -418,6 +418,7 @@ class EditController extends Controller
       $doc->doc_pihak1 = $request->doc_pihak1;
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
+      $doc->doc_signing = intval($request->statusButton);
       if((\Laratrust::hasRole('admin'))){
         $doc->user_id = $request->user_id;
       }
@@ -605,7 +606,7 @@ class EditController extends Controller
 
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     if($request->statusButton == '0'){
-      return redirect()->route('doc',['status'=>'proses']);
+      return redirect()->route('doc',['status'=>'tracking']);
     }else{
       return redirect()->route('doc',['status'=>'draft']);
     }

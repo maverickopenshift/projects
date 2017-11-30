@@ -23,6 +23,7 @@ class AmandemenKontrakCreateController
   {
     $type = $request->type;
     $rules = [];
+    $rules['parent_kontrak']   =  'required|kontrak_exists';
     if($request->statusButton == '0'){
     $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
     $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';

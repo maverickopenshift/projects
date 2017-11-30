@@ -50,7 +50,8 @@
           <div class="tab-pane active" id="tab_1">
             @include('documents::partials.alert-errors')
             @if(in_array($doc_type->name,['turnkey','sp','khs','surat_pengikatan','mou']))
-              @if(in_array($doc->doc_signing,['0','2']))
+
+              @if($doc->doc_signing!=1)
                 @include('documents::doc-form-edit.general-info')
               @else
                 @include('documents::doc-view.general-info')

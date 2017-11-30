@@ -26,15 +26,16 @@ class SpEditController extends Controller
     }
     public function store($request)
     {
-      // dd($request);
+      dd($request->input());
       $type = $request->type;
       $id = $request->id;
-      // dd($id);
+      $status = Documents::where('id',$id)->first()->doc_signing;
+
       $doc_nilai_material = $request->doc_nilai_material;
       $doc_nilai_jasa = $request->doc_nilai_jasa;
       $request->merge(['doc_nilai_material' => Helpers::input_rupiah($request->doc_nilai_material)]);
       $request->merge(['doc_nilai_jasa' => Helpers::input_rupiah($request->doc_nilai_jasa)]);
-      //dd($request->input());
+
       $m_hs_harga=[];
       $m_hs_qty=[];
       if(isset($request['hs_harga']) && count($request['hs_harga'])>0){
@@ -56,48 +57,48 @@ class SpEditController extends Controller
         $request->merge(['hs_qty'=>$m_hs_qty]);
       }
       $rules = [];
-
-      $rules['parent_kontrak']   =  'required|kontrak_exists';
-      $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
-      $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
-      $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      //$rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-      $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_lampiran_teknis']     =  'sometimes|nullable|mimes:pdf';
-      $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
-      if(\Laratrust::hasRole('admin')){
-        $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-      }
-      $check_new_lampiran = false;
-      foreach($request->doc_lampiran_old as $k => $v){
-        if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
-          $new_lamp[] = '';
-          $new_lamp_up[] = $request->doc_lampiran[$k];
-          $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+      if(in_array($status,['0','2'])){
+        $rules['parent_kontrak']   =  'required|kontrak_exists';
+        $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
+        $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
+        $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_lampiran_teknis']     =  'sometimes|nullable|mimes:pdf';
+        $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
+        if(\Laratrust::hasRole('admin')){
+          $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
-        else if(empty($v)){
-          $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
-          if(!isset($request->doc_lampiran[$k])){
+        $check_new_lampiran = false;
+        foreach($request->doc_lampiran_old as $k => $v){
+          if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
+            $new_lamp[] = '';
+            $new_lamp_up[] = $request->doc_lampiran[$k];
+            $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+          }
+          else if(empty($v)){
+            $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+            if(!isset($request->doc_lampiran[$k])){
+              $new_lamp[] = $v;
+              $new_lamp_up[] = $v;
+            }
+            else{
+              $new_lamp[] = '';
+              $new_lamp_up[] = $request->doc_lampiran[$k];
+            }
+          }
+          else{
             $new_lamp[] = $v;
             $new_lamp_up[] = $v;
           }
-          else{
-            $new_lamp[] = '';
-            $new_lamp_up[] = $request->doc_lampiran[$k];
-          }
         }
-        else{
-          $new_lamp[] = $v;
-          $new_lamp_up[] = $v;
-        }
+        $request->merge(['doc_lampiran' => $new_lamp]);
+
+        $rules['doc_nilai_material']   =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
+        $rules['doc_nilai_jasa']       =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
       }
-      $request->merge(['doc_lampiran' => $new_lamp]);
-
-      $rules['doc_nilai_material']   =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
-      $rules['doc_nilai_jasa']       =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
-
+      
       $rules['hs_kode_item.*']   =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_satuan.*']      =  'sometimes|nullable|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
@@ -122,10 +123,6 @@ class SpEditController extends Controller
       $rules['doc_jaminan_file.*']      = 'sometimes|nullable|mimes:pdf';
       $rules['doc_po']                  = 'sometimes|nullable|po_exists|regex:/^[a-z0-9 .\-]+$/i';
 
-
-
-      // $rule_lt_name = (count($request['lt_name'])>1)?'required':'sometimes|nullable';
-      // $rule_lt_desc = (count($request['lt_desc'])>1)?'required':'sometimes|nullable';
       $rules['lt_desc.*']  =  'required|date_format:"Y-m-d"';
       $rules['lt_name.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
@@ -160,9 +157,6 @@ class SpEditController extends Controller
             $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
         }
       });
-      // if(isset($doc_jaminan_nilai)){
-      //   $request->merge(['doc_jaminan_nilai.*' => $doc_jaminan_nilai]);
-      // }
 
       if(isset($hs_harga) && count($hs_harga)>0){
         $request->merge(['hs_harga'=>$hs_harga]);
@@ -170,60 +164,58 @@ class SpEditController extends Controller
       if(isset($hs_qty) && count($hs_qty)>0){
         $request->merge(['hs_qty'=>$hs_qty]);
       }
-      //dd($validator->errors());
+
       if ($validator->fails ()){
-        return redirect()->back()
-                    ->withInput($request->input())
-                    ->withErrors($validator);
+        return redirect()->back()->withInput($request->input())->withErrors($validator);
       }
 
+      if(in_array($status,['0','2'])){
+         $doc = Documents::where('id',$id)->first();
+        $doc->doc_title = $request->doc_title;
+        $doc->doc_desc = $request->doc_desc;
+        $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
+        $doc->doc_startdate = $request->doc_startdate;
+        $doc->doc_enddate = $request->doc_enddate;
+        $doc->doc_pihak1 = $request->doc_pihak1;
+        $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
+        $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
+        if((\Laratrust::hasRole('admin'))){
+          $doc->user_id  = $request->user_id;
+        }
+        if(isset($request->doc_lampiran_teknis)){
+          $fileName   = Helpers::set_filename('doc_lampiran_teknis_',strtolower($request->doc_title));
+          $request->doc_lampiran_teknis->storeAs('document/'.$request->type, $fileName);
+          $doc->doc_lampiran_teknis = $fileName;
+        }
 
-      // dd('berhasil');
-      $doc = Documents::where('id',$id)->first();
-      $doc->doc_title = $request->doc_title;
-      $doc->doc_desc = $request->doc_desc;
-      $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
-      $doc->doc_startdate = $request->doc_startdate;
-      $doc->doc_enddate = $request->doc_enddate;
-      $doc->doc_pihak1 = $request->doc_pihak1;
-      $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
-      $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
-      
-      if((\Laratrust::hasRole('admin'))){
-        $doc->user_id  = $request->user_id;
-      }
-      // $doc->user_id = Auth::id();
-      //$doc->supplier_id = $request->supplier_id;
+        $nilai_jasa               = Helpers::input_rupiah($request->doc_nilai_jasa);
+        $nilai_material           = Helpers::input_rupiah($request->doc_nilai_material);
+        $nilai_ppn                = config('app.ppn_set');
+        $nilai_total              = $nilai_jasa+$nilai_material;
 
-      if(isset($request->doc_lampiran_teknis)){
-        $fileName   = Helpers::set_filename('doc_lampiran_teknis_',strtolower($request->doc_title));
-        $request->doc_lampiran_teknis->storeAs('document/'.$request->type, $fileName);
-        $doc->doc_lampiran_teknis = $fileName;
-      }
+        $doc->doc_nilai_material  = $nilai_material;
+        $doc->doc_nilai_jasa      = $nilai_jasa;
+        $doc->doc_nilai_ppn       = $nilai_ppn;
+        $doc->doc_nilai_total_ppn = (($nilai_ppn/100)*$nilai_total)+$nilai_total;
 
-      $nilai_jasa               = Helpers::input_rupiah($request->doc_nilai_jasa);
-      $nilai_material           = Helpers::input_rupiah($request->doc_nilai_material);
-      $nilai_ppn                = config('app.ppn_set');
-      $nilai_total              = $nilai_jasa+$nilai_material;
+        $doc->doc_po_no = $request->doc_po;
 
-      $doc->doc_nilai_material  = $nilai_material;
-      $doc->doc_nilai_jasa      = $nilai_jasa;
-      $doc->doc_nilai_ppn       = $nilai_ppn;
-      $doc->doc_nilai_total_ppn = (($nilai_ppn/100)*$nilai_total)+$nilai_total;
-
-      $doc->doc_po_no = $request->doc_po;
-
-      $doc->doc_proc_process = $request->doc_proc_process;
-      $doc->doc_mtu = $request->doc_mtu;
-      $doc->doc_value = Helpers::input_rupiah($request->doc_value);
-      $doc->doc_sow = $request->doc_sow;
-      $doc->doc_type = $request->type;
-      $doc->doc_parent = 0;
-      // $doc->doc_signing = $request->statusButton;
-      $doc->doc_parent_id = $request->parent_kontrak;
-      $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
-      $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
-      $doc->save();
+        $doc->doc_proc_process = $request->doc_proc_process;
+        $doc->doc_mtu = $request->doc_mtu;
+        $doc->doc_value = Helpers::input_rupiah($request->doc_value);
+        $doc->doc_sow = $request->doc_sow;
+        $doc->doc_type = $request->type;
+        $doc->doc_parent = 0;
+        $doc->doc_parent_id = $request->parent_kontrak;
+        $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
+        $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
+        $doc->save();
+      }else{
+        $doc = Documents::where('id',$id)->first();
+        $doc->doc_sow = $request->doc_sow;
+        $doc->save();
+      } 
+     
 
       if(count($request->doc_po_no)>0){
         $doc_po = DocPo::where('id',$id)->first();
@@ -288,7 +280,6 @@ class SpEditController extends Controller
           }
         }
       }
-
 
       if(count($request->pic_nama)>0){
           DocPic::where([
@@ -372,7 +363,6 @@ class SpEditController extends Controller
         }
       }
 
-      //dd($request->input());
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
       return redirect()->back();
     }

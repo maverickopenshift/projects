@@ -21,7 +21,6 @@ class AmandemenKontrakCreateController
   }
   public function store($request)
   {
-
     $type = $request->type;
     $rules = [];
     if($request->statusButton == '0'){
@@ -30,7 +29,6 @@ class AmandemenKontrakCreateController
     $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    //$rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
     $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
 
@@ -67,9 +65,6 @@ class AmandemenKontrakCreateController
     $rules['scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
     $rules['scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
-
-    // $rule_lt_name = (count($request['lt_name'])>1)?'required':'sometimes|nullable';
-    // $rule_lt_desc = (count($request['lt_desc'])>1)?'required':'sometimes|nullable';
     $rules['lt_desc.*']  =  'required|date_format:"Y-m-d"';
     $rules['lt_name.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
     if(\Laratrust::hasRole('admin')){
@@ -102,27 +97,21 @@ class AmandemenKontrakCreateController
 
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
-    //dd($validator->errors());
     if ($validator->fails ()){
-      return redirect()->back()
-                  ->withInput($request->input())
-                  ->withErrors($validator);
+      return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
   }else{
-      $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
       if ($validator->fails ()){
-        return redirect()->back()
-                    ->withInput($request->input())
-                    ->withErrors($validator);
+        return redirect()->back()->withInput($request->input())->withErrors($validator);
       }
 
   }
-    // dd($request->input());
+
     $doc = new Documents();
     $doc->doc_title = $request->doc_title;
     $doc->doc_date = $request->doc_startdate;
@@ -134,7 +123,6 @@ class AmandemenKontrakCreateController
     $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
     $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
     $doc->user_id = (\Laratrust::hasRole('admin'))?$request->user_id:Auth::id();
-    //$doc->supplier_id = $request->supplier_id;
     $doc->doc_type = $request->type;
     $doc->doc_parent = 0;
     $doc->doc_parent_id = $request->parent_kontrak;
@@ -235,7 +223,6 @@ class AmandemenKontrakCreateController
       }
     }
 
-    //dd($request->input());
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     if($request->statusButton == '0'){
       return redirect()->route('doc',['status'=>'proses']);

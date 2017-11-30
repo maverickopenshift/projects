@@ -29,40 +29,43 @@ class AmandemenSpEditController extends Controller
   {
     $type = $request->type;
     $id = $request->id;
+    $status = Documents::where('id',$id)->first()->doc_signing;
     $rules = [];
-    $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
-    $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
-    $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    //$rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-    $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    if(\Laratrust::hasRole('admin')){
-      $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-    }
-    foreach($request->doc_lampiran_old as $k => $v){
-      if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
-        $new_lamp[] = '';
-        $new_lamp_up[] = $request->doc_lampiran[$k];
-        $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+
+    if(in_array($status,['0','2'])){
+      $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
+      $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
+      $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      if(\Laratrust::hasRole('admin')){
+        $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
-      else if(empty($v)){
-        $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
-        if(!isset($request->doc_lampiran[$k])){
+      foreach($request->doc_lampiran_old as $k => $v){
+        if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
+          $new_lamp[] = '';
+          $new_lamp_up[] = $request->doc_lampiran[$k];
+          $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+        }
+        else if(empty($v)){
+          $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+          if(!isset($request->doc_lampiran[$k])){
+            $new_lamp[] = $v;
+            $new_lamp_up[] = $v;
+          }
+          else{
+            $new_lamp[] = '';
+            $new_lamp_up[] = $request->doc_lampiran[$k];
+          }
+        }
+        else{
           $new_lamp[] = $v;
           $new_lamp_up[] = $v;
         }
-        else{
-          $new_lamp[] = '';
-          $new_lamp_up[] = $request->doc_lampiran[$k];
-        }
       }
-      else{
-        $new_lamp[] = $v;
-        $new_lamp_up[] = $v;
-      }
+      $request->merge(['doc_lampiran' => $new_lamp]);
     }
-    $request->merge(['doc_lampiran' => $new_lamp]);
 
     $rule_scope_name = (count($request['scope_name'])>1)?'required':'sometimes|nullable';
     $rule_scope_awal = (count($request['scope_awal'])>1)?'required':'sometimes|nullable';
@@ -95,8 +98,6 @@ class AmandemenSpEditController extends Controller
     }
     $request->merge(['scope_file' => $new_scope_file]);
 
-    // $rule_lt_name = (count($request['lt_name'])>1)?'required':'sometimes|nullable';
-    // $rule_lt_desc = (count($request['lt_desc'])>1)?'required':'sometimes|nullable';
     $rules['lt_desc.*']  =  'required|date_format:"Y-m-d"';
     $rules['lt_name.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
@@ -126,35 +127,30 @@ class AmandemenSpEditController extends Controller
 
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
-    //dd($validator->errors());
     if ($validator->fails ()){
-      return redirect()->back()
-                  ->withInput($request->input())
-                  ->withErrors($validator);
+      return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
-    //  dd($request->input());
-    $doc = Documents::where('id',$id)->first();;
-    $doc->doc_title = $request->doc_title;
-    $doc->doc_date = $request->doc_startdate;
-    $doc->doc_startdate = $request->doc_startdate;
-    $doc->doc_enddate = $request->doc_enddate;
-    $doc->doc_desc = $request->doc_desc;
-    $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
-    $doc->doc_pihak1 = $request->doc_pihak1;
-    $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
-    $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
     
-    if((\Laratrust::hasRole('admin'))){
-      $doc->user_id  = $request->user_id;
-    }
-    //$doc->user_id = Auth::id();
-    //$doc->supplier_id = $request->supplier_id;
-    $doc->doc_parent = 0;
-    $doc->doc_parent_id = $request->parent_sp;
-    $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
-    // $doc->doc_signing = $request->statusButton;
-    $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
-    $doc->save();
+    if(in_array($status,['0','2'])){
+      $doc = Documents::where('id',$id)->first();;
+      $doc->doc_title = $request->doc_title;
+      $doc->doc_date = $request->doc_startdate;
+      $doc->doc_startdate = $request->doc_startdate;
+      $doc->doc_enddate = $request->doc_enddate;
+      $doc->doc_desc = $request->doc_desc;
+      $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
+      $doc->doc_pihak1 = $request->doc_pihak1;
+      $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
+      $doc->doc_pihak2_nama = $request->doc_pihak2_nama;      
+      if((\Laratrust::hasRole('admin'))){
+        $doc->user_id  = $request->user_id;
+      }
+      $doc->doc_parent = 0;
+      $doc->doc_parent_id = $request->parent_sp;
+      $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
+      $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
+      $doc->save();
+    }    
 
     if(count($new_lamp_up)>0){
       DocMeta::where([
@@ -179,6 +175,7 @@ class AmandemenSpEditController extends Controller
         }
       }
     }
+
     if(count($request['lt_name'])>0){
       DocMeta::where([
         ['documents_id','=',$doc->id],
@@ -239,8 +236,6 @@ class AmandemenSpEditController extends Controller
       }
     }
 
-
-    //dd($request->input());
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     return redirect()->back();
   }

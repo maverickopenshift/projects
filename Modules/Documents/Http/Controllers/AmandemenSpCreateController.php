@@ -30,7 +30,6 @@ class AmandemenSpCreateController
     $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    //$rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
     $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     // $rules['doc_lampiran.*']     =  'required|mimes:pdf';
     foreach($request->doc_lampiran_old as $k => $v){
@@ -106,7 +105,6 @@ class AmandemenSpCreateController
                   ->withErrors($validator);
     }
   }else{
-      $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
@@ -131,8 +129,6 @@ class AmandemenSpCreateController
     $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
     $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
     $doc->user_id = (\Laratrust::hasRole('admin'))?$request->user_id:Auth::id();
-    //$doc->supplier_id = $request->supplier_id;
-
     $doc->doc_type = $request->type;
     $doc->doc_parent = 0;
     $doc->doc_parent_id = $request->parent_sp;

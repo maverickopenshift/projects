@@ -12,7 +12,7 @@
           <div class="alertBS"></div>
           <div class="form-horizontal">
               <div class="form-group">
-                <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Pilih Type Template</label>
+                <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Pilih Type Template </label>
                 <div class="col-sm-10">
                   <input type="hidden" class="form-control" name="id"  value="{{old('id',Helper::prop_exists($data,'id'))}}"  placeholder="Masukan Kode Template" autocomplete="off">
                   @if($data_class=='form-add')
@@ -46,7 +46,7 @@
                 </div>
               </div>
           </div>
-
+          <!--
           <div class="form-horizontal" style="display:none">
               <table class="table table-bordered table-me">
                 <thead>
@@ -81,6 +81,7 @@
               </tbody>
               </table>
           </div>
+          -->
           <div class="form-group text-center top50">
             <a href="{{route('doc.template')}}" class="btn btn-warning" style="padding:5px 20px;font-weight:bold;font-size:16px;margin-right:10px">BATAL</a>
             <button type="submit" class="btn btn-success btn-save" data-loading-text="Please wait..." style="padding:5px 20px;font-weight:bold;font-size:16px;">SIMPAN</button>
@@ -150,6 +151,7 @@
         formMe.find('.error').html('')
         var btnSave = formMe.find('.btn-save')
         btnSave.button('loading')
+       
         $.ajax({
             url: formMe.data('action'),
             type: 'post',
@@ -195,8 +197,8 @@
                 alertBS('Something wrong, please try again','danger')
             }
         });
+        
     })
-
     $(document).on('submit','.form-edit',function (event) {
         event.preventDefault();
         var formMe = $(this)

@@ -53,7 +53,9 @@
                   o.dateend = $.format.date(v.doc_enddate+" 10:54:50", "dd MMMM yyyy");
                   o.type = v.type;
                   o.jenis = v.jenis;
+                  o.nama_supplier = v.supplier.bdn_usaha+"."+v.supplier.nm_vendor;
                   results.push(o);
+
               })
               params.page = params.page || 1;
               return {
@@ -118,6 +120,7 @@
             o.parent_date = $.format.date(v.parent_date+" 10:54:50", "dd MMMM yyyy");
             o.type = v.type;
             o.jenis = v.jenis;
+            o.nama_supplier = v.supplier.bdn_usaha+"."+v.supplier.nm_vendor;
         })
         templateKontrakSelect(o);
         //console.log(JSON.stringify(o));
@@ -130,6 +133,7 @@
     var table = $('.result-sp'),judul,t_type='';
     //console.log(JSON.stringify(data));
     table.html('');
+    $('#nama_supplier').val(data.nama_supplier);
     var s_type = JSON.parse(data.type);
     console.log(JSON.stringify(s_type.length));
     var t_table = '<table class="table">\

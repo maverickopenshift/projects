@@ -18,6 +18,7 @@
 </div>
 @push('scripts')
   <script>
+    
   $(function() {
     var selectKontrak = $(".select-sp").select2({
       placeholder : "Pilih SP....",
@@ -55,6 +56,7 @@
                   o.dateend = $.format.date(v.doc_enddate+" 10:54:50", "dd-MM-yyyy");
                   o.type = v.type;
                   o.jenis = v.jenis;
+                  o.nama_supplier = v.supplier.bdn_usaha+"."+v.supplier.nm_vendor;
                   results.push(o);
               })
               params.page = params.page || 1;
@@ -67,6 +69,7 @@
           },
           cache: true
       },
+      
       escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
       minimumInputLength: 0,
       templateResult: function (state) {
@@ -87,7 +90,9 @@
           $('.select-sp-text').val(render);
           return render ;
       }
+      
     });
+    
     selectKontrak.on('select2:select', function (e) {
         var data = e.params.data;
         templateKontrakSelect(data);
@@ -95,6 +100,7 @@
           set_content_reset();
         }
     });
+
     var kontrak_set = $(".select-sp");
     if(kontrak_set.data('id')!==""){
       var text_kontrak = $(".select-sp-text").val();
@@ -126,13 +132,16 @@
             o.parent_date = $.format.date(v.parent_date+" 10:54:50", "dd-MM-yyyy");
             o.type = v.type;
             o.jenis = v.jenis;
+            o.nama_supplier = v.supplier.bdn_usaha+"."+v.supplier.nm_vendor;
         })
         templateKontrakSelect(o);
         //console.log(JSON.stringify(o));
       });
 
     }
+    
   });
+
   function templateKontrakSelect(data){
     $('.judul-man').hide().find('.text-me').html('');
     var table = $('.result-sp'),judul,t_type='';
@@ -142,6 +151,7 @@
     //console.log(JSON.stringify(s_type.length));
     var parent_no_first = '',parent_title_first='';
     var p_title = data.parent_title+' <small> <i>('+data.parent_no+')</i></small>';
+    $('#nama_supplier').val(data.nama_supplier);
     if(data.parent_title_first!==null){
       p_title = data.parent_title_first+' <small> <i>('+data.parent_no_first+')</i></small><div class="top10">'+p_title+'</div>';
     }
@@ -194,5 +204,6 @@
     $('.judul-man').show().find('.text-me').html(judul+'<input type="hidden" value="'+judul+'" name="doc_title"/>');
     table.html(t_table+t_type);
   }
+  
   </script>
 @endpush

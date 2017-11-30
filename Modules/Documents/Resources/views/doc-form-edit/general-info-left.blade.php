@@ -1,7 +1,7 @@
 <div class="form-horizontal">
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
     @if(!in_array($doc_type->name,['khs','turnkey','surat_pengikatan','mou']))
-      @include('documents::doc-form.no-kontrak')
+      @include('documents::doc-form-edit.no-kontrak')
     @else
     <div class="form-group  {{ $errors->has('doc_title') ? ' has-error' : '' }}">
       <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Judul {{$doc_type['title']}}</label>
@@ -192,7 +192,7 @@
   
   @if($doc_type->name!="surat_pengikatan" and $doc_type->name!="mou")
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-    @include('documents::doc-form.pic')
+    @include('documents::doc-form-edit.pic')
   </div>
   @endif
   

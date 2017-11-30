@@ -29,7 +29,6 @@ class SuratPengikatanCreateController extends Controller
 
     public function store(Request $request)
     {
-      //dd($request);
       $type = $request->type;
       $doc_value = $request->doc_value;
       $request->merge(['doc_value' => Helpers::input_rupiah($request->doc_value)]);
@@ -72,18 +71,11 @@ class SuratPengikatanCreateController extends Controller
         $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_sow']          =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-        /*
-        $rules['hs_kode_item.*']   =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['hs_satuan.*']      =  'sometimes|nullable|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['hs_mtu.*']         =  'sometimes|nullable|max:5|min:1|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['hs_harga.*']       =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
-        $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
-        $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
-        */
+
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
+
         $check_new_lampiran = false;
         foreach($request->doc_lampiran_old as $k => $v){
           if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
@@ -110,28 +102,6 @@ class SuratPengikatanCreateController extends Controller
 
         $request->merge(['doc_lampiran' => $new_lamp]);
 
-        /*
-        if(in_array($type,['turnkey','sp','surat_pengikatan'])){
-            // $doc_jaminan_nilai = $request->doc_jaminan_nilai;
-            // $request->merge(['doc_jaminan_nilai.*' => Helpers::input_rupiah($request->doc_jaminan_nilai)]);
-
-            $rule_doc_jaminan = (count($request['doc_jaminan'])>1)?'required':'sometimes|nullable';
-            $rule_doc_asuransi = (count($request['doc_asuransi'])>1)?'required':'sometimes|nullable';
-            $rule_doc_jaminan_nilai = (count($request['doc_jaminan_nilai'])>1)?'required':'sometimes|nullable';
-            $rule_doc_jaminan_startdate = (count($request['doc_jaminan_startdate'])>1)?'required':'sometimes|nullable';
-            $rule_doc_jaminan_enddate = (count($request['doc_jaminan_enddate'])>1)?'required':'sometimes|nullable';
-            $rule_doc_jaminan_desc = (count($request['doc_jaminan_desc'])>1)?'required':'sometimes|nullable';
-            $rules['doc_jaminan.*']           = $rule_doc_jaminan.'|in:PL,PM';
-            $rules['doc_asuransi.*']          = $rule_doc_asuransi.'|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-            $rules['doc_jaminan_nilai.*']     = $rule_doc_jaminan_nilai.'|max:500|min:3|regex:/^[0-9 .]+$/i';
-            $rules['doc_jaminan_startdate.*'] = $rule_doc_jaminan_startdate.'|date_format:"Y-m-d"'; //|date_format:"Y-m-d"
-            $rules['doc_jaminan_enddate.*']   = $rule_doc_jaminan_enddate.'|date_format:"Y-m-d"'; //
-            $rules['doc_jaminan_desc.*']      = $rule_doc_jaminan_desc.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-            $rules['doc_jaminan_file.*']      = 'sometimes|nullable|mimes:pdf';
-            $rules['doc_po']                  = 'sometimes|nullable|po_exists|regex:/^[a-z0-9 .\-]+$/i';
-        }
-        */
-        
         $rules['lt_desc.0']  =  'required|date_format:"Y-m-d"';
         $rules['lt_desc.3']  =  'required|date_format:"Y-m-d"';
         $rules['lt_desc.4']  =  'required|date_format:"Y-m-d"';
@@ -139,7 +109,6 @@ class SuratPengikatanCreateController extends Controller
         $rules['lt_name.3']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
         $rules['lt_name.4']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
-        //dd($request->lt_name);
         $check_new_file = false;
         foreach($request->lt_file_old as $k => $v){
           if(isset($request->lt_file[$k]) && is_object($request->lt_file[$k]) && !empty($v)){//jika ada file baru
@@ -170,7 +139,6 @@ class SuratPengikatanCreateController extends Controller
         }
 
         $request->merge(['lt_file' => $new_file]);
-        //dd(count($request->lt_name));
 
         $rule_ps_judul = (count($request['ps_judul'])>1)?'required':'sometimes|nullable';
         $rule_ps_isi = (count($request['ps_isi'])>1)?'required':'sometimes|nullable';
@@ -202,10 +170,7 @@ class SuratPengikatanCreateController extends Controller
         }
         
         if ($validator->fails ()){
-          //dd($validator->getMessageBag()->toArray());
-          return redirect()->back()
-                      ->withInput($request->input())
-                      ->withErrors($validator);
+          return redirect()->back()->withInput($request->input())->withErrors($validator);
         }
       }else{
           $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
@@ -216,9 +181,7 @@ class SuratPengikatanCreateController extends Controller
           }
           $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
           if ($validator->fails ()){
-            return redirect()->back()
-                        ->withInput($request->input())
-                        ->withErrors($validator);
+            return redirect()->back()->withInput($request->input())->withErrors($validator);
           }
       }
 
@@ -261,23 +224,6 @@ class SuratPengikatanCreateController extends Controller
         }
       }
 
-      /*
-      if(in_array($type,['turnkey','sp','surat_pengikatan'])){
-        if(count($request->doc_po_no)>0){
-          $doc_po = new DocPo();
-          $doc_po->documents_id = $doc->id;
-          $doc_po->po_no = $request->po_no;
-          $doc_po->po_date = $request->po_date;
-          $doc_po->po_vendor = $request->po_vendor;
-          $doc_po->po_pembuat = $request->po_pembuat;
-          $doc_po->po_nik = $request->po_nik;
-          $doc_po->po_approval = $request->po_approval;
-          $doc_po->po_penandatangan = $request->po_penandatangan;
-          $doc_po->save();
-        }
-      }
-      */
-
       if(count($request->doc_lampiran)>0){
         foreach($request->doc_lampiran as $key => $val){
           if(!empty($val)
@@ -295,50 +241,9 @@ class SuratPengikatanCreateController extends Controller
           }
         }
       }
-      /*
-      if(in_array($type,['turnkey','sp','surat_pengikatan'])){
-        if(count($request->doc_asuransi)>0){
-          foreach($request['doc_asuransi'] as $key => $val){
-            if(!empty($val)
-            ){
-              $asr = new DocAsuransi();
-              $asr->documents_id = $doc->id;
-              $asr->doc_jaminan = $request['doc_jaminan'][$key];
-              $asr->doc_jaminan_name = $request['doc_asuransi'][$key];
-              $asr->doc_jaminan_nilai = Helpers::input_rupiah($request['doc_jaminan_nilai'][$key]);
-              $asr->doc_jaminan_startdate = $request['doc_jaminan_startdate'][$key];
-              $asr->doc_jaminan_enddate = $request['doc_jaminan_enddate'][$key];
-              $asr->doc_jaminan_desc = $request['doc_jaminan_desc'][$key];
-              // dd($asr);
-              if(isset($request['doc_jaminan_file'][$key])){
-                $fileName   = Helpers::set_filename('doc_',strtolower($val));
-                $file = $request['doc_jaminan_file'][$key];
-                $file->storeAs('document/'.$request->type.'_asuransi', $fileName);
-                $asr->doc_jaminan_file = $fileName;
-              }
-              $asr->save();
-            }
-          }
-        }
-      }
-      /*
-      if(count($request->pic_nama)>0){
-        foreach($request['pic_nama'] as $key => $val){
-          $pic = new DocPic();
-          $pic->documents_id = $doc->id;
-          $pic->pegawai_id = $request['pic_id'][$key];
-          $pic->nama = $val;
-          $pic->email = $request['pic_email'][$key];
-          $pic->jabatan = $request['pic_jabatan'][$key];
-          $pic->telp = $request['pic_telp'][$key];
-          $pic->posisi = $request['pic_posisi'][$key];
-          $pic->save();
-        }
-      }
-      */
+
       if(count($request->lt_name)>0){
         foreach($request->lt_name as $key => $val){
-          //if(!empty($val) && !empty($request['lt_desc'][$key])){
           if(!empty($val)){
             $doc_meta = new DocMeta();
             $doc_meta->documents_id = $doc->id;
@@ -356,47 +261,12 @@ class SuratPengikatanCreateController extends Controller
         }
       }
 
-      /*
-      if(count($request->hs_harga)>0){
-        foreach($request->hs_harga as $key => $val){
-          if(!empty($val)
-              && !empty($request['hs_kode_item'][$key])
-              && !empty($request['hs_item'][$key])
-              && !empty($request['hs_satuan'][$key])
-              && !empty($request['hs_mtu'][$key])
-          ){
-            $doc_boq = new DocBoq();
-            $doc_boq->documents_id = $doc->id;
-            $doc_boq->kode_item = $request['hs_kode_item'][$key];
-            $doc_boq->item = $request['hs_item'][$key];
-            $doc_boq->satuan = $request['hs_satuan'][$key];
-            $doc_boq->mtu = $request['hs_mtu'][$key];
-            $q_harga = Helpers::input_rupiah($val);
-            $doc_boq->harga = Helpers::input_rupiah($q_harga);
-            $hs_type = 'harga_satuan';
-            if(in_array($type,['turnkey','sp'])){
-              $q_qty = Helpers::input_rupiah($request['hs_qty'][$key]);
-              $q_total = $q_qty*$q_harga;
-              $doc_boq->qty = $q_qty;
-              $doc_boq->harga_total = $q_total;
-              $hs_type = 'boq';
-            }
-            $doc_boq->desc = $request['hs_keterangan'][$key];
-            $doc_boq->data = json_encode(array('type'=>$hs_type));
-            $doc_boq->save();
-          }
-        }
-      }
-      */
-      
-      // dd($request->input());
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
       if($request->statusButton == '0'){
-      return redirect()->route('doc',['status'=>'proses']);
+        return redirect()->route('doc',['status'=>'proses']);
       }else{
         return redirect()->route('doc',['status'=>'draft']);
       }
-                  // ->withErrors($validator);
     }
 
     /**

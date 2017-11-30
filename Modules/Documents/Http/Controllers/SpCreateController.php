@@ -50,15 +50,14 @@ class SpCreateController
         $request->merge(['hs_qty'=>$m_hs_qty]);
       }
       $rules = [];
-      
-      $rules['parent_kontrak']   =  'required|kontrak_exists';
+
       if($request->statusButton == '0'){
+      $rules['parent_kontrak']   =  'required|kontrak_exists';
       $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      //$rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_lampiran_teknis']     =  'sometimes|nullable|mimes:pdf';
       $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
@@ -173,7 +172,6 @@ class SpCreateController
       }
 
     }else{
-        $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }

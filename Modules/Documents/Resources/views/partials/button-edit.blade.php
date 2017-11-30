@@ -1,7 +1,7 @@
 <div class="form-group text-center top50">
   <a href="{{route('doc',['status'=>Helper::doc_status($doc->doc_signing)])}}" class="btn btn-danger" style="padding:5px 20px;font-weight:bold;font-size:16px;margin-right:10px">CANCEL</a>
   @if($doc->doc_signing!=1)
-    <button type="submit" class="btn btn-warning" style="padding:5px 20px;font-weight:bold;font-size:16px;margin-right:10px;" id="btn-draft" name="statusButton" value="2">DRAFT</button>
+    <button type="submit" class="btn btn-warning" style="padding:5px 20px;font-weight:bold;font-size:16px;margin-right:10px;" id="btn-draft">DRAFT</button>
   @endif
   {{-- @if($doc->doc_signing==0)
     <button type="submit" class="btn btn-success" style="padding:5px 20px;font-weight:bold;font-size:16px;" id="btn-submit">SUBMIT</button>
@@ -9,7 +9,7 @@
   @if($doc->doc_signing==1)
     <button type="submit" class="btn btn-success" style="padding:5px 20px;font-weight:bold;font-size:16px;" id="btn-simpan">SIMPAN</button>
   @endif --}}
-  <button type="submit" name="statusButton" class="btn btn-success" style="padding:5px 20px;font-weight:bold;font-size:16px;" value="0">SUBMIT</button>
+  <button type="submit" class="btn btn-success" style="padding:5px 20px;font-weight:bold;font-size:16px;">SUBMIT</button>
 </div>
 @push('scripts')
 <script>

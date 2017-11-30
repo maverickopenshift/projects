@@ -3,14 +3,13 @@
   <div class="col-sm-10">
     <input type="hidden" class="select-kontrak-text" name="parent_kontrak_text" value="{{Helper::old_prop($doc,'parent_kontrak_text')}}">
     <select class="form-control select-kontrak" style="width: 100%;" name="parent_kontrak" data-id="{{Helper::old_prop($doc,'parent_kontrak')}}">
-        <option value="">Pilih Kontrak</option>
     </select>
     @if ($errors->has('parent_kontrak'))
         <span class="help-block">
             <strong>{{ $errors->first('parent_kontrak') }}</strong>
         </span>
     @endif
-    <div class="result-kontrak"></div>
+    <div class="result-kontrak top20"></div>
   </div>
 </div>
 <div class="form-group judul-man" style="display:none;">
@@ -25,7 +24,7 @@
       ajax: {
           url: '{!! route('doc.get-select-kontrak') !!}',
           dataType: 'json',
-          delay: 350,
+          delay: 250,
           data: function (params) {
               return {
                   q: params.term, // search term
@@ -54,6 +53,7 @@
                   o.date_end = enddate;
                   o.type = v.type;
                   o.jenis = v.jenis;
+                  o.nama_supplier = v.supplier.bdn_usaha+"."+v.supplier.nm_vendor;
                   results.push(o);
               })
               params.page = params.page || 1;
@@ -66,8 +66,8 @@
           },
           cache: true
       },
-      escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
       minimumInputLength: 0,
+      escapeMarkup: function (markup) { return markup; },
       templateResult: function (state) {
           if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching....' ; }
           var $state = $(
@@ -77,7 +77,7 @@
       },
       templateSelection: function (data) {
           if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
-              return "Cari Nomor/Judul Kontrak";
+              return 'Cari Nomor/Judul Kontrak';
           }
           var render = data.value;
           if(data.value === undefined){
@@ -90,6 +90,9 @@
     selectKontrak.on('select2:select', function (e) {
         var data = e.params.data;
         templateKontrakSelect(data);
+        if(set_content_reset!==undefined){
+          set_content_reset();
+        }
     });
     var kontrak_set = $(".select-kontrak");
     if(kontrak_set.data('id')!==""){
@@ -120,6 +123,7 @@
             o.date_end = enddate;
             o.type = v.type;
             o.jenis = v.jenis;
+            o.nama_supplier = v.supplier.bdn_usaha+"."+v.supplier.nm_vendor;
         })
         templateKontrakSelect(o);
         //console.log(JSON.stringify(o));
@@ -132,19 +136,23 @@
     var table = $('.result-kontrak'),judul,t_type='';
     //console.log(JSON.stringify(data));
     table.html('');
+    var h_title = '{!!strtoupper($doc_type->title)!!}';
     var s_type = JSON.parse(data.type);
-    console.log(JSON.stringify(s_type.length));
+    //console.log(JSON.stringify(s_type));
+    // console.log(JSON.stringify(s_type.length));
+    $('#nama_supplier').val(data.nama_supplier);
     var t_table = '<table class="table">\
                     <thead>\
                       <tr >\
                             <th width="400">Judul</th>\
-                            <th>Tanggal</th>\
+                            <th>Tanggal Mulai</th>\
+                            <th>Tanggal Akhir</th>\
                             <th  width="200">Jenis</th>\
                       </tr>\
                     </thead>\
                     <tbody>\
                       <tr>\
-                            <td>'+data.name+'</td>\
+                            <td>'+data.name+ '</td>\
                             <td>'+data.date_start+'</td>\
                             <td>'+data.date_end+'</td>\
                             <td>'+data.jenis.type.title+'</td>\
@@ -152,7 +160,7 @@
                     </tbody>\
                   </table>';
       if(s_type.length>0){
-        t_type = '<table class="table">\
+        t_type = '<div><button type="button" class="btn btn-success bottom15 toggle-me">Lihat Data '+h_title+' <i class="glyphicon glyphicon-chevron-down"></i></button></div><table class="table table-123" style="display:none;">\
                         <thead>\
                           <tr width="400">\
                                 <th>Judul</th>\
@@ -183,5 +191,19 @@
     $('.judul-man').show().find('.text-me').html(judul+'<input type="hidden" value="'+judul+'" name="doc_title"/>');
     table.html(t_table+t_type);
   }
+  $(document).on('click', '.toggle-me', function(event) {
+    event.preventDefault();
+    /* Act on the event */
+    var btn = $(this);
+    if(btn.find('i').hasClass('glyphicon-chevron-down')){
+      btn.find('i').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+      $('.table-123').show();
+    }
+    else{
+      btn.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+      $('.table-123').hide();
+    }
+    
+  });
   </script>
 @endpush

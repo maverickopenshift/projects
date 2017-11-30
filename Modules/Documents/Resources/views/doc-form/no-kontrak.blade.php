@@ -53,7 +53,7 @@
                   o.date_end = enddate;
                   o.type = v.type;
                   o.jenis = v.jenis;
-                  o.nama_supplier = v.supplier.nm_vendor;
+                  o.nama_supplier = v.supplier.bdn_usaha+"."+v.supplier.nm_vendor;
                   results.push(o);
               })
               params.page = params.page || 1;

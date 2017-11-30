@@ -196,6 +196,11 @@ class DocumentsController extends Controller
       // $data['no_kontrak'] = "-";
       // $data['no_loker'] = "-";
       $data['pegawai'] = \App\User::get_user_pegawai();
+      $data['pegawai_pihak1'] = \DB::table('pegawai')->where('n_nik',$dt->doc_pihak1_nama)->first();
+      $data['pegawai_konseptor'] = \DB::table('users_pegawai as a')
+                                  ->join('pegawai as b','a.nik','=','b.n_nik')
+                                  ->where('a.users_id',$dt->user_id)->first();
+      $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
       
       return view('documents::view')->with($data);
     }

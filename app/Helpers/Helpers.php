@@ -135,6 +135,7 @@ public static function get_approver_by_id($id)
   }
   return implode(',',$data);
 }
+
 public static function get_pihak1_by_id($id)
 {
   $cat = \DB::table('users_atasan')

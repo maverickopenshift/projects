@@ -124,26 +124,31 @@ function render_po(po){
           error_po.html('No.PO tidak ditemukan!');
         }
         else{
-          var data = response.data;
+          var data = response.data.POITEM;
+          var dataHeader = response.data.POHEADER[0];
+          console.log(data);
           loading.hide();
           table.parent().show();
           var tr;
           $.each(data,function(index, el) {
+            var hargaTotal = this.QUANTITY*this.NET_PRICE;
             var po_data = {
               no         : (index+1),
-              kode_item  : this.kode_item,
-              item       : this.item,
-              qty        : formatRupiah(this.qty),
-              satuan     : this.satuan,
-              mtu        : this.mtu,
-              harga      : formatRupiah(this.harga),
-              harga_total: formatRupiah(this.harga_total),
-              keterangan : this.keterangan,
+              kode_item  : this.PO_ITEM,
+              item       : this.SHORT_TEXT,
+              qty        : formatRupiah(this.QUANTITY),
+              satuan     : this.PO_UNIT,
+              mtu        : dataHeader.CURRENCY,
+              harga      : formatRupiah(this.NET_PRICE),
+              harga_total: formatRupiah(hargaTotal),
+              keterangan : this.TRACKINGNO,
+              date       : this.PRICE_DATE,
+              no_pr      : this.PREQ_NO,
             }
             var tr = templatePO(po_data);
             table.find('tbody').append(tr);
           });
-          var td = ParentPO();
+          var td = ParentPO(dataHeader);
           parentPO.find('tbody').append(td);
           error_po.html('');
         }
@@ -151,6 +156,10 @@ function render_po(po){
     });
 }
 function templatePO(data) {
+  var dates = data.date;
+  var hDate_year = dates.substr(0, 4); 
+  var hDate_month = dates.substr(4, 2); 
+  var hDate_day = dates.substr(6, 2); 
   return '<tr>\
               <td>'+data.no+'</th>\
               <td>'+data.kode_item+'</th>\
@@ -159,43 +168,47 @@ function templatePO(data) {
               <td>'+data.satuan+'</th>\
               <td>'+data.mtu+'</th>\
               <td>'+data.harga_total+'</th>\
-              <td>-</th>\
-              <td>-</th>\
+              <td>'+hDate_day+'-'+hDate_month+'-'+hDate_year+'</th>\
+              <td>'+data.no_pr+'</th>\
               <td>'+data.keterangan+'</th>\
           </tr>';
 }
 
-function ParentPO() {
+function ParentPO(data) {
   var nopo = $('.no_po').val();
+  var dates = data.CREAT_DATE;
+  var hDate_year = dates.substr(0, 4); 
+  var hDate_month = dates.substr(4, 2); 
+  var hDate_day = dates.substr(6, 2); 
   return '<tr>\
             <td width="150">No PO </td>\
             <td width="10">:</td>\
-            <td>'+nopo+'<input type="hidden" name="po_no" value="'+nopo+'"></td>\
+            <td>'+data.PO_NUMBER+'<input type="hidden" name="po_no" value="'+data.PO_NUMBER+'"></td>\
           </tr>\
           <tr>\
             <td>Tanggal PO</td>\
             <td> : </td>\
-            <td>27 Agustus 2017<input type="hidden" name="po_date" value="2017-08-27"></td>\
+            <td>'+hDate_day+'-'+hDate_month+'-'+hDate_year+'<input type="hidden" name="po_date" value="'+hDate_year+'-'+hDate_month+'-'+hDate_day+'"></td>\
           </tr>\
           <tr>\
             <td>Nama Vendor</td>\
             <td> : </td>\
-            <td>PT Jaya Makmur Sentosa<input type="hidden" name="po_vendor" value="PT Jaya Makmur Sentosa"></td>\
+            <td>'+data.VENDOR+'<input type="hidden" name="po_vendor" value="'+data.VENDOR+'"></td>\
           </tr>\
           <tr>\
             <td>Nama Pembuat/nik</td>\
             <td> : </td>\
-            <td>SUMARNI/123456<input type="hidden" name="po_pembuat" value="SUMARNI"><input type="hidden" name="po_nik" value="123456"></td>\
+            <td>'+data.CREATED_BY+'<input type="hidden" name="po_pembuat" value="'+data.CREATED_BY+'"><input type="hidden" name="po_nik" value="'+data.CREATED_BY+'"></td>\
           </tr>\
           <tr>\
             <td>Nama Approval PO</td>\
             <td> : </td>\
-            <td>Purwiro<input type="hidden" name="po_approval" value="Purwiro"></td>\
+            <td>- <input type="hidden" name="po_approval" value=""></td>\
           </tr>\
           <tr>\
             <td>Nama Penandatangan PO</td>\
             <td> : </td>\
-            <td>Januar <input type="hidden" name="po_penandatangan" value="Januar"></td>\
+            <td>- <input type="hidden" name="po_penandatangan" value=""></td>\
           </tr>';
 }
   @php

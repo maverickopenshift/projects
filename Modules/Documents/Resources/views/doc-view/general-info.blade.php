@@ -221,59 +221,34 @@
 
 
           @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
-          <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-            @if(count($doc->po)>0)
-          <div class="form-group ">
-            <label class="col-sm-2 control-label">No.PO</label>
-            <div class="col-sm-10 text-me">{{$doc->po->po_no or '-'}}</div>
-          </div>
-          <div class="form-group ">
-            <label class="col-sm-2 control-label">Tanggal Buat</label>
-            <div class="col-sm-10 text-me">{{$doc->po->po_date or '-'}}</div>
-          </div>
-          <div class="form-group ">
-            <label class="col-sm-2 control-label">Nama Vendor</label>
-            <div class="col-sm-10 text-me">{{$doc->po->po_vendor or '-'}}</div>
-          </div>
-          <div class="form-group ">
-            <label class="col-sm-2 control-label">Nama Pembuat</label>
-            <div class="col-sm-10 text-me">{{$doc->po->po_pembuat or '-'}}</div>
-          </div>
-          <div class="form-group ">
-            <label class="col-sm-2 control-label">Nama Approval</label>
-            <div class="col-sm-10 text-me">{{$doc->po->po_approval or '-'}}</div>
-          </div>
-          <div class="form-group ">
-            <label class="col-sm-2 control-label">Nama Penandatangan</label>
-            <div class="col-sm-10 text-me">{{$doc->po->po_penandatangan or '-'}}</div>
-          </div>
-        @else
-          <div class="form-group ">
-            <label class="col-sm-2 control-label">No.PO</label>
-            <div class="col-sm-10 text-me">-</div>
-          </div>
-          <div class="form-group ">
-            <label class="col-sm-2 control-label">Tanggal Buat</label>
-            <div class="col-sm-10 text-me">-</div>
-          </div>
-          <div class="form-group ">
-            <label class="col-sm-2 control-label">Nama Vendor</label>
-            <div class="col-sm-10 text-me">-</div>
-          </div>
-          <div class="form-group ">
-            <label class="col-sm-2 control-label">Nama Pembuat</label>
-            <div class="col-sm-10 text-me">-</div>
-          </div>
-          <div class="form-group ">
-            <label class="col-sm-2 control-label">Nama Approval</label>
-            <div class="col-sm-10 text-me">-</div>
-          </div>
-          <div class="form-group ">
-            <label class="col-sm-2 control-label">Nama Penandatangan</label>
-            <div class="col-sm-10 text-me">-</div>
-          </div>
-        @endif
-      </div>
+          <input type="hidden" id="view_po_val" name="po_no" value="{{$doc->doc_po_no}}">
+          <div class="form-horizontal parent-potables" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;display:none;">
+              <table class="table" id="parentPO">
+                <tbody>
+                </tbody>
+              </table>
+              <table class="table table-condensed table-striped" id="potables">
+                  <thead>
+                  <tr>
+                      <th>No.</th>
+                      <th>Kode Item</th>
+                      <th>Item</th>
+                      <th>Qty</th>
+                      <th>Satuan</th>
+                      <th>Currency</th>
+                      <th>Harga Total</th>
+                      <th>Delivery Date</th>
+                      <th>No PR</th>
+                      <th>Keterangan</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    <tr class="loading-tr">
+                      <td colspan="10" class="text-center"><img src="{{asset('/images/loader.gif')}}" title="please wait..."/></td>
+                    </tr>
+                  </tbody>
+              </table>
+            </div>
           @endif
           @include('documents::partials.buttons-view')
       </div>
@@ -283,7 +258,117 @@
 @push('scripts')
 <script>
 $(function() {
-
+  var view_po_val = $('#view_po_val').val();
+  if(view_po_val!=""){
+    render_po(view_po_val);
+  }
 });
+function render_po(po){
+  var error_po = $('.error-po');
+  var table = $('#potables');
+  var parentPO = $('#parentPO');
+  var loading = table.find('.loading-tr');
+  loading.show();
+  var tr_count = table.find('tbody>tr').not('tbody>tr.loading-tr');
+  table.parent().hide();
+    $.ajax({
+      url: '{!! route('doc.get-po') !!}',
+      type: 'GET',
+      dataType: 'json',
+      data: {po: po}
+    })
+    .done(function(response) {
+      if(response.status){
+        if(response.length==0){
+          error_po.html('No.PO tidak ditemukan!');
+        }
+        else{
+          var data = response.data.POITEM;
+          var dataHeader = response.data.POHEADER[0];
+          // console.log(data);
+          loading.hide();
+          table.parent().show();
+          var tr;
+          $.each(data,function(index, el) {
+            var hargaTotal = this.QUANTITY*this.NET_PRICE;
+            var po_data = {
+              no         : (index+1),
+              kode_item  : this.PO_ITEM,
+              item       : this.SHORT_TEXT,
+              qty        : formatRupiah(this.QUANTITY),
+              satuan     : this.PO_UNIT,
+              mtu        : dataHeader.CURRENCY,
+              harga      : formatRupiah(this.NET_PRICE),
+              harga_total: formatRupiah(hargaTotal),
+              keterangan : this.TRACKINGNO,
+              date       : this.PRICE_DATE,
+              no_pr      : this.PREQ_NO,
+            }
+            var tr = templatePO(po_data);
+            table.find('tbody').append(tr);
+          });
+          var td = ParentPO(dataHeader);
+          parentPO.find('tbody').append(td);
+          error_po.html('');
+        }
+      }
+    });
+}
+function templatePO(data) {
+  var dates = data.date;
+  var hDate_year = dates.substr(0, 4); 
+  var hDate_month = dates.substr(4, 2); 
+  var hDate_day = dates.substr(6, 2); 
+  return '<tr>\
+              <td>'+data.no+'</th>\
+              <td>'+data.kode_item+'</th>\
+              <td>'+data.item+'</th>\
+              <td>'+data.qty+'</th>\
+              <td>'+data.satuan+'</th>\
+              <td>'+data.mtu+'</th>\
+              <td>'+data.harga_total+'</th>\
+              <td>'+hDate_day+'-'+hDate_month+'-'+hDate_year+'</th>\
+              <td>'+data.no_pr+'</th>\
+              <td>'+data.keterangan+'</th>\
+          </tr>';
+}
+
+function ParentPO(data) {
+  var nopo = $('.no_po').val();
+  var dates = data.CREAT_DATE;
+  var hDate_year = dates.substr(0, 4); 
+  var hDate_month = dates.substr(4, 2); 
+  var hDate_day = dates.substr(6, 2); 
+  return '<tr>\
+            <td width="150">No PO </td>\
+            <td width="10">:</td>\
+            <td>'+data.PO_NUMBER+'<input type="hidden" name="po_no" value="'+data.PO_NUMBER+'"></td>\
+          </tr>\
+          <tr>\
+            <td>Tanggal PO</td>\
+            <td> : </td>\
+            <td>'+hDate_day+'-'+hDate_month+'-'+hDate_year+'<input type="hidden" name="po_date" value="'+hDate_year+'-'+hDate_month+'-'+hDate_day+'"></td>\
+          </tr>\
+          <tr>\
+            <td>Nama Vendor</td>\
+            <td> : </td>\
+            <td>'+data.VENDOR+'<input type="hidden" name="po_vendor" value="'+data.VENDOR+'"></td>\
+          </tr>\
+          <tr>\
+            <td>Nama Pembuat/nik</td>\
+            <td> : </td>\
+            <td>'+data.CREATED_BY+'<input type="hidden" name="po_pembuat" value="'+data.CREATED_BY+'"><input type="hidden" name="po_nik" value="'+data.CREATED_BY+'"></td>\
+          </tr>\
+          <tr>\
+            <td>Nama Approval PO</td>\
+            <td> : </td>\
+            <td>- <input type="hidden" name="po_approval" value=""></td>\
+          </tr>\
+          <tr>\
+            <td>Nama Penandatangan PO</td>\
+            <td> : </td>\
+            <td>- <input type="hidden" name="po_penandatangan" value=""></td>\
+          </tr>';
+}
 </script>
 @endpush

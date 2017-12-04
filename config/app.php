@@ -17,6 +17,14 @@ return [
     'ppn_set' => 10,
 
     'password_default' => str_random(8),
+    
+    'sap' => [
+        'ashost' => '10.0.128.9',
+        'sysnr'  => '00',
+        'client' => '300',
+        'user'   => 'abap1',
+        'passwd' => 'Telkom2017',
+    ],
     /*
     |--------------------------------------------------------------------------
     | Application Environment

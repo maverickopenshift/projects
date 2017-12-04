@@ -8,6 +8,7 @@ use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
+use Modules\Documents\Entities\DocActivity;
 use App\Helpers\Helpers;
 use Validator;
 use DB;
@@ -132,7 +133,7 @@ class AmandemenKontrakCreateController
 
     if(count($request->f_judul)>0){
       foreach($request->f_judul as $key => $val){
-        if(!empty($val)){          
+        if(!empty($val)){
 
           if($val=="Harga"){
             $f_name="harga";
@@ -144,7 +145,7 @@ class AmandemenKontrakCreateController
             $f_name="lainnya";
             $desc=$request->f_isi[$key];
           }
-          
+
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = 'sow_boq';
@@ -222,6 +223,13 @@ class AmandemenKontrakCreateController
         }
       }
     }
+
+    $log_activity = new DocActivity();
+    $log_activity->users_id = Auth::id();
+    $log_activity->documents_id = $doc->id;
+    $log_activity->activity = "Submit";
+    $log_activity->date = new \DateTime();
+    $log_activity->save();
 
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     if($request->statusButton == '0'){

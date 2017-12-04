@@ -9,6 +9,7 @@ use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocPo;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocAsuransi;
+use Modules\Documents\Entities\DocActivity;
 use App\Helpers\Helpers;
 use Validator;
 use DB;
@@ -197,7 +198,7 @@ class SpCreateController
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       $doc->user_id = (\Laratrust::hasRole('admin'))?$request->user_id:Auth::id();
-      
+
 
       if(isset($request->doc_lampiran_teknis)){
         $fileName   = Helpers::set_filename('doc_lampiran_teknis_',strtolower($request->doc_title));
@@ -349,6 +350,13 @@ class SpCreateController
           }
         }
       }
+
+      $log_activity = new DocActivity();
+      $log_activity->users_id = Auth::id();
+      $log_activity->documents_id = $doc->id;
+      $log_activity->activity = "Submit";
+      $log_activity->date = new \DateTime();
+      $log_activity->save();
 
       //dd($request->input());
       $request->session()->flash('alert-success', 'Data berhasil disimpan');

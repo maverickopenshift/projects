@@ -14,12 +14,13 @@ use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocPo;
+use Modules\Documents\Entities\DocActivity;
 
 use App\Helpers\Helpers;
 use Validator;
 use DB;
 use Auth;
- 
+
 class SuratPengikatanCreateController extends Controller
 {
     public function __construct()
@@ -41,18 +42,18 @@ class SuratPengikatanCreateController extends Controller
           $m_hs_harga[$key] = Helpers::input_rupiah($val);
         }
       }
-      
+
       if(count($m_hs_harga)>0){
         $request->merge(['hs_harga'=>$m_hs_harga]);
       }
-      
+
       if(isset($request['hs_qty']) && count($request['hs_qty'])>0){
         foreach($request['hs_qty'] as $key => $val){
           $hs_qty[$key] = $val;
           $m_hs_qty[$key] = Helpers::input_rupiah($val);
         }
       }
-      
+
       if(count($m_hs_qty)>0){
         $request->merge(['hs_qty'=>$m_hs_qty]);
       }
@@ -60,8 +61,8 @@ class SuratPengikatanCreateController extends Controller
 
       $rules = [];
       if($request->statusButton == '0'){
-        $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';        
-        $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';       
+        $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+        $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
         $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
         $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -116,13 +117,13 @@ class SuratPengikatanCreateController extends Controller
             $new_file_up[] = $request->lt_file[$k];
             if(!in_array($k,['1','2'])){
               $rules['lt_file.'.$k] = 'required|mimes:pdf';
-            }            
+            }
           }
           else if(empty($v)){
             if(!in_array($k,['1','2'])){
               $rules['lt_file.'.$k] = 'required|mimes:pdf';
             }
-            
+
             if(!isset($request->lt_file[$k])){
               $new_file[] = $v;
               $new_file_up[] = $v;
@@ -168,7 +169,7 @@ class SuratPengikatanCreateController extends Controller
         if(isset($hs_qty) && count($hs_qty)>0){
           $request->merge(['hs_qty'=>$hs_qty]);
         }
-        
+
         if ($validator->fails ()){
           return redirect()->back()->withInput($request->input())->withErrors($validator);
         }
@@ -260,6 +261,13 @@ class SuratPengikatanCreateController extends Controller
           }
         }
       }
+
+      $log_activity = new DocActivity();
+      $log_activity->users_id = Auth::id();
+      $log_activity->documents_id = $doc->id;
+      $log_activity->activity = "Submit";
+      $log_activity->date = new \DateTime();
+      $log_activity->save();
 
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
       if($request->statusButton == '0'){

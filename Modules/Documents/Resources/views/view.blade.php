@@ -10,7 +10,7 @@
         }elseif($doc_type->name=='mou'){
           $title_sow = 'RUANG LINGKUP';
         }
-        
+
       @endphp
       <ul class="nav nav-tabs">
         <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
@@ -115,7 +115,9 @@
           </div>
         </div>
         <!-- /.tab-content -->
-        @include('documents::partials.comments')
+        <div class="row">
+          @include('documents::partials.comments')
+        </div>
       </div>
 @endsection
 @push('scripts')

@@ -1,6 +1,7 @@
 <!-- Construct the box with style you want. Here we are using box-danger -->
   <!-- Then add the class direct-chat and choose the direct-chat-* contexual class -->
   <!-- The contextual class should match the box, so we are using direct-chat-danger -->
+<div class="col-md-6">
   <div class="box box-primary direct-chat direct-chat-primary">
     <div class="box-header with-border">
       <i class="fa fa-comments-o"></i>
@@ -28,13 +29,75 @@
       </form>
     </div><!-- /.box-footer-->
   </div><!--/.direct-chat -->
+</div>
+<div class="col-md-6">
+  <div class="box box-primary">
+      <div class="box-header with-border">
+        <h3 class="box-title">Log Aktifitas</h3>
+        <div class="box-tools pull-right">
+          <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+        </div>
+      </div><!-- /.box-header -->
+      <div class="box-body relative">
+        <div class="loading-ao"></div>
+        <!-- Log Activity -->
+        <div class="log-activity">
+        </div>
+      </div>
+      <!-- /.box-body -->
+
+      <!-- /.box-footer -->
+    </div>
+</div>
+
   @push('scripts')
   <script>
   var user_un = '{!!Auth::user()->username!!}';
   var user_nm = '{!!Auth::user()->name!!}';
   $(function() {
     loadComments();
+    loadActivity();
   });
+  function loadActivity(){
+    var conten = $('.log-activity');
+    var loading = conten.parent().find('.loading-ao');
+    conten.html('');
+    loading.show();
+    conten.find('.alert').remove();
+    $.ajax({
+      url: '{!!route('doc.activity')!!}',
+      type: 'GET',
+      dataType: 'json',
+      data: {id: {!!$id!!}}
+    })
+    .done(function(data) {
+      if(data.length>0){
+        $.each(data.data,function(index, el) {
+          conten.append(aktifitas(this));
+        });
+      }
+      else{
+        conten.append('<div class="alert alert-info text-center" role="alert">Tidak ada log aktifitas</div>');
+      }
+      loading.hide();
+    });
+
+  }
+  function aktifitas(data){
+    var tanggal = data.date;
+    var tmp = '<ul class="products-list product-list-in-box">\
+                  <li class="item">\
+                    <div class="product-info">\
+                        <span class="direct-chat-name">'+data.name+'('+data.username+')</span>\
+                        <span class="product-description"> '+data.activity+' at \
+                          '+$.format.date(data.date+".546", "dd/MM/yyyy HH:mm")+'\
+                        </span>\
+                    </div>\
+                  </li>\
+                </ul>';
+    return tmp;
+  }
+
   function loadComments(){
     var ctn = $('.direct-chat-messages');
     var loading = ctn.parent().find('.loading-ao');
@@ -58,7 +121,7 @@
       }
       loading.hide();
     });
-    
+
   }
   function template_comment(data){
     var user_dt = data.user.username;
@@ -74,7 +137,7 @@
                   <i class="fa fa-trash fa-stack-1x fa-inverse"></i>\
                 </span>\
               </a>';
-    var lable = (data.status==1)?' <span class="label label-danger">returned</span>':'';          
+    var lable = (data.status==1)?' <span class="label label-danger">returned</span>':'';
     var oe = (user_un==user_dt)?'':'other';
     var btn = (user_un==user_dt || is_admin())?btn:'';
     var full_n = data.user.name+'('+data.user.username+')';

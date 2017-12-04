@@ -14,12 +14,13 @@ use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocPo;
+use Modules\Documents\Entities\DocActivity;
 
 use App\Helpers\Helpers;
 use Validator;
 use DB;
 use Auth;
- 
+
 class MouCreateController extends Controller
 {
     public function __construct()
@@ -42,18 +43,18 @@ class MouCreateController extends Controller
           $m_hs_harga[$key] = Helpers::input_rupiah($val);
         }
       }
-      
+
       if(count($m_hs_harga)>0){
         $request->merge(['hs_harga'=>$m_hs_harga]);
       }
-      
+
       if(isset($request['hs_qty']) && count($request['hs_qty'])>0){
         foreach($request['hs_qty'] as $key => $val){
           $hs_qty[$key] = $val;
           $m_hs_qty[$key] = Helpers::input_rupiah($val);
         }
       }
-      
+
       if(count($m_hs_qty)>0){
         $request->merge(['hs_qty'=>$m_hs_qty]);
       }
@@ -61,8 +62,8 @@ class MouCreateController extends Controller
 
       $rules = [];
       if($request->statusButton == '0'){
-        $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';        
-        $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';       
+        $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+        $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
         $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
         $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -128,7 +129,7 @@ class MouCreateController extends Controller
         if(isset($hs_qty) && count($hs_qty)>0){
           $request->merge(['hs_qty'=>$hs_qty]);
         }
-        
+
         if ($validator->fails ()){
           //dd($validator->getMessageBag()->toArray());
           return redirect()->back()
@@ -226,6 +227,13 @@ class MouCreateController extends Controller
           }
         }
       }
+
+      $log_activity = new DocActivity();
+      $log_activity->users_id = Auth::id();
+      $log_activity->documents_id = $doc->id;
+      $log_activity->activity = "Submit";
+      $log_activity->date = new \DateTime();
+      $log_activity->save();
 
 /*
       if(count($request->hs_harga)>0){

@@ -13,6 +13,7 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocPo;
+use Modules\Documents\Entities\DocActivity;
 use Modules\Documents\Http\Controllers\SuratPengikatanCreateController as SuratPengikatanCreate;
 use Modules\Documents\Http\Controllers\MouCreateController as MouCreate;
 use Modules\Documents\Http\Controllers\SpCreateController as SpCreate;
@@ -462,6 +463,13 @@ class EntryDocumentController extends Controller
           }
         }
       }
+
+      $log_activity = new DocActivity();
+      $log_activity->users_id = Auth::id();
+      $log_activity->documents_id = $doc->id;
+      $log_activity->activity = "Submit";
+      $log_activity->date = new \DateTime();
+      $log_activity->save();
 
       // dd($request->input());
       $request->session()->flash('alert-success', 'Data berhasil disimpan');

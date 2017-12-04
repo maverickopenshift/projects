@@ -8,6 +8,7 @@ use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
+use Modules\Documents\Entities\DocActivity;
 use App\Helpers\Helpers;
 use Validator;
 use DB;
@@ -199,6 +200,13 @@ class AmandemenSpCreateController
         }
       }
     }
+
+    $log_activity = new DocActivity();
+    $log_activity->users_id = Auth::id();
+    $log_activity->documents_id = $doc->id;
+    $log_activity->activity = "Submit";
+    $log_activity->date = new \DateTime();
+    $log_activity->save();
 
 
     //dd($request->input());

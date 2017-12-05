@@ -18,7 +18,7 @@
 </div>
 @push('scripts')
   <script>
-    
+
   $(function() {
     var selectKontrak = $(".select-sp").select2({
       placeholder : "Pilih SP....",
@@ -69,7 +69,7 @@
           },
           cache: true
       },
-      
+
       escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
       minimumInputLength: 0,
       templateResult: function (state) {
@@ -90,9 +90,9 @@
           $('.select-sp-text').val(render);
           return render ;
       }
-      
+
     });
-    
+
     selectKontrak.on('select2:select', function (e) {
         var data = e.params.data;
         templateKontrakSelect(data);
@@ -139,7 +139,7 @@
       });
 
     }
-    
+
   });
 
   function templateKontrakSelect(data){
@@ -196,14 +196,14 @@
                         });
           t_type +=    '</tbody>\
                       </table>';
-          judul = '{!!strtoupper($doc_type->title)!!} #'+(s_type.length+1);
+          judul = '{!!strtoupper($doc_type->title)!!} #'+(s_type.length+1)+" || "+data.parent_title;
       }
       else{
-        judul = '{!!strtoupper($doc_type->title)!!} #1';
+        judul = '{!!strtoupper($doc_type->title)!!} #1 || '+data.parent_title;
       }
     $('.judul-man').show().find('.text-me').html(judul+'<input type="hidden" value="'+judul+'" name="doc_title"/>');
     table.html(t_table+t_type);
   }
-  
+
   </script>
 @endpush

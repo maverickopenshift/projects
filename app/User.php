@@ -76,10 +76,23 @@ class User extends Authenticatable
       $data = \DB::table('rptom')->selectRaw('objidunit as id,v_short_unit as title,count(objidposisi) as total_posisi');
       $data->where('objiddivisi',self::get_divisi_by_user_id())->groupBy(['objidunit','v_short_unit']);
       return $data;
+    }
+    public static function get_all_disivi(){
+      $data = \DB::table('rptom')->selectRaw('objiddivisi as id,v_short_divisi as title,count(objidposisi) as total_divisi');
+      $data->orderBy('v_short_divisi','ASC');
+      $data->whereNotNull('v_short_divisi');
+      $data->groupBy(['objiddivisi','v_short_divisi']);
+      return $data;
     } 
     public static function get_posisi_by_unit($unit){
       $data = \DB::table('rptom')->selectRaw('objidposisi as id,v_short_posisi as title');
       $data->where('objidunit',$unit);
+      return $data;
+    }
+    public static function get_unit_by_disivi2($divisi){
+      $data = \DB::table('rptom')->selectRaw('objidunit as id,v_short_unit as title,count(objidposisi) as total_posisi');
+      $data->orderBy('v_short_unit','ASC');
+      $data->where('objiddivisi',$divisi)->groupBy(['objidunit','v_short_unit']);
       return $data;
     }
     public static function get_user_telkom_by_nik($nik){

@@ -54,6 +54,7 @@ class DocumentsController extends Controller
           $search = $request->q;
           $unit = $request->unit;
           $posisi = $request->posisi;
+          $divisi = $request->divisi;
           $jenis = $request->jenis;
           if(!empty($request->limit)){
             $limit = $request->limit;
@@ -119,9 +120,12 @@ class DocumentsController extends Controller
               });
             }
           }
-          if(!empty($unit)){
+          if(!empty($divisi) && \Auth::user()->hasRole('admin')){
             $documents->join('users_pegawai as up','up.users_id','=','documents.user_id');
             $documents->join('pegawai as g','g.n_nik','=','up.nik');
+            $documents->where('g.objiddivisi',$divisi);
+          }
+          if(!empty($unit) && !empty($divisi)){
             if(!empty($posisi)){
               $documents->where('g.objidposisi',$posisi);
             }
@@ -135,6 +139,9 @@ class DocumentsController extends Controller
             $documents->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
             $documents->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
             $documents->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+          }
+          else{
+            
           }
           $documents = $documents->with(['jenis','supplier','pic']);
           $documents = $documents->paginate($limit);
@@ -504,6 +511,15 @@ class DocumentsController extends Controller
             return \Response::json([]);
         }
         $data = \App\User::get_posisi_by_unit($unit)->get();
+        return \Response::json($data);
+    }
+    public function getUnit(Request $request){
+        $divisi = trim($request->divisi);
+
+        if (empty($divisi)) {
+            return \Response::json([]);
+        }
+        $data = \App\User::get_unit_by_disivi2($divisi)->get();
         return \Response::json($data);
     }
 }

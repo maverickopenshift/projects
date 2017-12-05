@@ -20,6 +20,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
     Route::get('/get-po', 'DocumentsController@getPo')->name('doc.get-po');
     Route::get('/get-pic', 'DocumentsController@getPic')->name('doc.get-pic');
     Route::get('/get-posisi', 'DocumentsController@getPosisi')->name('doc.get-posisi');
+    Route::get('/get-unit', 'DocumentsController@getUnit')->name('doc.get-unit');
 
     Route::get('/log-activity', ['middleware' => ['permission:lihat-kontrak|ubah-kontrak|'],'uses' => 'DocLogController@logActivity'])->name('doc.activity');
 

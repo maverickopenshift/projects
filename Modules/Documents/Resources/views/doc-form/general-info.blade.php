@@ -126,7 +126,6 @@ function render_po(po){
         else{
           var data = response.data.POITEM;
           var dataHeader = response.data.POHEADER[0];
-          console.log(data);
           loading.hide();
           table.parent().show();
           var tr;
@@ -148,7 +147,7 @@ function render_po(po){
             var tr = templatePO(po_data);
             table.find('tbody').append(tr);
           });
-          var td = ParentPO(dataHeader);
+          var td = ParentPO(response.data);
           parentPO.find('tbody').append(td);
           error_po.html('');
         }
@@ -176,14 +175,16 @@ function templatePO(data) {
 
 function ParentPO(data) {
   var nopo = $('.no_po').val();
-  var dates = data.CREAT_DATE;
+  var dataHeader = data.POHEADER[0];
+  var dataVendor = data.VENDOR_INF[0];
+  var dates = dataHeader.CREAT_DATE;
   var hDate_year = dates.substr(0, 4); 
   var hDate_month = dates.substr(4, 2); 
   var hDate_day = dates.substr(6, 2); 
   return '<tr>\
             <td width="150">No PO </td>\
             <td width="10">:</td>\
-            <td>'+data.PO_NUMBER+'<input type="hidden" name="po_no" value="'+data.PO_NUMBER+'"></td>\
+            <td>'+dataHeader.PO_NUMBER+'<input type="hidden" name="po_no" value="'+dataHeader.PO_NUMBER+'"></td>\
           </tr>\
           <tr>\
             <td>Tanggal PO</td>\
@@ -193,12 +194,12 @@ function ParentPO(data) {
           <tr>\
             <td>Nama Vendor</td>\
             <td> : </td>\
-            <td>'+data.VENDOR+'<input type="hidden" name="po_vendor" value="'+data.VENDOR+'"></td>\
+            <td>'+dataVendor.LIFNR+' - '+dataVendor.NAME1+' '+dataVendor.STRAS+' '+dataVendor.ORT01+' '+dataVendor.PSTLZ+'<input type="hidden" name="po_vendor" value="'+dataVendor.LIFNR+' - '+dataVendor.NAME1+' '+dataVendor.STREET+' '+dataVendor.ORT01+' '+dataVendor.PSTLZ+'"></td>\
           </tr>\
           <tr>\
             <td>Nama Pembuat/nik</td>\
             <td> : </td>\
-            <td>'+data.CREATED_BY+'<input type="hidden" name="po_pembuat" value="'+data.CREATED_BY+'"><input type="hidden" name="po_nik" value="'+data.CREATED_BY+'"></td>\
+            <td>'+dataHeader.CREATED_BY+'<input type="hidden" name="po_pembuat" value="'+dataHeader.CREATED_BY+'"><input type="hidden" name="po_nik" value="'+dataHeader.CREATED_BY+'"></td>\
           </tr>\
           <tr>\
             <td>Nama Approval PO</td>\

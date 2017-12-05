@@ -173,7 +173,9 @@
                         $.each(s_type,function(index, el) {
                           var s_start = (this.doc_startdate!==null)?$.format.date(this.doc_startdate+" 10:54:50", "dd-MM-yyyy"):'-';
                           var s_end = (this.doc_enddate!==null)?$.format.date(this.doc_enddate+" 10:54:50", "dd-MM-yyyy"):'-';
-                          var parent = (this.parent_title!==null && this.parent_title!==undefined)?this.parent_title:'-'
+                          // var no_parent = (this.parent_title!==null && this.parent_title!==undefined)?data.value:'-';
+                          // var nm_parent = (this.parent_title!==null && this.parent_title!==undefined)?data.name:'-';
+                          var parent = (this.parent_title!==null && this.parent_title!==undefined)?this.parent_title:'-';
                           t_type += '<tr>\
                                           <td>'+this.doc_title+'</td>\
                                           <td>'+s_start+'</td>\
@@ -183,10 +185,10 @@
                         });
           t_type +=    '</tbody>\
                       </table>';
-          judul = '{!!strtoupper($doc_type->title)!!} #'+(s_type.length+1)+" "+data.name;
+          judul = '{!!strtoupper($doc_type->title)!!} #'+(s_type.length+1)+" || "+data.name;
       }
       else{
-        judul = '{!!strtoupper($doc_type->title)!!} #1';
+        judul = '{!!strtoupper($doc_type->title)!!} #1 || '+data.name;
       }
     $('.judul-man').show().find('.text-me').html(judul+'<input type="hidden" value="'+judul+'" name="doc_title"/>');
     table.html(t_table+t_type);

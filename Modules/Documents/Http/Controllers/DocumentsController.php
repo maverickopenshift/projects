@@ -270,7 +270,7 @@ class DocumentsController extends Controller
           $log_activity = new DocActivity();
           $log_activity->users_id = Auth::id();
           $log_activity->documents_id = $request->id;
-          $log_activity->activity = "Approve";
+          $log_activity->activity = "Approved";
           $log_activity->date = new \DateTime();
           $log_activity->save();
 
@@ -331,7 +331,7 @@ class DocumentsController extends Controller
             $log_activity = new DocActivity();
             $log_activity->users_id = Auth::id();
             $log_activity->documents_id = $request->id;
-            $log_activity->activity = "Return";
+            $log_activity->activity = "Rejected";
             $log_activity->date = new \DateTime();
             $log_activity->save();
             $dt_c = Comments::where('id',$comment->id)->with('user')->first();

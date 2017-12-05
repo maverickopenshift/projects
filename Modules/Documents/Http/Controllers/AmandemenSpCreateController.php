@@ -204,7 +204,7 @@ class AmandemenSpCreateController
     $log_activity = new DocActivity();
     $log_activity->users_id = Auth::id();
     $log_activity->documents_id = $doc->id;
-    $log_activity->activity = "Submit";
+    $log_activity->activity = "Submitted";
     $log_activity->date = new \DateTime();
     $log_activity->save();
 

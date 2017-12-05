@@ -13,7 +13,7 @@
   </div>
 </div>
 <div class="form-group judul-man" style="display:none;">
-  <label for="nm_vendor" class="col-sm-2 control-label">Judul</label>
+  <label for="nm_vendor" class="col-sm-2 control-label">Judul {{$doc_type['title']}}</label>
   <div class="col-sm-10 text-me"></div>
 </div>
 @push('scripts')
@@ -166,7 +166,7 @@
                                 <th>Judul</th>\
                                 <th>Tanggal Mulai</th>\
                                 <th>Tanggal Akhir</th>\
-                                <th></th>\
+                                <th>Acuan Kontrak</th>\
                           </tr>\
                         </thead>\
                         <tbody>';
@@ -183,7 +183,7 @@
                         });
           t_type +=    '</tbody>\
                       </table>';
-          judul = '{!!strtoupper($doc_type->title)!!} #'+(s_type.length+1);
+          judul = '{!!strtoupper($doc_type->title)!!} #'+(s_type.length+1)+" "+data.name;
       }
       else{
         judul = '{!!strtoupper($doc_type->title)!!} #1';
@@ -203,7 +203,7 @@
       btn.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
       $('.table-123').hide();
     }
-    
+
   });
   </script>
 @endpush

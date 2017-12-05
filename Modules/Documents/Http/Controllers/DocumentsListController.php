@@ -32,6 +32,7 @@ class DocumentsListController extends Controller
         $search = $request->q;
         $unit = $request->unit;
         $posisi = $request->posisi;
+        $divisi = $request->divisi;
         $jenis = $request->jenis;
         if(!empty($request->limit)){
           $limit = $request->limit;
@@ -47,9 +48,12 @@ class DocumentsListController extends Controller
               $q->orWhere('documents.doc_title', 'like', '%'.$search.'%');
           });
         }
-        if(!empty($unit)){
+        if(!empty($divisi) && \Auth::user()->hasRole('admin')){
           $documents->join('users_pegawai as up','up.users_id','=','documents.user_id');
           $documents->join('pegawai as g','g.n_nik','=','up.nik');
+          $documents->where('g.objiddivisi',$divisi);
+        }
+        if(!empty($unit) && !empty($divisi)){
           if(!empty($posisi)){
             $documents->where('g.objidposisi',$posisi);
           }

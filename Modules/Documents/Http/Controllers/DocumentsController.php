@@ -226,8 +226,6 @@ class DocumentsController extends Controller
                                   ->where('a.users_id',$dt->user_id)->first();
       $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
       
-      
-
       return view('documents::view')->with($data);
     }
     public function getPo(Request $request){

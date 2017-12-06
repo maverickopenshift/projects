@@ -81,7 +81,7 @@
             @include('documents::partials.alert-errors')
             @if(in_array($doc_type->name,['surat_pengikatan']))
               @include('documents::doc-form.surat_pengikatan-latar-belakang')
-            @else
+            @elseif(!in_array($doc_type->name,['mou']))
               @include('documents::doc-form.latar-belakang')
             @endif
             

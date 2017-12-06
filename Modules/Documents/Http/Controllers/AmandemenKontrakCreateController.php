@@ -55,6 +55,7 @@ class AmandemenKontrakCreateController
         $new_lamp_up[] = $v;
       }
     }
+
     $request->merge(['doc_lampiran' => $new_lamp]);
 
     $rule_scope_pasal = (count($request['scope_pasal'])>1)?'required':'sometimes|nullable';
@@ -93,6 +94,7 @@ class AmandemenKontrakCreateController
         $new_file_up[] = $v;
       }
     }
+    
     $request->merge(['lt_file' => $new_file]);
 
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());

@@ -1,7 +1,7 @@
 <!-- Construct the box with style you want. Here we are using box-danger -->
   <!-- Then add the class direct-chat and choose the direct-chat-* contexual class -->
   <!-- The contextual class should match the box, so we are using direct-chat-danger -->
-  <div class="box box-primary direct-chat direct-chat-primary">
+  <div class="box box-primary direct-chat direct-chat-primary col-md-6">
     <div class="box-header with-border">
       <i class="fa fa-comments-o"></i>
       <h3 class="box-title">Komentar</h3>

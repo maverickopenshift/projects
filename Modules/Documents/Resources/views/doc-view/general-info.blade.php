@@ -128,7 +128,7 @@
             </div>
           </div>
         </div>
-        @if($doc_type->name!="mou")
+        @if($doc_type->name!="mou" && $doc_type->name!="surat_pengikatan")
         <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           @if($doc_type->name!="sp")
             <div class="form-group">

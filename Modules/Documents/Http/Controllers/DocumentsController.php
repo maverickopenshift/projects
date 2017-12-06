@@ -12,11 +12,13 @@ use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
+use Modules\Documents\Entities\DocActivity;
 use Modules\Documents\Entities\DocComment as Comments;
 use Modules\Documents\Http\Controllers\DocumentsListController as DocList;
 use Modules\Documents\Entities\DocChildLatest;
 use App\Helpers\Helpers;
 use Validator;
+use Auth;
 
 class DocumentsController extends Controller
 {
@@ -52,6 +54,7 @@ class DocumentsController extends Controller
           $search = $request->q;
           $unit = $request->unit;
           $posisi = $request->posisi;
+          $divisi = $request->divisi;
           $jenis = $request->jenis;
           if(!empty($request->limit)){
             $limit = $request->limit;
@@ -117,15 +120,18 @@ class DocumentsController extends Controller
               });
             }
           }
-          if(!empty($unit)){
+          if(!empty($divisi) && \Auth::user()->hasRole('admin')){
             $documents->join('users_pegawai as up','up.users_id','=','documents.user_id');
             $documents->join('pegawai as g','g.n_nik','=','up.nik');
+            $documents->where('g.objiddivisi',$divisi);
+          }
+          if(!empty($unit) && !empty($divisi)){
             if(!empty($posisi)){
               $documents->where('g.objidposisi',$posisi);
             }
             $documents->where('g.objidunit',$unit);
           }
-          
+
 //          echo $search;
 //          echo $status_no;
 //          echo($documents->toSql());exit;
@@ -133,6 +139,9 @@ class DocumentsController extends Controller
             $documents->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
             $documents->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
             $documents->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+          }
+          else{
+            
           }
           $documents = $documents->with(['jenis','supplier','pic']);
           $documents = $documents->paginate($limit);
@@ -279,6 +288,14 @@ class DocumentsController extends Controller
           $doc->doc_signing_date = \DB::raw('NOW()');
           $doc->doc_data =  json_encode(['signing_by_userid'=>\Auth::id()]);
           $doc->save();
+
+          $log_activity = new DocActivity();
+          $log_activity->users_id = Auth::id();
+          $log_activity->documents_id = $request->id;
+          $log_activity->activity = "Approved";
+          $log_activity->date = new \DateTime();
+          $log_activity->save();
+
           //$request->session()->flash('alert-success', 'Data berhasil disetujui!');
           return Response::json(['status'=>true,'hai'=>'haloo','doc_no'=>$doc->doc_no,'csrf_token'=>csrf_token()]);
         }
@@ -287,8 +304,8 @@ class DocumentsController extends Controller
       abort(500);
     }
     public function hapus(Request $request)
-    {      
-      if ($request->ajax()) {        
+    {
+      if ($request->ajax()) {
         if(\Laratrust::hasRole('admin')){
           $doc = $this->documents
               ->where('id',$request->id)
@@ -332,6 +349,13 @@ class DocumentsController extends Controller
             $comment->users_id = \Auth::id();
             $comment->status = 1;
             $comment->save();
+
+            $log_activity = new DocActivity();
+            $log_activity->users_id = Auth::id();
+            $log_activity->documents_id = $request->id;
+            $log_activity->activity = "Returned";
+            $log_activity->date = new \DateTime();
+            $log_activity->save();
             $dt_c = Comments::where('id',$comment->id)->with('user')->first();
             //$request->session()->flash('alert-success', 'Data berhasil disetujui!');
             return Response::json(['status'=>true,'doc_no'=>$doc->doc_no,'csrf_token'=>csrf_token(),'data'=>$dt_c]);
@@ -413,11 +437,11 @@ class DocumentsController extends Controller
     //     $search = trim($request->q);
     //     $type = trim($request->type);//sp,amandemen,adendum dll
     //     $type_id = trim($request->type_id);//sp,amandemen,adendum dll
-    // 
+    //
     //     if (empty($type)) {
     //         return \Response::json([]);
     //     }
-    // 
+    //
     //     $data = DocChildLatest::selectRaw('doc_child_latest.*')
     //             ->with('jenis')
     //             ->where('doc_child_latest.doc_type','sp')
@@ -517,6 +541,15 @@ class DocumentsController extends Controller
             return \Response::json([]);
         }
         $data = \App\User::get_posisi_by_unit($unit)->get();
+        return \Response::json($data);
+    }
+    public function getUnit(Request $request){
+        $divisi = trim($request->divisi);
+
+        if (empty($divisi)) {
+            return \Response::json([]);
+        }
+        $data = \App\User::get_unit_by_disivi2($divisi)->get();
         return \Response::json($data);
     }
 }

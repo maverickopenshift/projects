@@ -1,7 +1,7 @@
 <div class="box">
     <div class="box-header with-border">
       <h3 class="box-title">
-          General Infoxx
+          General Info
       </h3>
     </div>
     <!-- /.box-header -->

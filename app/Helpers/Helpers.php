@@ -53,6 +53,21 @@ class Helpers
       $select .= '</select>';
       return $select;
     }
+    public static function select_all_divisi($name,$val=null)
+    {
+      $unit = \App\User::get_all_disivi()->get();
+      $select  = '<select class="form-control" id="'.$name.'" name="'.$name.'">';
+      $select .= '<option value="">Pilih Divisi</option>';
+      foreach ($unit as $dt) {
+        $selected = '';
+        if($val==$dt->id){
+          $selected = 'selected="selected"';
+        }
+        $select .= '<option value="'.$dt->id.'" '.$selected.'>'.$dt->title.'</option>';
+      }
+      $select .= '</select>';
+      return $select;
+    }
     public static function select_category($name='category',$val=null)
     {
       $cat = DocCategory::all();

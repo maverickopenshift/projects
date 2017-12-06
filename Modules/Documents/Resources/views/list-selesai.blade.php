@@ -20,17 +20,22 @@
       </div> <!-- end .flash-message -->
       <div class="table-kontrak">
         <div class="form-inline bottom25">
-          <div class="form-group">
+          <div class="form-group top10">
             <input  style="width:290px;" type="text" class="form-control cari-judul" placeholder="Judul/Nomor Kontrak">
           </div>
-          <div class="form-group">
+          @role('admin')
+          <div class="form-group top10">
+            {!!Helper::select_all_divisi('divisi')!!}
+          </div>
+          @endrole
+          <div class="form-group top10">
             {!!Helper::select_unit('unit_bisnis')!!}
           </div>
-          <div class="form-group">
+          <div class="form-group top10">
             {!! Helper::select_type2('doc_type') !!}
           </div>
-          <button type="button" class="btn btn-success search">Cari</button>
-          <button type="button" class="btn btn-danger reset">Reset</button>
+          <button type="button" class="btn btn-success search top10">Cari</button>
+          <button type="button" class="btn btn-danger reset top10">Reset</button>
         </div>
       </div>
     </div>
@@ -39,32 +44,35 @@
 @endsection
 @push('scripts')
 <script>
-// $(document).on('change', '#unit_bisnis', function(event) {
-//   event.preventDefault();
-//   /* Act on the event */
-//   var unit = this.value;
-//   //if(unit!==""){
-//     $('#select-posisi').find('option').not('option[value=""]').remove();
-//     $.ajax({
-//       url: '{!!route('doc.get-posisi')!!}',
-//       type: 'GET',
-//       dataType: 'json',
-//       data: {unit: unit}
-//     })
-//     .done(function(data) {
-//       if(data.length>0){
-//         $.each(data,function(index, el) {
-//           $('#select-posisi').append('<option value="'+this.id+'">'+this.title+'</option>');
-//         });
-//       }
-//     });
-//   //}
-// });
-// $(function(e){
-//   if($('#unit_bisnis').val()!==""){
-//     $('#unit_bisnis').change();
-//   }
-// });
+if(is_admin()){
+  $(document).on('change', '#divisi', function(event) {
+    event.preventDefault();
+    /* Act on the event */
+    var divisi = this.value;
+    //if(unit!==""){
+    $('#unit_bisnis').find('option').not('option[value=""]').remove();
+      $.ajax({
+        url: '{!!route('doc.get-unit')!!}',
+        type: 'GET',
+        dataType: 'json',
+        data: {divisi: divisi}
+      })
+      .done(function(data) {
+        if(data.length>0){
+          $.each(data,function(index, el) {
+            $('#unit_bisnis').append('<option value="'+this.id+'">'+this.title+'</option>');
+          });
+        }
+      });
+    //}
+  });
+  $(function(e){
+    $('#unit_bisnis').find('option').not('option[value=""]').remove();
+    if($('#divisi').val()!==""){
+      $('#divisi').change();
+    }
+  });
+}
 $.fn.tableOke = function(options) {
     options.tableAttr = this;
     options.tableClass = 'table table-condensed table-striped';
@@ -75,10 +83,10 @@ $.fn.tableOke = function(options) {
     options.trLoadingClass='row-loading';
     options.qAttr = options.tableAttr.find('.cari-judul');
     options.unitAttr = options.tableAttr.find('#unit_bisnis');
-    options.posisiAttr = options.tableAttr.find('#select-posisi');
+    options.divisiAttr = options.tableAttr.find('#divisi');
     options.jenisAttr = options.tableAttr.find('#doc_type');
     options.q = options.qAttr.val();
-    options.posisi = options.posisiAttr.val();
+    options.divisi = options.divisiAttr.val();
     options.unit = options.unitAttr.val();
     options.cssLoading='background-color: rgba(255,255,255,0.5);position: absolute;width: 100%;height: 100%;background-image: url('+options.loadingImg+');background-position: center center;background-repeat: no-repeat;z-index:1000;';
     options.loading = 'loading-me';
@@ -233,7 +241,7 @@ $.fn.tableOke = function(options) {
     }
     options.pagination = function(data){
       var render_pg='';
-      var url = '&limit='+options.limit+'&q='+options.q+'&unit='+options.unit+'&jenis='+options.jenis;
+      var url = '&limit='+options.limit+'&q='+options.q+'&divisi='+options.divisi+'&unit='+options.unit+'&jenis='+options.jenis;
       if(data.last_page>1){
         render_pg += '<ul class="pagination">';
           if(data.current_page != 1 && data.last_page >=5){
@@ -298,7 +306,7 @@ $.fn.tableOke = function(options) {
     options.limit = options.getParams('limit',options.limit);
     options.q = options.getParams('q',options.q);
     options.unit = options.getParams('unit',options.unit);
-    options.posisi = options.getParams('posisi',options.posisi);
+    options.divisi = options.getParams('divisi',options.divisi);
     options.jenis = options.getParams('jenis',options.jenis);
     options.ajaxPro = function(){
       $.ajax({
@@ -308,7 +316,7 @@ $.fn.tableOke = function(options) {
         data : {
           page  : options.page,
           q : (options.q!==undefined)?options.q:'',
-          posisi : (options.posisi!==undefined)?options.posisi:'',
+          divisi : (options.divisi!==undefined)?options.divisi:'',
           unit : (options.unit!==undefined)?options.unit:'',
           jenis : (options.jenis!==undefined)?options.jenis:'',
           limit : options.limit
@@ -366,7 +374,7 @@ $.fn.tableOke = function(options) {
           child     : child,
           parent_id : parent_id,
           q : (options.q!==undefined)?options.q:'',
-          posisi : (options.posisi!==undefined)?options.posisi:'',
+          divisi : (options.divisi!==undefined)?options.divisi:'',
           unit : (options.unit!==undefined)?options.unit:'',
           jenis : (options.jenis!==undefined)?options.jenis:'',
         }
@@ -419,14 +427,14 @@ $.fn.tableOke = function(options) {
         options.page = 1;
         options.limit = options.getParams('limit',options.limit,urls);
         // options.q = options.getParams('q',options.q,urls);
-        // options.posisi = options.getParams('posisi',options.posisi,urls);
+        // options.divisi = options.getParams('divisi',options.divisi,urls);
         // options.unit = options.getParams('unit',options.unit,urls);
         options.tableAttr.prepend(options.loadingHtml);
         options.q = options.qAttr.val();
-        options.posisi = options.posisiAttr.val();
+        options.divisi = options.divisiAttr.val();
         options.unit = options.unitAttr.val();
         options.jenis = options.jenisAttr.val();
-        var urls = options.url+'?page='+options.page+'&limit='+options.limit+'&q='+options.q+'&unit='+options.unit+'&jenis='+options.jenis;
+        var urls = options.url+'?page='+options.page+'&limit='+options.limit+'&q='+options.q+'&divisi='+options.divisi+'&unit='+options.unit+'&jenis='+options.jenis;
         window.history.pushState({}, "", urls);
         options.ajaxPro();
     });
@@ -436,12 +444,12 @@ $.fn.tableOke = function(options) {
         options.page = 1;
         options.tableAttr.prepend(options.loadingHtml);
         options.q = "";
-        options.posisi = "";
+        options.divisi = "";
         options.unit = "";
         options.jenis = "";
-        $('#select-posisi').find('option').not('option[value=""]').remove();
+        $('#unit_bisnis').find('option').not('option[value=""]').remove();
         options.qAttr.val('');
-        options.posisiAttr.val('');
+        options.divisiAttr.val('');
         options.unitAttr.val('');
         options.jenisAttr.val('');
         window.history.pushState({}, "", options.url);

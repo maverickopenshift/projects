@@ -299,8 +299,7 @@ class EntryDocumentController extends Controller
     }
 
 }
-// dd($request->input());
-// dd("masuk");
+
       $doc = new Documents();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
@@ -339,6 +338,28 @@ class EntryDocumentController extends Controller
           }
         }
       }
+
+      if(in_array($type,['turnkey','khs'])){
+        if(isset($request->f_no_surat_pengikatan)){
+          $doc_meta = new DocMeta();
+          $doc_meta->documents_id = $doc->id;
+          $doc_meta->meta_type = "latar_belakang_surat_pengikatan";
+          $doc_meta->meta_title = "Latar Belakang Surat Pengikatan";
+          $doc_meta->meta_desc = $request->f_no_surat_pengikatan;
+          $doc_meta->save();
+        }
+
+        if(isset($request->f_no_mou)){
+          $doc_meta = new DocMeta();
+          $doc_meta->documents_id = $doc->id;
+          $doc_meta->meta_type = "latar_belakang_mou";
+          $doc_meta->meta_title = "Latar Belakang Mou";
+          $doc_meta->meta_desc = $request->f_no_mou;
+          $doc_meta->save();
+        }
+      }
+
+      
 
       if(in_array($type,['turnkey','sp'])){
         if(count($request->doc_po_no)>0){

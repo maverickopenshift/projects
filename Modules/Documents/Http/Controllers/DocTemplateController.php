@@ -60,6 +60,7 @@ class DocTemplateController extends Controller
         $data['data_class'] = 'form-add';
         $data['data'] = [];
         $data['data_detail'] = [];
+
         return view('documents::doc-template.form')->with($data);
     }
 
@@ -73,9 +74,9 @@ class DocTemplateController extends Controller
       $rules = array (
           'type' => 'required',
           'category' => 'required',
-          'pasal.*' => 'required|min:3|max:20',
-          'isi.*' => 'required|min:10',
-          'judul.*' => 'required|min:5',
+          //'pasal.*' => 'required|min:3|max:20',
+          //'isi.*' => 'required|min:10',
+          //'judul.*' => 'required|min:5',
       );
       $validator = Validator::make($request->all(), $rules);
       if ($validator->fails ())
@@ -101,14 +102,7 @@ class DocTemplateController extends Controller
             $data->id_doc_category = $request->category;
             $data->kode = $request->kode;
             $data->save ();
-            foreach($pasal as $k=>$v){
-              $data2 = new DocTemplateDetail();
-              $data2->id_doc_template = $data->id;
-              $data2->name = $v;
-              $data2->title = $judul[$k];
-              $data2->desc = $isi[$k];
-              $data2->save ();
-            }
+
             return response()->json(array('status'=>true));
           }
           else{
@@ -146,9 +140,9 @@ class DocTemplateController extends Controller
     {
       $rules = array (
           'kode' => 'required',
-          'pasal.*' => 'required|min:3|max:20',
-          'isi.*' => 'required|min:10',
-          'judul.*' => 'required|min:5',
+          //'pasal.*' => 'required|min:3|max:20',
+          //'isi.*' => 'required|min:10',
+          //'judul.*' => 'required|min:5',
       );
       $validator = Validator::make($request->all(), $rules);
       if ($validator->fails ())
@@ -165,13 +159,6 @@ class DocTemplateController extends Controller
             $data = DocTemplate::where('id','=',$id)->first();
             $data->kode = $request->kode;
             $data->save ();
-            // foreach($pasal as $k=>$v){
-            //   $data2 = DocTemplateDetail::where('id_doc_template','=',$id)->first();
-            //   $data2->name = $v;
-            //   $data2->title = $judul[$k];
-            //   $data2->desc = $isi[$k];
-            //   $data2->save ();
-            // }
             return response()->json(array('status'=>true));
           }
           else{

@@ -8,6 +8,7 @@
     <div class="box-body">
       <div class="form-horizontal">
         <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+          @if(!in_array($doc_type->name,['turnkey','khs','surat_pengikatan','mou']))
           <div class="form-group ">
             <label class="col-sm-2 control-label">No.Kontrak Induk </label>
             <div class="col-sm-10 text-me">{{$doc_parent->doc_no or '-'}}</div>
@@ -16,6 +17,7 @@
             <label class="col-sm-2 control-label">Judul Kontrak Induk </label>
             <div class="col-sm-10 text-me">{{$doc_parent->doc_title or '-'}}</div>
           </div>
+          @endif
           <div class="form-group ">
             <label class="col-sm-2 control-label">No.Kontrak </label>
             <div class="col-sm-10 text-me">{{$doc->doc_no or '-'}}</div>
@@ -57,7 +59,7 @@
           @endif
         </div>
         <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-          @include('documents::doc-view.general-info-right')
+          
           <div class="form-group">
             <label class="col-sm-2 control-label">Konseptor</label>
             <div class="col-sm-10 text-me">{{$pegawai_konseptor->n_nik}} - {{$pegawai_konseptor->v_nama_karyawan}}</div>
@@ -66,14 +68,15 @@
             <label class="col-sm-2 control-label">Divisi</label>
             <div class="col-sm-10 text-me">{{$pegawai_konseptor->v_short_divisi}}</div>
           </div>
-          <div class="form-group">
-            <label class="col-sm-2 control-label">Pihak I </label>
-            <div class="col-sm-10 text-me">{{$doc->doc_pihak1}}</div>
-          </div>
+          @include('documents::doc-view.general-info-right')
           <div class="form-group">
             <label class="col-sm-2 control-label">Approver</label>
             <div class="col-sm-10 text-me">{{Helper::get_approver_by_id($doc->user_id)}}</div>
           </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Pihak I </label>
+            <div class="col-sm-10 text-me">{{$doc->doc_pihak1}}</div>
+          </div>          
           <div class="form-group">
             <label for="ttd_pihak1" class="col-sm-2 control-label">Penandatangan Pihak I</label>
             <div class="col-sm-10 text-me">{{$pegawai_pihak1->n_nik}} - {{$pegawai_pihak1->v_nama_karyawan}} - {{$pegawai_pihak1->v_short_posisi}}</div>
@@ -125,7 +128,7 @@
             </div>
           </div>
         </div>
-        @if($doc_type->name!="mou")
+        @if($doc_type->name!="mou" && $doc_type->name!="surat_pengikatan")
         <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           @if($doc_type->name!="sp")
             <div class="form-group">

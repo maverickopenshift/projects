@@ -54,6 +54,7 @@ class DocumentsController extends Controller
           $search = $request->q;
           $unit = $request->unit;
           $posisi = $request->posisi;
+          $divisi = $request->divisi;
           $jenis = $request->jenis;
           if(!empty($request->limit)){
             $limit = $request->limit;
@@ -119,9 +120,12 @@ class DocumentsController extends Controller
               });
             }
           }
-          if(!empty($unit)){
+          if(!empty($divisi) && \Auth::user()->hasRole('admin')){
             $documents->join('users_pegawai as up','up.users_id','=','documents.user_id');
             $documents->join('pegawai as g','g.n_nik','=','up.nik');
+            $documents->where('g.objiddivisi',$divisi);
+          }
+          if(!empty($unit) && !empty($divisi)){
             if(!empty($posisi)){
               $documents->where('g.objidposisi',$posisi);
             }
@@ -135,6 +139,9 @@ class DocumentsController extends Controller
             $documents->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
             $documents->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
             $documents->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+          }
+          else{
+            
           }
           $documents = $documents->with(['jenis','supplier','pic']);
           $documents = $documents->paginate($limit);
@@ -183,13 +190,28 @@ class DocumentsController extends Controller
     {
       $id = $request->id;
       $doc_type = DocType::where('name','=',$request->type)->first();
-      $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po','sow_boq')->first();
+      $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po','sow_boq','latar_belakang_surat_pengikatan','latar_belakang_mou')->first();
       // dd($loker);
       if(!$doc_type || !$dt){
         abort(404);
       }
       if(!$this->documents->check_permission_doc($id,$doc_type->name)){
         abort(404);
+      }
+      if(in_array($request->type,['khs','turnkey'])){
+        if(count($dt->latar_belakang_surat_pengikatan)>0){
+          foreach($dt->latar_belakang_surat_pengikatan as $key => $val){
+            $query_latar_belakang_surat_pengikatan=$this->documents->selectRaw("id,doc_title,doc_no,doc_startdate,doc_enddate")->where('id','=',$val->meta_desc)->with('lampiran_ttd')->first(); 
+          }
+          $data['latar_belakang_surat_pengikatan']=$query_latar_belakang_surat_pengikatan;
+        }
+
+        if(count($dt->latar_belakang_mou)>0){
+          foreach($dt->latar_belakang_mou as $key => $val){
+            $query_latar_belakang_mou=$this->documents->selectRaw("id,doc_title,doc_no,doc_startdate,doc_enddate")->where('id','=',$val->meta_desc)->with('lampiran_ttd')->first();
+          }
+          $data['latar_belakang_mou']=$query_latar_belakang_mou;
+        }      
       }
       $data['doc_type'] = $doc_type;
       $data['page_title'] = 'View Kontrak - '.$doc_type['title'];
@@ -203,7 +225,7 @@ class DocumentsController extends Controller
                                   ->join('pegawai as b','a.nik','=','b.n_nik')
                                   ->where('a.users_id',$dt->user_id)->first();
       $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
-
+      
       return view('documents::view')->with($data);
     }
     public function getPo(Request $request){
@@ -346,7 +368,6 @@ class DocumentsController extends Controller
     public function getSelectKontrak(Request $request){
         $search = trim($request->q);
         $type = trim($request->type);//sp,amandemen,adendum dll
-
         if (empty($type)) {
             return \Response::json([]);
         }
@@ -354,7 +375,12 @@ class DocumentsController extends Controller
         ->with('jenis','supplier','pic')->whereNotNull('documents.doc_no')->where('documents.doc_parent',1)->where('documents.doc_signing', 1);
         if($type=='sp'){
           $data->where('documents.doc_type','khs');
+        }elseif($type=='mou'){
+          $data->where('documents.doc_type','mou');
+        }elseif($type=='surat_pengikatan'){
+          $data->where('documents.doc_type','surat_pengikatan');
         }
+        
         if(!empty($search)){
           $data->where(function($q) use ($search) {
               $q->orWhere('documents.doc_no', 'like', '%'.$search.'%');
@@ -364,10 +390,11 @@ class DocumentsController extends Controller
         if(!\Auth::user()->hasRole('admin')){
           $data->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
           $data->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
+
           $data->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
         }
         $data = $data->paginate(30);
-        //dd($data);
+        
         $data->getCollection()->transform(function ($value) use ($type){
           $types=DocType::select('id')->where('name',$type)->first();
           $temp = DocTemplate::select('id')->where('id_doc_type', $types->id)->first();
@@ -405,9 +432,19 @@ class DocumentsController extends Controller
                       ->get();
           }
 
+          $ttd=DocMeta::where('meta_type','lampiran_ttd')->where('documents_id',$value['id'])->get();
+          $ttd->map(function($item, $key) use ($type){
+              $item->url=route('doc.file',['filename'=>$item->meta_file,'type'=>$type.'_lampiran_ttd']);
+
+              return $item;
+          });
+
+          $value['lampiran_ttd'] = $ttd;
           $value['type'] = json_encode($doc->toArray());
           return $value;
         });
+
+        
         return \Response::json($data);
     }
 
@@ -519,6 +556,15 @@ class DocumentsController extends Controller
             return \Response::json([]);
         }
         $data = \App\User::get_posisi_by_unit($unit)->get();
+        return \Response::json($data);
+    }
+    public function getUnit(Request $request){
+        $divisi = trim($request->divisi);
+
+        if (empty($divisi)) {
+            return \Response::json([]);
+        }
+        $data = \App\User::get_unit_by_disivi2($divisi)->get();
         return \Response::json($data);
     }
 }

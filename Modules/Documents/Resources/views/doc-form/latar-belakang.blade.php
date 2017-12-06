@@ -15,6 +15,9 @@
         $lt_desc = Helper::old_prop_each($doc,'lt_desc');
         $lt_file_old = Helper::old_prop_each($doc,'lt_file_old');
       @endphp
+      @if(in_array($doc_type->name,['turnkey','khs']))
+        @include('documents::doc-form.latar_belakang_2')
+      @endif
       @if(count($lt_name)>0)
         @foreach ($lt_name as $key => $value)
             <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
@@ -113,6 +116,7 @@
               </div>
             </div>
         </div>
+
         <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
               <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Surat Kesanggupan Mitra <span class="total_lt"></span>
@@ -161,5 +165,6 @@
 </div>
 @push('scripts')
 <script>
+
 </script>
 @endpush

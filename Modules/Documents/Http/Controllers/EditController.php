@@ -48,7 +48,7 @@ class EditController extends Controller
     $id = $request->id;
     $type = $request->type;
     $doc = $this->documents->where('documents.id','=',$id);
-    $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','sow_boq','scope_perubahan','users')->first();
+    $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','sow_boq','scope_perubahan','users','latar_belakang_surat_pengikatan','latar_belakang_mou')->first();
     if(!$dt || !$this->documents->check_permission_doc($id,$type)){
       abort(404);
     }
@@ -68,7 +68,21 @@ class EditController extends Controller
     if(in_array($type,['amandemen_kontrak','adendum','side_letter'])){
       $dt->parent_kontrak = $dt->doc_parent_id;
       $dt->parent_kontrak_text = $this->documents->select('doc_no')->where('id','=',$dt->doc_parent_id)->first()->doc_no;
+    }
+    if(in_array($type,['khs','turnkey'])){
+      if(count($dt->latar_belakang_surat_pengikatan)>0){
+        foreach($dt->latar_belakang_surat_pengikatan as $key => $val){
+          $dt->f_no_surat_pengikatan = $val->meta_desc;
+          $dt->text_surat_pengikatan = $this->documents->select('doc_no')->where('id','=',$val->meta_desc)->first()->doc_no;
+        }
+      }
 
+      if(count($dt->latar_belakang_mou)>0){
+        foreach($dt->latar_belakang_mou as $key => $val){
+          $dt->f_no_mou = $val->meta_desc;
+          $dt->text_mou = $this->documents->select('doc_no')->where('id','=',$val->meta_desc)->first()->doc_no;
+        }
+      }      
     }
     if(count($dt->scope_perubahan)>0){
       foreach($dt->scope_perubahan as $key => $val){
@@ -185,6 +199,11 @@ class EditController extends Controller
     $data['action_url'] = route('doc.storeedit',['type'=>$dt->jenis->type->name,'id'=>$dt->id]);
     $data['data'] = [];
     $data['id'] = $dt->id;
+    $data['pegawai_pihak1'] = \DB::table('pegawai')->where('n_nik',$dt->doc_pihak1_nama)->first();
+    $data['pegawai_konseptor'] = \DB::table('users_pegawai as a')
+                                  ->join('pegawai as b','a.nik','=','b.n_nik')
+                                  ->where('a.users_id',$dt->user_id)->first();
+    $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
 
     return view('documents::form-edit')->with($data);
   }
@@ -401,7 +420,6 @@ class EditController extends Controller
       $request->merge(['hs_qty'=>$hs_qty]);
     }
     if ($validator->fails ()){
-      dd($validator->getMessageBag()->toArray());
       return redirect()->back()
                   ->withInput($request->input())
                   ->withErrors($validator);
@@ -481,6 +499,34 @@ class EditController extends Controller
           }
           $doc_meta->save();
         }
+      }
+    }
+
+    if(in_array($type,['turnkey','khs'])){
+      if(isset($request->f_no_surat_pengikatan)){
+        DocMeta::where([
+          ['documents_id','=',$doc->id],
+          ['meta_type','=','latar_belakang_surat_pengikatan']
+          ])->delete();
+        $doc_meta = new DocMeta();
+        $doc_meta->documents_id = $doc->id;
+        $doc_meta->meta_type = "latar_belakang_surat_pengikatan";
+        $doc_meta->meta_title = "Latar Belakang Surat Pengikatan";
+        $doc_meta->meta_desc = $request->f_no_surat_pengikatan;
+        $doc_meta->save();
+      }
+
+      if(isset($request->f_no_mou)){
+        DocMeta::where([
+          ['documents_id','=',$doc->id],
+          ['meta_type','=','latar_belakang_mou']
+          ])->delete();
+        $doc_meta = new DocMeta();
+        $doc_meta->documents_id = $doc->id;
+        $doc_meta->meta_type = "latar_belakang_mou";
+        $doc_meta->meta_title = "Latar Belakang Mou";
+        $doc_meta->meta_desc = $request->f_no_mou;
+        $doc_meta->save();
       }
     }
 

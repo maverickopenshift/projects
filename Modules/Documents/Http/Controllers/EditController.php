@@ -199,6 +199,11 @@ class EditController extends Controller
     $data['action_url'] = route('doc.storeedit',['type'=>$dt->jenis->type->name,'id'=>$dt->id]);
     $data['data'] = [];
     $data['id'] = $dt->id;
+    $data['pegawai_pihak1'] = \DB::table('pegawai')->where('n_nik',$dt->doc_pihak1_nama)->first();
+    $data['pegawai_konseptor'] = \DB::table('users_pegawai as a')
+                                  ->join('pegawai as b','a.nik','=','b.n_nik')
+                                  ->where('a.users_id',$dt->user_id)->first();
+    $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
 
     return view('documents::form-edit')->with($data);
   }

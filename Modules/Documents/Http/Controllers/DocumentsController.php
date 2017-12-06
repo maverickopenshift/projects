@@ -203,12 +203,14 @@ class DocumentsController extends Controller
           foreach($dt->latar_belakang_surat_pengikatan as $key => $val){
             $query_latar_belakang_surat_pengikatan=$this->documents->selectRaw("id,doc_title,doc_no,doc_startdate,doc_enddate")->where('id','=',$val->meta_desc)->with('lampiran_ttd')->first(); 
           }
+          $data['latar_belakang_surat_pengikatan']=$query_latar_belakang_surat_pengikatan;
         }
 
         if(count($dt->latar_belakang_mou)>0){
           foreach($dt->latar_belakang_mou as $key => $val){
             $query_latar_belakang_mou=$this->documents->selectRaw("id,doc_title,doc_no,doc_startdate,doc_enddate")->where('id','=',$val->meta_desc)->with('lampiran_ttd')->first();
           }
+          $data['latar_belakang_mou']=$query_latar_belakang_mou;
         }      
       }
       $data['doc_type'] = $doc_type;
@@ -223,9 +225,7 @@ class DocumentsController extends Controller
                                   ->join('pegawai as b','a.nik','=','b.n_nik')
                                   ->where('a.users_id',$dt->user_id)->first();
       $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
-      $data['latar_belakang_surat_pengikatan']=$query_latar_belakang_surat_pengikatan;
-      $data['latar_belakang_mou']=$query_latar_belakang_mou;
-
+      
       return view('documents::view')->with($data);
     }
     public function getPo(Request $request){

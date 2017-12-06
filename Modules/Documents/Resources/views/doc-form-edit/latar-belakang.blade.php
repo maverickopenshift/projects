@@ -15,6 +15,9 @@
         $lt_desc = Helper::old_prop_each($doc,'lt_desc');
         $lt_file_old = Helper::old_prop_each($doc,'lt_file_old');
       @endphp
+      @if(in_array($doc_type->name,['turnkey','khs']))
+        @include('documents::doc-form-edit.latar_belakang_2')
+      @endif
       @if(count($lt_name)>0)
         @foreach ($lt_name as $key => $value)
             <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">

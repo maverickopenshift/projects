@@ -115,9 +115,7 @@
           </div>
         </div>
         <!-- /.tab-content -->
-        <div class="row">
           @include('documents::partials.comments')
-        </div>
       </div>
 @endsection
 @push('scripts')

@@ -372,14 +372,29 @@ class DocumentsController extends Controller
           $types=DocType::select('id')->where('name',$type)->first();
           $temp = DocTemplate::select('id')->where('id_doc_type', $types->id)->first();
           if($type=='sp'){
-            $doc = Documents::selectRaw('documents.*,parent.doc_title as parent_title')
+            $parent = Documents::select('id')
                         ->where('documents.doc_parent', 0)
-                        ->where('documents.doc_type','sp')
+                        ->where('documents.doc_type','amandemen_kontrak')
                         ->where('documents.doc_signing', 1)
-                        ->where('documents.doc_template_id', $temp->id)
-                        ->leftJoin('documents as parent','parent.doc_parent_id','=','documents.id')
                         ->where('documents.doc_parent_id', $value['id'])
                         ->get();
+
+                        $valu[] = $value['id'];
+                        // // dd(array_splice($parent,0,2,$val));
+                        foreach ($parent as $key => $d) {
+                          $valu[] = $d->id;
+                        }
+
+                        $doc = Documents::selectRaw('documents.*,parent.doc_title as parent_title,doc.doc_title as title,doc.doc_no as num')
+                                    ->where('documents.doc_parent', 0)
+                                    ->where('documents.doc_type','sp')
+                                    ->where('documents.doc_signing', 1)
+                                    ->where('documents.doc_template_id', $temp->id)
+                                    ->leftJoin('documents as parent','parent.doc_parent_id','=','documents.id')
+                                    ->join('documents as doc','doc.id','=','documents.doc_parent_id')
+                                    ->whereIn('documents.doc_parent_id', $valu)
+                                    ->get();
+                        // dd($doc);
           }
           else{
            $doc = Documents::selectRaw('documents.*')

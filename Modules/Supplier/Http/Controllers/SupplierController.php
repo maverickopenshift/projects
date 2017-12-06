@@ -43,7 +43,21 @@ class SupplierController extends Controller
         $sql = Supplier::with('user')->get();
         return Datatables::of($sql)
             ->addIndexColumn()
+            ->addColumn('vendor_status', function ($data){
+              if($data->vendor_status==0){
+                $sts = 'Belum Disetujui';
+              }else if($data->vendor_status==1){
+                $sts = "Sudah Disetujui";
+              }else{
+                $sts = "-";
+              }
+              // $sts = ($data->vendor_status==0)?'Belum Disetujui':'-';
+              // $sts = ($data->vendor_status==1)?'Sudah Disetujui':'-';
+              return $sts;
+            })
             ->addColumn('action', function ($data) {
+              // dd($data->vendor_status);
+
                 $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
                 $roles = htmlspecialchars(json_encode($data->roles), ENT_QUOTES, 'UTF-8');
               $act= '<div class="">';

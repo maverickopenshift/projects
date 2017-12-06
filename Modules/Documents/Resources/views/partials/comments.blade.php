@@ -1,53 +1,55 @@
 <!-- Construct the box with style you want. Here we are using box-danger -->
   <!-- Then add the class direct-chat and choose the direct-chat-* contexual class -->
   <!-- The contextual class should match the box, so we are using direct-chat-danger -->
-<div class="col-md-6">
-  <div class="box box-primary direct-chat direct-chat-primary">
-    <div class="box-header with-border">
-      <i class="fa fa-comments-o"></i>
-      <h3 class="box-title">Komentar</h3>
-      <div class="box-tools pull-right">
-        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-      </div>
-    </div><!-- /.box-header -->
-    <div class="box-body relative">
-      <div class="loading-ao"></div>
-      <!-- Conversations are loaded here -->
-      <div class="direct-chat-messages">
-      </div><!--/.direct-chat-messages-->
-    </div><!-- /.box-body -->
-    <div class="box-footer relative">
-      <form method="post" id="form-comment" action="#" data-action="{{route('doc.comment.add',['id'=>$id])}}">
-        <div class="loading-ao"></div>
-        <div id="alertBS"></div>
-        {{ csrf_field() }}
-        <textarea class="form-control comment" rows="4" placeholder="Masukan Komentar" name="content"></textarea>
-        <div class="text-center">
-          <button type="submit" class="btn btn-success btn-flat top10 btn-comment">Submit</button>
-        </div>
-      </form>
-    </div><!-- /.box-footer-->
-  </div><!--/.direct-chat -->
-</div>
-<div class="col-md-6">
-  <div class="box box-primary">
+<div class="row">
+  <div class="col-md-6">
+    <div class="box box-primary direct-chat direct-chat-primary">
       <div class="box-header with-border">
-        <h3 class="box-title">Log Aktifitas</h3>
+        <i class="fa fa-comments-o"></i>
+        <h3 class="box-title">Komentar</h3>
         <div class="box-tools pull-right">
-          <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+          <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                  </button>
         </div>
       </div><!-- /.box-header -->
       <div class="box-body relative">
         <div class="loading-ao"></div>
-        <!-- Log Activity -->
-        <div class="log-activity">
+        <!-- Conversations are loaded here -->
+        <div class="direct-chat-messages">
+        </div><!--/.direct-chat-messages-->
+      </div><!-- /.box-body -->
+      <div class="box-footer relative">
+        <form method="post" id="form-comment" action="#" data-action="{{route('doc.comment.add',['id'=>$id])}}">
+          <div class="loading-ao"></div>
+          <div id="alertBS"></div>
+          {{ csrf_field() }}
+          <textarea class="form-control comment" rows="4" placeholder="Masukan Komentar" name="content"></textarea>
+          <div class="text-center">
+            <button type="submit" class="btn btn-success btn-flat top10 btn-comment">Submit</button>
+          </div>
+        </form>
+      </div><!-- /.box-footer-->
+    </div><!--/.direct-chat -->
+  </div>
+  <div class="col-md-6">
+    <div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">Log Aktifitas</h3>
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+          </div>
+        </div><!-- /.box-header -->
+        <div class="box-body relative">
+          <div class="loading-ao"></div>
+          <!-- Log Activity -->
+          <div class="log-activity">
+          </div>
         </div>
-      </div>
-      <!-- /.box-body -->
+        <!-- /.box-body -->
 
-      <!-- /.box-footer -->
-    </div>
+        <!-- /.box-footer -->
+      </div>
+  </div>
 </div>
 
   @push('scripts')

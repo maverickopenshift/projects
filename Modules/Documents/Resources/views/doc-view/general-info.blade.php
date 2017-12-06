@@ -70,13 +70,13 @@
           </div>
           @include('documents::doc-view.general-info-right')
           <div class="form-group">
-            <label class="col-sm-2 control-label">Pihak I </label>
-            <div class="col-sm-10 text-me">{{$doc->doc_pihak1}}</div>
-          </div>
-          <div class="form-group">
             <label class="col-sm-2 control-label">Approver</label>
             <div class="col-sm-10 text-me">{{Helper::get_approver_by_id($doc->user_id)}}</div>
           </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Pihak I </label>
+            <div class="col-sm-10 text-me">{{$doc->doc_pihak1}}</div>
+          </div>          
           <div class="form-group">
             <label for="ttd_pihak1" class="col-sm-2 control-label">Penandatangan Pihak I</label>
             <div class="col-sm-10 text-me">{{$pegawai_pihak1->n_nik}} - {{$pegawai_pihak1->v_nama_karyawan}} - {{$pegawai_pihak1->v_short_posisi}}</div>

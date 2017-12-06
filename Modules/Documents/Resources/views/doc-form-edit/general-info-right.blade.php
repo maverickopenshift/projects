@@ -19,6 +19,12 @@
     <input type="text" class="form-control" name="jabatan"  disabled="disabled" autocomplete="off" value="{{$pegawai->v_short_posisi}}">
   </div>
 </div>
+<div class="form-group">
+  <label class="col-sm-2 control-label">Approver</label>
+  <div class="col-sm-6">
+    <textarea class="form-control" name="approver" disabled="disabled">{{Helper::get_approver($pegawai)}}</textarea>
+  </div>
+</div>
 <div class="form-group {{ $errors->has('doc_pihak1') ? ' has-error' : '' }}">
   <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Pihak I</label>
   <div class="col-sm-6">
@@ -26,12 +32,6 @@
   </div>
   <div class="col-sm-10 col-sm-offset-2">
     {!!Helper::error_help($errors,'doc_pihak1')!!}
-  </div>
-</div>
-<div class="form-group">
-  <label class="col-sm-2 control-label">Approver</label>
-  <div class="col-sm-6">
-    <textarea class="form-control" name="approver" disabled="disabled">{{Helper::get_approver($pegawai)}}</textarea>
   </div>
 </div>
 {{-- <div class="form-group {{ $errors->has('doc_pihak1_nama') ? ' has-error' : '' }}">

@@ -1,5 +1,5 @@
 
-@if(count($latar_belakang_surat_pengikatan)>0)
+@if(isset($latar_belakang_surat_pengikatan)>0)
   <div class="form-horizontal ao-jas" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
       <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
         <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">
@@ -62,7 +62,7 @@
 @endif
 
 
-@if(count($latar_belakang_mou)>0)
+@if(isset($latar_belakang_mou)>0)
   <div class="form-horizontal ao-jas" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
       <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
         <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">

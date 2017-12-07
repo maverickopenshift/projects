@@ -25,6 +25,9 @@ return [
         'user'   => 'abap1',
         'passwd' => 'Telkom2017',
     ],
+    'soap_sap_po' => 'http://simteldev.telkom.co.id:1080/sap/bc/srt/wsdl/bndg_9DB6205AB3173237E10000000A008009/wsdl11/allinone/standard/document?sap-client=300',
+    'soap_sap_material' => 'http://simteldev.telkom.co.id:1080/sap/bc/srt/wsdl/bndg_76B6205AB3173237E10000000A008009/wsdl11/allinone/standard/document?sap-client=300',
+    'soap_sap_vendor' => 'http://simteldev.telkom.co.id:1080/sap/bc/srt/wsdl/bndg_14DD265A997C3737E10000000A008009/wsdl11/allinone/standard/document?sap-client=300',
     /*
     |--------------------------------------------------------------------------
     | Application Environment

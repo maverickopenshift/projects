@@ -12,6 +12,7 @@
 <!-- /.box-body -->
 </div>
 @push('scripts')
+<script src="{{ mix('js/po_sap.js') }}"></script>
 <script>
 $(function() {
   // add_select('doc_lampiran');
@@ -104,114 +105,6 @@ $(function() {
     }
     render_po(po);
   });
-function render_po(po){
-  var error_po = $('.error-po');
-  var table = $('#potables');
-  var parentPO = $('#parentPO');
-  var loading = table.find('.loading-tr');
-  loading.show();
-  var tr_count = table.find('tbody>tr').not('tbody>tr.loading-tr');
-  table.parent().hide();
-    $.ajax({
-      url: '{!! route('doc.get-po') !!}',
-      type: 'GET',
-      dataType: 'json',
-      data: {po: po}
-    })
-    .done(function(response) {
-      if(response.status){
-        if(response.length==0){
-          error_po.html('No.PO tidak ditemukan!');
-        }
-        else{
-          var data = response.data.POITEM;
-          var dataHeader = response.data.POHEADER[0];
-          loading.hide();
-          table.parent().show();
-          var tr;
-          $.each(data,function(index, el) {
-            var hargaTotal = this.QUANTITY*this.NET_PRICE;
-            var po_data = {
-              no         : (index+1),
-              kode_item  : this.PO_ITEM,
-              item       : this.SHORT_TEXT,
-              qty        : formatRupiah(this.QUANTITY),
-              satuan     : this.PO_UNIT,
-              mtu        : dataHeader.CURRENCY,
-              harga      : formatRupiah(this.NET_PRICE),
-              harga_total: formatRupiah(hargaTotal),
-              keterangan : this.TRACKINGNO,
-              date       : this.PRICE_DATE,
-              no_pr      : this.PREQ_NO,
-            }
-            var tr = templatePO(po_data);
-            table.find('tbody').append(tr);
-          });
-          var td = ParentPO(response.data);
-          parentPO.find('tbody').append(td);
-          error_po.html('');
-        }
-      }
-    });
-}
-function templatePO(data) {
-  var dates = data.date;
-  var hDate_year = dates.substr(0, 4); 
-  var hDate_month = dates.substr(4, 2); 
-  var hDate_day = dates.substr(6, 2); 
-  return '<tr>\
-              <td>'+data.no+'</th>\
-              <td>'+data.kode_item+'</th>\
-              <td>'+data.item+'</th>\
-              <td>'+data.qty+'</th>\
-              <td>'+data.satuan+'</th>\
-              <td>'+data.mtu+'</th>\
-              <td>'+data.harga_total+'</th>\
-              <td>'+hDate_day+'-'+hDate_month+'-'+hDate_year+'</th>\
-              <td>'+data.no_pr+'</th>\
-              <td>'+data.keterangan+'</th>\
-          </tr>';
-}
-
-function ParentPO(data) {
-  var nopo = $('.no_po').val();
-  var dataHeader = data.POHEADER[0];
-  var dataVendor = data.VENDOR_INF[0];
-  var dates = dataHeader.CREAT_DATE;
-  var hDate_year = dates.substr(0, 4); 
-  var hDate_month = dates.substr(4, 2); 
-  var hDate_day = dates.substr(6, 2); 
-  return '<tr>\
-            <td width="150">No PO </td>\
-            <td width="10">:</td>\
-            <td>'+dataHeader.PO_NUMBER+'<input type="hidden" name="po_no" value="'+dataHeader.PO_NUMBER+'"></td>\
-          </tr>\
-          <tr>\
-            <td>Tanggal PO</td>\
-            <td> : </td>\
-            <td>'+hDate_day+'-'+hDate_month+'-'+hDate_year+'<input type="hidden" name="po_date" value="'+hDate_year+'-'+hDate_month+'-'+hDate_day+'"></td>\
-          </tr>\
-          <tr>\
-            <td>Nama Vendor</td>\
-            <td> : </td>\
-            <td>'+dataVendor.LIFNR+' - '+dataVendor.NAME1+' '+dataVendor.STRAS+' '+dataVendor.ORT01+' '+dataVendor.PSTLZ+'<input type="hidden" name="po_vendor" value="'+dataVendor.LIFNR+' - '+dataVendor.NAME1+' '+dataVendor.STREET+' '+dataVendor.ORT01+' '+dataVendor.PSTLZ+'"></td>\
-          </tr>\
-          <tr>\
-            <td>Nama Pembuat/nik</td>\
-            <td> : </td>\
-            <td>'+dataHeader.CREATED_BY+'<input type="hidden" name="po_pembuat" value="'+dataHeader.CREATED_BY+'"><input type="hidden" name="po_nik" value="'+dataHeader.CREATED_BY+'"></td>\
-          </tr>\
-          <tr>\
-            <td>Nama Approval PO</td>\
-            <td> : </td>\
-            <td>- <input type="hidden" name="po_approval" value=""></td>\
-          </tr>\
-          <tr>\
-            <td>Nama Penandatangan PO</td>\
-            <td> : </td>\
-            <td>- <input type="hidden" name="po_penandatangan" value=""></td>\
-          </tr>';
-}
   @php
     $pic=Helper::old_prop($doc,'pic_data');
     $pic_posisi=Helper::old_prop_each($doc,'pic_posisi');

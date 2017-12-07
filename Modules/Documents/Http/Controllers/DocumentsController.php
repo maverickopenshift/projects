@@ -141,7 +141,7 @@ class DocumentsController extends Controller
             $documents->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
           }
           else{
-            
+
           }
           $documents = $documents->with(['jenis','supplier','pic']);
           $documents = $documents->paginate($limit);
@@ -174,7 +174,8 @@ class DocumentsController extends Controller
             $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason']);
             $value['sup_name']= $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
             $doc_no = (!empty($value->doc_no))?' - '.$value->doc_no:'';
-            $value['title'] = $value->doc_title.$doc_no;
+            $myArray = explode('||', $value->doc_title);
+            $value['title'] = $myArray[0].$doc_no;
             // $value['supplier']['nm_vendor'] = $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
             // $value->doc_title = $value->doc_title.' <i>'.$value->supplier_id.'</i>';
             return $value;
@@ -201,7 +202,7 @@ class DocumentsController extends Controller
       if(in_array($request->type,['khs','turnkey'])){
         if(count($dt->latar_belakang_surat_pengikatan)>0){
           foreach($dt->latar_belakang_surat_pengikatan as $key => $val){
-            $query_latar_belakang_surat_pengikatan=$this->documents->selectRaw("id,doc_title,doc_no,doc_startdate,doc_enddate")->where('id','=',$val->meta_desc)->with('lampiran_ttd')->first(); 
+            $query_latar_belakang_surat_pengikatan=$this->documents->selectRaw("id,doc_title,doc_no,doc_startdate,doc_enddate")->where('id','=',$val->meta_desc)->with('lampiran_ttd')->first();
           }
           $data['latar_belakang_surat_pengikatan']=$query_latar_belakang_surat_pengikatan;
         }
@@ -211,7 +212,7 @@ class DocumentsController extends Controller
             $query_latar_belakang_mou=$this->documents->selectRaw("id,doc_title,doc_no,doc_startdate,doc_enddate")->where('id','=',$val->meta_desc)->with('lampiran_ttd')->first();
           }
           $data['latar_belakang_mou']=$query_latar_belakang_mou;
-        }      
+        }
       }
       $data['doc_type'] = $doc_type;
       $data['page_title'] = 'View Kontrak - '.$doc_type['title'];
@@ -225,7 +226,7 @@ class DocumentsController extends Controller
                                   ->join('pegawai as b','a.nik','=','b.n_nik')
                                   ->where('a.users_id',$dt->user_id)->first();
       $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
-      
+
       return view('documents::view')->with($data);
     }
     public function getPo(Request $request){
@@ -380,7 +381,7 @@ class DocumentsController extends Controller
         }elseif($type=='surat_pengikatan'){
           $data->where('documents.doc_type','surat_pengikatan');
         }
-        
+
         if(!empty($search)){
           $data->where(function($q) use ($search) {
               $q->orWhere('documents.doc_no', 'like', '%'.$search.'%');
@@ -394,7 +395,7 @@ class DocumentsController extends Controller
           $data->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
         }
         $data = $data->paginate(30);
-        
+
         $data->getCollection()->transform(function ($value) use ($type){
           $types=DocType::select('id')->where('name',$type)->first();
           $temp = DocTemplate::select('id')->where('id_doc_type', $types->id)->first();
@@ -412,14 +413,15 @@ class DocumentsController extends Controller
                           $valu[] = $d->id;
                         }
 
-                        $doc = Documents::selectRaw('documents.*,parent.doc_title as parent_title,doc.doc_title as title,doc.doc_no as num')
+                        $doc = Documents::selectRaw('documents.*,doc.doc_title as title,doc.doc_no as num')
                                     ->where('documents.doc_parent', 0)
                                     ->where('documents.doc_type','sp')
                                     ->where('documents.doc_signing', 1)
                                     ->where('documents.doc_template_id', $temp->id)
-                                    ->leftJoin('documents as parent','parent.doc_parent_id','=','documents.id')
+                                    // ->leftJoin('documents as parent','parent.doc_parent_id','=','documents.id')
                                     ->join('documents as doc','doc.id','=','documents.doc_parent_id')
                                     ->whereIn('documents.doc_parent_id', $valu)
+                                    ->orderBy('documents.id', 'asc')
                                     ->get();
                         // dd($doc);
           }
@@ -444,7 +446,7 @@ class DocumentsController extends Controller
           return $value;
         });
 
-        
+
         return \Response::json($data);
     }
 

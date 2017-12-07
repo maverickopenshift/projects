@@ -89,7 +89,10 @@ class DocumentsListController extends Controller
           $value['link'] = $view.$edit;
           $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason']);
           $value['sup_name']= $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
-          $value['title'] = $value->doc_title.Documents::get_parent_title($value);
+
+          //split judul kontrak (||)
+          $myArray = explode('||', $value->doc_title);
+          $value['title'] = $myArray[0].Documents::get_parent_title($value);
           // $value['supplier']['nm_vendor'] = $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
           // $value->doc_title = $value->doc_title.' <i>'.$value->supplier_id.'</i>';
           return $value;

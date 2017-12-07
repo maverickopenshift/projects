@@ -26,7 +26,6 @@ class SpEditController extends Controller
     }
     public function store($request)
     {
-      dd($request->input());
       $type = $request->type;
       $id = $request->id;
       $status = Documents::where('id',$id)->first()->doc_signing;

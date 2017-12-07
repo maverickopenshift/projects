@@ -104,7 +104,7 @@
             </div>
           </div>
           @if($action_type=='edit')
-          @include('usersupplier::partials.buttons')
+          @include('supplier::partials.buttons')
           @endif
       </div>
     </div>

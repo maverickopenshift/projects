@@ -447,7 +447,7 @@
       </div>
       @include('supplier::form.__part-sertifikat-dokumen')
       @if($action_type=='edit')
-      @include('usersupplier::partials.buttons')
+      @include('supplier::partials.buttons')
       @endif
     </div>
 <!-- /.box-body -->

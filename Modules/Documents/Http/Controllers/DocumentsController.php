@@ -167,7 +167,7 @@ class DocumentsController extends Controller
             else{
               $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-eye"></i> LIHAT</a>';
             }
-            if(!\Laratrust::hasRole('approver') ){
+            if(!\Laratrust::hasRole('approver') && !\Laratrust::hasRole('monitor') ){
               $edit = '<a class="btn btn-xs btn-info" href="'.route('doc.edit',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-edit"></i> EDIT</a>';
             }
             $value['link'] = $view.$edit;

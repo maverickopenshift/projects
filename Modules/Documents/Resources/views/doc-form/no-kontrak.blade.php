@@ -90,7 +90,7 @@
     selectKontrak.on('select2:select', function (e) {
         var data = e.params.data;
         templateKontrakSelect(data);
-        if(set_content_reset!==undefined){
+        if(typeof set_content_reset !== 'undefined'){
           set_content_reset();
         }
     });

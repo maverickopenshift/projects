@@ -100,7 +100,7 @@
       var newOption_ = new Option(text_kontrak, kontrak_set.data('id'), false, true);
       kontrak_set.append(newOption_);
       kontrak_set.val(kontrak_set.data('id')).change();
-      /*
+
       $.ajax({
         url: '{!! route('doc.get-select-kontrak') !!}',
         type: 'GET',
@@ -129,7 +129,7 @@
         templateKontrakSelect(o);
         //console.log(JSON.stringify(o));
       });
-      */
+      
 
     }
   });

@@ -48,7 +48,9 @@ class EditController extends Controller
     $id = $request->id;
     $type = $request->type;
     $doc = $this->documents->where('documents.id','=',$id);
-    $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','sow_boq','scope_perubahan','users','latar_belakang_surat_pengikatan','latar_belakang_mou')->first();
+    $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','sow_boq','scope_perubahan','users','latar_belakang_surat_pengikatan','latar_belakang_mou')
+              ->first();
+// dd($dt);
     if(!$dt || !$this->documents->check_permission_doc($id,$type)){
       abort(404);
     }
@@ -62,8 +64,13 @@ class EditController extends Controller
       $dt->parent_sp_text = $this->documents->select('doc_no')->where('id','=',$dt->doc_parent_id)->first()->doc_no;
     }
     if($type=='sp'){
-      $dt->parent_kontrak = $dt->doc_parent_id;
-      $dt->parent_kontrak_text = $this->documents->select('doc_no')->where('id','=',$dt->doc_parent_id)->first()->doc_no;
+      $qry = $this->documents->where('documents.id','=',$id)
+                            ->join('documents as doc','doc.id','=', 'documents.doc_parent_id')
+                            ->select('doc.doc_parent_id as ibu','documents.*')
+                            ->first();
+      $parent = ($qry->ibu!==null)?$qry->ibu:$dt->doc_parent_id;
+      $dt->parent_kontrak = $parent;
+      $dt->parent_kontrak_text = $this->documents->select('doc_no')->where('id','=',$parent)->first()->doc_no;
     }
     if(in_array($type,['amandemen_kontrak','adendum','side_letter'])){
       $dt->parent_kontrak = $dt->doc_parent_id;
@@ -82,7 +89,7 @@ class EditController extends Controller
           $dt->f_no_mou = $val->meta_desc;
           $dt->text_mou = $this->documents->select('doc_no')->where('id','=',$val->meta_desc)->first()->doc_no;
         }
-      }      
+      }
     }
     if(count($dt->scope_perubahan)>0){
       foreach($dt->scope_perubahan as $key => $val){
@@ -209,7 +216,7 @@ class EditController extends Controller
   }
   public function store(Request $request)
   {
-    
+
     $id = $request->id;
     $type = $request->type;
     $status = Documents::where('id',$id)->first()->doc_signing;
@@ -399,10 +406,10 @@ class EditController extends Controller
     }
     $request->merge(['ps_judul_new' => $new_pasal]);
 
-    
+
 
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-    
+
     if(in_array($status,['0','2'])){
       $rules['pic_posisi.*']    =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
       $validator->after(function ($validator) use ($request) {

@@ -106,6 +106,16 @@
 
             </li>
             @endrole
+
+            <li class="treeview">
+              <a href="#"><img src="{{asset('/images/icon-user.png')}}" title="Catalog" />
+                <span>Catalog</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <ul class="treeview-menu">
+                <li class=""><a href="{{route('catalog.category')}}">Category</a></li>
+                <li class=""><a href="{{route('catalog.product')}}">Product</a></li>
+              </ul>
+
+            </li>
         </ul><!-- /.sidebar-menu -->
     </section>
     <!-- /.sidebar -->

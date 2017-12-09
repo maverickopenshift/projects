@@ -97,7 +97,7 @@ class SpEditController extends Controller
         $rules['doc_nilai_material']   =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
         $rules['doc_nilai_jasa']       =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
       }
-      
+
       $rules['hs_kode_item.*']   =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_satuan.*']      =  'sometimes|nullable|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
@@ -205,7 +205,7 @@ class SpEditController extends Controller
         $doc->doc_sow = $request->doc_sow;
         $doc->doc_type = $request->type;
         $doc->doc_parent = 0;
-        $doc->doc_parent_id = $request->parent_kontrak;
+        $doc->doc_parent_id = $request->parent_kontrak_id;
         $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
         $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
         $doc->save();
@@ -213,8 +213,8 @@ class SpEditController extends Controller
         $doc = Documents::where('id',$id)->first();
         $doc->doc_sow = $request->doc_sow;
         $doc->save();
-      } 
-     
+      }
+
 
       if(count($request->doc_po_no)>0){
         $doc_po = DocPo::where('id',$id)->first();

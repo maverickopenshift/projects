@@ -1,11 +1,11 @@
 {
-    "/css/blue.png": "/css/blue.png",
-    "/css/blue@2x.png": "/css/blue@2x.png",
-    "/css/all.css": "/css/all.css",
-    "/css/login.css": "/css/login.css",
-    "/js/all.js": "/js/all.js",
-    "/js/vue.js": "/js/vue.js",
-    "/js/po_sap.js": "/js/po_sap.js",
-    "/js/pdf.js": "/js/pdf.js",
-    "/js/login.js": "/js/login.js"
+    "/css/blue.png": "/css/blue.png?id=9d528941958eae5a4817",
+    "/css/blue@2x.png": "/css/blue@2x.png?id=3cbc597340b998eb0d7e",
+    "/css/all.css": "/css/all.css?id=19834ae3e0a96b6fc3e1",
+    "/css/login.css": "/css/login.css?id=8d8898d57f2d4e4a62dc",
+    "/js/all.js": "/js/all.js?id=7684a504f177e4236529",
+    "/js/vue.js": "/js/vue.js?id=7e052e2850e70a8db1bd",
+    "/js/po_sap.js": "/js/po_sap.js?id=28d93a1bb147fa45ab8c",
+    "/js/pdf.js": "/js/pdf.js?id=a3a59941d92a979430bd",
+    "/js/login.js": "/js/login.js?id=e552d264ceeb785efc84"
 }

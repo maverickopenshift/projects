@@ -60,7 +60,16 @@ class EditController extends Controller
     $pasal = [];
     $lampiran = [];
     if($type=='amandemen_sp'){
+      $qry = $this->documents->where('documents.id','=',$id)
+                            ->join('documents as doc','doc.id','=', 'documents.doc_parent_id')
+                            ->select('doc.doc_parent_id as ibu','documents.*')
+                            ->first();
+      $parent = ($qry->ibu!==null)?$qry->ibu:$dt->doc_parent_id;
+      // dd($parent);
+      $dt->parent_kontrak = $parent;
+      $dt->parent_kontrak_text = $this->documents->select('doc_no')->where('id','=',$parent)->first()->doc_no;
       $dt->parent_sp = $dt->doc_parent_id;
+      // dd($dt->parent_sp);
       $dt->parent_sp_text = $this->documents->select('doc_no')->where('id','=',$dt->doc_parent_id)->first()->doc_no;
     }
     if($type=='sp'){
@@ -69,6 +78,7 @@ class EditController extends Controller
                             ->select('doc.doc_parent_id as ibu','documents.*')
                             ->first();
       $parent = ($qry->ibu!==null)?$qry->ibu:$dt->doc_parent_id;
+      $dt->parent_kontrak_id = $dt->doc_parent_id;
       $dt->parent_kontrak = $parent;
       $dt->parent_kontrak_text = $this->documents->select('doc_no')->where('id','=',$parent)->first()->doc_no;
     }

@@ -2,6 +2,7 @@
   <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> No Kontrak Induk</label>
   <div class="col-sm-10">
     <input type="hidden" class="select-kontrak-text" name="parent_kontrak_text" value="{{Helper::old_prop($doc,'parent_kontrak_text')}}">
+    <input type="hidden" class="select-kontrak-induk" name="parent_kontrak_id" value="{{Helper::old_prop($doc,'parent_kontrak_id')}}">
     <select class="form-control select-kontrak" style="width: 100%;" name="parent_kontrak" data-id="{{Helper::old_prop($doc,'parent_kontrak')}}">
     </select>
     @if ($errors->has('parent_kontrak'))
@@ -129,7 +130,7 @@
         templateKontrakSelect(o);
         //console.log(JSON.stringify(o));
       });
-      
+
 
     }
   });

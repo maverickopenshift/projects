@@ -450,6 +450,85 @@ class DocumentsController extends Controller
         return \Response::json($data);
     }
 
+    public function getSelectKontrakSP(Request $request){
+      // dd("hai");
+        $search = trim($request->q);
+        $type = trim($request->type);//sp,amandemen,adendum dll
+        if (empty($type)) {
+            return \Response::json([]);
+        }
+        $data = $this->documents->select('documents.id','documents.doc_no','documents.doc_date','documents.doc_title','documents.doc_template_id','documents.doc_startdate','documents.doc_enddate','documents.supplier_id')
+        ->with('jenis','supplier','pic')->whereNotNull('documents.doc_no')->where('documents.doc_parent',1)->where('documents.doc_signing', 1)->where('documents.doc_type','khs');
+
+        if(!empty($search)){
+          $data->where(function($q) use ($search) {
+              $q->orWhere('documents.doc_no', 'like', '%'.$search.'%');
+              $q->orWhere('documents.doc_title', 'like', '%'.$search.'%');
+          });
+        }
+        if(!\Auth::user()->hasRole('admin')){
+          $data->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
+          $data->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
+
+          $data->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+        }
+        // dd($data->toSql());
+        $data = $data->paginate(30);
+
+        $data->getCollection()->transform(function ($value) use ($type){
+          $types=DocType::select('id')->where('name',$type)->first();
+          $temp = DocTemplate::select('id')->where('id_doc_type', $types->id)->first();
+          if($type=='sp'){
+            $parent = Documents::select('id')
+                        ->where('documents.doc_parent', 0)
+                        ->where('documents.doc_type','amandemen_kontrak')
+                        ->where('documents.doc_signing', 1)
+                        ->where('documents.doc_parent_id', $value['id'])
+                        ->get();
+
+                        $valu[] = $value['id'];
+                        // // dd(array_splice($parent,0,2,$val));
+                        foreach ($parent as $key => $d) {
+                          $valu[] = $d->id;
+                        }
+
+                        $doc = Documents::selectRaw('documents.*,doc.doc_title as title,doc.doc_no as num')
+                                    ->where('documents.doc_parent', 0)
+                                    ->where('documents.doc_type','sp')
+                                    ->where('documents.doc_signing', 1)
+                                    ->where('documents.doc_template_id', $temp->id)
+                                    // ->leftJoin('documents as parent','parent.doc_parent_id','=','documents.id')
+                                    ->join('documents as doc','doc.id','=','documents.doc_parent_id')
+                                    ->whereIn('documents.doc_parent_id', $valu)
+                                    ->orderBy('documents.id', 'asc')
+                                    ->get();
+                        // dd($doc);
+          }
+          else{
+           $doc = Documents::selectRaw('documents.*')
+                      ->where('documents.doc_parent', 0)
+                      ->where('documents.doc_signing', 1)
+                      ->where('documents.doc_parent_id', $value['id'])
+                      ->where('documents.doc_template_id', $temp->id)
+                      ->get();
+          }
+
+          $ttd=DocMeta::where('meta_type','lampiran_ttd')->where('documents_id',$value['id'])->get();
+          $ttd->map(function($item, $key) use ($type){
+              $item->url=route('doc.file',['filename'=>$item->meta_file,'type'=>$type.'_lampiran_ttd']);
+
+              return $item;
+          });
+
+          $value['lampiran_ttd'] = $ttd;
+          $value['type'] = json_encode($doc->toArray());
+          return $value;
+        });
+
+
+        return \Response::json($data);
+    }
+
     // public function getSelectSp(Request $request){
     //     $search = trim($request->q);
     //     $type = trim($request->type);//sp,amandemen,adendum dll
@@ -502,6 +581,7 @@ class DocumentsController extends Controller
     //     return \Response::json($data);
     // }
     public function getSelectSp(Request $request){
+        $id_kon = trim($request->id);
         $search = trim($request->q);
         $type = trim($request->type);//sp,amandemen,adendum dll
         $type_id = trim($request->type_id);//sp,amandemen,adendum dll
@@ -509,24 +589,51 @@ class DocumentsController extends Controller
         if (empty($type)) {
             return \Response::json([]);
         }
-        $data = $this->documents
-                     ->select('documents.id','documents.doc_no','documents.doc_startdate','documents.doc_enddate','documents.doc_parent_id','documents.doc_title','documents.doc_template_id','documents.supplier_id')
-                     ->with('jenis','supplier','pic')
-                      ->where('documents.doc_type','sp')
-                      ->whereNotNull('documents.doc_no')
+
+          $parent = Documents::select('id')
+                      ->where('documents.doc_parent', 0)
+                      ->where('documents.doc_type','amandemen_kontrak')
                       ->where('documents.doc_signing', 1)
-                      ->where('documents.doc_parent',0);
+                      ->where('documents.doc_parent_id', $id_kon)
+                      ->get();
+                      // dd($parent);
+
+            $valu[] = $id_kon;
+            foreach ($parent as $key => $d) {
+              $valu[] = $d->id;
+            }
+            // dd($valu);
+            $data = $this->documents->select('documents.id','documents.doc_no','documents.doc_startdate','documents.doc_enddate','documents.doc_parent_id','documents.doc_title','documents.doc_template_id','documents.supplier_id')
+                              ->with('jenis','supplier','pic')
+                              ->join('documents as doc','doc.id','=','documents.doc_parent_id')
+                              ->where('documents.doc_parent', 0)
+                              ->where('documents.doc_type','sp')
+                              ->where('documents.doc_signing', 1)
+                              ->whereIn('documents.doc_parent_id', $valu)
+                              ->orderBy('documents.id', 'asc');
+                              // ->get();
+                        // dd($data);
+
+        // $data = $this->documents
+        //              ->select('documents.id','documents.doc_no','documents.doc_startdate','documents.doc_enddate','documents.doc_parent_id','documents.doc_title','documents.doc_template_id','documents.supplier_id')
+        //              ->with('jenis','supplier','pic')
+        //               ->where('documents.doc_type','sp')
+        //               ->whereNotNull('documents.doc_no')
+        //               ->where('documents.doc_signing', 1)
+        //               ->where('documents.doc_parent',0)
+        //               ->where('documents.doc_parent_id',$id_kon);
         if(!empty($search)){
           $data->where(function($q) use ($search) {
               $q->orWhere('documents.doc_no', 'like', '%'.$search.'%');
               $q->orWhere('documents.doc_title', 'like', '%'.$search.'%');
           });
         }
-        if(!\Auth::user()->hasRole('admin')){
-          $data->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
-          $data->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
-          $data->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
-        }
+        // if(!\Auth::user()->hasRole('admin')){
+        //   $data->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
+        //   $data->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
+        //   $data->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+        // }
+        // dd($data->toSql());
         $data = $data->paginate(30);
         // dd($data);
         $data->getCollection()->transform(function ($value) use ($type){

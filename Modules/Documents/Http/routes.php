@@ -16,6 +16,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
 
     Route::get('/getKontrak', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@getKontrak'])->name('doc.getKontrak');
     Route::get('/get-select-kontrak', 'DocumentsController@getSelectKontrak')->name('doc.get-select-kontrak');
+    Route::get('/get-select-kontrak-sp', 'DocumentsController@getSelectKontrakSP')->name('doc.get-select-kontrak-sp');
     Route::get('/get-select-sp', 'DocumentsController@getSelectSp')->name('doc.get-select-sp');
     Route::get('/get-po', 'DocumentsController@getPo')->name('doc.get-po');
     Route::get('/get-pic', 'DocumentsController@getPic')->name('doc.get-pic');

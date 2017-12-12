@@ -2,6 +2,7 @@
   <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> No Kontrak Induk</label>
   <div class="col-sm-10">
     <input type="hidden" class="select-kontrak-text" name="parent_kontrak_text" value="{{Helper::old_prop($doc,'parent_kontrak_text')}}">
+    <input type="hidden" class="select-kontrak-induk" name="parent_kontrak_id" value="{{Helper::old_prop($doc,'parent_kontrak_id')}}">
     <select class="form-control select-kontrak" style="width: 100%;" name="parent_kontrak" data-id="{{Helper::old_prop($doc,'parent_kontrak')}}">
     </select>
     @if ($errors->has('parent_kontrak'))
@@ -100,7 +101,7 @@
       var newOption_ = new Option(text_kontrak, kontrak_set.data('id'), false, true);
       kontrak_set.append(newOption_);
       kontrak_set.val(kontrak_set.data('id')).change();
-      /*
+
       $.ajax({
         url: '{!! route('doc.get-select-kontrak') !!}',
         type: 'GET',
@@ -129,7 +130,7 @@
         templateKontrakSelect(o);
         //console.log(JSON.stringify(o));
       });
-      */
+
 
     }
   });
@@ -168,14 +169,19 @@
                                 <th>Judul</th>\
                                 <th>Tanggal Mulai</th>\
                                 <th>Tanggal Akhir</th>\
-                                <th></th>\
+                                <th>Acuan Kontrak</th>\
                           </tr>\
                         </thead>\
                         <tbody>';
                         $.each(s_type,function(index, el) {
                           var s_start = (this.doc_startdate!==null)?$.format.date(this.doc_startdate+" 10:54:50", "dd-MM-yyyy"):'-';
                           var s_end = (this.doc_enddate!==null)?$.format.date(this.doc_enddate+" 10:54:50", "dd-MM-yyyy"):'-';
-                          var parent = (this.parent_title!==null && this.parent_title!==undefined)?this.parent_title:'-'
+                          // var parent = (this.parent_title!==null && this.parent_title!==undefined)?this.parent_title:'-'
+                          if(this.doc_parent_id==data.id){
+                            var parent = data.name+"<br><small> ("+data.value+")</small>";
+                          }else{
+                            parent = this.title+"<br><small> ("+this.num+")</small>";
+                          }
                           t_type += '<tr>\
                                           <td>'+this.doc_title+'</td>\
                                           <td>'+s_start+'</td>\
@@ -185,10 +191,10 @@
                         });
           t_type +=    '</tbody>\
                       </table>';
-          judul = '{!!strtoupper($doc_type->title)!!} #'+(s_type.length+1);
+          judul = '{!!strtoupper($doc_type->title)!!} #'+(s_type.length+1)+" || "+data.name;
       }
       else{
-        judul = '{!!strtoupper($doc_type->title)!!} #1';
+        judul = '{!!strtoupper($doc_type->title)!!} #1 || '+data.name;
       }
     $('.judul-man').show().find('.text-me').html(judul+'<input type="hidden" value="'+judul+'" name="doc_title"/>');
     table.html(t_table+t_type);
@@ -205,7 +211,7 @@
       btn.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
       $('.table-123').hide();
     }
-    
+
   });
   </script>
 @endpush

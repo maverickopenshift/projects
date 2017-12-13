@@ -92,16 +92,10 @@ if(isset($data->id)){
             			<td>{{$rows->parent_name}}</td>
             			<td>{{$rows->desc}}</td>
             			<td>
-            				<a href="{{route('catalog.category')}}?id={{$rows->id}}">
-	            				<span class="badge bg-green" style="margin-bottom: 2px;">
-	                                Rubah
-	                            </span>
-	                        </a>
-	                        <a href="{{route('catalog.category.delete')}}?f_id={{$rows->id}}">
-	            				<span class="badge bg-red" style="margin-bottom: 2px;">
-	                                Hapus
-	                            </span>
-	                        </a>
+                            <div class="btn-group">
+                                <a href="{{route('catalog.category')}}?id={{$rows->id}}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> Edit</a>
+                                <a href="{{route('catalog.category.delete')}}?f_id={{$rows->id}}" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-trash"></i> Delete</a>
+                            </div>
 	                    </td>
             		</tr>
             	@endforeach

@@ -3,10 +3,11 @@
 namespace Modules\Catalog\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Modules\Catalog\Entities\CatalogProduct as CatalogProduct;
+use Modules\Documents\Entities\DocBoq as DocBoq;
 use Modules\Catalog\Entities\CatalogCategory as CatalogCategory;
+use Response;
 
 class ProductController extends Controller
 {
@@ -18,6 +19,17 @@ class ProductController extends Controller
                         ->get();
         //$data['product']=CatalogProduct::join('')->get();           
         return view('catalog::product')->with($data);
+    }
+
+    public function boq(Request $request){
+        if($request->id==0){
+            $data=DocBoq::get();
+        }else{
+            $data=DocBoq::where('id',$request->id)->get();
+        }
+        
+
+        return Response::json($data);
     }
 
     public function add(Request $request){

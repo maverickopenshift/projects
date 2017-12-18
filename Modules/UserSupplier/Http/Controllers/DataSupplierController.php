@@ -25,10 +25,12 @@ class DataSupplierController extends Controller
       $username=auth()->user()->username;
       $sql = supplier::where('kd_vendor','=',$username)->first();
 
-    $notif = "Data belum Disetujui oleh Admin";
+    $notif = "Kelengkapan data belum terisi";
             if($sql){
               if($sql->vendor_status  == '1'){
                 $notif="Data Sudah Disetujui";
+              }else{
+                $notif="Data sudah terkirim, menunggu persetujuan Admin";
               }
             }
 

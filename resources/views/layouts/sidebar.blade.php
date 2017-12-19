@@ -114,6 +114,7 @@
               <ul class="treeview-menu">
                 <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Category</a></li>
                 <li class="{{Request::is('catalog/product') ?'active':''}}"><a href="{{route('catalog.product')}}">Product</a></li>
+                <li class="{{Request::is('catalog/catalog_list') ?'active':''}}"><a href="{{route('catalog.list')}}">List Kategori & Product</a></li>
               </ul>
             </li>
             @endpermission

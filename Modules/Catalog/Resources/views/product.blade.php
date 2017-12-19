@@ -137,7 +137,6 @@ if(isset($data->id)){
             </tbody>
         </table>
     </div>
-<!-- /.box-body -->
 </div>
 
 <div class="modal fade" id="modalboq" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">

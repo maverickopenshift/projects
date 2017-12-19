@@ -32,6 +32,8 @@ class DataSupplierController extends Controller
             if($sql){
               if($sql->vendor_status  == '1'){
                 $notif="Data Sudah Disetujui";
+              }else if($sql->vendor_status  == '2'){
+                $notif="Data Tidak Disetujui";
               }else{
                 $notif="Data sudah terkirim, menunggu persetujuan Admin";
               }

@@ -13,9 +13,9 @@ class VendorRevisi extends Migration
      */
     public function up()
     {
-      // Schema::create('supplier', function (Blueprint $table) {
-      //     $table->string('bank_kota')->nullable();
-      // });
+      Schema::create('supplier', function (Blueprint $table) {
+          $table->string('bank_kota')->nullable();
+      });
     }
 
     /**

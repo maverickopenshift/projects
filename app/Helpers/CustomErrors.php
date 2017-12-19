@@ -235,4 +235,25 @@ class CustomErrors
             '*.kontrak_exists'=>'Kontrak tidak ditemukan!',
           ];
   }
+
+      public static function catalog(){
+            return [
+                  'f_kodeproduct.min' => 'Input minimal 5 karakter',
+                  'f_kodeproduct.max' => 'Input maximal 10 karakter',
+                  
+                  'f_namaproduct.min' => 'Input maximal 1 karakter',
+                  'f_namaproduct.max' => 'Input maximal 100 karakter',
+
+                  'f_unitproduct.min' => 'Input maximal 1 karakter',
+                  'f_unitproduct.max' => 'Input maximal 30 karakter',
+
+                  'f_hargaproduct.min' => 'Input maximal 1 karakter',
+                  'f_hargaproduct.max' => 'Input maximal 20 karakter',
+
+                  'f_descproduct.max' => 'Input maximal 300 karakter',
+
+                  '*.required' => 'Inputan harus diisi',
+                  '*.regex' => 'Karakter input tidak valid',
+            ];
+      }
 }

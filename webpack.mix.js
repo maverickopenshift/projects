@@ -40,6 +40,8 @@ let mix = require('laravel-mix');
             'node_modules/admin-lte/plugins/select2/select2.css',
             'node_modules/admin-lte/dist/css/AdminLTE.css',
             'node_modules/admin-lte/dist/css/skins/skin-red-light.css',
+            'node_modules/admin-lte/dist/css/skins/skin-red-light.css',
+            'node_modules/jstree/dist/themes/default/style.min.css',
             'resources/assets/css/custom.css'
         ], 'public/css/all.css', './')
         .styles([
@@ -77,6 +79,7 @@ let mix = require('laravel-mix');
             'node_modules/admin-lte/plugins/daterangepicker/daterangepicker.js',
             'node_modules/admin-lte/plugins/select2/select2.full.js',
             'node_modules/admin-lte/plugins/select2/i18n/id.js',
+            'node_modules/jstree/dist/jstree.min.js',
             'resources/assets/js/jquery.autocomplete.min.js',
             'resources/assets/js/bootbox.min.js',
             'resources/assets/js/bootstrap-tagsinput.js',

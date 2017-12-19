@@ -9,13 +9,29 @@ if(isset($data->id)){
 }
 
 @endphp
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title">
+            Daftar testxx
+        </h3>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div id="container">
+          
+        </div>
+    </div>
+<!-- /.box-body -->
+</div>
+
 <div class="box box-danger">
     <div class="box-header with-border">
 		<h3 class="box-title">{{$judul}}</h3>
     </div>
     <div class="box-body form-horizontal parent-category">
         <form method="post" action="{{route('catalog.category.proses')}}" id="fileinfo">
-        	<input type="hidden" name="f_id" value="{{$id}}">
+        	<input type="hidden" name="f_idparent" value="{{$id}}">
         	{{ csrf_field() }}
         	
         	<div class="form-group">
@@ -86,7 +102,7 @@ if(isset($data->id)){
             </thead>
             <tbody>
             	@foreach($category as $i=>$rows)
-            		<tr>
+            		<tr class="row-child">
             			<td>{{$rows->code}}</td>
             			<td>{{$rows->display_name}}</td>
             			<td>{{$rows->parent_name}}</td>
@@ -104,19 +120,91 @@ if(isset($data->id)){
     </div>
 <!-- /.box-body -->
 </div>
+
+<div class="box box-danger">
+    <div class="box-header with-border">
+        <h3 class="box-title">
+            Daftar test
+        </h3>
+    </div>
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div id="container">
+          
+        </div>
+    </div>
+<!-- /.box-body -->
 </div>
-s
+
 @endsection
 @push('scripts')
 <script>
+$('#container')
+.on("changed.jstree", function (e, data) {
+    if(data.selected.length) {
+        alert('The selected node is: ' + data.instance.get_node(data.selected[0]).id);
+    }
+})
+.jstree({
+    'core' : {
+        'data' : {
+            "url" : "{{route('catalog.get_category')}}",
+            "data" : function (node) {
+                return { "id" : node.id };
+            }
+        }
+    }
+});
+
 $('#daftar1').DataTable();
 $('.parent-category').find(".select2").each(function(index){
     if($(this).data('select2')) {
         $(this).select2('destroy');
     } 
 });
+
 $(".select2").select2({
 	placeholder:"Silahkan Pilih"
 });
+
+$('#jstree_demo').jstree({
+  "core" : {
+    "animation" : 0,
+    "check_callback" : true,
+    "themes" : { "stripes" : true },
+    'data' : {
+      'url' : function (node) {
+        return node.id === '#' ?
+          'ajax_demo_roots.json' : 'ajax_demo_children.json';
+      },
+      'data' : function (node) {
+        return { 'id' : node.id };
+      }
+    }
+  },
+  "types" : {
+    "#" : {
+      "max_children" : 1,
+      "max_depth" : 4,
+      "valid_children" : ["root"]
+    },
+    "root" : {
+      "icon" : "/static/3.3.4/assets/images/tree_icon.png",
+      "valid_children" : ["default"]
+    },
+    "default" : {
+      "valid_children" : ["default","file"]
+    },
+    "file" : {
+      "icon" : "glyphicon glyphicon-file",
+      "valid_children" : []
+    }
+  },
+  "plugins" : [
+    "contextmenu", "dnd", "search",
+    "state", "types", "wholerow"
+  ]
+});
+
 </script>
 @endpush

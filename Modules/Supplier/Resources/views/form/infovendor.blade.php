@@ -2,10 +2,13 @@
     <div class="box-header with-border">
       <h3 class="box-title">
           Informasi Vendor
-          @if($action_type=='edit')
+          @if($action_type=='lihat' || $action_type=='edit')
             (<span class="text-info" style="font-weight:bold;font-size:20px;"> {{Helper::prop_exists($supplier,'kd_vendor')}}</span>)
           @endif
       </h3>
+      @if($action_type=='lihat' || $action_type=='edit')
+        @include('supplier::partials.buttons-edit')
+      @endif
     </div>
     <!-- /.box-header -->
     <div class="box-body">
@@ -103,7 +106,7 @@
               @endif
             </div>
           </div>
-          @if($action_type=='edit')
+          @if($action_type=='lihat' || $action_type=='edit')
           @include('supplier::partials.buttons')
           @endif
       </div>

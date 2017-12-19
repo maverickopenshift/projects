@@ -11,8 +11,11 @@ use App\Helpers\Helpers;
 use App\Helpers\CustomErrors;
 use Modules\Supplier\Entities\Supplier;
 use Modules\Supplier\Entities\SupplierMetadata;
+use Modules\Supplier\Entities\SupplierActivity;
 use Datatables;
 use Validator;
+use Response;
+use Auth;
 
 class DataSupplierController extends Controller
 {
@@ -39,6 +42,11 @@ class DataSupplierController extends Controller
       $data['data'] = $sql;
       $data['page_title'] = 'Data Supplier';
       $data['notif']=$notif;
+      if($sql){
+        $data['label']= 'Edit Kelengkapan Data';
+      }else {
+        $data['label']= 'Isi Kelengkapan Data';
+      }
 
       return view("usersupplier::dataSupplier.index")->with($data);
     }
@@ -164,6 +172,7 @@ class DataSupplierController extends Controller
      {
 
        $rules = array (
+           'komentar'                   => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
            'bdn_usaha'                  => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
            'nm_vendor'                  => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
            'nm_vendor_uq'               => 'max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -359,6 +368,14 @@ class DataSupplierController extends Controller
             $mt_data->save();
           };
 
+          $log_activity = new SupplierActivity();
+          $log_activity->users_id = Auth::id();
+          $log_activity->supplier_id = $data->id;
+          $log_activity->activity = "Submitted";
+          $log_activity->date = new \DateTime();
+          $log_activity->komentar = $request->komentar;
+          $log_activity->save();
+
         }
             return redirect('usersupplier/dataSupplier');
 
@@ -368,6 +385,7 @@ class DataSupplierController extends Controller
       {
         $kd_vendor=auth()->user()->username;
         $rules = array (
+            'komentar'                   => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
             'bdn_usaha'         => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
             'nm_vendor'         => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
             'nm_vendor_uq'      => 'max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -648,6 +666,15 @@ class DataSupplierController extends Controller
             $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
             $mt_data->save();
           };
+
+          $log_activity = new SupplierActivity();
+          $log_activity->users_id = Auth::id();
+          $log_activity->supplier_id = $data->id;
+          $log_activity->activity = "Edited";
+          $log_activity->date = new \DateTime();
+          $log_activity->komentar = $request->komentar;
+          $log_activity->save();
+
               return redirect()->back()->withData($data)->with('message', 'Data berhasil disimpan!');
             }
           }

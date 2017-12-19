@@ -17,7 +17,7 @@
     <!-- /.box-header -->
     <!-- <div class="box-body">
 
-      {{ $notif}}
+      {{-- {{ $notif}} --}}
     </div> -->
 <!-- /.box-body -->
 <!-- </div> -->
@@ -26,7 +26,7 @@
       <h3 class="box-title">
         <div class="btn-group" role="group" aria-label="...">
           <a href="{{route('supplier.tambah')}}" class="btn btn-default">
-              <i class="glyphicon glyphicon-list-alt"></i> Isi Kelengkapan Data
+              <i class="glyphicon glyphicon-list-alt"></i> {{$label}}
           </a>
         </div>
       </h3>

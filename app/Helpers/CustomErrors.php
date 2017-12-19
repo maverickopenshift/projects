@@ -5,6 +5,11 @@ class CustomErrors
 {
   public static function supplier(){
     return [
+            'komentar.max' => 'Komentar maksimal 500 karakter',
+            'komentar.min' => 'Komentar minimal 3 karakter',
+            'komentar.required' => 'Komentar harus diisi',
+            'komentar.regex' => 'Komentar harus huruf dan angka',
+
             'nm_vendor.max' => 'Nama Perusahaan maksimal 500 karakter',
             'nm_vendor.min' => 'Nama Perusahaan minimal 3 karakter',
             'nm_vendor.required' => 'Nama Perusahaan harus diisi',
@@ -220,15 +225,15 @@ class CustomErrors
             'password_confirmation.same' => 'Password Konformasi tidak sama',
           ];
   }
-  
+
   public static function documents(){
     return [
             'doc_title.min' => 'Input minimal 5 karakter',
             '*.required' => 'Inputan harus diisi',
             'doc_title.max' => 'Input maksimal 500 karakter',
             '*.regex' => 'Karakter input tidak valid',
-            
-            
+
+
             'doc_desc.min' => 'Input minimum 30 karakter',
             'doc_date.format' => 'Input tanggal tidak valid',
             '*.po_exists'=>'No.PO tidak ditemukan!',

@@ -19,7 +19,6 @@ class CatalogTable extends Migration
           $table->string('display_name',100);
           $table->string('name',100);
           $table->bigInteger('parent_id')->nullable()->default(0);
-          $table->bigInteger('child_position')->nullable()->default(0);
           $table->string('desc',100);
           $table->timestamps();
           $table->softDeletes();

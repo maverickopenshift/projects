@@ -62,6 +62,19 @@ function alertBS(msg,type) {
     });
 
 }
+
+function alertBS_2(msg,type) {
+    var alertHtml = '<div class="alert alert-'+type+' alert-dismissible" role="alert">'+
+        '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+
+        '<span aria-hidden="true">&times;</span></button>'+
+        msg+
+    '</div>';
+    $('#alertBS_2').html(alertHtml);
+    $("#alertBS_2").fadeTo(2000, 500).slideUp(500, function(){
+        $("#alertBS_2").slideUp(500);
+    });
+}
+
 function alertBS2(msg,type) {
     var alertHtml = '<div class="alert alert-'+type+' alert-dismissible" role="alert">'+
         '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'+

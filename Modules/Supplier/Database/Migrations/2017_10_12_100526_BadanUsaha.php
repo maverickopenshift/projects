@@ -13,12 +13,12 @@ class BadanUsaha extends Migration
      */
     public function up()
     {
-      Schema::create('badan_usaha', function (Blueprint $table) {
-        $table->bigIncrements('id');
-        $table->longText('text');
-        $table->timestamps();
-        $table->softDeletes();
-      });
+      // Schema::create('badan_usaha', function (Blueprint $table) {
+      //   $table->bigIncrements('id');
+      //   $table->longText('text');
+      //   $table->timestamps();
+      //   $table->softDeletes();
+      // });
     }
 
     /**

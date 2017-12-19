@@ -13,15 +13,15 @@ class SupplierMetadata extends Migration
      */
     public function up()
     {
-      Schema::create('supplier_metadata', function (Blueprint $table) {
-          $table->bigIncrements('id');
-          $table->bigInteger('id_object')->nullable();
-          $table->string('object_type')->nullable();
-          $table->string('object_key')->nullable();
-          $table->longText('object_value')->nullable();
-          $table->string('object_status')->nullable();
-          $table->timestamps();
-      });
+      // Schema::create('supplier_metadata', function (Blueprint $table) {
+      //     $table->bigIncrements('id');
+      //     $table->bigInteger('id_object')->nullable();
+      //     $table->string('object_type')->nullable();
+      //     $table->string('object_key')->nullable();
+      //     $table->longText('object_value')->nullable();
+      //     $table->string('object_status')->nullable();
+      //     $table->timestamps();
+      // });
     }
 
     /**

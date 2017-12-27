@@ -8,6 +8,7 @@ use Modules\Catalog\Entities\CatalogProduct as CatalogProduct;
 use Modules\Documents\Entities\DocBoq as DocBoq;
 use Modules\Catalog\Entities\CatalogCategory as CatalogCategory;
 use App\Permission as Auth;
+//use App\User;
 use Response;
 use Validator;
 use Datatables;
@@ -19,31 +20,31 @@ class ProductController extends Controller
         $data['product']=\DB::table('catalog_product as a')
                         ->selectRaw('a.*,b.display_name as category_name')
                         ->join('catalog_category as b','b.id','=','a.catalog_category_id')
-                        ->get();
-        //$data['product']=CatalogProduct::join('')->get();           
+                        ->get();          
         return view('catalog::product2')->with($data);
     }
 
     public function datatables(Request $request){
-        $data=\DB::table('catalog_product as a')
-                ->selectRaw('a.*,b.display_name as category_name')
-                ->join('catalog_category as b','b.id','=','a.catalog_category_id')
-                ->get();
+        if($request->parent_id==0){
+            $data=CatalogProduct::get();
+        }else{
+            $data=CatalogProduct::where('catalog_category_id',$request->parent_id)->get();
+        }
 
         return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($data) {
                     $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
                     $act= '<div class="btn-group">';
-                    
-                    if(\Auth::user()->hasPermission('ubah-permission')){
+
+                    if(\Auth::user()->hasPermission('catalog-product')){
                         $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal-product"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-type="product" ><i class="glyphicon glyphicon-edit"></i> Edit</button>';
                     }
-                    
+
                     if(\Auth::user()->hasPermission('hapus-catalog-product')){
-                        $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-type="product"  data-toggle="modal" data-target="#modal-delete"><i class="glyphicon glyphicon-trash"></i> Delete</button>';
+                        $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-type="product" data-toggle="modal" data-target="#modal-delete"><i class="glyphicon glyphicon-trash"></i> Delete</button>';
                     }
-                    
+
                     $act .='</div>';
                     return $act;
                     })
@@ -51,15 +52,15 @@ class ProductController extends Controller
     }
 
     public function boq(Request $request){
+
         if($request->id==0){
             $data=DocBoq::get();
         }else{
             $data=DocBoq::where('id',$request->id)->get();
-        }
-        
+        }        
 
         return Response::json($data);
-    }
+    }   
 
     public function add(Request $request){
         $rules = [];
@@ -94,7 +95,6 @@ class ProductController extends Controller
             }
         }
         return redirect()->route('catalog.product');
-        
     }
 
     public function edit(Request $request){

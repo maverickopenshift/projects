@@ -84,19 +84,22 @@ if(isset($data->id)){
                 <div class="modal-body">
                     <input type="hidden" id="f_id" name="f_id">
                     <input type="hidden" id="f_parentid" name="f_parentid">
-                    <div class="form-group">                       
+                    <div class="form-group formerror-f_kodekategori">                       
                         <label>Kode Kategori</label>
-                        <input type="text" placeholder="Nama Kategori.." class="form-control" id="f_kodekategori" name="f_kodekategori" required>
+                        <input type="text" placeholder="Kode Kategori.." class="form-control" id="f_kodekategori" name="f_kodekategori" required>
+                        <div class="error-f_kodekategori"></div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group formerror-f_kodekategori">
                         <label>Nama Kategori</label>
                         <input type="text" placeholder="Nama Kategori.." class="form-control" id="f_namakategori" name="f_namakategori" required>
+                        <div class="error-f_namakategori"></div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group formerror-f_kodekategori">
                         <label>Deskripsi</label>
                         <textarea class="form-control" id="f_deskripsikategori" name="f_deskripsikategori" placeholder="Deskripsi.."></textarea>
+                        <div class="error-f_deskripsikategori"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -111,7 +114,7 @@ if(isset($data->id)){
 <div class="modal fade" role="dialog" id="form-modal-product">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form id="form-me" action="#" method="post">
+            <form id="form-me-product" action="{{route('catalog.product.edit')}}" method="post">
                 {{ csrf_field() }}
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -121,38 +124,44 @@ if(isset($data->id)){
                     <input type="hidden" id="f_id" name="f_id">
                     <input type="hidden" id="f_parentid" name="f_parentid">
 
-                    <div class="form-group">
+                    <div class="form-group formerror-f_kodeproduk">
                         <label>Kode Produk</label>
                         <input type="text" class="form-control" id="f_kodeproduk" name="f_kodeproduk" placeholder="Kode Produk ...">
+                        <div class="error-f_kodeproduk"></div>
                     </div>
                     
-                    <div class="form-group">
+                    <div class="form-group formerror-f_namaproduk">
                         <label>Nama Produk</label>
                         <input type="text" class="form-control" id="f_namaproduk" name="f_namaproduk"  placeholder="Nama Produk ...">
+                        <div class="error-f_namaproduk"></div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group formerror-f_unitproduk">
                         <label>Unit Produk</label>
                         <input type="text" class="form-control" id="f_unitproduk" name="f_unitproduk"  placeholder="Unit Produk ...">
+                        <div class="error-f_unitproduk"></div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group formerror-f_matauangproduk">
                         <label>Mata Uang</label>
-                        <select name="f_matauang" class="form-control select2" style="width: 100%;" required>
+                        <select class="form-control select2" id="f_matauangproduk" name="f_matauangproduk" style="width: 100%;" required>
                             <option value=""></option>
                             <option value="RP">RP</option>
                             <option value="USD">USD</option>                       
                         </select>
+                        <div class="error-f_matauangproduk"></div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group formerror-f_hargaproduk">
                         <label>Harga Produk</label>
-                        <input type="text" class="form-control" id="f_hargaproduk" name="f_hargaproduk"  placeholder="Harga Produk ...">
+                        <input type="text" class="form-control input-rupiah" id="f_hargaproduk" name="f_hargaproduk"  placeholder="Harga Produk ...">
+                        <div class="error-f_hargaproduk"></div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group formerror-f_descproduk">
                         <label>Deskripsi</label>
                         <textarea class="form-control"  placeholder="Deskripsi.." id="f_descproduk" name="f_descproduk" ></textarea>
+                        <div class="error-f_descproduk"></div>
                     </div>
 
                 </div>
@@ -414,7 +423,6 @@ $(function() {
         var title = button.data('title');        
         var btnSave = modal.find('.btn-save')
         btnSave.button('reset')
-        modal.find('.modal-title').text(title)
 
         var data = button.data('data');
         console.log(data);
@@ -430,14 +438,18 @@ $(function() {
         event.preventDefault();
 
         var formMe = $(this)
-        /*
-        var attErrorKode = $('#fileinfo').find('.error-f_kodekategori')
-        var attErrorName = $('#fileinfo').find('.error-f_namakategori')
-        var attErrorDesc = $('#fileinfo').find('.error-f_deskripsikategori')
+        
+        var attErrorKode = formMe.find('.error-f_kodekategori')
+        var attErrorName = formMe.find('.error-f_namakategori')
+        var attErrorDesc = formMe.find('.error-f_deskripsikategori')
+
+        formMe.find('.formerror-f_kodekategori').removeClass("has-error");
+        formMe.find('.formerror-f_namakategori').removeClass("has-error");
+        formMe.find('.formerror-f_deskripsikategori').removeClass("has-error");
         attErrorKode.html('')
         attErrorName.html('')
         attErrorDesc.html('')
-        */
+        
         var btnSave = formMe.find('.btn-simpan')
         btnSave.button('loading')
         
@@ -447,24 +459,21 @@ $(function() {
             data: formMe.serialize(), // Remember that you need to have your csrf token included
             dataType: 'json',
             success: function(response){
-                if(response.errors){
-                    
+                if(response.errors){                    
                     alertBS('Something Wrong','danger');
-                    /*
+                    
                     if(response.errors.f_kodekategori){
                         attErrorKode.html('<span class="help-block">'+response.errors.f_kodekategori+'</span>');
-                        $("#formerror-f_kodekategori").addClass("has-error");
+                        formMe.find('.formerror-f_kodekategori').addClass("has-error");
                     }
                     if(response.errors.f_namakategori){
                         attErrorName.html('<span class="help-block">'+response.errors.f_namakategori+'</span>');
-                        $("#formerror-f_namakategori").addClass("has-error");
+                        formMe.find('.formerror-f_namakategori').addClass("has-error");
                     }
                     if(response.errors.f_deskripsikategori){
                         attErrorDesc.html('<span class="help-block">'+response.errors.f_deskripsikategori+'</span>');
-                        $("#formerror-f_deskripsikategori").addClass("has-error");
+                        formMe.find('.formerror-f_deskripsikategori').addClass("has-error");
                     }
-                    */
-
                     btnSave.button('reset');
                 }
                 else{
@@ -496,10 +505,89 @@ $(function() {
         console.log(data);
         
         modal.find('.modal-body input#f_id').val(data.id);
-        modal.find('.modal-body input#f_parentid').val(data.parent_id);
+        modal.find('.modal-body input#f_parentid').val(data.catalog_category_id);
         modal.find('.modal-body input#f_kodeproduk').val(data.code);
-        modal.find('.modal-body input#f_kodeproduk').val(data.display_name);
-        modal.find('.modal-body textarea#f_deskripsikategori').val(data.desc);
+        modal.find('.modal-body input#f_namaproduk').val(data.name);
+        modal.find('.modal-body input#f_unitproduk').val(data.unit);
+        modal.find('.modal-body select#f_matauangproduk').val(data.currency).trigger('change');        
+        modal.find('.modal-body input#f_hargaproduk').val(data.price);
+        modal.find('.modal-body textarea#f_descproduk').val(data.desc);
+    });
+
+    $(document).on('submit','#form-me-product',function (event) {
+        event.preventDefault();
+
+        var formMe = $(this)
+        
+        var attError_f_kodeproduk = formMe.find('.error-f_kodeproduk')
+        var attError_f_namaproduk = formMe.find('.error-f_namaproduk')
+        var attError_f_unitproduk = formMe.find('.error-f_unitproduk')
+        var attError_f_matauangproduk = formMe.find('.error-f_matauangproduk')
+        var attError_f_hargaproduk = formMe.find('.error-f_hargaproduk')
+        var attError_f_descproduk = formMe.find('.error-f_descproduk')
+
+        formMe.find('.formerror-f_kodeproduk').removeClass("has-error");
+        formMe.find('.formerror-f_namaproduk').removeClass("has-error");
+        formMe.find('.formerror-f_unitproduk').removeClass("has-error");
+        formMe.find('.formerror-f_matauangproduk').removeClass("has-error");
+        formMe.find('.formerror-f_hargaproduk').removeClass("has-error");
+        formMe.find('.formerror-f_descproduk').removeClass("has-error");
+
+        attError_f_kodeproduk.html('')
+        attError_f_namaproduk.html('')
+        attError_f_unitproduk.html('')
+        attError_f_matauangproduk.html('')
+        attError_f_hargaproduk.html('')
+        attError_f_descproduk.html('')
+        
+        var btnSave = formMe.find('.btn-simpan')
+        btnSave.button('loading')
+        
+        $.ajax({
+            url: formMe.attr('action'),
+            type: 'post',
+            data: formMe.serialize(), // Remember that you need to have your csrf token included
+            dataType: 'json',
+            success: function(response){
+                if(response.errors){
+                    
+                    alertBS_2('Something Wrong','danger');
+                    
+                    if(response.errors.f_kodeproduk){
+                        attError_f_kodeproduk.html('<span class="help-block">'+response.errors.f_kodeproduk+'</span>');
+                        formMe.find('.formerror-f_kodeproduk').addClass("has-error");
+                    }
+                    if(response.errors.f_namaproduk){
+                        attError_f_namaproduk.html('<span class="help-block">'+response.errors.f_namaproduk+'</span>');
+                        formMe.find('.formerror-f_namaproduk').addClass("has-error");
+                    }
+                    if(response.errors.f_unitproduk){
+                        attError_f_unitproduk.html('<span class="help-block">'+response.errors.f_unitproduk+'</span>');
+                        formMe.find('.formerror-f_unitproduk').addClass("has-error");
+                    }
+                    if(response.errors.f_matauangproduk){
+                        attError_f_matauangproduk.html('<span class="help-block">'+response.errors.f_matauangproduk+'</span>');
+                        formMe.find('.formerror-f_matauangproduk').addClass("has-error");
+                    }
+                    if(response.errors.f_hargaproduk){
+                        attError_f_hargaproduk.html('<span class="help-block">'+response.errors.f_hargaproduk+'</span>');
+                        formMe.find('.formerror-f_hargaproduk').addClass("has-error");
+                    }
+                    if(response.errors.f_descproduk){
+                        attError_f_descproduk.html('<span class="help-block">'+response.errors.f_descproduk+'</span>');
+                        formMe.find('.formerror-f_descproduk').addClass("has-error");
+                    }
+
+                    btnSave.button('reset');
+                }
+                else{
+                    alertBS_2('Data successfully updated','success');
+                    refresh_product(0);
+                    btnSave.button('reset');
+                    $('#form-modal-product').modal('hide');
+                }                
+            }
+        });
     });
 });
 </script>

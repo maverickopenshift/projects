@@ -7,10 +7,14 @@ if(isset($data->id)){
 	$id=0;
 }
 
-//$vkodeproduct=Helper::old_prop_each($product,'f_kodeproduct');
-
+$product=array();
+$vkodeproduct=Helper::old_prop_each($product,'f_kodeproduct');
+$vnamaproduct=Helper::old_prop_each($product,'f_namaproduct');
+$vunitproduct=Helper::old_prop_each($product,'f_unitproduct');
+$vmtuproduct=Helper::old_prop_each($product,'f_mtuproduct');
+$vhargaproduct=Helper::old_prop_each($product,'f_hargaproduct');
+$vdescproduct=Helper::old_prop_each($product,'f_descproduct');
 @endphp
-{{old('f_kodeproduct')}}
 <div class="row">
     <div class="col-md-3">
         <div class="box box-danger">
@@ -43,6 +47,7 @@ if(isset($data->id)){
                     </button>
                     <input type="file" name="upload-boq" class="upload-boq hide"/>
                     <button class="btn btn-primary upload-boq-btn" type="button"><i class="fa fa-upload"></i> Upload</button>
+                    <a href="{{route('doc.template.download',['filename'=>'harga_satuan'])}}" class="btn btn-info"><i class="glyphicon glyphicon-download-alt"></i></a>
                 </div>
             </div>    
             <form method="post" action="{{route('catalog.product.add')}}">
@@ -62,6 +67,44 @@ if(isset($data->id)){
                             </tr>
                         </thead>
                         <tbody class="table-test">
+                            @if(count($vkodeproduct)>0)
+                                @foreach ($vkodeproduct as $key => $value)
+                                <tr>
+                                    <td class="{{ $errors->has('f_kodeproduct.'.$key) ? ' has-error' : '' }}"> 
+                                        <input type="text" name="f_kodeproduct[]" placeholder="Kode.." class="form-control" value="">
+                                        {!!Helper::error_help($errors,'f_kodeproduct.'.$key)!!}
+                                    </td>
+                                    <td class="{{ $errors->has('f_namaproduct.'.$key) ? ' has-error' : '' }}"> 
+                                        <input type="text" name="f_namaproduct[]" placeholder="Nama .." class="form-control">
+                                        {!!Helper::error_help($errors,'f_namaproduct.'.$key)!!}
+                                    </td>
+                                    <td class="{{ $errors->has('f_unitproduct.'.$key) ? ' has-error' : '' }}">
+                                        <input type="text" name="f_unitproduct[]" placeholder="Unit.." class="form-control">
+                                        {!!Helper::error_help($errors,'f_unitproduct.'.$key)!!}
+                                    </td>
+                                    <td>
+                                        <select name="f_mtuproduct[]" class="form-control select2" style="width: 100%;">
+                                            <option value=""></option>
+                                            <option value="RP">RP</option>
+                                            <option value="USD">USD</option>                       
+                                        </select>
+                                    </td>
+                                    <td class="{{ $errors->has('f_hargaproduct.'.$key) ? ' has-error' : '' }}">
+                                        <input type="text" name="f_hargaproduct[]" placeholder="Harga.." class="form-control input-rupiah">
+                                        {!!Helper::error_help($errors,'f_hargaproduct.'.$key)!!}
+                                    </td>
+                                    <td class="{{ $errors->has('f_descproduct.'.$key) ? ' has-error' : '' }}">
+                                        <input type="text" name="f_descproduct[]" placeholder="Deskripsi.." class="form-control">
+                                        {!!Helper::error_help($errors,'f_descproduct.'.$key)!!}
+                                    </td>
+                                    <td>
+                                        <button class="btn bg-red btn-delete" style="margin-bottom: 2px;">
+                                            Hapus
+                                        </button>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            @else
                             <tr class="tabel-product">
                                 <td> 
                                     <input type="text" name="f_kodeproduct[]" placeholder="Kode.." class="form-control" required>
@@ -91,6 +134,7 @@ if(isset($data->id)){
                                     </button>
                                 </td>
                             </tr>
+                            @endif
                         </tbody>
                     </table>
                 </div>

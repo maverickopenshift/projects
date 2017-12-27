@@ -79,9 +79,6 @@ class CategoryController extends Controller
     }
 
     public function proses(Request $request){
-
-        //dd($request->input());
-        
         $rules = array (
             'f_kodekategori' => 'required|min:2|max:250',
             'f_namakategori' => 'required|min:2|max:250',

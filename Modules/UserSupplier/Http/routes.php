@@ -28,4 +28,6 @@ Route::group(['middleware' => 'web', 'prefix' => 'usersupplier', 'namespace' => 
 
   Route::post('/updatedata', ['middleware' => ['role:vendor'],'uses' => 'DataSupplierController@update'])
   ->name('usersupplier.update');
+
+  Route::get('/comments', ['middleware' => ['role:vendor'],'uses' => 'UserSupplierCommentController@comments'])->name('usr.comments');
 });

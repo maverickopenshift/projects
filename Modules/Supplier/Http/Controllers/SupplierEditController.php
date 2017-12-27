@@ -10,7 +10,10 @@ use App\Helpers\CustomErrors;
 use App\User;
 use Modules\Supplier\Entities\Supplier;
 use Modules\Supplier\Entities\SupplierMetadata;
+use Modules\Supplier\Entities\SupplierActivity;
 use Validator;
+use Response;
+use Auth;
 
 class SupplierEditController extends Controller
 {
@@ -90,15 +93,17 @@ class SupplierEditController extends Controller
       $supplier->file_old_sd = $file_old_sd;
       //dd($supplier);
       //$data = $sup;
-      $page_title = 'Edit Supplier';
-      $action_type = 'edit';
+      $page_title = ucfirst($request->status).' Supplier';
+      $action_type = $request->status;
       return view('supplier::form')->with(compact('supplier','page_title','action_type','id'));
   }
 
   public function update(Request $request)
   {
     $id = $request->id;
+    // dd($request->komentar);
     $rules = array (
+        'komentar'          => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
         'bdn_usaha'         => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
         'nm_vendor'         => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'nm_vendor_uq'      => 'max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -222,7 +227,7 @@ class SupplierEditController extends Controller
                   ->withErrors($validator);
     }
     else {
-
+// dd("hai");
       $id = $request->id;
 
       $data = Supplier::where('id',$id)->first();
@@ -277,6 +282,8 @@ class SupplierEditController extends Controller
       $data->cp1_email = $request->cp1_email;
       $data->jml_peg_domestik = $request->jml_peg_domestik;
       $data->jml_peg_asing = $request->jml_peg_asing;
+      $data->vendor_status = 0;
+      // $data->Komen = $request->reason;
       $data->save();
 
       $mt_data = SupplierMetadata::where([
@@ -389,7 +396,17 @@ class SupplierEditController extends Controller
         $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
         $mt_data->save();
       };
-      return redirect()->back()->withData($data)->with('message', 'Data berhasil disimpan!');
+
+      $log_activity = new SupplierActivity();
+      $log_activity->users_id = Auth::id();
+      $log_activity->supplier_id = $request->id;
+      $log_activity->activity = "Edited";
+      $log_activity->date = new \DateTime();
+      $log_activity->komentar = $request->komentar;
+      $log_activity->save();
+
+      return redirect()->route('supplier.lihat', ['id' => $request->id, 'status' => 'lihat'])->withData($data)->with('message', 'Data berhasil disimpan!');
+
     }
   }
 
@@ -397,12 +414,50 @@ class SupplierEditController extends Controller
 
   public function editstatus(Request $request)
   {
-      $id = $request->id;
+    if ($request->ajax()) {
+      $user = Supplier::where('id',$request->id)->first();
+    if($user){
+        $user->vendor_status = 1;
+        $user->save();
 
-      $user = Supplier::where('id',$id)->first();
-      $user->vendor_status = $request->statuss;
-      $user->save();
-      return redirect()->back()->with('message', 'Data berhasil disimpan!');
-    
+        $log_activity = new SupplierActivity();
+        $log_activity->users_id = Auth::id();
+        $log_activity->supplier_id = $request->id;
+        $log_activity->activity = "Approved";
+        $log_activity->date = new \DateTime();
+        $log_activity->komentar = $request->reason;
+        $log_activity->save();
+
+      //$request->session()->flash('alert-success', 'Data berhasil disetujui!');
+      return Response::json(['status'=>true,'csrf_token'=>csrf_token()]);
+    }
+    return Response::json(['status'=>false]);
+  }
+  abort(500);
+
+  }
+
+  public function return(Request $request)
+  {
+    if ($request->ajax()) {
+      $user = Supplier::where('id',$request->id)->first();
+    if($user){
+        $user->vendor_status = 2;
+        $user->save();
+
+        $log_activity = new SupplierActivity();
+        $log_activity->users_id = Auth::id();
+        $log_activity->supplier_id = $request->id;
+        $log_activity->activity = "Returned";
+        $log_activity->date = new \DateTime();
+        $log_activity->komentar = $request->reason;
+        $log_activity->save();
+      //$request->session()->flash('alert-success', 'Data berhasil disetujui!');
+      return Response::json(['status'=>true,'csrf_token'=>csrf_token()]);
+    }
+    return Response::json(['status'=>false]);
+  }
+  abort(500);
+
   }
 }

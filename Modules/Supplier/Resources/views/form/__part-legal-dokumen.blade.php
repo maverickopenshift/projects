@@ -23,7 +23,7 @@
                   <button class="btn btn-default click-upload" type="button">Browse</button>
                 </span>
               </div>
-              @if($action_type=='edit')
+              @if($action_type=='lihat' || $action_type=='edit')
                 @php
                   $old_file = old('file_old_ld',Helper::prop_exists($supplier,'file_old_ld','array'));
                 @endphp
@@ -31,11 +31,11 @@
                   <span class="help-block">
                   <!--
                     <a target="_blank" href="{{route('supplier.legaldokumen.file',['filename'=>$old_file[$k]])}}"><i class="glyphicon glyphicon-paperclip"></i> {{$old_file[$k]}}</a>
-                  -->  
-                  
+                  -->
+
                     <a href="#" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('supplier.legaldokumen.file',['filename'=>$old_file[$k]])}}">
-                    <i class="glyphicon glyphicon-paperclip"></i>{{$old_file[$k]}}</a>  
-                    
+                    <i class="glyphicon glyphicon-paperclip"></i>{{$old_file[$k]}}</a>
+
                     <input type="hidden" class="hide" name="file_old_ld[]" value="{{$old_file[$k]}}">
                   </span>
                 @endif

@@ -48,6 +48,8 @@ class SupplierController extends Controller
                 $sts = 'Belum Disetujui';
               }else if($data->vendor_status==1){
                 $sts = "Sudah Disetujui";
+              }else if($data->vendor_status==2){
+                $sts = "Tidak Disetujui";
               }else{
                 $sts = "-";
               }
@@ -62,12 +64,12 @@ class SupplierController extends Controller
                 $roles = htmlspecialchars(json_encode($data->roles), ENT_QUOTES, 'UTF-8');
               $act= '<div class="">';
               if(\Auth::user()->hasPermission('ubah-supplier')){
-                  $act .='<a href="'.route('supplier.edit',['id'=>$data->id]).'" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-list-alt"></i> Lihat</a> <br>';
+                  $act .='<a href="'.route('supplier.lihat',['id'=>$data->id,'status'=>'lihat']).'" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-list-alt"></i> Lihat</a> <br>';
               }
-              if(\Auth::user()->hasPermission('ubah-supplier')){
-                  $act .='<button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#form-modal"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'">
-  <i class="glyphicon glyphicon-edit"></i> Edit Status</button>';
-              }
+  //             if(\Auth::user()->hasPermission('ubah-supplier')){
+  //                 $act .='<button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#form-modal"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'">
+  // <i class="glyphicon glyphicon-edit"></i> Edit Status</button>';
+  //             }
               if(\Auth::user()->hasPermission('hapus-supplier')){
                 $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-toggle="modal" data-target="#modal-delete"><i class="glyphicon glyphicon-trash"></i> Deleteeee</button> <br>';
               }

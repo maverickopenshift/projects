@@ -3,6 +3,9 @@
       <h3 class="box-title">
           Employee Detail
       </h3>
+      @if($action_type=='lihat' || $action_type=='edit')
+        @include('supplier::partials.buttons-edit')
+      @endif
     </div>
     <!-- /.box-header -->
     <div class="box-body">

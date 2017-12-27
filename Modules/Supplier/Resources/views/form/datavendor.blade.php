@@ -3,6 +3,9 @@
       <h3 class="box-title">
           Data Vendor
       </h3>
+      @if($action_type=='lihat' || $action_type=='edit')
+        @include('supplier::partials.buttons-edit')
+      @endif
     </div>
     <!-- /.box-header -->
     <div class="box-body">
@@ -157,7 +160,7 @@
             @endif
           </div>
         </div>
-        @if($action_type=='edit')
+        @if($action_type=='lihat' || $action_type=='edit')
         @include('supplier::partials.buttons')
         @endif
       </div>

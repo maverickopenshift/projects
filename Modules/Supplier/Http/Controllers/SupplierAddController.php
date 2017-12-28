@@ -10,8 +10,10 @@ use App\Helpers\CustomErrors;
 use App\User;
 use Modules\Supplier\Entities\Supplier;
 use Modules\Supplier\Entities\SupplierMetadata;
+use Modules\Supplier\Entities\SupplierActivity;
 use Validator;
 use DB;
+use Auth;
 
 
 class SupplierAddController extends Controller
@@ -24,11 +26,13 @@ class SupplierAddController extends Controller
       $action_type = 'add';
       return view('supplier::form')->with(compact('supplier','page_title','action_type'));
   }
-  
+
   public function store(Request $request)
   {
+    // dd($request->komentar);
     //dd($request->all());
     $rules = array (
+        'komentar'          => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
         'bdn_usaha'         => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
         'nm_vendor'         => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'nm_vendor_uq'      => 'max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -79,10 +83,10 @@ class SupplierAddController extends Controller
         'cp1_email'     => 'required|max:50|min:4|email',
         'jml_peg_domestik'     => 'required|integer',
         'jml_peg_asing'     => 'required|integer',
-        'legal_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i', 
-        'legal_dokumen.*.file' => 'required|mimes:pdf', 
-        'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i', 
-        'sertifikat_dokumen.*.file' => 'required|mimes:pdf', 
+        'legal_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'legal_dokumen.*.file' => 'required|mimes:pdf',
+        'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'sertifikat_dokumen.*.file' => 'required|mimes:pdf',
     );
     $validator = Validator::make($request->all(), $rules,CustomErrors::supplier());
     if ($validator->fails ()){
@@ -102,7 +106,7 @@ class SupplierAddController extends Controller
       $user->password = bcrypt($request->password);
       $user->save();
       $user->attachRole('vendor');
-      
+
       $data = new Supplier();
       $data->bdn_usaha = $request->bdn_usaha;
       $data->id_user = $user->id;
@@ -149,39 +153,39 @@ class SupplierAddController extends Controller
       $data->jml_peg_domestik = $request->jml_peg_domestik;
       $data->jml_peg_asing = $request->jml_peg_asing;
       $data->approval_at = DB::raw('now()');
-      $data->vendor_status = 1;
+      $data->vendor_status = 0;
       $data->created_by = \Auth::user()->username;
       $data->kd_vendor = $kd_vendor;
       $data->save();
-      
+
       $mt_data = new SupplierMetadata();
       $mt_data->id_object    = $data->id;
       $mt_data->object_type  = 'vendor';
       $mt_data->object_key   = 'pengalaman_kerja';
       $mt_data->object_value = $request->pengalaman_kerja;
       $mt_data->save();
-      
+
       $mt_data = new SupplierMetadata();
       $mt_data->id_object    = $data->id;
       $mt_data->object_type  = 'vendor';
       $mt_data->object_key   = 'bank_kota';
       $mt_data->object_value = $request->bank_kota;
       $mt_data->save();
-      
+
       $mt_data = new SupplierMetadata();
       $mt_data->id_object    = $data->id;
       $mt_data->object_type  = 'vendor';
       $mt_data->object_key   = 'nm_direktur_utama';
       $mt_data->object_value = $request->nm_direktur_utama;
       $mt_data->save();
-      
+
       $mt_data = new SupplierMetadata();
       $mt_data->id_object    = $data->id;
       $mt_data->object_type  = 'vendor';
       $mt_data->object_key   = 'nm_komisaris_utama';
       $mt_data->object_value = $request->nm_komisaris_utama;
       $mt_data->save();
-      
+
       foreach($request->klasifikasi_usaha as $k){
         $mt_data = new SupplierMetadata();
         $mt_data->id_object    = $data->id;
@@ -201,7 +205,7 @@ class SupplierAddController extends Controller
       foreach($request->legal_dokumen as $l => $val){
         $fileName   = Helpers::set_filename($kd_vendor,$val['name']);
         $val['file']->storeAs('supplier/legal_dokumen', $fileName);
-        
+
         $mt_data = new SupplierMetadata();
         $mt_data->id_object    = $data->id;
         $mt_data->object_type  = 'vendor';
@@ -212,7 +216,7 @@ class SupplierAddController extends Controller
       foreach($request->sertifikat_dokumen as $l => $val){
         $fileName   = Helpers::set_filename($kd_vendor,$val['name']);
         $val['file']->storeAs('supplier/sertifikat_dokumen', $fileName);
-        
+
         $mt_data = new SupplierMetadata();
         $mt_data->id_object    = $data->id;
         $mt_data->object_type  = 'vendor';
@@ -220,10 +224,19 @@ class SupplierAddController extends Controller
         $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
         $mt_data->save();
       };
+
+      $log_activity = new SupplierActivity();
+      $log_activity->users_id = Auth::id();
+      $log_activity->supplier_id = $data->id;
+      $log_activity->activity = "Submitted";
+      $log_activity->date = new \DateTime();
+      $log_activity->komentar = $request->komentar;
+      $log_activity->save();
+
       return redirect()->route('supplier')->with('message', 'Data supplier berhasil ditambahkan!');
     }
   }
-  
+
   private function generate_id(){
     $sup = new Supplier();
     $id = $sup->gen_userid();

@@ -3,6 +3,9 @@
       <h3 class="box-title">
           Finansial Aspek
       </h3>
+      @if($action_type=='lihat' || $action_type=='edit')
+        @include('supplier::partials.buttons-edit')
+      @endif
     </div>
     <!-- /.box-header -->
     <div class="box-body">
@@ -75,7 +78,7 @@
           <div class="form-group">
             <hr  />
           </div>
-          @if($action_type=='edit')
+          @if($action_type=='lihat' || $action_type=='edit')
           @include('supplier::partials.buttons')
           @endif
       </div>

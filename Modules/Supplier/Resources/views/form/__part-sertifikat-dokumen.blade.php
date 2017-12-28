@@ -2,7 +2,7 @@
   <label for="sertifikat-dokumen" class="col-sm-2 control-label"></label>
   <div class="col-sm-10">
     @if(count(old('sertifikat_dokumen',Helper::prop_exists($supplier,'sertifikat_dokumen','array')))>0)
-      @php 
+      @php
         $i=1;
       @endphp
       @foreach (old('sertifikat_dokumen',Helper::prop_exists($supplier,'sertifikat_dokumen','array')) as $k => $d)
@@ -23,7 +23,7 @@
                   <button class="btn btn-default click-upload" type="button">Browse</button>
                 </span>
               </div>
-              @if($action_type=='edit')
+              @if($action_type=='lihat' || $action_type=='edit')
                 @php
                   $old_file_sd = old('file_old_sd',Helper::prop_exists($supplier,'file_old_sd','array'));
                 @endphp
@@ -35,7 +35,7 @@
 
                     <a href="#" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('supplier.sertifikat.file',['filename'=>$old_file_sd[$k]])}}">
                     <i class="glyphicon glyphicon-paperclip"></i>{{$old_file_sd[$k]}}</a>
-                      
+
                     <input type="hidden" class="hide" name="file_old_sd[]" value="{{$old_file_sd[$k]}}">
                   </span>
                 @endif
@@ -55,7 +55,7 @@
                 @endif
             </div>
         </div>
-        @php 
+        @php
           $i++;
         @endphp
       @endforeach

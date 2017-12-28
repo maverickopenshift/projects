@@ -10,6 +10,7 @@ use App\Permission as Auth;
 use App\User;
 use Response;
 use Datatables;
+use Validator;
 
 class CategoryController extends Controller
 {
@@ -18,13 +19,26 @@ class CategoryController extends Controller
     }
 
     public function get_category(Request $request){
-        $result=CatalogCategory::where('id',$request->id)->get();
+        $data['category']=CatalogCategory::where('id',$request->id)->get();
+        $data['induk']=CatalogCategory::selectRaw('id, display_name as text')->where('id','!=',$request->id)->get();
+
+        return Response::json($data);
+    }
+    /*
+    public function get_category_induk(Request $request){
+        $result=CatalogCategory::where('id','!=',$request->id)->get();
 
         return Response::json($result);
     }
-
+    */
     public function datatables(Request $request){
-        $data=CatalogCategory::get();
+
+        if($request->parent_id==0){
+            $data=CatalogCategory::get();
+        }else{
+            $data=CatalogCategory::where('parent_id',$request->parent_id)->get();
+        }
+        
 
         return Datatables::of($data)
                 ->addIndexColumn()
@@ -52,6 +66,9 @@ class CategoryController extends Controller
             for($i=0;$i<count($result);$i++){
                 $hasil[$i]['id']=$result[$i]->id;
                 $hasil[$i]['text']=$result[$i]->code ." - ". $result[$i]->display_name;
+                $hasil[$i]['data']['parent_id']=$result[$i]->parent_id;
+                $hasil[$i]['data']['code']=$result[$i]->code;
+                $hasil[$i]['data']['name']=$result[$i]->display_name;
                 $hasil[$i]['data']['desc']=$result[$i]->desc;
                 $hitung=CatalogCategory::where('parent_id',$result[$i]->id)->count();
                 if($hitung!=0){
@@ -62,34 +79,45 @@ class CategoryController extends Controller
     }
 
     public function proses(Request $request){
-        //dd($request->input());
-        if($request->f_id==0){
-            $proses=new CatalogCategory();
-            $proses->code=$request->f_kodekategori;
-            $proses->display_name=$request->f_namakategori;
-            $proses->name=str_slug($request->f_namakategori);
-            $proses->parent_id=$request->f_parentid;
-            $proses->desc=$request->f_deskripsikategori;
-            $proses->save();
-        }else{
-            $proses=CatalogCategory::where('id',$request->f_id)->first();
-            $proses->code=$request->f_kodekategori;
-            $proses->display_name=$request->f_namakategori;
-            $proses->name=str_slug($request->f_namakategori);
-            $proses->parent_id=$request->f_parentid;
-            $proses->desc=$request->f_deskripsikategori;
-            $proses->save();
+        $rules = array (
+            'f_kodekategori' => 'required|min:2|max:250',
+            'f_namakategori' => 'required|min:2|max:250',
+            'f_deskripsikategori' => 'required|min:2|max:500',
+        );
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails ())
+            return Response::json (array(
+                'errors' => $validator->getMessageBag()->toArray()
+            ));
+        else{
+            if($request->f_id==0){
+                $proses=new CatalogCategory();
+                $proses->code=$request->f_kodekategori;
+                $proses->display_name=$request->f_namakategori;
+                $proses->name=str_slug($request->f_namakategori);
+                $proses->parent_id=$request->f_parentid;
+                $proses->desc=$request->f_deskripsikategori;
+                $proses->save();
+            }else{
+                $proses=CatalogCategory::where('id',$request->f_id)->first();
+                $proses->code=$request->f_kodekategori;
+                $proses->display_name=$request->f_namakategori;
+                $proses->name=str_slug($request->f_namakategori);
+                $proses->parent_id=$request->f_parentid;
+                $proses->desc=$request->f_deskripsikategori;
+                $proses->save();
+            }
+
+            return response()->json($proses);
         }
-        
-    	
-    	return redirect()->route('catalog.category');
     }
 
     public function delete(Request $request){
         $cek_category=CatalogCategory::where('parent_id',$request->id)->count();
         $cek_product=CatalogProduct::where('catalog_category_id',$request->id)->count();
 
-        if($cek_product==0 && $cek_product==0){
+        if($cek_category==0 and $cek_product==0){
             $proses=CatalogCategory::where('id',$request->id)->first()->delete();
             return 1;
         }else{

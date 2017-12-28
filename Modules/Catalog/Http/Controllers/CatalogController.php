@@ -5,7 +5,9 @@ namespace Modules\Catalog\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Catalog\Entities\CatalogProduct as CatalogProduct;
+use Modules\Documents\Entities\DocBoq as DocBoq;
 use Modules\Catalog\Entities\CatalogCategory as CatalogCategory;
+use Modules\Documents\Entities\Documents as Documents;
 use Response;
 
 class CatalogController extends Controller
@@ -18,7 +20,16 @@ class CatalogController extends Controller
                         ->get();        
 
         return view('catalog::catalog')->with($data);
-    }   
+    } 
 
-    
+    public function get_no_kontrak(Request $request){
+    	$documents=Documents::selectRaw('id, doc_no as text')->where('doc_signing',1)->get();
+
+        return Response::json($documents);
+    } 
+
+    public function cari_no_kontrak(Request $request){
+        $data=DocBoq::where('documents_id',$request->id)->get();
+        return Response::json($data);
+    }    
 }

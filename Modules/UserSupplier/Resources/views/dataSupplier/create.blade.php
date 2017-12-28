@@ -5,6 +5,9 @@
 
 
   <form action="{{ $action_url }}" method="post" enctype="multipart/form-data">
+    @if($action_type == "edit")
+      <input type="hidden" value="{{$data->id}}" name="id" id="id_supplier" />
+    @endif
     {{ csrf_field() }}
     <div class="nav-tabs-custom">
         <ul class="nav nav-tabs">
@@ -78,6 +81,7 @@
           <!-- /.tab-pane -->
         </div>
         <!-- /.tab-content -->
+        @include('usersupplier::partials.logActivity')
       </div>
   </form>
 @endsection
@@ -90,6 +94,10 @@ $(function () {
   $('.btnPrevious').click(function(){
    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
   });
+  var type = '{!!$action_type!!}';
+  if(type == "edit"){
+    $('.direct-chat-messages').show();
+  }
 });
 </script>
 @endpush

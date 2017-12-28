@@ -7,10 +7,14 @@ if(isset($data->id)){
 	$id=0;
 }
 
-//$vkodeproduct=Helper::old_prop_each($product,'f_kodeproduct');
-
+$product=array();
+$vkodeproduct=Helper::old_prop_each($product,'f_kodeproduct');
+$vnamaproduct=Helper::old_prop_each($product,'f_namaproduct');
+$vunitproduct=Helper::old_prop_each($product,'f_unitproduct');
+$vmtuproduct=Helper::old_prop_each($product,'f_mtuproduct');
+$vhargaproduct=Helper::old_prop_each($product,'f_hargaproduct');
+$vdescproduct=Helper::old_prop_each($product,'f_descproduct');
 @endphp
-{{old('f_kodeproduct')}}
 <div class="row">
     <div class="col-md-3">
         <div class="box box-danger">
@@ -35,12 +39,15 @@ if(isset($data->id)){
                 <i class="fa fa-cogs"></i>
                 <h3 class="box-title f_parentname">Tambah Product</h3>
                 <div class="box-tools pull-right">
-                    <a class="btn btn-default add-product">
+                    <button class="btn btn-default add-product">
                         <i class="glyphicon glyphicon-plus"></i> Tambah
-                    </a>
-                    <a class="btn btn-default add-boq" data-toggle="modal" data-target="#modalboq">
+                    </button>
+                    <button class="btn btn-default add-boq" data-toggle="modal" data-target="#modalboq">
                         <i class="glyphicon glyphicon-plus"></i> Tambah BOQ
-                    </a>
+                    </button>
+                    <input type="file" name="upload-boq" class="upload-boq hide"/>
+                    <button class="btn btn-primary upload-boq-btn" type="button"><i class="fa fa-upload"></i> Upload</button>
+                    <a href="{{route('doc.template.download',['filename'=>'harga_satuan'])}}" class="btn btn-info"><i class="glyphicon glyphicon-download-alt"></i></a>
                 </div>
             </div>    
             <form method="post" action="{{route('catalog.product.add')}}">
@@ -60,34 +67,66 @@ if(isset($data->id)){
                             </tr>
                         </thead>
                         <tbody class="table-test">
+                            @if(count($vkodeproduct)>0)
+                                @foreach ($vkodeproduct as $key => $value)
+                                <tr>
+                                    <td class="{{ $errors->has('f_kodeproduct.'.$key) ? ' has-error' : '' }}"> 
+                                        <input type="text" name="f_kodeproduct[]" placeholder="Kode.." class="form-control" value="">
+                                        {!!Helper::error_help($errors,'f_kodeproduct.'.$key)!!}
+                                    </td>
+                                    <td class="{{ $errors->has('f_namaproduct.'.$key) ? ' has-error' : '' }}"> 
+                                        <input type="text" name="f_namaproduct[]" placeholder="Nama .." class="form-control">
+                                        {!!Helper::error_help($errors,'f_namaproduct.'.$key)!!}
+                                    </td>
+                                    <td class="{{ $errors->has('f_unitproduct.'.$key) ? ' has-error' : '' }}">
+                                        <input type="text" name="f_unitproduct[]" placeholder="Unit.." class="form-control">
+                                        {!!Helper::error_help($errors,'f_unitproduct.'.$key)!!}
+                                    </td>
+                                    <td>
+                                        <select name="f_mtuproduct[]" class="form-control select2" style="width: 100%;">
+                                            <option value=""></option>
+                                            <option value="RP">RP</option>
+                                            <option value="USD">USD</option>                       
+                                        </select>
+                                    </td>
+                                    <td class="{{ $errors->has('f_hargaproduct.'.$key) ? ' has-error' : '' }}">
+                                        <input type="text" name="f_hargaproduct[]" placeholder="Harga.." class="form-control input-rupiah">
+                                        {!!Helper::error_help($errors,'f_hargaproduct.'.$key)!!}
+                                    </td>
+                                    <td class="{{ $errors->has('f_descproduct.'.$key) ? ' has-error' : '' }}">
+                                        <input type="text" name="f_descproduct[]" placeholder="Deskripsi.." class="form-control">
+                                        {!!Helper::error_help($errors,'f_descproduct.'.$key)!!}
+                                    </td>
+                                    <td>
+                                        <button class="btn bg-red btn-delete" style="margin-bottom: 2px;">
+                                            Hapus
+                                        </button>
+                                    </td>
+                                </tr>
+                                @endforeach
+                            @else
                             <tr class="tabel-product">
-                                <td class="{{ $errors->has('f_kodeproduct') ? ' has-error' : '' }}"> 
+                                <td> 
                                     <input type="text" name="f_kodeproduct[]" placeholder="Kode.." class="form-control" required>
-                                    {!!Helper::error_help($errors,'f_kodeproduct')!!}
                                 </td>
-                                <td class="{{ $errors->has('f_namaproduct') ? ' has-error' : '' }}"> 
+                                <td> 
                                     <input type="text" name="f_namaproduct[]" placeholder="Nama .." class="form-control" required>
-                                    {!!Helper::error_help($errors,'f_namaproduct')!!}
                                 </td>
-                                <td class="{{ $errors->has('f_unitproduct') ? ' has-error' : '' }}"> 
+                                <td>
                                     <input type="text" name="f_unitproduct[]" placeholder="Unit.." class="form-control" required>
-                                    {!!Helper::error_help($errors,'f_unitproduct')!!}
                                 </td>
-                                <td class="{{ $errors->has('f_mtuproduct') ? ' has-error' : '' }}"> 
+                                <td>
                                     <select name="f_mtuproduct[]" class="form-control select2" style="width: 100%;" required>
                                         <option value=""></option>
                                         <option value="RP">RP</option>
                                         <option value="USD">USD</option>                       
                                     </select>
-                                    {!!Helper::error_help($errors,'f_mtuproduct')!!}
                                 </td>
-                                <td class="{{ $errors->has('f_hargaproduct') ? ' has-error' : '' }}"> 
+                                <td>
                                     <input type="text" name="f_hargaproduct[]" placeholder="Harga.." class="form-control input-rupiah" required>
-                                    {!!Helper::error_help($errors,'f_hargaproduct')!!}
                                 </td>
-                                <td class="{{ $errors->has('f_descproduct') ? ' has-error' : '' }}"> 
+                                <td>
                                     <input type="text" name="f_descproduct[]" placeholder="Deskripsi.." class="form-control" required>
-                                    {!!Helper::error_help($errors,'f_descproduct')!!}
                                 </td>
                                 <td>
                                     <button class="btn bg-red btn-delete" style="margin-bottom: 2px;">
@@ -95,6 +134,7 @@ if(isset($data->id)){
                                     </button>
                                 </td>
                             </tr>
+                            @endif
                         </tbody>
                     </table>
                 </div>
@@ -108,32 +148,43 @@ if(isset($data->id)){
     </div>
 </div>
 
-<div class="modal fade" id="modalboq" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="modalboq" style="overflow:hidden;" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 <h4 class="modal-title" id="myModalLabel">Data BOQ</h4> 
             </div>
-            <div class="modal-body table-parent-boq">
-                <div style=" max-height: 500px; overflow: auto;" style="text-align: center;" id="holder">
-                    <table id="daftar2" class="table table-striped table-parent-boq" width="100%">
-                        <thead>
-                            <tr>
-                                <th>Aksi</th>
-                                <th>Kode</th>
-                                <th>Nama</th>
-                                <th>Unit</th>
-                                <th>Mata Uang</th>
-                                <th>Harga</th>
-                                <th>Deksripsi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="table-boq">
-                        </tbody>
-                    </table>
+            <div class="modal-body">
+                <div class="form-group input-group">
+                    <select class="form-control select-kontrak" style="width: 100%;">
+                    </select>
+                    <span class="input-group-btn">
+                        <a class="btn btn-primary cari-kontrak">Cari No Kontrak</a>
+                    </span>
+                </div>
+
+                <div class="form-group table-parent-boq">
+                    <div style=" max-height: 500px; overflow: auto;" style="text-align: center;" id="holder">
+                        <table id="daftar2" class="table table-striped table-parent-boq" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Aksi</th>
+                                    <th>Kode</th>
+                                    <th>Nama</th>
+                                    <th>Unit</th>
+                                    <th>Mata Uang</th>
+                                    <th>Harga</th>
+                                    <th>Deksripsi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-boq">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
+
             <div class="modal-footer">
                 <a class="btn btn-primary simpan-boq">Simpan</a>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -165,20 +216,105 @@ if(isset($data->id)){
 @push('scripts')
 <script>
 $(function() {
-    $(".simpan-product").prop( "disabled", true );
+    normal();
     $('#daftar1').DataTable();
     $('#daftar1').DataTable();
     $('#daftar2').DataTable();
+
     $(".select2").select2({
         placeholder:"Silahkan Pilih"
     });
+
+    function normal(){
+        $(".add-product").prop("disabled", true);
+        $(".add-boq").prop("disabled", true);
+        $(".upload-boq-btn").prop("disabled", true);
+        $(".simpan-product").prop( "disabled", true );
+    }
+
+    $('.upload-boq-btn').on('click', function(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        var $file = $('.upload-boq').click();
+    });
+
+    $('.upload-boq').on('change', function(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        BoqFile(this.files[0]);
+    });
+
+    function BoqFile(file) {
+        console.log("upload start");
+        Papa.parse(file, {
+            header: true,
+            dynamicTyping: true,
+            complete: function(results) {
+                
+                //dataPapaParse = results;
+                var fields = results.meta.fields;
+                @php
+                    echo "var fields_dec = ['KODE_ITEM','ITEM','SATUAN','MTU','HARGA','KETERANGAN'];";
+                    echo "var fields_length_set = 6;";
+                @endphp
+                
+                if(fields.length!==fields_length_set || JSON.stringify(fields_dec)!==JSON.stringify(fields)){
+                    console.log("format tidak valid");
+                    //$('.error-daftar_harga').html('Format CSV tidak valid!');
+                    return false;
+                }
+
+                if(results.data.length==0){
+                    console.log("data tidak ada");
+                    //$('.error-daftar_harga').html('Data tidak ada!');
+                    return false;
+                }
+
+                console.log(JSON.stringify(results.data));
+
+                
+
+                $.each(results.data,function(index, el) {
+                    if(results.data[index].KODE_ITEM!=""){
+                        $('.table-parent-product').find(".select2").each(function(index){
+                            if($(this).data('select2')) {
+                                $(this).select2('destroy');
+                            } 
+                        });
+
+                        var new_row = $('.tabel-product:last').clone(true).insertAfter(".tabel-product:last");
+                        var input_new_row = new_row.find('td');
+                        
+                        input_new_row.eq(0).find('input').val(results.data[index].KODE_ITEM);
+                        input_new_row.eq(1).find('input').val(results.data[index].ITEM);
+                        input_new_row.eq(2).find('input').val(results.data[index].SATUAN);
+                        input_new_row.eq(3).find('select').val(results.data[index].MTU);
+                        input_new_row.eq(4).find('input').val(results.data[index].HARGA);
+                        input_new_row.eq(5).find('input').val(results.data[index].KETERANGAN);
+
+                        $(".select2").select2({
+                            placeholder:"Silahkan Pilih"
+                        });
+                    }                    
+                });
+
+                
+
+                
+            }
+        });
+    }
 
     $('#jstree')
         .on("changed.jstree", function (e, data) {
             if(data.selected.length) {
                 $(".f_parentname").html("Tambah Product - " + data.instance.get_node(data.selected[0]).text);
                 $(".f_parentid").val(data.instance.get_node(data.selected[0]).id);
-                $(".simpan-product").prop( "disabled", false);
+
+                $(".add-product").prop("disabled", false);
+                $(".add-boq").prop("disabled", false);
+                $(".upload-boq-btn").prop("disabled", false);
+                $(".simpan-product").prop( "disabled", false );
             }
         })
         .jstree({
@@ -188,7 +324,10 @@ $(function() {
                     "url" : "{{route('catalog.category.get_category_all',['parent_id' => 0])}}",
                 }
             }
-    });
+        })
+        .bind("ready.jstree", function (event, data) {
+             $(this).jstree("open_all");
+        });
 
     var to = false;
     $('.f_carikategori').keyup(function () {
@@ -222,11 +361,27 @@ $(function() {
     });
 
     $(document).on('click', '.add-boq', function(event) {
-       $.ajax({
-            url: "{{route('catalog.boq')}}?id=0",
+        $.ajax({
+            url: "{{route('catalog.no_kontrak')}}",
             dataType: 'json',
             success: function(data)
             {
+                $(".select-kontrak").select2({
+                    data: data
+                });
+
+            }
+        });
+    });
+
+    $(document).on('click', '.cari-kontrak', function(event) {
+        var id_kontrak = $(".select-kontrak").val();
+        $.ajax({
+            url: "{{route('catalog.cari_no_kontrak')}}?id=" + id_kontrak,
+            dataType: 'json',
+            success: function(data)
+            {
+                console.log(data);
                 $('.table-boq').html("");
                 var html = '';
                 for(var i = 0; i < data.length; i++){
@@ -249,12 +404,14 @@ $(function() {
     $(document).on('click', '.simpan-boq', function(event) {
         $('.table-boq').find('input[type=checkbox]').each(function (index) {
             if (this.checked) {
+                console.log($(this).val());
 
                 $.ajax({
                     url: "{{route('catalog.boq')}}?id=" + $(this).val(),
                     dataType: 'json',
                     success: function(data)
                     {
+                        console.log(data);
                         $('.table-parent-product').find(".select2").each(function(index){
                             if($(this).data('select2')) {
                                 $(this).select2('destroy');
@@ -263,16 +420,19 @@ $(function() {
 
                         var new_row = $('.tabel-product:last').clone(true).insertAfter(".tabel-product:last");
                         var input_new_row = new_row.find('td');
+                        console.log(data);
                         input_new_row.eq(0).find('input').val(data[0].kode_item);
                         input_new_row.eq(1).find('input').val(data[0].item);
-                        input_new_row.eq(3).find('input').val(data[0].satuan);
-                        input_new_row.eq(4).find('select').val("");
-                        input_new_row.eq(5).find('input').val(data[0].harga);
-                        input_new_row.eq(6).find('input').val(data[0].desc);
+                        input_new_row.eq(2).find('input').val(data[0].satuan);
+                        input_new_row.eq(3).find('select').val(data[0].mtu);
+                        input_new_row.eq(4).find('input').val(data[0].harga);
+                        input_new_row.eq(5).find('input').val(data[0].desc);
 
                         $(".select2").select2({
                             placeholder:"Silahkan Pilih"
                         });
+
+                        $("#modalboq").modal('hide');
                     }
                 });            
             }

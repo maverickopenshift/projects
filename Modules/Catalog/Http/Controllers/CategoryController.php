@@ -47,8 +47,8 @@ class CategoryController extends Controller
                             $hasil[$x]['text']=$result_child[$y]['text'];
                             $x++;
                         }
-                    }    
-                }                
+                    }
+                }
             }
         return $hasil;
     }
@@ -71,8 +71,8 @@ class CategoryController extends Controller
                             $hasil[$x]['text']=$result_child[$y]['text'];
                             $x++;
                         }
-                    }    
-                }                
+                    }
+                }
             }
         return $hasil;
     }
@@ -83,7 +83,7 @@ class CategoryController extends Controller
             $data=CatalogCategory::get();
         }else{
             $data=CatalogCategory::where('parent_id',$request->parent_id)->get();
-        }        
+        }
 
         return Datatables::of($data)
                 ->addIndexColumn()
@@ -151,7 +151,7 @@ class CategoryController extends Controller
                     return 1;
                 }else{
                     return 0;
-                }                
+                }
             }else{
                 $hitung=CatalogCategory::where('id','!=',$request->f_id)->where('code',$request->f_kodekategori)->count();
 

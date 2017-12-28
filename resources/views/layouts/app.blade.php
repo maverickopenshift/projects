@@ -26,6 +26,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta name="msapplication-TileColor" content="#ffffff">
     <meta name="msapplication-TileImage" content="{{ asset('images/favicon/ms-icon-144x144.png')}}">
     <meta name="theme-color" content="#ffffff">
+    <link href="{{ asset('js/jstree/dist/themes/default/style.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ mix('css/all.css') }}" rel="stylesheet" type="text/css" />
     @stack('css')
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -136,6 +137,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
 
 <script src="{{ mix('js/all.js') }}"></script>
+<script src="{{ asset('js/jstree/dist/jstree.min.js') }}"></script>
 <script>
 var is_admin = function(){
   var roles = {!!\Auth::user()->roles!!};

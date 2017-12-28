@@ -12,6 +12,7 @@ Route::group(['middleware' => 'web', 'prefix' => 'catalog', 'namespace' => 'Modu
 
     Route::get('/product', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductController@index'])->name('catalog.product');
     Route::post('/product/datatables', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductController@datatables'])->name('catalog.product.datatables');
+    Route::get('/product/get_product_induk', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductController@get_product_induk'])->name('catalog.product.get_product_induk');
     Route::post('/product/add', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductController@add'])->name('catalog.product.add');
     Route::post('/product/edit', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductController@edit'])->name('catalog.product.edit');
     Route::delete('/product/delete', ['middleware' => ['permission:hapus-catalog-product'],'uses' => 'ProductController@delete'])->name('catalog.product.delete');

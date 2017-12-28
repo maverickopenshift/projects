@@ -60,7 +60,7 @@ $f_descproduct=Helper::old_prop_each($product,'f_descproduct');
                     </button>
                     <input type="file" name="upload-boq" class="upload-boq hide"/>
                     <button class="btn btn-primary upload-boq-btn" type="button"><i class="fa fa-upload"></i> Upload</button>
-                    <a href="{{route('doc.template.download',['filename'=>'harga_satuan'])}}" class="btn btn-info"><i class="glyphicon glyphicon-download-alt"></i></a>
+                    <a href="{{route('doc.template.download',['filename'=>'harga_satuan'])}}" class="btn btn-info"><i class="glyphicon glyphicon-download-alt"></i> Download Template</a>
                 </div>
             </div>    
             <form method="post" action="{{route('catalog.product.add')}}">

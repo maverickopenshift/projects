@@ -2,12 +2,23 @@
 @section('content')
 @php
 if(isset($data->id)){
-	$id=$data->id;
+    $id=$data->id;
 }else{
-	$id=0;
+    $id=0;
 }
 
 @endphp
+<style type="text/css">
+    #jstree{
+        max-width: 200px;
+    }
+
+    #jstree a {
+        white-space: normal !important;
+        height: auto;
+        padding: 1px 2px;
+    }
+</style>
 <div class="row">
     <div class="col-md-3">
         <div class="box box-danger">
@@ -90,13 +101,20 @@ if(isset($data->id)){
                         <div class="error-f_kodekategori"></div>
                     </div>
 
-                    <div class="form-group formerror-f_kodekategori">
+                    <div class="form-group formerror-f_namakategori">
                         <label>Nama Kategori</label>
                         <input type="text" placeholder="Nama Kategori.." class="form-control" id="f_namakategori" name="f_namakategori" required>
                         <div class="error-f_namakategori"></div>
                     </div>
 
-                    <div class="form-group formerror-f_kodekategori">
+                    <div class="form-group formerror-f_parentid_select">
+                        <label>Induk Kategori</label>
+                        <select name="f_parentid_select" class="form-control select2 f_parentid_select" style="width: 100%;" required>                       
+                        </select>
+                        <div class="error-f_parentid_select"></div>
+                    </div>
+
+                    <div class="form-group formerror-f_deskripsikategori">
                         <label>Deskripsi</label>
                         <textarea class="form-control" id="f_deskripsikategori" name="f_deskripsikategori" placeholder="Deskripsi.."></textarea>
                         <div class="error-f_deskripsikategori"></div>
@@ -104,7 +122,7 @@ if(isset($data->id)){
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary btn-save" data-loading-text="Please wait..." autocomplete="off">Simpan</button>
+                    <button type="submit" class="btn btn-primary btn-simpan" data-loading-text="Please wait..." autocomplete="off">Simpan</button>
                 </div>
             </form>
         </div>
@@ -126,25 +144,32 @@ if(isset($data->id)){
 
                     <div class="form-group formerror-f_kodeproduk">
                         <label>Kode Produk</label>
-                        <input type="text" class="form-control" id="f_kodeproduk" name="f_kodeproduk" placeholder="Kode Produk ...">
+                        <input type="text" class="form-control" id="f_kodeproduk" name="f_kodeproduct" placeholder="Kode Produk ...">
                         <div class="error-f_kodeproduk"></div>
                     </div>
                     
                     <div class="form-group formerror-f_namaproduk">
                         <label>Nama Produk</label>
-                        <input type="text" class="form-control" id="f_namaproduk" name="f_namaproduk"  placeholder="Nama Produk ...">
+                        <input type="text" class="form-control" id="f_namaproduk" name="f_namaproduct"  placeholder="Nama Produk ...">
                         <div class="error-f_namaproduk"></div>
+                    </div>
+
+                    <div class="form-group formerror-f_produk_parentid">
+                        <label>Induk Kategori</label>
+                        <select class="form-control select2" id="f_produk_parent" name="f_produk_parent" style="width: 100%;" required>                      
+                        </select>
+                        <div class="error-f_produk_parentid"></div>
                     </div>
 
                     <div class="form-group formerror-f_unitproduk">
                         <label>Unit Produk</label>
-                        <input type="text" class="form-control" id="f_unitproduk" name="f_unitproduk"  placeholder="Unit Produk ...">
+                        <input type="text" class="form-control" id="f_unitproduk" name="f_unitproduct"  placeholder="Unit Produk ...">
                         <div class="error-f_unitproduk"></div>
                     </div>
 
                     <div class="form-group formerror-f_matauangproduk">
                         <label>Mata Uang</label>
-                        <select class="form-control select2" id="f_matauangproduk" name="f_matauangproduk" style="width: 100%;" required>
+                        <select class="form-control select2" id="f_matauangproduk" name="f_mtuproduct" style="width: 100%;" required>
                             <option value=""></option>
                             <option value="RP">RP</option>
                             <option value="USD">USD</option>                       
@@ -154,20 +179,20 @@ if(isset($data->id)){
 
                     <div class="form-group formerror-f_hargaproduk">
                         <label>Harga Produk</label>
-                        <input type="text" class="form-control input-rupiah" id="f_hargaproduk" name="f_hargaproduk"  placeholder="Harga Produk ...">
+                        <input type="text" class="form-control input-rupiah" id="f_hargaproduk" name="f_hargaproduct"  placeholder="Harga Produk ...">
                         <div class="error-f_hargaproduk"></div>
                     </div>
 
                     <div class="form-group formerror-f_descproduk">
                         <label>Deskripsi</label>
-                        <textarea class="form-control"  placeholder="Deskripsi.." id="f_descproduk" name="f_descproduk" ></textarea>
+                        <textarea class="form-control"  placeholder="Deskripsi.." id="f_descproduk" name="f_descproduct" ></textarea>
                         <div class="error-f_descproduk"></div>
                     </div>
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary btn-save" data-loading-text="Please wait..." autocomplete="off">Save changes</button>
+                    <button type="submit" class="btn btn-primary btn-simpan" data-loading-text="Please wait..." autocomplete="off">Save changes</button>
                 </div>
             </form>
         </div>
@@ -203,6 +228,10 @@ $(function() {
     $(".select2").select2({
         placeholder:"Silahkan Pilih"
     });
+
+    $(".f_produk_parentid_select").select2({
+            data:{id:0,text:"asd"}
+        });
 
     $('#jstree')
         .on("changed.jstree", function (e, data) {
@@ -415,17 +444,51 @@ $(function() {
         }
     });
 
+    function get_kategori(id, parent){
+        $(".f_parentid_select").empty().trigger('change');
+
+        $.ajax({
+            url: "{{route('catalog.category.get_category_induk')}}?id=" + id,
+            dataType: 'json',
+            success: function(data)
+            {                
+                $(".f_parentid_select").select2({
+                    data: data
+                });
+
+                $(".f_parentid_select").val(parent).trigger('change');
+            }
+        });        
+    }
+
+    function get_produk_induk(parent){
+        $("#f_produk_parent").empty().trigger('change');
+
+        $.ajax({
+            url: "{{route('catalog.product.get_product_induk')}}",
+            dataType: 'json',
+            success: function(data)
+            {                
+                $("#f_produk_parent").select2({
+                    data: data
+                });
+
+                $("#f_produk_parent").val(parent).trigger('change');
+            }
+        });        
+    }
+ 
     var formModal = $('#form-modal-category');
     formModal.on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget)
         var modal = $(this)
 
         var title = button.data('title');        
-        var btnSave = modal.find('.btn-save')
+        var btnSave = modal.find('.btn-simpan')
         btnSave.button('reset')
 
         var data = button.data('data');
-        console.log(data);
+        get_kategori(data.id,data.parent_id);
         
         modal.find('.modal-body input#f_id').val(data.id);
         modal.find('.modal-body input#f_parentid').val(data.parent_id);
@@ -456,7 +519,7 @@ $(function() {
         $.ajax({
             url: formMe.attr('action'),
             type: 'post',
-            data: formMe.serialize(), // Remember that you need to have your csrf token included
+            data: formMe.serialize(),
             dataType: 'json',
             success: function(response){
                 if(response.errors){                    
@@ -477,15 +540,22 @@ $(function() {
                     btnSave.button('reset');
                 }
                 else{
-                    alertBS('Data successfully updated','success');
-                    $('#jstree').jstree(true).refresh();
+                    if(response==1){
+                        alertBS('Data berhasil di update','success');
+                        $('#jstree').jstree(true).refresh();
 
-                    $('#jstree').on('refresh.jstree', function() {
-                        $("#jstree").jstree("open_all");          
-                    });
-                    refresh_kategori(0);
+                        $('#jstree').on('refresh.jstree', function() {
+                            $("#jstree").jstree("open_all");          
+                        });
+                        $("#form-modal-category").modal('hide');
+                        refresh_kategori(0);
+                    }else{
+                        alertBS('Terjadi Kesalahan, Kode kategori tidak boleh sama','danger');
+                        attErrorKode.html('<span class="help-block"> Kode kategori tidak boleh sama </span>');
+                        formMe.find('.formerror-f_kodekategori').addClass("has-error");
+                    }                    
                     btnSave.button('reset');
-                    $('#form-modal-category').modal('hide');
+                    
                 }                
             }
         });
@@ -502,7 +572,8 @@ $(function() {
         modal.find('.modal-title').text(title)
 
         var data = button.data('data');
-        console.log(data);
+
+        get_produk_induk(data.catalog_category_id);
         
         modal.find('.modal-body input#f_id').val(data.id);
         modal.find('.modal-body input#f_parentid').val(data.catalog_category_id);

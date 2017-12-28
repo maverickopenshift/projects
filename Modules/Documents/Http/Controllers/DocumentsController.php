@@ -396,56 +396,57 @@ class DocumentsController extends Controller
         }
         $data = $data->paginate(30);
 
-        $data->getCollection()->transform(function ($value) use ($type){
-          $types=DocType::select('id')->where('name',$type)->first();
-          $temp = DocTemplate::select('id')->where('id_doc_type', $types->id)->first();
-          if($type=='sp'){
-            $parent = Documents::select('id')
+        if($type!="all"){
+          $data->getCollection()->transform(function ($value) use ($type){
+            $types=DocType::select('id')->where('name',$type)->first();
+            $temp = DocTemplate::select('id')->where('id_doc_type', $types->id)->first();
+            if($type=='sp'){
+              $parent = Documents::select('id')
+                          ->where('documents.doc_parent', 0)
+                          ->where('documents.doc_type','amandemen_kontrak')
+                          ->where('documents.doc_signing', 1)
+                          ->where('documents.doc_parent_id', $value['id'])
+                          ->get();
+
+                          $valu[] = $value['id'];
+                          // // dd(array_splice($parent,0,2,$val));
+                          foreach ($parent as $key => $d) {
+                            $valu[] = $d->id;
+                          }
+
+                          $doc = Documents::selectRaw('documents.*,doc.doc_title as title,doc.doc_no as num')
+                                      ->where('documents.doc_parent', 0)
+                                      ->where('documents.doc_type','sp')
+                                      ->where('documents.doc_signing', 1)
+                                      ->where('documents.doc_template_id', $temp->id)
+                                      // ->leftJoin('documents as parent','parent.doc_parent_id','=','documents.id')
+                                      ->join('documents as doc','doc.id','=','documents.doc_parent_id')
+                                      ->whereIn('documents.doc_parent_id', $valu)
+                                      ->orderBy('documents.id', 'asc')
+                                      ->get();
+                          // dd($doc);
+            }
+            else{
+             $doc = Documents::selectRaw('documents.*')
                         ->where('documents.doc_parent', 0)
-                        ->where('documents.doc_type','amandemen_kontrak')
                         ->where('documents.doc_signing', 1)
                         ->where('documents.doc_parent_id', $value['id'])
+                        ->where('documents.doc_template_id', $temp->id)
                         ->get();
+            }
 
-                        $valu[] = $value['id'];
-                        // // dd(array_splice($parent,0,2,$val));
-                        foreach ($parent as $key => $d) {
-                          $valu[] = $d->id;
-                        }
+            $ttd=DocMeta::where('meta_type','lampiran_ttd')->where('documents_id',$value['id'])->get();
+            $ttd->map(function($item, $key) use ($type){
+                $item->url=route('doc.file',['filename'=>$item->meta_file,'type'=>$type.'_lampiran_ttd']);
 
-                        $doc = Documents::selectRaw('documents.*,doc.doc_title as title,doc.doc_no as num')
-                                    ->where('documents.doc_parent', 0)
-                                    ->where('documents.doc_type','sp')
-                                    ->where('documents.doc_signing', 1)
-                                    ->where('documents.doc_template_id', $temp->id)
-                                    // ->leftJoin('documents as parent','parent.doc_parent_id','=','documents.id')
-                                    ->join('documents as doc','doc.id','=','documents.doc_parent_id')
-                                    ->whereIn('documents.doc_parent_id', $valu)
-                                    ->orderBy('documents.id', 'asc')
-                                    ->get();
-                        // dd($doc);
-          }
-          else{
-           $doc = Documents::selectRaw('documents.*')
-                      ->where('documents.doc_parent', 0)
-                      ->where('documents.doc_signing', 1)
-                      ->where('documents.doc_parent_id', $value['id'])
-                      ->where('documents.doc_template_id', $temp->id)
-                      ->get();
-          }
+                return $item;
+            });
 
-          $ttd=DocMeta::where('meta_type','lampiran_ttd')->where('documents_id',$value['id'])->get();
-          $ttd->map(function($item, $key) use ($type){
-              $item->url=route('doc.file',['filename'=>$item->meta_file,'type'=>$type.'_lampiran_ttd']);
-
-              return $item;
+            $value['lampiran_ttd'] = $ttd;
+            $value['type'] = json_encode($doc->toArray());
+            return $value;
           });
-
-          $value['lampiran_ttd'] = $ttd;
-          $value['type'] = json_encode($doc->toArray());
-          return $value;
-        });
-
+        }
 
         return \Response::json($data);
     }

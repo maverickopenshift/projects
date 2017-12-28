@@ -15,7 +15,7 @@ use Validator;
 class CategoryController extends Controller
 {
     public function index(Request $request){
-        return view('catalog::category2');
+        return view('catalog::category');
     }
 
     public function get_category(Request $request){
@@ -24,13 +24,23 @@ class CategoryController extends Controller
 
         return Response::json($data);
     }
-    /*
-    public function get_category_induk(Request $request){
-        $result=CatalogCategory::where('id','!=',$request->id)->get();
 
-        return Response::json($result);
-    }
-    */
+    public function get_category_induk(Request $request){
+        $result=CatalogCategory::selectRaw('id, code, display_name')->where('id','!=',$request->id)->get();
+        
+
+        $hasil=array();
+        $hasil[0]['id']=0;
+        $hasil[0]['text']="Tidak Memiliki Induk";
+
+        for($i=0;$i<count($result);$i++){
+            $hasil[$i+1]['id']=$result[$i]->id;
+            $hasil[$i+1]['text']=$result[$i]->code ." - ". $result[$i]->display_name;
+        }
+
+        return Response::json($hasil);
+    } 
+
     public function datatables(Request $request){
 
         if($request->parent_id==0){
@@ -80,36 +90,50 @@ class CategoryController extends Controller
 
     public function proses(Request $request){
         $rules = array (
-            'f_kodekategori' => 'required|min:2|max:250',
-            'f_namakategori' => 'required|min:2|max:250',
-            'f_deskripsikategori' => 'required|min:2|max:500',
+            'f_kodekategori' => 'required|min:5|max:10|regex:/^[0-9]+$/i',
+            'f_namakategori' => 'required|min:5|max:250|regex:/^[a-z0-9 .\-]+$/i',
+            'f_deskripsikategori' => 'required|min:5|max:500|regex:/^[a-z0-9 .\-]+$/i',
         );
 
-        $validator = Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
+
         if ($validator->fails ())
             return Response::json (array(
                 'errors' => $validator->getMessageBag()->toArray()
             ));
         else{
             if($request->f_id==0){
-                $proses=new CatalogCategory();
-                $proses->code=$request->f_kodekategori;
-                $proses->display_name=$request->f_namakategori;
-                $proses->name=str_slug($request->f_namakategori);
-                $proses->parent_id=$request->f_parentid;
-                $proses->desc=$request->f_deskripsikategori;
-                $proses->save();
-            }else{
-                $proses=CatalogCategory::where('id',$request->f_id)->first();
-                $proses->code=$request->f_kodekategori;
-                $proses->display_name=$request->f_namakategori;
-                $proses->name=str_slug($request->f_namakategori);
-                $proses->parent_id=$request->f_parentid;
-                $proses->desc=$request->f_deskripsikategori;
-                $proses->save();
-            }
+                $hitung=CatalogCategory::where('code',$request->f_kodekategori)->count();
+                if($hitung==0){
+                    $proses=new CatalogCategory();
+                    $proses->code=$request->f_kodekategori;
+                    $proses->display_name=$request->f_namakategori;
+                    $proses->name=str_slug($request->f_namakategori);
+                    $proses->parent_id=$request->f_parentid;
+                    $proses->desc=$request->f_deskripsikategori;
+                    $proses->save();
 
-            return response()->json($proses);
+                    return 1;
+                }else{
+                    return 0;
+                }                
+            }else{
+                $hitung=CatalogCategory::where('id','!=',$request->f_id)->where('code',$request->f_kodekategori)->count();
+
+                if($hitung==0){
+                    $proses=CatalogCategory::where('id',$request->f_id)->first();
+                    $proses->code=$request->f_kodekategori;
+                    $proses->display_name=$request->f_namakategori;
+                    $proses->name=str_slug($request->f_namakategori);
+                    $proses->parent_id=$request->f_parentid_select;
+                    $proses->desc=$request->f_deskripsikategori;
+                    $proses->save();
+
+                    return 1;
+                }else{
+                    return 0;
+                }
+            }
         }
     }
 

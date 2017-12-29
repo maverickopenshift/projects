@@ -14,6 +14,12 @@ class Supplier extends Model
     {
         return $this->hasOne('App\User','id','id_user');
     }
+
+    public function supplierSap()
+    {
+        return $this->hasMany('Modules\Supplier\Entities\SupplierSap','supplier_id','id');
+    }
+
     public static function gen_userid(){
       $thn=date("y");
       $bln=date("m");

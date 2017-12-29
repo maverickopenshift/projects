@@ -38,7 +38,7 @@
                     </ul>
                   </li>
                 @endpermission
-                
+
                 @permission('lihat-kontrak')
                   @if(!Laratrust::hasRole('approver'))
                     <li class="{{Request::is("documents/status/draft")?'active':''}}" ><a href="{{route('doc',['status'=>'draft'])}}">Draft</a></li>
@@ -82,6 +82,7 @@
               <ul class="treeview-menu">
                 @permission('lihat-supplier')
                   <li class="{{Request::is("supplier/create") || Request::is("supplier/*/edit") || Request::is("supplier")?'active':''}}" ><a href="{{route('supplier')}}">Supplier</a></li>
+                  <li class="{{Request::is("supplier/sap")?'active':''}}" ><a href="{{route('suppliersap')}}">Supplier SAP</a></li>
                 @endpermission
 
                 @permission('lihat-klasifikasi-usaha')

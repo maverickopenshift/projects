@@ -72,6 +72,7 @@ class EntryDocumentController extends Controller
         // dd($doc_type);
         $data['data'] = $this->fields;
         $data['pegawai'] = \App\User::get_user_pegawai();
+
         return view('documents::form')->with($data);
     }
 

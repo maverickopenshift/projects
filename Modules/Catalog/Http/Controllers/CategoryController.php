@@ -25,9 +25,9 @@ class CategoryController extends Controller
         return Response::json($data);
     }
 
+    /*
     public function get_category_induk(Request $request){
-        $result=CatalogCategory::selectRaw('id, code, display_name')->where('id','!=',$request->id)->get();
-        
+        $result=CatalogCategory::selectRaw('id, code, display_name')->where('id','!=',$request->id)->get();        
 
         $hasil=array();
         $hasil[0]['id']=0;
@@ -40,6 +40,59 @@ class CategoryController extends Controller
 
         return Response::json($hasil);
     } 
+    */
+
+    public function get_category_induk(Request $request){
+        $id=$request->id;
+        $parent_id=$request->parent_id;
+        $result=CatalogCategory::where('parent_id',$parent_id)->get();
+        $hasil=array();
+        $hasil[0]['id']=0;
+        $hasil[0]['text']="Tidak Memiliki Induk";
+        $x=1;
+            for($i=0;$i<count($result);$i++){
+                if($id!=$result[$i]->id){
+                    $hasil[$x]['id']=$result[$i]->id;
+                    $hasil[$x]['text']=$result[$i]->code ." - ". $result[$i]->display_name;
+                    $x++;
+
+                    $hitung=CatalogCategory::where('parent_id',$result[$i]->id)->count();
+                    if($hitung!=0){
+                        $result_child=$this->get_category_induk2($id, $result[$i]->id);
+                        for($y=0;$y<count($result_child);$y++){
+                            $hasil[$x]['id']=$result_child[$y]['id'];
+                            $hasil[$x]['text']=$result_child[$y]['text'];
+                            $x++;
+                        }
+                    }    
+                }                
+            }
+        return $hasil;
+    }
+
+    public function get_category_induk2($id,$parent_id){
+        $result=CatalogCategory::where('parent_id',$parent_id)->get();
+        $hasil=array();
+        $x=0;
+            for($i=0;$i<count($result);$i++){
+                if($id!=$result[$i]->id){
+                    $hasil[$x]['id']=$result[$i]->id;
+                    $hasil[$x]['text']=$result[$i]->code ." - ". $result[$i]->display_name;
+                    $x++;
+
+                    $hitung=CatalogCategory::where('parent_id',$result[$i]->id)->count();
+                    if($hitung!=0){
+                        $result_child=$this->get_category_induk2($id, $result[$i]->id);
+                        for($y=0;$y<count($result_child);$y++){
+                            $hasil[$x]['id']=$result_child[$y]['id'];
+                            $hasil[$x]['text']=$result_child[$y]['text'];
+                            $x++;
+                        }
+                    }    
+                }                
+            }
+        return $hasil;
+    }
 
     public function datatables(Request $request){
 

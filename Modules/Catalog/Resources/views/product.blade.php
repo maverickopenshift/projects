@@ -14,17 +14,23 @@ $f_unitproduct=Helper::old_prop_each($product,'f_unitproduct');
 $f_mtuproduct=Helper::old_prop_each($product,'f_mtuproduct');
 $f_hargaproduct=Helper::old_prop_each($product,'f_hargaproduct');
 $f_descproduct=Helper::old_prop_each($product,'f_descproduct');
+$f_parentid=old('f_parentid');
 @endphp
 
 <style type="text/css">
     #jstree{
-        max-width: 200px;
+        max-width: 90%;
     }
 
     #jstree a {
         white-space: normal !important;
         height: auto;
         padding: 1px 2px;
+    }
+
+    .disabledbutton {
+        pointer-events: none;
+        opacity: 0.4;
     }
 </style>
 
@@ -47,26 +53,28 @@ $f_descproduct=Helper::old_prop_each($product,'f_descproduct');
     </div>
 
     <div class="col-md-9">
-        <div class="box box-danger">
+        <div class="box box-danger test-product">
             <div class="box-header with-border">
                 <i class="fa fa-cogs"></i>
                 <h3 class="box-title f_parentname">Tambah Product</h3>
-                <div class="box-tools pull-right">
-                    <button class="btn btn-default add-product">
-                        <i class="glyphicon glyphicon-plus"></i> Tambah
-                    </button>
-                    <button class="btn btn-default add-boq" data-toggle="modal" data-target="#modalboq">
-                        <i class="glyphicon glyphicon-plus"></i> Tambah BOQ
-                    </button>
-                    <input type="file" name="upload-boq" class="upload-boq hide"/>
-                    <button class="btn btn-primary upload-boq-btn" type="button"><i class="fa fa-upload"></i> Upload</button>
-                    <a href="{{route('doc.template.download',['filename'=>'harga_satuan'])}}" class="btn btn-info"><i class="glyphicon glyphicon-download-alt"></i> Download Template</a>
-                </div>
             </div>    
             <form method="post" action="{{route('catalog.product.add')}}">
-                <input type="hidden" class="f_parentid" name="f_parentid">
+                <input type="hidden" class="f_parentid" name="f_parentid" value="{{$f_parentid}}">
                 {{ csrf_field() }}
                 <div class="box-body form-horizontal">
+                    <div id="alertBS"></div>
+
+                    <div class="form-group pull-right">
+                        <div class="col-sm-12">
+                            <a class="btn btn-default add-boq" data-toggle="modal" data-target="#modalboq">
+                                <i class="glyphicon glyphicon-plus"></i> BOQ Kontrak
+                            </a>
+                            <input type="file" name="upload-boq" class="upload-boq hide"/>
+                            <a class="btn btn-primary upload-boq-btn" type="button"><i class="fa fa-upload"></i> Upload</a>
+                            <a href="{{route('doc.template.download',['filename'=>'harga_satuan'])}}" class="btn btn-info"><i class="glyphicon glyphicon-download-alt"></i> Download Template</a>
+                        </div>
+                    </div>
+
                     <table class="table table-striped table-parent-product" width="100%">
                         <thead>
                             <tr>
@@ -100,9 +108,12 @@ $f_descproduct=Helper::old_prop_each($product,'f_descproduct');
                                             if($f_mtuproduct[$key]=="RP"){
                                                 $a="selected";
                                                 $b="";
-                                            }else{
+                                            }else if($f_mtuproduct[$key]=="USD"){
                                                 $a="";
                                                 $b="selected";
+                                            }else{
+                                                $a="";
+                                                $b="";
                                             }
                                         @endphp
                                         <select name="f_mtuproduct[]" class="form-control select2" style="width: 100%;">
@@ -120,10 +131,15 @@ $f_descproduct=Helper::old_prop_each($product,'f_descproduct');
                                         <input type="text" value="{{$f_descproduct[$key]}}" name="f_descproduct[]" placeholder="Deskripsi.." class="form-control">
                                         {!!Helper::error_help($errors,'f_descproduct.'.$key)!!}
                                     </td>
-                                    <td>
-                                        <button class="btn bg-red btn-delete" style="margin-bottom: 2px;">
-                                            Hapus
-                                        </button>
+                                    <td width="100px">
+                                        <div class="btn-group">
+                                            <a class="btn btn-primary add-product">
+                                                <i class="glyphicon glyphicon-plus"></i>
+                                            </a>
+                                            <a class="btn bg-red btn-delete" style="margin-bottom: 2px;">
+                                                <i class="glyphicon glyphicon-trash"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -151,10 +167,15 @@ $f_descproduct=Helper::old_prop_each($product,'f_descproduct');
                                 <td>
                                     <input type="text" name="f_descproduct[]" placeholder="Deskripsi.." class="form-control">
                                 </td>
-                                <td>
-                                    <button class="btn bg-red btn-delete" style="margin-bottom: 2px;">
-                                        Hapus
-                                    </button>
+                                <td width="100px">
+                                    <div class="btn-group">
+                                        <a class="btn btn-primary add-product">
+                                            <i class="glyphicon glyphicon-plus"></i>
+                                        </a>
+                                        <a class="btn bg-red btn-delete" style="margin-bottom: 2px;">
+                                            <i class="glyphicon glyphicon-trash"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             @endif
@@ -163,6 +184,9 @@ $f_descproduct=Helper::old_prop_each($product,'f_descproduct');
                 </div>
                 <div class="box-footer">
                     <div class="box-tools pull-right">
+                        <a class="btn bg-red btn-reset" href="{{route('catalog.product')}}" style="margin-bottom: 2px;">
+                            Reset
+                        </a>
                         <input type="submit" class="btn btn-primary simpan-product" value="Simpan">
                     </div>
                 </div>
@@ -216,25 +240,6 @@ $f_descproduct=Helper::old_prop_each($product,'f_descproduct');
     </div>
 </div>
 
-<div class="modal modal-danger fade" id="modal-delete">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span></button>
-                <h4 class="modal-title">Confirm Delete</h4>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete this data</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-outline btn-delete" data-loading-text="Please wait..."><i class="glyphicon glyphicon-trash"></i> Delete</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @endsection
 @push('scripts')
 <script>
@@ -250,6 +255,7 @@ $(function() {
 
     function normal(){
         $(".add-product").prop("disabled", true);
+        $(".test-product").addClass("disabledbutton");
         $(".add-boq").prop("disabled", true);
         $(".upload-boq-btn").prop("disabled", true);
         $(".simpan-product").prop( "disabled", true );
@@ -282,7 +288,7 @@ $(function() {
                 @endphp
                 
                 if(fields.length!==fields_length_set || JSON.stringify(fields_dec)!==JSON.stringify(fields)){
-                    console.log("format tidak valid");
+                    alertBS("Format file tidak valid");
                     //$('.error-daftar_harga').html('Format CSV tidak valid!');
                     return false;
                 }
@@ -309,21 +315,29 @@ $(function() {
                         var input_new_row = new_row.find('td');
                         
                         input_new_row.eq(0).find('input').val(results.data[index].KODE_ITEM);
+                        input_new_row.eq(0).find('.error').remove();
+                        input_new_row.eq(0).removeClass("has-error");
                         input_new_row.eq(1).find('input').val(results.data[index].ITEM);
+                        input_new_row.eq(1).find('.error').remove();
+                        input_new_row.eq(1).removeClass("has-error");
                         input_new_row.eq(2).find('input').val(results.data[index].SATUAN);
+                        input_new_row.eq(2).find('.error').remove();
+                        input_new_row.eq(2).removeClass("has-error");
                         input_new_row.eq(3).find('select').val(results.data[index].MTU);
+                        input_new_row.eq(3).find('.error').remove();
+                        input_new_row.eq(3).removeClass("has-error");
                         input_new_row.eq(4).find('input').val(results.data[index].HARGA);
+                        input_new_row.eq(4).find('.error').remove();
+                        input_new_row.eq(4).removeClass("has-error");
                         input_new_row.eq(5).find('input').val(results.data[index].KETERANGAN);
+                        input_new_row.eq(5).find('.error').remove();
+                        input_new_row.eq(5).removeClass("has-error");
 
                         $(".select2").select2({
                             placeholder:"Silahkan Pilih"
                         });
                     }                    
                 });
-
-                
-
-                
             }
         });
     }
@@ -333,7 +347,7 @@ $(function() {
             if(data.selected.length) {
                 $(".f_parentname").html("Tambah Product - " + data.instance.get_node(data.selected[0]).text);
                 $(".f_parentid").val(data.instance.get_node(data.selected[0]).id);
-
+                $(".test-product").removeClass("disabledbutton");
                 $(".add-product").prop("disabled", false);
                 $(".add-boq").prop("disabled", false);
                 $(".upload-boq-btn").prop("disabled", false);
@@ -350,6 +364,12 @@ $(function() {
         })
         .bind("ready.jstree", function (event, data) {
              $(this).jstree("open_all");
+             var parent=$(".f_parentid").val();
+             console.log(parent);
+
+             if(parent!=""){
+                $('#jstree').jstree('select_node', parent);
+             }
         });
 
     var to = false;
@@ -367,6 +387,8 @@ $(function() {
         var rowCount = $('.table-parent-product tr:last').index() + 1;
         if(rowCount!=1){
             $(this).closest('tr').remove();    
+        }else{
+            alertBS('Jika jumlah baris hanya ada 1 tidak bisa di hapus, silahkan tambah sebelum menghapus','danger');
         }
     });
 
@@ -377,7 +399,28 @@ $(function() {
             } 
         });
 
-        $('.tabel-product:last').clone(true).insertAfter(".tabel-product:last").find("input:text").val("");
+        var new_row = $('.tabel-product:last').clone(true).insertAfter(".tabel-product:last");
+        var input_new_row = new_row.find('td');
+        
+        input_new_row.eq(0).find('input').val("");
+        input_new_row.eq(0).find('.error').remove();
+        input_new_row.eq(0).removeClass("has-error");
+        input_new_row.eq(1).find('input').val("");
+        input_new_row.eq(1).find('.error').remove();
+        input_new_row.eq(1).removeClass("has-error");
+        input_new_row.eq(2).find('input').val("");
+        input_new_row.eq(2).find('.error').remove();
+        input_new_row.eq(2).removeClass("has-error");
+        input_new_row.eq(3).find('select').val("");
+        input_new_row.eq(3).find('.error').remove();
+        input_new_row.eq(3).removeClass("has-error");
+        input_new_row.eq(4).find('input').val("");
+        input_new_row.eq(4).find('.error').remove();
+        input_new_row.eq(4).removeClass("has-error");
+        input_new_row.eq(5).find('input').val("");
+        input_new_row.eq(5).find('.error').remove();
+        input_new_row.eq(5).removeClass("has-error");
+
         $(".select2").select2({
             placeholder:"Silahkan Pilih"
         });
@@ -389,6 +432,7 @@ $(function() {
             dataType: 'json',
             success: function(data)
             {
+                console.log(data);
                 $(".select-kontrak").select2({
                     data: data
                 });
@@ -443,14 +487,26 @@ $(function() {
 
                         var new_row = $('.tabel-product:last').clone(true).insertAfter(".tabel-product:last");
                         var input_new_row = new_row.find('td');
-                        console.log(data);
+                        
                         input_new_row.eq(0).find('input').val(data[0].kode_item);
+                        input_new_row.eq(0).find('.error').remove();
+                        input_new_row.eq(0).removeClass("has-error");
                         input_new_row.eq(1).find('input').val(data[0].item);
+                        input_new_row.eq(1).find('.error').remove();
+                        input_new_row.eq(1).removeClass("has-error");
                         input_new_row.eq(2).find('input').val(data[0].satuan);
+                        input_new_row.eq(2).find('.error').remove();
+                        input_new_row.eq(2).removeClass("has-error");
                         input_new_row.eq(3).find('select').val(data[0].mtu);
+                        input_new_row.eq(3).find('.error').remove();
+                        input_new_row.eq(3).removeClass("has-error");
                         input_new_row.eq(4).find('input').val(data[0].harga);
+                        input_new_row.eq(4).find('.error').remove();
+                        input_new_row.eq(4).removeClass("has-error");
                         input_new_row.eq(5).find('input').val(data[0].desc);
-
+                        input_new_row.eq(5).find('.error').remove();
+                        input_new_row.eq(5).removeClass("has-error");
+                        
                         $(".select2").select2({
                             placeholder:"Silahkan Pilih"
                         });

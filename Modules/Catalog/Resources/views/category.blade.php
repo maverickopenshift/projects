@@ -230,12 +230,12 @@ $(function() {
     }
 
     function get_kategori(id, parent){
-        console.log(parent);
+        console.log(id + " - " + parent);
 
         $(".f_parentid_select").empty().trigger('change');
 
         $.ajax({
-            url: "{{route('catalog.category.get_category_induk')}}?id=" + id,
+            url: "{{route('catalog.category.get_category_induk')}}?id=" + id + "&parent_id=0",
             dataType: 'json',
             success: function(data)
             {                

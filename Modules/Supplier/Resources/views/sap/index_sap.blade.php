@@ -36,13 +36,13 @@
             <thead>
             <tr>
                 <th width="">No.</th>
-                <th width="">Supplier</th>
-                <th width="">ID</th>
-                <th width="">Alamat</th>
-                <th width="">Kota</th>
-                <th width="">Upload By</th>
-                <th width="">Upload At</th>
-                <th width="">Action</th>
+                <th width="150">Supplier</th>
+                <th width="50">ID</th>
+                <th width="180">Alamat</th>
+                <th width="100">Kota</th>
+                <th width="50">Upload By</th>
+                <th width="150">Upload At</th>
+                <th width="50">Action</th>
             </tr>
             </thead>
         </table>
@@ -77,9 +77,7 @@ $(function() {
       serverSide: true,
       autoWidth : true,
       scrollX   : true,
-      fixedColumns:   {
-            // leftColumns: 2,
-      },
+
       order : [[ 0, 'desc' ]],
       pageLength: 50,
       ajax: '{!! route('supplier.sap.data') !!}',

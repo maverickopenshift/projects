@@ -113,7 +113,7 @@
               <a href="#"><img src="{{asset('/images/icon-user.png')}}" title="Catalog" />
                 <span>Catalog</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
-                @permission('catalog-product')
+                @permission('catalog-category')
                   <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Category</a></li>
                 @endpermission
                 @permission('catalog-product')

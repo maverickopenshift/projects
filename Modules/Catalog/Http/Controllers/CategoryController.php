@@ -100,8 +100,7 @@ class CategoryController extends Controller
             $data=CatalogCategory::get();
         }else{
             $data=CatalogCategory::where('parent_id',$request->parent_id)->get();
-        }
-        
+        }        
 
         return Datatables::of($data)
                 ->addIndexColumn()
@@ -109,7 +108,7 @@ class CategoryController extends Controller
                     $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
                     $act= '<div class="btn-group">';
 
-                    if(\Auth::user()->hasPermission('catalog-product')){
+                    if(\Auth::user()->hasPermission('ubah-catalog-category')){
                         $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal-category"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-type="category" ><i class="glyphicon glyphicon-edit"></i> Edit</button>';
                     }
 

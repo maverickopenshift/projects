@@ -38,7 +38,7 @@
                     </ul>
                   </li>
                 @endpermission
-                
+
                 @permission('lihat-kontrak')
                   @if(!Laratrust::hasRole('approver'))
                     <li class="{{Request::is("documents/status/draft")?'active':''}}" ><a href="{{route('doc',['status'=>'draft'])}}">Draft</a></li>
@@ -82,6 +82,7 @@
               <ul class="treeview-menu">
                 @permission('lihat-supplier')
                   <li class="{{Request::is("supplier/create") || Request::is("supplier/*/edit") || Request::is("supplier")?'active':''}}" ><a href="{{route('supplier')}}">Supplier</a></li>
+                  <li class="{{Request::is("supplier/sap")?'active':''}}" ><a href="{{route('suppliersap')}}">Supplier SAP</a></li>
                 @endpermission
 
                 @permission('lihat-klasifikasi-usaha')
@@ -112,9 +113,15 @@
               <a href="#"><img src="{{asset('/images/icon-user.png')}}" title="Catalog" />
                 <span>Catalog</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
-                <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Category</a></li>
-                <li class="{{Request::is('catalog/product') ?'active':''}}"><a href="{{route('catalog.product')}}">Product</a></li>
-                <li class="{{Request::is('catalog/catalog_list') ?'active':''}}"><a href="{{route('catalog.list')}}">List Kategori & Product</a></li>
+                @permission('catalog-category')
+                  <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Category</a></li>
+                @endpermission
+                @permission('catalog-product')
+                  <li class="{{Request::is('catalog/product') ?'active':''}}"><a href="{{route('catalog.product')}}">Product</a></li>
+                @endpermission
+                @permission('lihat-catalog')
+                  <li class="{{Request::is('catalog/catalog_list') ?'active':''}}"><a href="{{route('catalog.list')}}">List Kategori & Product</a></li>
+                @endpermission
               </ul>
             </li>
             @endpermission

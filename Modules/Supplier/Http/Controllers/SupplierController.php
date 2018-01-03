@@ -33,16 +33,27 @@ class SupplierController extends Controller
                 $notif="Sudah Disetujui";
               }
             }
-
         $data['page_title'] = 'Supplier';
         return view('supplier::index')->with($data);
     }
     public function data()
     {
-
-        $sql = Supplier::with('user')->get();
+        $sql = Supplier::with('user','supplierSap')->get();
+        // dd($sql);
         return Datatables::of($sql)
             ->addIndexColumn()
+            ->addColumn('id_sap', function ($data){
+              if($data->id_sap==="" || $data->id_sap==null){
+                $sap = "-";
+              }else{
+                foreach ($data->supplierSap as $key => $v) {
+                  $vendor[] = $v->vendor;
+                }
+                $kalimat = implode(', ',$vendor);
+                $sap = $kalimat;
+              }
+              return $sap;
+            })
             ->addColumn('vendor_status', function ($data){
               if($data->vendor_status==0){
                 $sts = 'Belum Disetujui';
@@ -53,8 +64,6 @@ class SupplierController extends Controller
               }else{
                 $sts = "-";
               }
-              // $sts = ($data->vendor_status==0)?'Belum Disetujui':'-';
-              // $sts = ($data->vendor_status==1)?'Sudah Disetujui':'-';
               return $sts;
             })
             ->addColumn('action', function ($data) {
@@ -65,6 +74,14 @@ class SupplierController extends Controller
               $act= '<div class="">';
               if(\Auth::user()->hasPermission('ubah-supplier')){
                   $act .='<a href="'.route('supplier.lihat',['id'=>$data->id,'status'=>'lihat']).'" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-list-alt"></i> Lihat</a> <br>';
+              }
+              if(\Auth::user()->hasPermission('ubah-supplier')){
+                if($data->id_sap==="" || $data->id_sap==null){
+                  $act .='<a href="'.route('supplier.mapping.sap',['id'=>$data->id]).'" class="btn btn-success btn-xs">Link To SAP</a> <br>';
+                }else{
+                  $act .='<button class="btn btn-danger btn-xs unlink_btn" data-id="'.$data->id.'">Unlink To SAP</button> <br>';
+                }
+
               }
   //             if(\Auth::user()->hasPermission('ubah-supplier')){
   //                 $act .='<button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#form-modal"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'">

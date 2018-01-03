@@ -230,12 +230,12 @@ $(function() {
     }
 
     function get_kategori(id, parent){
-        console.log(parent);
+        console.log(id + " - " + parent);
 
         $(".f_parentid_select").empty().trigger('change');
 
         $.ajax({
-            url: "{{route('catalog.category.get_category_induk')}}?id=" + id,
+            url: "{{route('catalog.category.get_category_induk')}}?id=" + id + "&parent_id=0",
             dataType: 'json',
             success: function(data)
             {                
@@ -263,7 +263,7 @@ $(function() {
 
         $(".f_kodekategori").prop( "disabled", false);
         $(".f_namakategori").prop( "disabled", false);
-        $(".f_parentid_select").prop( "disabled", true);
+        $(".f_parentid_select").prop( "disabled", false);
         $(".f_deskripsikategori").prop( "disabled", false);
         $(".btn-simpan").prop( "disabled", false);
 
@@ -271,6 +271,12 @@ $(function() {
         $(".btn-delete").prop( "disabled", true);
 
         $(".f_parentid_select").empty().trigger('change');
+
+        $(".f_parentid_select").select2({
+            data:[
+                {id:0,text:"Tidak Memiliki Induk"}
+            ],
+        });
 
         $(".f_parentid_select").select2({
             placeholder:"Silahkan Pilih",
@@ -286,7 +292,7 @@ $(function() {
         
         $(".f_kodekategori").prop( "disabled", false);
         $(".f_namakategori").prop( "disabled", false);
-        $(".f_parentid_select").prop( "disabled", true);
+        $(".f_parentid_select").prop( "disabled", false);
         $(".f_deskripsikategori").prop( "disabled", false);
         $(".btn-edit").prop( "disabled", true);
         $(".btn-delete").prop( "disabled", true);
@@ -304,6 +310,12 @@ $(function() {
         $(".f_deskripsikategori").val("");
 
         $(".f_parentid_select").empty().trigger('change');
+
+        $(".f_parentid_select").select2({
+            data:[
+                {id:$("#jstree").jstree().get_selected(true)[0].id, text:$("#jstree").jstree().get_selected(true)[0].text}
+            ],
+        });
 
         $(".f_parentid_select").select2({
             placeholder:"Silahkan Pilih",

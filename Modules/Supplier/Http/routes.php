@@ -28,6 +28,14 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
     Route::post('/update', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@update'])->name('supplier.update');
     Route::get('/get-select', 'SupplierController@getSelect')->name('supplier.get-select');
 
+    Route::get('/sap', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierSapController@index'])->name('suppliersap');
+    Route::get('/sap-data', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierSapController@data'])->name('supplier.sap.data');
+    Route::get('/sap-lihat-{id}', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierSapController@lihat'])->name('supplier.sap.lihat');
+    Route::post('/sap-upload', ['middleware' => ['permission:tambah-supplier'],'uses' => 'UploadSapController@store'])->name('supplier.upload.sap');
+    Route::get('/sap-mapping-{id}', ['middleware' => ['permission:ubah-supplier'],'uses' => 'MappingSapController@index'])->name('supplier.mapping.sap');
+    Route::post('/mapping-simpan', ['middleware' => ['permission:ubah-supplier'],'uses' => 'MappingSapController@simpan'])->name('supplier.mapping.simpan');
+    Route::post('/mapping-hapus', ['middleware' => ['permission:ubah-supplier'],'uses' => 'MappingSapController@hapus'])->name('supplier.hapus.mapping');
+
     Route::get('/comments', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierCommentController@comments'])->name('sup.comments');
 
     Route::get('/legal-dokumen/{filename}', function ($filename){

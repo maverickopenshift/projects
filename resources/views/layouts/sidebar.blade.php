@@ -55,6 +55,7 @@
               </ul>
             </li>
             @endpermission
+
             @permission('lihat-user|lihat-role|lihat-permission')
             <li class="treeview {{Request::is("users/*") || Request::is("users")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management User" />

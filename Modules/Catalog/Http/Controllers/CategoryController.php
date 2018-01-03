@@ -25,23 +25,6 @@ class CategoryController extends Controller
         return Response::json($data);
     }
 
-    /*
-    public function get_category_induk(Request $request){
-        $result=CatalogCategory::selectRaw('id, code, display_name')->where('id','!=',$request->id)->get();        
-
-        $hasil=array();
-        $hasil[0]['id']=0;
-        $hasil[0]['text']="Tidak Memiliki Induk";
-
-        for($i=0;$i<count($result);$i++){
-            $hasil[$i+1]['id']=$result[$i]->id;
-            $hasil[$i+1]['text']=$result[$i]->code ." - ". $result[$i]->display_name;
-        }
-
-        return Response::json($hasil);
-    } 
-    */
-
     public function get_category_induk(Request $request){
         $id=$request->id;
         $parent_id=$request->parent_id;

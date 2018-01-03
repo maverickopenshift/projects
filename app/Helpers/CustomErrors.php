@@ -260,9 +260,10 @@ class CustomErrors
                   'f_kodekategori.min' => 'Input minimal 5 karakter',
                   'f_kodekategori.max' => 'Input maximal 10 karakter',
 
-                  'f_namakategori.min' => 'Input minimal 2 karakter',
+                  'f_namakategori.min' => 'Input minimal 5 karakter',
                   'f_namakategori.max' => 'Input maximal 250 karakter',
 
+                  'f_deskripsikategori.min' => 'Input minimal 5 karakter',
                   'f_deskripsikategori.max' => 'Input maximal 500 karakter',
 
                   '*.required' => 'Inputan harus diisi',

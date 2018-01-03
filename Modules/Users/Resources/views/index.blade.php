@@ -69,7 +69,14 @@ $(function() {
       // },
       order : [[ 5, 'desc' ]],
       pageLength: 50,
-      ajax: '{!! route('users.data') !!}',
+      //ajax: '{!! route('users.data') !!}',
+      ajax: {
+          "url": "{!! route('users.data') !!}",
+          "type": "POST",
+          'headers': {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}'
+          }
+      },
       columns: [
           {data : 'DT_Row_Index',orderable:false,searchable:false},
           { data: 'name', name: 'name' },

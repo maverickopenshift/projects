@@ -63,7 +63,14 @@
         autoWidth : false,
         order : [[ 1, 'desc' ]],
         pageLength: 50,
-        ajax: '{!! route('users.roles.data') !!}',
+        //ajax: '{!! route('users.roles.data') !!}',
+        ajax: {
+            "url": "{!! route('users.roles.data') !!}",
+            "type": "POST",
+            'headers': {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        },
         columns: [
             {data : 'DT_Row_Index',orderable:false,searchable:false},
             { data: 'name', name: 'name' },

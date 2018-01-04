@@ -54,6 +54,10 @@ class Documents extends Model
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','scope_perubahan');
     }
+    public function scope_perubahan_side_letter()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocMetaSideLetter');
+    }
     public function latar_belakang_surat_pengikatan()
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','latar_belakang_surat_pengikatan');

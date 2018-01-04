@@ -15,6 +15,7 @@ use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocPo;
 use Modules\Documents\Entities\DocActivity;
 use Modules\Documents\Http\Controllers\SuratPengikatanCreateController as SuratPengikatanCreate;
+use Modules\Documents\Http\Controllers\SideLetterCreateController as SideLetterCreate;
 use Modules\Documents\Http\Controllers\MouCreateController as MouCreate;
 use Modules\Documents\Http\Controllers\SpCreateController as SpCreate;
 use Modules\Documents\Http\Controllers\AmandemenSpCreateController as AmandemenSpCreate;
@@ -35,12 +36,14 @@ class EntryDocumentController extends Controller
     protected $AmandemenKontrakCreate;
     protected $AdendumCreate;
     protected $SideLetterCreate;
-    public function __construct(Request $req,MouCreate $MouCreate,SuratPengikatanCreate $SuratPengikatanCreate,SpCreate $spCreate,AmandemenSpCreate $AmandemenSpCreate,AmandemenKontrakCreate $AmandemenKontrakCreate){
+    
+    public function __construct(Request $req,MouCreate $MouCreate,SuratPengikatanCreate $SuratPengikatanCreate,SpCreate $spCreate,AmandemenSpCreate $AmandemenSpCreate,AmandemenKontrakCreate $AmandemenKontrakCreate,SideLetterCreate $SideLetterCreate){
       $this->SuratPengikatanCreate  = $SuratPengikatanCreate;
       $this->MouCreate              = $MouCreate;
       $this->spCreate               = $spCreate;
       $this->AmandemenSpCreate      = $AmandemenSpCreate;
       $this->AmandemenKontrakCreate = $AmandemenKontrakCreate;
+      $this->SideLetterCreate = $SideLetterCreate;
       $doc_id = $req->doc_id;
       $field = Documents::get_fields();
       if(!empty($doc_id)){
@@ -107,7 +110,10 @@ class EntryDocumentController extends Controller
       if($type=='amandemen_sp'){
         return $this->AmandemenSpCreate->store($request);
       }
-      if(in_array($type,['amandemen_kontrak','adendum','side_letter'])){
+      if($type=='side_letter'){
+        return $this->SideLetterCreate->store($request);
+      }
+      if(in_array($type,['amandemen_kontrak','adendum'])){
         return $this->AmandemenKontrakCreate->store($request);
       }
       $doc_value = $request->doc_value;

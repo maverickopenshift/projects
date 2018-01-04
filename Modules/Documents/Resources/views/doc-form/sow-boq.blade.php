@@ -44,7 +44,7 @@
           <div class="form-group top20">
             <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
             <div class="col-sm-10">
-              <input type="file" name="daftar_harga" class="daftar_harga hide"/>
+              <input type="file" name="daftar_harga" class="daftar_harga hide" accept=".csv,.xls">
               <button class="btn btn-primary btn-sm upload-daftar_harga" type="button"><i class="fa fa-upload"></i> Upload {{$title_hs}}</button>
               <a href="{{route('doc.template.download',['filename'=>$tm_download])}}" class="btn btn-info  btn-sm" title="Download Sample Template"><i class="glyphicon glyphicon-download-alt"></i> Download sample template</a>
               <span class="error error-daftar_harga text-danger"></span>
@@ -175,7 +175,24 @@ $(function() {
   $('.daftar_harga').on('change', function(event) {
     event.stopPropagation();
     event.preventDefault();
-    handleDaftarHargaFileSelect(this.files[0]);
+    var validfile = [".csv", ".xls"];  
+    var namefile = $('.daftar_harga').val().split('\\').pop();
+    var valid = 0;
+
+    for (var i = 0; i < validfile.length; i++) {
+      var validfilex=validfile[i];
+
+      if (namefile.substr(namefile.length - validfilex.length, validfilex.length).toLowerCase() == validfilex.toLowerCase()) {
+          valid = 1;
+          break;
+      }
+    }
+
+    if(valid==1){
+      handleDaftarHargaFileSelect(this.files[0]);
+    }else{
+      $('.error-daftar_harga').html('Format File tidak valid! hanya CSV & XLS yang valid');
+    }
   });
 });
 
@@ -205,7 +222,6 @@ function handleDaftarHargaFileSelect(file) {
         return false;
       }
       var $this = $('#table-hargasatuan');
-      //console.log(JSON.stringify(results.data));
       var tbody = $this.find('tbody');
       tbody.html('');
       var parse_row,btn_del;
@@ -213,10 +229,12 @@ function handleDaftarHargaFileSelect(file) {
         btn_del = '<button type="button" class="btn btn-danger btn-xs delete-hs"><i class="glyphicon glyphicon-remove"></i> hapus</button>';
       }
       $.each(results.data,function(index, el) {
-          row_html = templateHS(results.data[index],index);
-          row_html = $(row_html).clone();
-          row_html.find('.action').html(btn_del);
-          parse_row += $('<tr>').append(row_html).html();;
+          if(results.data[index].KODE_ITEM!=""){
+            row_html = templateHS(results.data[index],index);
+            row_html = $(row_html).clone();
+            row_html.find('.action').html(btn_del);
+            parse_row += $('<tr>').append(row_html).html();
+          }
       });
       tbody.html(parse_row);
     }
@@ -225,13 +243,14 @@ function handleDaftarHargaFileSelect(file) {
 function templateHS(data,index) {
   var harga = data.HARGA,qty,harga_total;
   @php
+
       if($doc_type->name!='khs'){
         echo "qty = '<td><input type=\"text\" class=\"form-control input-rupiah hitung_total\" name=\"hs_qty[]\" value=\"'+data.QTY+'\" /></td>';";
         echo "harga_total = harga*data.QTY;";
         echo "harga_total = '<td style=\"vertical-align: middle;\" class=\"text-right\">'+formatRupiah(harga_total.toString())+'</td>';";
       }
   @endphp
-return '<tr>\
+      return '<tr>\
           <td>'+(index+1)+'</td>\
           <td><input type="text" class="form-control" name="hs_kode_item[]" value="'+data.KODE_ITEM+'" /></td>\
           <td><input type="text" class="form-control" name="hs_item[]" value="'+data.ITEM+'" /></td>\

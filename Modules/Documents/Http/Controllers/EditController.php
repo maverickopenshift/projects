@@ -13,6 +13,7 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Http\Controllers\SuratPengikatanEditController as SuratPengikatanEdit;
+use Modules\Documents\Http\Controllers\SideLetterEditController as SideLetterEdit;
 use Modules\Documents\Http\Controllers\MouEditController as MouEdit;
 use Modules\Documents\Http\Controllers\AmandemenSpEditController as AmandemenSpEdit;
 use Modules\Documents\Http\Controllers\SpEditController as SpEdit;
@@ -32,8 +33,9 @@ class EditController extends Controller
   protected $amandemenSpEdit;
   protected $spEdit;
   protected $amademenKontrakEdit;
+  protected $SideLetterEdit;
 
-  public function __construct(Documents $documents,SuratPengikatanEdit $SuratPengikatanEdit,MouEdit $MouEdit,AmandemenSpEdit $amandemenSpEdit,SpEdit $spEdit, AmademenKontrakEdit $amademenKontrakEdit)
+  public function __construct(Documents $documents,SuratPengikatanEdit $SuratPengikatanEdit,MouEdit $MouEdit,AmandemenSpEdit $amandemenSpEdit,SpEdit $spEdit, AmademenKontrakEdit $amademenKontrakEdit, SideLetterEdit $SideLetterEdit)
   {
       $this->documents = $documents;
       $this->SuratPengikatanEdit = $SuratPengikatanEdit;
@@ -41,6 +43,7 @@ class EditController extends Controller
       $this->amandemenSpEdit = $amandemenSpEdit;
       $this->spEdit = $spEdit;
       $this->amademenKontrakEdit = $amademenKontrakEdit;
+      $this->SideLetterEdit = $SideLetterEdit;
   }
   public function index(Request $request)
   {
@@ -48,7 +51,7 @@ class EditController extends Controller
     $id = $request->id;
     $type = $request->type;
     $doc = $this->documents->where('documents.id','=',$id);
-    $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','sow_boq','scope_perubahan','users','latar_belakang_surat_pengikatan','latar_belakang_mou')
+    $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','sow_boq','scope_perubahan','users','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter')
               ->first();
 // dd($dt);
     if(!$dt || !$this->documents->check_permission_doc($id,$type)){
@@ -101,6 +104,7 @@ class EditController extends Controller
         }
       }
     }
+    
     if(count($dt->scope_perubahan)>0){
       foreach($dt->scope_perubahan as $key => $val){
         $scop['name'][$key]  = $val->meta_name;
@@ -122,6 +126,26 @@ class EditController extends Controller
       $dt->scope_file     = $scop['file'];
       $dt->scope_file_old = $scop['file'];
     }
+
+    if(count($dt->scope_perubahan_side_letter)>0){
+      foreach($dt->scope_perubahan_side_letter as $key => $val){
+        $scop['pasal'][$key]  = $val->meta_pasal;
+        $scop['judul'][$key]  = $val->meta_judul;
+        $scop['isi'][$key]  = $val->meta_isi;
+        $scop['awal'][$key]  = $val->meta_awal;
+        $scop['akhir'][$key] = $val->meta_akhir;
+        $scop['file'][$key]  = $val->meta_file;
+      }
+      
+      $dt->scope_pasal    = $scop['pasal'];
+      $dt->scope_judul    = $scop['judul'];
+      $dt->scope_isi      = $scop['isi'];
+      $dt->scope_awal     = $scop['awal'];
+      $dt->scope_akhir    = $scop['akhir'];
+      $dt->scope_file     = $scop['file'];
+      $dt->scope_file_old = $scop['file'];
+    }
+
     if(count($dt->pic)>0){
       foreach($dt->pic as $key => $val){
         $pic['pic_posisi'][$key]  = $val->posisi;
@@ -221,7 +245,6 @@ class EditController extends Controller
                                   ->join('pegawai as b','a.nik','=','b.n_nik')
                                   ->where('a.users_id',$dt->user_id)->first();
     $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
-
     return view('documents::form-edit')->with($data);
   }
   public function store(Request $request)
@@ -246,7 +269,10 @@ class EditController extends Controller
     if($type=='mou'){
       return $this->MouEdit->store($request);
     }
-    if(in_array($type,['amandemen_kontrak','adendum','side_letter'])){
+    if($type=='side_letter'){
+      return $this->SideLetterEdit->store($request);
+    }
+    if(in_array($type,['amandemen_kontrak','adendum'])){
       return $this->amademenKontrakEdit->store($request);
     }
 

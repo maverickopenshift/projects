@@ -10,6 +10,7 @@ use Modules\Documents\Entities\DocType;
 use Modules\Documents\Entities\Documents;
 use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
+use Modules\Documents\Entities\DocMetaSideLetter;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
 use App\Helpers\Helpers;
@@ -17,7 +18,7 @@ use Validator;
 use DB;
 use Auth;
 
-class AmandemenKontrakEditController extends Controller
+class SideLetterEditController extends Controller
 {
   public function __construct()
   {
@@ -27,6 +28,7 @@ class AmandemenKontrakEditController extends Controller
   public function store($request)
   {
     
+
     $type = $request->type;
     $id = $request->id;
     $status = Documents::where('id',$id)->first()->doc_signing;
@@ -237,22 +239,19 @@ class AmandemenKontrakEditController extends Controller
     }
 
     if(count($request->scope_pasal)>0){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','scope_perubahan']
-        ])->delete();
+      DocMetaSideLetter::where('documents_id','=',$doc->id)->delete();
       foreach($request->scope_pasal as $key => $val){
         if(!empty($val)
             && !empty($request['scope_judul'][$key])
             && !empty($request['scope_isi'][$key])
         ){
-          $doc_meta = new DocMeta();
+          $doc_meta = new DocMetaSideLetter();
           $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'scope_perubahan';
-          $doc_meta->meta_name = $request['scope_pasal'][$key];
-          $doc_meta->meta_title = $request['scope_judul'][$key];
-          $doc_meta->meta_desc = $request['scope_isi'][$key];
-
+          $doc_meta->meta_pasal  = $request['scope_pasal'][$key];
+          $doc_meta->meta_judul  = $request['scope_judul'][$key];
+          $doc_meta->meta_isi    = $request['scope_isi'][$key];
+          $doc_meta->meta_awal = $request['scope_awal'][$key];
+          $doc_meta->meta_akhir = $request['scope_akhir'][$key];
 
           if(is_object($new_scope_file_up[$key])){
             $fileName   = Helpers::set_filename('doc_scope_perubahan_',strtolower($val));

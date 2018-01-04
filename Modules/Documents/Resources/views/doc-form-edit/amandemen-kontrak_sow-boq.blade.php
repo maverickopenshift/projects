@@ -33,9 +33,20 @@
           if($f_judul=="Harga"){
             $f_harga=$f_desc;
           }elseif($f_judul=="Jangka Waktu"){
-            $pecah=explode("-",$f_desc);
-            $f_tangga1=$pecah[0];
-            $f_tanggal2=$pecah[1];
+            $pecah=explode("|",$f_desc);
+
+            if(isset($pecah[0])){
+              $f_tangga11=$pecah[0];
+            }else{
+              $f_tangga11="";
+            }
+
+            if(isset($pecah[1])){
+              $f_tanggal2=$pecah[1];
+            }else{
+              $f_tanggal2="";
+            }          
+            
           }elseif($f_judul=="Lainnya"){
             $f_isi=$f_desc;
           }else{
@@ -81,7 +92,7 @@
                       <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                       </div>
-                      <input type="text" name="f_tanggal1[]" value="{{$f_tanggal1}}" class="form-control f_tanggal1">
+                      <input type="text" name="f_tanggal1[]" value="{{$f_tangga11}}" class="form-control f_tanggal1">
                   </div>
                 </div>
             </div>

@@ -40,8 +40,8 @@
                 @endpermission
 
                 @permission('lihat-kontrak')
-                  @if(!Laratrust::hasRole('approver'))
-                    <li class="{{Request::is("documents/status/draft")?'active':''}}" ><a href="{{route('doc',['status'=>'draft'])}}">Draft</a></li>
+                  @if(Laratrust::hasRole('approver')==false && Laratrust::hasRole('admin')==false)
+                    <li class="{{Request::is("documents/status/draft")?'active':''}}" ><a href="{{route('doc',['status'=>'draft'])}}">Draft </a></li>
                   @endif
                   <li class="{{Request::is("documents/status/proses")?'active':''}}" ><a href="{{route('doc',['status'=>'proses'])}}">Perlu Diproses</a></li>
                 @endpermission

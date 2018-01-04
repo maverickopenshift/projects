@@ -6,6 +6,7 @@ use Modules\Documents\Entities\DocType;
 use Modules\Documents\Entities\Documents;
 use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
+use Modules\Documents\Entities\DocMetaSideLetter;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocActivity;
@@ -14,15 +15,15 @@ use Validator;
 use DB;
 use Auth;
 
-class AmandemenSpCreateController
+class SideLetterCreateController
 {
   public function __construct()
   {
       //oke
   }
+  
   public function store($request)
   {
-    // dd("hai");
     $type = $request->type;
     $rules = [];
     if($request->statusButton == '0'){
@@ -32,7 +33,9 @@ class AmandemenSpCreateController
     $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    // $rules['doc_lampiran.*']     =  'required|mimes:pdf';
+
+
+    $check_new_lampiran = false;
     foreach($request->doc_lampiran_old as $k => $v){
       if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
         $new_lamp[] = '';
@@ -55,18 +58,17 @@ class AmandemenSpCreateController
         $new_lamp_up[] = $v;
       }
     }
+
     $request->merge(['doc_lampiran' => $new_lamp]);
 
-    $rule_scope_name = (count($request['scope_name'])>1)?'required':'sometimes|nullable';
-    $rule_scope_awal = (count($request['scope_awal'])>1)?'required':'sometimes|nullable';
-    $rule_scope_akhir = (count($request['scope_akhir'])>1)?'required':'sometimes|nullable';
+    $rule_scope_pasal = (count($request['scope_pasal'])>1)?'required':'sometimes|nullable';
+    $rule_scope_judul = (count($request['scope_judul'])>1)?'required':'sometimes|nullable';
+    $rule_scope_isi = (count($request['scope_isi'])>1)?'required':'sometimes|nullable';
     $rules['scope_file.*']  =  'sometimes|nullable|mimes:pdf';
-    $rules['scope_name.*']  =  $rule_scope_name.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['scope_awal.*']  =  $rule_scope_awal.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-    $rules['scope_akhir.*']  =  $rule_scope_akhir.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
-    // $rule_lt_name = (count($request['lt_name'])>1)?'required':'sometimes|nullable';
-    // $rule_lt_desc = (count($request['lt_desc'])>1)?'required':'sometimes|nullable';
     $rules['lt_desc.*']  =  'required|date_format:"Y-m-d"';
     $rules['lt_name.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
     if(\Laratrust::hasRole('admin')){
@@ -95,15 +97,13 @@ class AmandemenSpCreateController
         $new_file_up[] = $v;
       }
     }
+    
     $request->merge(['lt_file' => $new_file]);
 
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
-    //dd($validator->errors());
     if ($validator->fails ()){
-      return redirect()->back()
-                  ->withInput($request->input())
-                  ->withErrors($validator);
+      return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
   }else{
       if(\Laratrust::hasRole('admin')){
@@ -112,12 +112,10 @@ class AmandemenSpCreateController
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
       if ($validator->fails ()){
-        return redirect()->back()
-                    ->withInput($request->input())
-                    ->withErrors($validator);
+        return redirect()->back()->withInput($request->input())->withErrors($validator);
       }
   }
-    // dd($request->input());
+
     $doc = new Documents();
     $doc->doc_title = $request->doc_title;
     $doc->doc_date = $request->doc_startdate;
@@ -131,7 +129,7 @@ class AmandemenSpCreateController
     $doc->user_id = (\Laratrust::hasRole('admin'))?$request->user_id:Auth::id();
     $doc->doc_type = $request->type;
     $doc->doc_parent = 0;
-    $doc->doc_parent_id = $request->parent_sp;
+    $doc->doc_parent_id = $request->parent_kontrak;
     $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
     $doc->doc_signing = $request->statusButton;
     $doc->save();
@@ -202,19 +200,22 @@ class AmandemenSpCreateController
       }
     }
 
-    if(count($request->scope_name)>0){
-      foreach($request->scope_name as $key => $val){
+    if(count($request->scope_pasal)>0){
+      foreach($request->scope_pasal as $key => $val){
         if(!empty($val)
-            && !empty($request['scope_awal'][$key])
-            && !empty($request['scope_akhir'][$key])
+            && !empty($request['scope_judul'][$key])
+            && !empty($request['scope_isi'][$key])
         ){
-
-          $doc_meta = new DocMeta();
+          $scope_judul = $request['scope_judul'][$key];
+          $scope_isi = $request['scope_isi'][$key];
+          
+          $doc_meta = new DocMetaSideLetter();
           $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'scope_perubahan';
-          $doc_meta->meta_name = $request['scope_name'][$key];
-          $doc_meta->meta_title = $request['scope_awal'][$key];
-          $doc_meta->meta_desc = $request['scope_akhir'][$key];
+          $doc_meta->meta_pasal  = $request['scope_pasal'][$key];
+          $doc_meta->meta_judul  = $request['scope_judul'][$key];
+          $doc_meta->meta_isi    = $request['scope_isi'][$key];
+          $doc_meta->meta_awal = $request['scope_awal'][$key];
+          $doc_meta->meta_akhir = $request['scope_akhir'][$key];
 
           if(isset($request['scope_file'][$key])){
             $fileName   = Helpers::set_filename('doc_scope_perubahan_',strtolower($val));
@@ -234,8 +235,6 @@ class AmandemenSpCreateController
     $log_activity->date = new \DateTime();
     $log_activity->save();
 
-
-    //dd($request->input());
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     if($request->statusButton == '0'){
       return redirect()->route('doc',['status'=>'tracking']);

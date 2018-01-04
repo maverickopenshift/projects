@@ -20,6 +20,9 @@
             <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
             <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
             <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
+          @elseif(in_array($doc_type->name,['amandemen_sp']))
+            <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
+            <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
           @else
             <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
             <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
@@ -63,7 +66,7 @@
             @include('documents::partials.alert-errors')
             @if(in_array($doc_type->name,['turnkey','sp','khs','mou']))
               @include('documents::doc-view.sow-boq')
-            @elseif(in_array($doc_type->name,['amandemen_kontrak']))
+            @elseif(in_array($doc_type->name,['amandemen_kontrak','amandemen_sp']))
               @include('documents::doc-view.amandemen_kontrak-sow-boq')
             @endif
             <div class="clearfix"></div>
@@ -98,10 +101,10 @@
           </div>
           <div class="tab-pane" id="tab_5">
             @include('documents::partials.alert-errors')
-            @if(in_array($doc_type->name,['amandemen_sp']))
-              @include('documents::doc-view.scope-perubahan')
-            @elseif(in_array($doc_type->name,['turnkey','sp']))
+            @if(in_array($doc_type->name,['turnkey','sp']))
               @include('documents::doc-view.jaminan-asuransi')
+            @elseif(in_array($doc_type->name,['side_letter']))
+              @include('documents::doc-view.side_letter-scope-perubahan')
             @else
               @include('documents::doc-view.scope-perubahan-others')
             @endif

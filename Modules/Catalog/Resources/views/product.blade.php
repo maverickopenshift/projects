@@ -297,11 +297,7 @@ $(function() {
                     console.log("data tidak ada");
                     //$('.error-daftar_harga').html('Data tidak ada!');
                     return false;
-                }
-
-                console.log(JSON.stringify(results.data));
-
-                
+                }                
 
                 $.each(results.data,function(index, el) {
                     if(results.data[index].KODE_ITEM!=""){

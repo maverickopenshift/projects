@@ -8,7 +8,7 @@
         <ul class="sidebar-menu">
           <li>
               <a href="{{url('/')}}">
-                  <img src="{{asset('/images/logo.png')}}" alt="Consys">
+                  <img src="{{asset('/images/logo_new.png')}}" alt="Consys">
               </a>
           </li>
             @permission('lihat-kontrak')

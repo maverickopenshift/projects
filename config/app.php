@@ -185,6 +185,7 @@ return [
         Yajra\Datatables\DatatablesServiceProvider::class,
         Yajra\Datatables\HtmlServiceProvider::class,
         Yajra\Datatables\ButtonsServiceProvider::class,
+        Maatwebsite\Excel\ExcelServiceProvider::class,
 
     ],
 
@@ -237,6 +238,7 @@ return [
         'Laratrust'   => Laratrust\LaratrustFacade::class,
         'Module' => Nwidart\Modules\Facades\Module::class,
         'Helper' => App\Helpers\Helpers::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
 
     ],
 

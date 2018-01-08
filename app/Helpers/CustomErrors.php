@@ -247,6 +247,7 @@ class CustomErrors
 
       public static function catalog(){
             return [
+<<<<<<< HEAD
                   'f_kodeproduct.*.min' => 'Input minimal 5 karakter',
                   'f_kodeproduct.*.max' => 'Input maximal 20 karakter',
 
@@ -260,6 +261,13 @@ class CustomErrors
                   'f_hargaproduct.*.max' => 'Input maximal 500 karakter',
 
                   'f_descproduct.*.max' => 'Input maximal 500 karakter',
+=======
+                  'f_kodeproduct.min' => 'Input minimal 5 karakter',
+                  'f_kodeproduct.max' => 'Input maximal 10 karakter',
+
+                  'f_namaproduct.min' => 'Input maximal 1 karakter',
+                  'f_namaproduct.max' => 'Input maximal 100 karakter',
+>>>>>>> uploadsapdone
 
                   'f_kodekategori.min' => 'Input minimal 5 karakter',
                   'f_kodekategori.max' => 'Input maximal 10 karakter',

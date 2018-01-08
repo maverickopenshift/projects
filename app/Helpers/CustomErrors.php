@@ -5,6 +5,8 @@ class CustomErrors
 {
   public static function supplier(){
     return [
+            'supplier_sap.mimes' => 'Format harus PDF',
+
             'komentar.max' => 'Komentar maksimal 500 karakter',
             'komentar.min' => 'Komentar minimal 3 karakter',
             'komentar.required' => 'Komentar harus diisi',

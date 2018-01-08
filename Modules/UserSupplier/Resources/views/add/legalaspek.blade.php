@@ -63,7 +63,7 @@
         <div class="col-sm-5">
           <div class="form-horizontal">
             <div class="form-group {{ $errors->has('akte_akhir_no') ? ' has-error' : '' }}">
-              <label for="akte_akhir_no" class="col-sm-5 control-label"><span class="text-red">*</span> No Akte Perubahan</label>
+              <label for="akte_akhir_no" class="col-sm-5 control-label">No Akte Perubahan</label>
               <div class="col-sm-7">
                 <input type="text" class="form-control" name="akte_akhir_no" value="{{ old('akte_akhir_no',Helper::prop_exists($data,'akte_akhir_no')) }}" autocomplete="off">
                 @if ($errors->has('akte_akhir_no'))
@@ -78,7 +78,7 @@
         <div class="col-sm-3">
           <div class="form-horizontal">
             <div class="form-group {{ $errors->has('akte_akhir_tg') ? ' has-error' : '' }}">
-              <label for="akte_akhir_tg" class="col-sm-4 control-label"><span class="text-red">*</span> Tgl Terbit</label>
+              <label for="akte_akhir_tg" class="col-sm-4 control-label">Tgl Terbit</label>
               <div class="col-sm-8">
                 <div class="input-group date" data-provide="datepicker">
                     <div class="input-group-addon">
@@ -98,7 +98,7 @@
         <div class="col-sm-4">
           <div class="form-horizontal">
             <div class="form-group {{ $errors->has('akte_akhir_notaris') ? ' has-error' : '' }}">
-              <label for="akte_akhir_notaris" class="col-sm-4 control-label"><span class="text-red">*</span> Notaris</label>
+              <label for="akte_akhir_notaris" class="col-sm-4 control-label">Notaris</label>
               <div class="col-sm-8">
                 <input type="text" class="form-control" name="akte_akhir_notaris" value="{{ old('akte_akhir_notaris',Helper::prop_exists($data,'akte_akhir_notaris')) }}" autocomplete="off">
                 @if ($errors->has('akte_akhir_notaris'))
@@ -380,7 +380,10 @@
         <div class="clearfix"></div>
         <hr  />
       </div>
+
+      <div class="form-horizontal">
       @include('usersupplier::add.__part-legal-dokumen')
+      </div>
 
 
       <div class="form-group">
@@ -388,67 +391,10 @@
         <hr  />
       </div>
 
-      <div class="row">
-        <div class="col-sm-5">
-          <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('iujk_no') ? ' has-error' : '' }}">
-              <label for="iujk_no" class="col-sm-5 control-label">Sertifikat Keahlian</label>
-              <div class="col-sm-7">
-                <input type="text" class="form-control" placeholder="No. Sertifikat" name="iujk_no" value="{{ old('iujk_no',Helper::prop_exists($data,'iujk_no')) }}" autocomplete="off">
-                @if ($errors->has('iujk_no'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('iujk_no') }}</strong>
-                    </span>
-                @endif
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-3">
-          <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('iujk_tg_terbit') ? ' has-error' : '' }}">
-              <label for="iujk_tg_terbit" class="col-sm-4 control-label">Tgl Terbit</label>
-              <div class="col-sm-8">
-                <div class="input-group date" data-provide="datepicker">
-                    <div class="input-group-addon">
-                        <span class="fa fa-calendar"></span>
-                    </div>
-                    <input type="text" class="form-control" name="iujk_tg_terbit" value="{{ old('iujk_tg_terbit',Helper::prop_exists($data,'iujk_tg_terbit')) }}" autocomplete="off">
-                </div>
-                @if ($errors->has('iujk_tg_terbit'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('iujk_tg_terbit') }}</strong>
-                    </span>
-                @endif
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-sm-4">
-          <div class="form-horizontal">
-              <div class="form-group {{ $errors->has('iujk_tg_expired') ? ' has-error' : '' }}">
-                <label for="iujk_tg_expired" class="col-sm-4 control-label">Tgl Expired</label>
-                <div class="col-sm-8">
-                  <div class="input-group date" data-provide="datepicker">
-                      <div class="input-group-addon">
-                          <span class="fa fa-calendar"></span>
-                      </div>
-                      <input type="text" class="form-control" name="iujk_tg_expired" value="{{ old('iujk_tg_expired',Helper::prop_exists($data,'iujk_tg_expired')) }}" autocomplete="off">
-                  </div>
-                  @if ($errors->has('iujk_tg_expired'))
-                      <span class="help-block">
-                          <strong>{{ $errors->first('iujk_tg_expired') }}</strong>
-                      </span>
-                  @endif
-                </div>
-              </div>
-          </div>
-        </div>
-      </div>
-      @include('usersupplier::add.__part-sertifikat-dokumen')
-      @if($action_type=='edit')
+      @include('usersupplier::add.sertifikat')
+      {{-- @if($action_type=='edit') --}}
       @include('usersupplier::partials.buttons')
-      @endif
+      {{-- @endif --}}
     </div>
 <!-- /.box-body -->
 </div>
@@ -495,7 +441,7 @@ function add_field_x(attr) {
     $new_clone.find('input[type="text"]').val('');
     $new_clone.find('.help-block').remove();
     $new_clone.find('.attr-btn').append($clone_btn);
-    $new_clone.appendTo($parent);
+    $new_clone.prependTo($parent);
 
     var row_p = $('.row-'+attr);
     if(row_p.length>1){

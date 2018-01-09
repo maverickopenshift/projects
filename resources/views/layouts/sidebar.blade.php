@@ -8,12 +8,12 @@
         <ul class="sidebar-menu">
           <li>
               <a href="{{url('/')}}">
-                  <img src="{{asset('/images/logo.png')}}" alt="Consys">
+                  <img src="{{asset('/images/logo_new.png')}}" alt="Consys">
               </a>
           </li>
-            @permission('manajemen-dashboard')
-            <li class="treeview {{Request::is("documents/dasboard")?'active':''}}">
-                <a href="{{route('doc',['status'=>'selesai'])}}"> <img src="{{asset('/images/icon-dashboard.png')}}" title="Dashboard" />
+            @permission('lihat-kontrak')
+            <li class="treeview {{Request::is("/")?'active':''}}">
+                <a href="{{url('/')}}"> <img src="{{asset('/images/icon-dashboard.png')}}" title="Dashboard" />
                     <span>Dashboard</span></a>
             </li>
             @endpermission
@@ -55,6 +55,7 @@
               </ul>
             </li>
             @endpermission
+
             @permission('lihat-user|lihat-role|lihat-permission')
             <li class="treeview {{Request::is("users/*") || Request::is("users")?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management User" />
@@ -113,9 +114,15 @@
               <a href="#"><img src="{{asset('/images/icon-user.png')}}" title="Catalog" />
                 <span>Catalog</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
-                <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Category</a></li>
-                <li class="{{Request::is('catalog/product') ?'active':''}}"><a href="{{route('catalog.product')}}">Product</a></li>
-                <li class="{{Request::is('catalog/catalog_list') ?'active':''}}"><a href="{{route('catalog.list')}}">List Kategori & Product</a></li>
+                @permission('catalog-category')
+                  <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Category</a></li>
+                @endpermission
+                @permission('catalog-product')
+                  <li class="{{Request::is('catalog/product') ?'active':''}}"><a href="{{route('catalog.product')}}">Product</a></li>
+                @endpermission
+                @permission('lihat-catalog')
+                  <li class="{{Request::is('catalog/catalog_list') ?'active':''}}"><a href="{{route('catalog.list')}}">List Kategori & Product</a></li>
+                @endpermission
               </ul>
             </li>
             @endpermission

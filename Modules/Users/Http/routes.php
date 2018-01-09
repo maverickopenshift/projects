@@ -2,8 +2,9 @@
 
 Route::group(['middleware' => ['web','auth'], 'prefix' => 'users', 'namespace' => 'Modules\Users\Http\Controllers'], function()
 {
+
     Route::get('/', ['middleware' => ['permission:lihat-user'],'uses' => 'UsersController@index'])->name('users');
-    Route::get('/data', ['middleware' => ['permission:lihat-user'],'uses' => 'UsersController@data'])->name('users.data');
+    Route::post('/data', ['middleware' => ['permission:lihat-user'],'uses' => 'UsersController@data'])->name('users.data');
     Route::post('/update', ['middleware' => ['permission:ubah-user'],'uses' => 'UsersController@update'])->name('users.update');
     Route::get('/reset-user',  ['middleware' => ['permission:ubah-user'],'uses' => 'UsersController@reset'])->name('users.reset');
     Route::post('/add', ['middleware' => ['permission:tambah-user'],'uses' => 'UsersController@add'])->name('users.add');
@@ -28,7 +29,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'users', 'namespace' =
 
 
     Route::get('/roles', ['middleware' => ['permission:lihat-role'],'uses' => 'RolesController@index'])->name('users.roles');
-    Route::get('/roles/data',['middleware' => ['permission:lihat-role'],'uses' => 'RolesController@data'])->name('users.roles.data');
+    Route::post('/roles/data',['middleware' => ['permission:lihat-role'],'uses' => 'RolesController@data'])->name('users.roles.data');
     Route::post('/roles/update',['middleware' => ['permission:ubah-role'],'uses' => 'RolesController@update'])->name('users.roles.update');
     Route::post('/roles/add', ['middleware' => ['permission:tambah-role'],'uses' => 'RolesController@add'])->name('users.roles.add');
     Route::delete('/roles/delete',['middleware' => ['permission:hapus-role'],'uses' => 'RolesController@delete'])->name('users.roles.delete');

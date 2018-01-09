@@ -21,7 +21,19 @@ class ProductController extends Controller
                         ->selectRaw('a.*,b.display_name as category_name')
                         ->join('catalog_category as b','b.id','=','a.catalog_category_id')
                         ->get();          
-        return view('catalog::product2')->with($data);
+        return view('catalog::product')->with($data);
+    }
+
+    public function get_product_induk(Request $request){
+        $result=CatalogCategory::selectRaw('id, code, display_name')->get();
+
+        $hasil=array();
+        for($i=0;$i<count($result);$i++){
+            $hasil[$i]['id']=$result[$i]->id;
+            $hasil[$i]['text']=$result[$i]->code ." - ". $result[$i]->display_name;
+        }
+
+        return Response::json($hasil);
     }
 
     public function datatables(Request $request){
@@ -37,7 +49,7 @@ class ProductController extends Controller
                     $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
                     $act= '<div class="btn-group">';
 
-                    if(\Auth::user()->hasPermission('catalog-product')){
+                    if(\Auth::user()->hasPermission('ubah-catalog-product')){
                         $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal-product"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-type="product" ><i class="glyphicon glyphicon-edit"></i> Edit</button>';
                     }
 
@@ -63,21 +75,23 @@ class ProductController extends Controller
     }   
 
     public function add(Request $request){
-        /*
-        $rules = [];
-        $rules['f_kodeproduct']='required|max:20|min:5|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['f_namaproduct']='required|max:100|min:1|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['f_unitproduct']='required|max:30|min:1|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['f_mtuproduct']='required';
-        $rules['f_hargaproduct']='required|max:20|min:1|regex:/^[0-9]+$/';
-        $rules['f_descproduct']='max:300|regex:/^[a-z0-9 .\-]+$/i';
+        $rules = array();
+
+        foreach($request->f_kodeproduct as $key => $val){
+            $rules['f_kodeproduct.'.$key]   ='required|max:20|min:5|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_namaproduct.'.$key]   ='required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_unitproduct.'.$key]   ='required|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_mtuproduct.'.$key]    ='required';
+            $rules['f_hargaproduct.'.$key]  ='required|max:500|min:1|regex:/^[0-9 .]+$/i';
+            $rules['f_descproduct.'.$key]   ='required|max:500|regex:/^[a-z0-9 .\-]+$/i';
+        }
         
         $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
 
         if ($validator->fails ()){
             return redirect()->back()->withInput($request->input())->withErrors($validator);
         }else{
-            */
+            
             if(count($request->f_kodeproduct)>0){
                 foreach($request->f_kodeproduct as $key => $val){
                     if(!empty($val)){
@@ -96,33 +110,32 @@ class ProductController extends Controller
             }
 
             return redirect()->route('catalog.product');
-        //}        
+        }        
     }
 
     public function edit(Request $request){
         $rules = array (
-            'f_kodeproduk' => 'required|min:2|max:250',
-            'f_namaproduk' => 'required|min:2|max:250',
-            'f_unitproduk' => 'required|min:2|max:250',
-            'f_matauangproduk' => 'required|min:2|max:250',
-            'f_hargaproduk' => 'required|min:2|max:250',
-            'f_descproduk' => 'required|min:2|max:500',
+            'f_kodeproduct' => 'required|max:20|min:5|regex:/^[a-z0-9 .\-]+$/i',
+            'f_namaproduct' => 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i',
+            'f_unitproduct' => 'required|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i',
+            'f_mtuproduct' => 'required',
+            'f_hargaproduct' => 'required|max:500|min:1|regex:/^[0-9 .]+$/i',
+            'f_descproduct' => 'required|max:500|regex:/^[a-z0-9 .\-]+$/i',
         );
-
-        $validator = Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
         if ($validator->fails ())
             return Response::json (array(
                 'errors' => $validator->getMessageBag()->toArray()
             ));
         else{
             $proses = CatalogProduct::where('id',$request->f_id)->first();
-            $proses->catalog_category_id = $request->f_parentid;
-            $proses->code = $request->f_kodeproduk;
-            $proses->name =$request->f_namaproduk;
-            $proses->unit = $request->f_unitproduk;
-            $proses->currency = $request->f_matauangproduk;
-            $proses->price = $request->f_hargaproduk;
-            $proses->desc = $request->f_descproduk;
+            $proses->catalog_category_id = $request->f_produk_parent;
+            $proses->code = $request->f_kodeproduct;
+            $proses->name =$request->f_namaproduct;
+            $proses->unit = $request->f_unitproduct;
+            $proses->currency = $request->f_mtuproduct;
+            $proses->price = $request->f_hargaproduct;
+            $proses->desc = $request->f_descproduct;
             $proses->keyword = "";
             $proses->save();   
 

@@ -31,25 +31,27 @@ class SupplierAddController extends Controller
   {
     // dd($request->komentar);
     //dd($request->all());
+    $asset = $request->asset;
+    $request->merge(['asset' => Helpers::input_rupiah($request->asset)]);
     $rules = array (
-        'komentar'          => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
-        'bdn_usaha'         => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
-        'nm_vendor'         => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'nm_vendor_uq'      => 'max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'komentar'          => 'required|max:250|min:2',
+        'bdn_usaha'         => 'required|max:250|min:2',
+        'nm_vendor'         => 'required|max:500|min:3',
+        'nm_vendor_uq'      => 'max:3|min:3',
         'prinsipal_st'      => 'required|boolean',
-        'klasifikasi_usaha.*' => 'required|regex:/^[a-z0-9 .\-]+$/i',
-        'pengalaman_kerja'  => 'required|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
+        'klasifikasi_usaha.*' => 'required',
+        'pengalaman_kerja'  => 'required|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
         'alamat'            => 'required|max:1000|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
         'kota'              => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'kd_pos'            => 'required|digits_between:3,20',
-        'telepon'           => 'required|digits_between:7,20',
-        'fax'               => 'required|digits_between:7,20',
+        'kd_pos'            => 'required|max:5',
+        'telepon'           => 'required|digits_between:7,12',
+        'fax'               => 'required|digits_between:7,12',
         'email'             => 'required|max:50|min:4|email',
         'password'          => 'required|max:50|min:6|confirmed',
         'web_site'          => 'sometimes|nullable|url',
         'induk_perus'       => 'sometimes|nullable|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'anak_perusahaan.*' => 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'asset'             => 'required|max:500|min:3|digits_between:3,50',
+        'asset'             => 'required|max:500|min:3|regex:/^[0-9 .]+$/i',
         'bank_nama'         => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'bank_cabang'       => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'bank_norek'        => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -57,9 +59,9 @@ class SupplierAddController extends Controller
         'akte_awal_no'      => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'akte_awal_tg'      => 'required|date_format:"Y-m-d"',
         'akte_awal_notaris' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'akte_akhir_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'akte_akhir_tg'     => 'required|date_format:"Y-m-d"',
-        'akte_akhir_notaris'=> 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'akte_akhir_no'     => 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'akte_akhir_tg'     => 'sometimes|nullable|date_format:"Y-m-d"',
+        'akte_akhir_notaris'=> 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'siup_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'siup_tg_terbit'     => 'required|date_format:"Y-m-d"',
         'siup_tg_expired'     => 'required|date_format:"Y-m-d"',
@@ -73,9 +75,6 @@ class SupplierAddController extends Controller
         'idp_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'idp_tg_terbit'     => 'required|date_format:"Y-m-d"',
         'idp_tg_expired'     => 'required|date_format:"Y-m-d"',
-        'iujk_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'iujk_tg_terbit'     => 'required|date_format:"Y-m-d"',
-        'iujk_tg_expired'     => 'required|date_format:"Y-m-d"',
         'nm_direktur_utama'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'nm_komisaris_utama'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'cp1_nama'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -85,9 +84,40 @@ class SupplierAddController extends Controller
         'jml_peg_asing'     => 'required|integer',
         'legal_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'legal_dokumen.*.file' => 'required|mimes:pdf',
-        'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'sertifikat_dokumen.*.file' => 'required|mimes:pdf',
+        // 'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        // 'sertifikat_dokumen.*.file' => 'required|mimes:pdf',
+
+        'iujk_no.*'                    => 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'iujk_tg_terbit.*'             => 'sometimes|nullable|date_format:"Y-m-d"',
+        'iujk_tg_expired.*'            => 'sometimes|nullable|date_format:"Y-m-d"',
+        'nama_sertifikat_dokumen.*'    => 'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i',
     );
+    $check_new_lampiran = false;
+    foreach($request->file_sertifikat_dokumen_old as $k => $v){
+      if(isset($request->file_sertifikat_dokumen[$k]) && is_object($request->file_sertifikat_dokumen[$k]) && !empty($v)){//jika ada file baru
+        $new_lamp[] = '';
+        $new_lamp_up[] = $request->file_sertifikat_dokumen[$k];
+        $rules['file_sertifikat_dokumen.'.$k] = 'sometimes|nullable|mimes:pdf';
+      }
+      else if(empty($v)){
+        $rules['file_sertifikat_dokumen.'.$k] = 'sometimes|nullable|mimes:pdf';
+        if(!isset($request->file_sertifikat_dokumen[$k])){
+          $new_lamp[] = $v;
+          $new_lamp_up[] = $v;
+        }
+        else{
+          $new_lamp[] = '';
+          $new_lamp_up[] = $request->file_sertifikat_dokumen[$k];
+        }
+      }
+      else{
+        $new_lamp[] = $v;
+        $new_lamp_up[] = $v;
+      }
+    }
+    $request->merge(['file_sertifikat_dokumen' => $new_lamp]);
+    $request->merge(['asset' => $asset]);
+
     $validator = Validator::make($request->all(), $rules,CustomErrors::supplier());
     if ($validator->fails ()){
       return redirect()->back()
@@ -95,12 +125,17 @@ class SupplierAddController extends Controller
                   ->withErrors($validator);
     }
     else {
+// dd($request->input());
       $kd_vendor = $this->generate_id();
       $user = new User();
       $user->name = $request->nm_vendor;
       $user->username = $kd_vendor;
       $user->phone = $request->telepon;
       $user->email = $request->email;
+        $bdn_usaha = $request->bdn_usaha;
+        $inisial = $request->nm_vendor_uq;
+        $gabung = $bdn_usaha." - ".$inisial;
+      $user->data = $gabung;
       $user->confirmed = 1;
       $user->actived = 1;
       $user->password = bcrypt($request->password);
@@ -121,7 +156,7 @@ class SupplierAddController extends Controller
       $data->email = $request->email;
       $data->web_site = $request->web_site;
       $data->induk_perus = $request->induk_perus;
-      $data->asset = $request->asset;
+      $data->asset = Helpers::input_rupiah($request->asset);
       $data->bank_nama = $request->bank_nama;
       $data->bank_cabang = $request->bank_cabang;
       $data->bank_norek = $request->bank_norek;
@@ -144,9 +179,9 @@ class SupplierAddController extends Controller
       $data->idp_no = $request->idp_no;
       $data->idp_tg_terbit = $request->idp_tg_terbit;
       $data->idp_tg_expired = $request->idp_tg_expired;
-      $data->iujk_no = $request->iujk_no;
-      $data->iujk_tg_terbit = $request->iujk_tg_terbit;
-      $data->iujk_tg_expired = $request->iujk_tg_expired;
+      // $data->iujk_no = $request->iujk_no;
+      // $data->iujk_tg_terbit = $request->iujk_tg_terbit;
+      // $data->iujk_tg_expired = $request->iujk_tg_expired;
       $data->cp1_nama = $request->cp1_nama;
       $data->cp1_telp = $request->cp1_telp;
       $data->cp1_email = $request->cp1_email;
@@ -157,6 +192,22 @@ class SupplierAddController extends Controller
       $data->created_by = \Auth::user()->username;
       $data->kd_vendor = $kd_vendor;
       $data->save();
+
+      foreach($request->iujk_no as $l => $val){
+        $nama = $request['nama_sertifikat_dokumen'][$l];
+        $fileName   = $kd_vendor.'_'.str_slug($nama).'_'.time().'.pdf';
+        $request['file_sertifikat_dokumen'][$l]->storeAs('supplier/sertifikat_dokumen', $fileName);
+
+        $mt_data = new SupplierMetadata();
+        $mt_data->id_object    = $data->id;
+        $mt_data->object_type  = 'vendor';
+        $mt_data->object_key   = 'sertifikat_dokumen';
+        $mt_data->object_value = json_encode(['iujk_no'=>$request['iujk_no'][$l], 'iujk_tg_terbit'=>$request['iujk_tg_terbit'][$l],
+                                'iujk_tg_expired'=>$request['iujk_tg_expired'][$l], 'name'=>$request['nama_sertifikat_dokumen'][$l],
+                                'file'=>$fileName]);
+        $mt_data->save();
+      };
+      // dd("msuk");
 
       $mt_data = new SupplierMetadata();
       $mt_data->id_object    = $data->id;
@@ -213,17 +264,7 @@ class SupplierAddController extends Controller
         $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
         $mt_data->save();
       };
-      foreach($request->sertifikat_dokumen as $l => $val){
-        $fileName   = Helpers::set_filename($kd_vendor,$val['name']);
-        $val['file']->storeAs('supplier/sertifikat_dokumen', $fileName);
 
-        $mt_data = new SupplierMetadata();
-        $mt_data->id_object    = $data->id;
-        $mt_data->object_type  = 'vendor';
-        $mt_data->object_key   = 'sertifikat_dokumen';
-        $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
-        $mt_data->save();
-      };
 
       $log_activity = new SupplierActivity();
       $log_activity->users_id = Auth::id();

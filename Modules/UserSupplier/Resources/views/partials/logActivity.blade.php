@@ -21,7 +21,7 @@
       <div class="box-footer relative komentar {{ $errors->has('komentar') ? ' has-error' : '' }}">
           <div class="loading-ao"></div>
           <div id="alertBS"></div>
-          <textarea class="form-control comment" rows="4" placeholder="Masukan Komentar" name="komentar"></textarea>
+          <textarea class="form-control comment" rows="4" placeholder="Masukan Komentar" name="komentar">{{ old('komentar') }}</textarea>
           @if ($errors->has('komentar'))
               <span class="help-block">
                   <strong>{{ $errors->first('komentar') }}</strong>

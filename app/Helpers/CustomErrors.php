@@ -17,7 +17,7 @@ class CustomErrors
             'nm_vendor.required' => 'Nama Perusahaan harus diisi',
             'nm_vendor.regex' => 'Nama Perusahaan harus huruf dan angka',
 
-            'nm_vendor_uq.max' => 'Nama Inisial Perusahaan maksimal 500 karakter',
+            'nm_vendor_uq.max' => 'Nama Inisial Perusahaan maksimal 3 karakter',
             'nm_vendor_uq.min' => 'Nama Inisial Perusahaan minimal 3 karakter',
             'nm_vendor_uq.regex' => 'Nama Inisial Perusahaan harus huruf dan angka',
 
@@ -26,6 +26,7 @@ class CustomErrors
 
             'pengalaman_kerja.required' => 'Pengalaman Kerja harus diisi',
             'pengalaman_kerja.min' => 'Pengalaman Kerja minimal 30 karakter',
+            'pengalaman_kerja.regex' => 'Karakter input tidak valid',
 
             'alamat.required' => 'Alamat harus diisi',
             'alamat.max' => 'Alamat maksimal 1000 karakter',
@@ -37,6 +38,7 @@ class CustomErrors
 
             'kd_pos.required' => 'Kode Pos harus diisi',
             'kd_pos.digits_between' => 'Kode Pos harus diantara 3 sampai 20 digit',
+            'kd_pos.max' => 'Kode Pos maksimal 5 karakter',
 
             'telepon.required' => 'Telepon harus diisi',
             'telepon.digits_between' => 'Telepon harus diantara 7 sampai 20 digit',
@@ -143,15 +145,6 @@ class CustomErrors
 
             'idp_tg_expired.required' => 'Tanggal Masa Berlaku IDP harus diisi',
 
-            'iujk_no.required' => 'Nomer Sertifikat harus diisi',
-            'iujk_no.max' => 'Nomer Sertifikat maksimal 500 karakter',
-            'iujk_no.min' => 'Nomer Sertifikat minimal 3 karakter',
-            'iujk_no.regex' => 'Nomer Sertifikat  harus huruf dan angka',
-
-            'iujk_tg_terbit.required' => 'Tanggal Terbit Sertifikat Keahliah harus diisi',
-
-            'iujk_tg_expired.required' => 'Tanggal Masa Berlaku Sertifikat Keahliah harus diisi',
-
             'nm_direktur_utama.required' => 'Nama Direktur Utama harus diisi',
             'nm_direktur_utama.max' => 'Nama Direktur Utama maksimal 500 karakter',
             'nm_direktur_utama.min' => 'Nama Direktur Utama minimal 3 karakter',
@@ -189,13 +182,22 @@ class CustomErrors
             'legal_dokumen.*.file.required' => 'File Dokumen harus diisi',
             'legal_dokumen.*.file.mimes' => 'File Dokumen harus format PDF',
 
-            'sertifikat_dokumen.*.name.required' => 'Nama Sertifikat harus diisi',
-            'sertifikat_dokumen.*.name.max' => 'Nama Sertifikat maksimal 500 karakter',
-            'sertifikat_dokumen.*.name.min' => 'Nama Sertifikat minimal 3 karakter',
-            'sertifikat_dokumen.*.name.regex' => 'Nama Sertifikat  harus huruf dan angka',
+            'iujk_no.*.required' => 'Nomer Sertifikat harus diisi',
+            'iujk_no.*.max' => 'Nomer Sertifikat maksimal 500 karakter',
+            'iujk_no.*.min' => 'Nomer Sertifikat minimal 3 karakter',
+            'iujk_no.*.regex' => 'Nomer Sertifikat  harus huruf dan angka',
 
-            'sertifikat_dokumen.*.file.required' => 'File Sertifikat harus diisi',
-            'sertifikat_dokumen.*.file.mimes' => 'File Sertifikat harus format PDF',
+            'iujk_tg_terbit.*.required' => 'Tanggal Terbit Sertifikat keahlian harus diisi',
+
+            'iujk_tg_expired.*.required' => 'Tanggal Masa Berlaku Sertifikat keahlian harus diisi',
+
+            'nama_sertifikat_dokumen.*.required' => 'Nama Sertifikat harus diisi',
+            'nama_sertifikat_dokumen.*.max' => 'Nama Sertifikat maksimal 500 karakter',
+            'nama_sertifikat_dokumen.*.min' => 'Nama Sertifikat minimal 3 karakter',
+            'nama_sertifikat_dokumen.*.regex' => 'Nama Sertifikat  harus huruf dan angka',
+
+            'file_sertifikat_dokumen.*.required' => 'File Sertifikat harus diisi',
+            'file_sertifikat_dokumen.*.mimes' => 'File Sertifikat harus format PDF',
 
           ];
   }

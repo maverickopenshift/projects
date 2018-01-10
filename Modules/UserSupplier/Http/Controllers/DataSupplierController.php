@@ -174,6 +174,7 @@ class DataSupplierController extends Controller
                 $sql->bdn_usaha = $dt[0];
                 $data['data'] = $sql;
               }
+              // dd($data);
          return view('usersupplier::dataSupplier.create')->with($data);
      }
 
@@ -183,18 +184,18 @@ class DataSupplierController extends Controller
        $asset = $request->asset;
        $request->merge(['asset' => Helpers::input_rupiah($request->asset)]);
        $rules = array (
-           'komentar'                   => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
-           'bdn_usaha'                  => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
-           'nm_vendor'                  => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-           'nm_vendor_uq'               => 'max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+           'komentar'                   => 'required|max:250|min:2',
+           'bdn_usaha'                  => 'required|max:250|min:2',
+           'nm_vendor'                  => 'required|max:500|min:3',
+           'nm_vendor_uq'               => 'max:3|min:3',
            'prinsipal_st'               => 'required|boolean',
-           'klasifikasi_usaha.*'        => 'required|regex:/^[a-z0-9 .\-]+$/i',
-           'pengalaman_kerja'           => 'required|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
+           'klasifikasi_usaha.*'        => 'required',
+           'pengalaman_kerja'           => 'required|min:3|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
            'alamat'                     => 'required|max:1000|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
            'kota'                       => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-           'kd_pos'                     => 'required|digits_between:3,20',
-           'telepon'                    => 'required|digits_between:7,20',
-           'fax'                        => 'required|digits_between:7,20',
+           'kd_pos'                     => 'required|max:5',
+           'telepon'                    => 'required|digits_between:7,12',
+           'fax'                        => 'required|digits_between:7,12',
           //  'email'             => 'required|max:50|min:4|email',
            'web_site'                   => 'sometimes|nullable|url',
            'induk_perus'                => 'sometimes|nullable|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -239,10 +240,10 @@ class DataSupplierController extends Controller
            // 'sertifikat_dokumen.*.file'  => 'mimes:pdf',
 
 
-           'iujk_no.*'                    => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-           'iujk_tg_terbit.*'             => 'required|date_format:"Y-m-d"',
-           'iujk_tg_expired.*'            => 'required|date_format:"Y-m-d"',
-           'nama_sertifikat_dokumen.*'    => 'required|max:500|regex:/^[a-z0-9 .\-]+$/i',
+           'iujk_no.*'                    => 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+           'iujk_tg_terbit.*'             => 'sometimes|nullable|date_format:"Y-m-d"',
+           'iujk_tg_expired.*'            => 'sometimes|nullable|date_format:"Y-m-d"',
+           'nama_sertifikat_dokumen.*'    => 'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i',
        );
 
        $check_new_lampiran = false;
@@ -250,10 +251,10 @@ class DataSupplierController extends Controller
          if(isset($request->file_sertifikat_dokumen[$k]) && is_object($request->file_sertifikat_dokumen[$k]) && !empty($v)){//jika ada file baru
            $new_lamp[] = '';
            $new_lamp_up[] = $request->file_sertifikat_dokumen[$k];
-           $rules['file_sertifikat_dokumen.'.$k] = 'required|mimes:pdf';
+           $rules['file_sertifikat_dokumen.'.$k] = 'sometimes|nullable|mimes:pdf';
          }
          else if(empty($v)){
-           $rules['file_sertifikat_dokumen.'.$k] = 'required|mimes:pdf';
+           $rules['file_sertifikat_dokumen.'.$k] = 'sometimes|nullable|mimes:pdf';
            if(!isset($request->file_sertifikat_dokumen[$k])){
              $new_lamp[] = $v;
              $new_lamp_up[] = $v;
@@ -280,10 +281,21 @@ class DataSupplierController extends Controller
 
        }
        else {
-// dd("ms");
+// dd($request->input());
+
           $id_usr = auth()->user()->id;
           $usr_nm = auth()->user()->username;
           $email = auth()->user()->email;
+
+          $user = User::where('id','=',$id_usr)->first();
+          $user->name = $request->nm_vendor;
+          $user->phone = $request->telepon;
+            $bdn_usaha = $request->bdn_usaha;
+            $inisial = $request->nm_vendor_uq;
+            $gabung = $bdn_usaha." - ".$inisial;
+          $user->data = $gabung;
+          $user->save();
+
           $data = new supplier();
           $data->id_user = $id_usr;
           $data->kd_vendor = $usr_nm;
@@ -431,24 +443,26 @@ class DataSupplierController extends Controller
 
       public function update(Request $request)
       {
+        // dd($request->input());
         $asset = $request->asset;
         $kd_vendor=auth()->user()->username;
+        $id_usr = auth()->user()->id;
         $rules = array (
-            'komentar'                   => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
-            'bdn_usaha'         => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
-            'nm_vendor'         => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-            'nm_vendor_uq'      => 'max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-            'prinsipal_st'      => 'required|boolean',
-            'klasifikasi_usaha.*' => 'required|regex:/^[a-z0-9 .\-]+$/i',
-            'pengalaman_kerja'  => 'required|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
+            'komentar'                   => 'required|max:250|min:2',
+            'bdn_usaha'                  => 'required|max:250|min:2',
+            'nm_vendor'                  => 'required|max:500|min:3',
+            'nm_vendor_uq'               => 'max:3|min:3',
+            'prinsipal_st'               => 'required|boolean',
+            'klasifikasi_usaha.*'        => 'required',
+            'pengalaman_kerja'  => 'required|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
             'alamat'            => 'required|max:1000|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
             'kota'              => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-            'kd_pos'            => 'required|digits_between:3,20',
-            'telepon'           => 'required|digits_between:7,20',
-            'fax'               => 'required|digits_between:7,20',
+            'kd_pos'            => 'required|max:5',
+            'telepon'           => 'required|digits_between:7,12',
+            'fax'               => 'required|digits_between:7,12',
             'web_site'          => 'sometimes|nullable|url',
-            'induk_perus'       => 'sometimes|nullable|min:3|regex:/^[a-z0-9 .\-]+$/i',
-            'anak_perusahaan.*' => 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+            'induk_perus'       => 'sometimes|nullable|min:3',
+            'anak_perusahaan.*' => 'sometimes|nullable|max:500|min:3',
             'asset'             => 'required|max:500|min:3|regex:/^[0-9 .]+$/i',
             'bank_nama'         => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
             'bank_cabang'       => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -485,10 +499,10 @@ class DataSupplierController extends Controller
             'jml_peg_asing'     => 'required|integer',
             'legal_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
 
-            'iujk_no.*'                    => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-            'iujk_tg_terbit.*'             => 'required|date_format:"Y-m-d"',
-            'iujk_tg_expired.*'            => 'required|date_format:"Y-m-d"',
-            'nama_sertifikat_dokumen.*'    => 'required|max:500|regex:/^[a-z0-9 .\-]+$/i',
+            'iujk_no.*'                    => 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+            'iujk_tg_terbit.*'             => 'sometimes|nullable|date_format:"Y-m-d"',
+            'iujk_tg_expired.*'            => 'sometimes|nullable|date_format:"Y-m-d"',
+            'nama_sertifikat_dokumen.*'    => 'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i',
 
         );
         $check_new_legal_dok = false;
@@ -549,10 +563,10 @@ class DataSupplierController extends Controller
           if(isset($request->file_sertifikat_dokumen[$k]) && is_object($request->file_sertifikat_dokumen[$k]) && !empty($v)){//jika ada file baru
             $new_lamp[] = '';
             $new_lamp_up[] = $request->file_sertifikat_dokumen[$k];
-            $rules['file_sertifikat_dokumen.'.$k] = 'required|mimes:pdf';
+            $rules['file_sertifikat_dokumen.'.$k] = 'sometimes|nullable|mimes:pdf';
           }
           else if(empty($v)){
-            $rules['file_sertifikat_dokumen.'.$k] = 'required|mimes:pdf';
+            $rules['file_sertifikat_dokumen.'.$k] = 'sometimes|nullable|mimes:pdf';
             if(!isset($request->file_sertifikat_dokumen[$k])){
               $new_lamp[] = $v;
               $new_lamp_up[] = $v;
@@ -578,13 +592,16 @@ class DataSupplierController extends Controller
                       ->withErrors($validator);
         }
         else {
-          // dd("hai");
           // dd($request->input());
-          $user = User::where('username','=',$kd_vendor)->first();
+          $user = User::where('id','=',$id_usr)->first();
           $user->name = $request->nm_vendor;
           $user->phone = $request->telepon;
+            $bdn_usaha = $request->bdn_usaha;
+            $inisial = $request->nm_vendor_uq;
+            $gabung = $bdn_usaha." - ".$inisial;
+          $user->data = $gabung;
           $user->save();
-
+// dd("ms");
           $data = Supplier::where('kd_vendor','=',$kd_vendor)->first();
           $data->bdn_usaha = $request->bdn_usaha;
           $data->nm_vendor = $request->nm_vendor;
@@ -635,6 +652,31 @@ class DataSupplierController extends Controller
           $data->jml_peg_asing = $request->jml_peg_asing;
           $data->vendor_status = 0;
           $data->save();
+
+          SupplierMetadata::where([
+            ['id_object','=',$data->id],
+            ['object_type','=','vendor'],
+            ['object_key','=','sertifikat_dokumen']
+            ])->delete();
+            foreach($request->iujk_no as $l => $val){
+              $mt_data = new SupplierMetadata();
+              $mt_data->id_object    = $data->id;
+              $mt_data->object_type  = 'vendor';
+              $mt_data->object_key   = 'sertifikat_dokumen';
+
+              if(is_object($new_lamp_up[$l])){
+                $nama = $request['nama_sertifikat_dokumen'][$l];
+                $fileName   = $data->kd_vendor.'_'.str_slug($nama).'_'.time().'.pdf';
+                $new_lamp_up[$l]->storeAs('supplier/sertifikat_dokumen', $fileName);
+              }
+              else{
+                $fileName = $new_lamp_up[$l];
+              }
+              $mt_data->object_value = json_encode(['iujk_no'=>$request['iujk_no'][$l], 'iujk_tg_terbit'=>$request['iujk_tg_terbit'][$l],
+                                      'iujk_tg_expired'=>$request['iujk_tg_expired'][$l], 'name'=>$request['nama_sertifikat_dokumen'][$l],
+                                      'file'=>$fileName]);
+              $mt_data->save();
+            };
 
           $mt_data = SupplierMetadata::where([
             ['id_object','=',$data->id],
@@ -727,25 +769,7 @@ class DataSupplierController extends Controller
             $mt_data->save();
           };
 
-          SupplierMetadata::where([
-            ['id_object','=',$data->id],
-            ['object_type','=','vendor'],
-            ['object_key','=','sertifikat_dokumen']
-            ])->delete();
-            foreach($request->iujk_no as $l => $val){
-              $nama = $request['nama_sertifikat_dokumen'][$l];
-              $fileName   = $data->kd_vendor.'_'.str_slug($nama).'_'.time().'.pdf';
-              $request['file_sertifikat_dokumen'][$l]->storeAs('supplier/sertifikat_dokumen', $fileName);
 
-              $mt_data = new SupplierMetadata();
-              $mt_data->id_object    = $data->id;
-              $mt_data->object_type  = 'vendor';
-              $mt_data->object_key   = 'sertifikat_dokumen';
-              $mt_data->object_value = json_encode(['iujk_no'=>$request['iujk_no'][$l], 'iujk_tg_terbit'=>$request['iujk_tg_terbit'][$l],
-                                      'iujk_tg_expired'=>$request['iujk_tg_expired'][$l], 'name'=>$request['nama_sertifikat_dokumen'][$l],
-                                      'file'=>$fileName]);
-              $mt_data->save();
-            };
 
           $log_activity = new SupplierActivity();
           $log_activity->users_id = Auth::id();

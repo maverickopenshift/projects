@@ -392,9 +392,9 @@
       </div>
 
       @include('usersupplier::add.sertifikat')
-      {{-- @if($action_type=='edit') --}}
+      @if($action_type=='edit')
       @include('usersupplier::partials.buttons')
-      {{-- @endif --}}
+      @endif
     </div>
 <!-- /.box-body -->
 </div>

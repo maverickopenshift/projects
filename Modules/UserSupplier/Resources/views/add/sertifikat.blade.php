@@ -4,23 +4,23 @@
   </div>
 </div>
 
-
 @php
-  $sertifikat_dokumen          = old('sertifikat_dokumen',Helper::prop_exists($data,'sertifikat_dokumen'));
-  $iujk_no          = old('iujk_no',Helper::prop_exists($data,'iujk_no'));
-  $iujk_tg_terbit   = old('iujk_tg_terbit',Helper::prop_exists($data,'iujk_tg_terbit'));
-  $iujk_tg_expired  = old('iujk_tg_expired',Helper::prop_exists($data,'iujk_tg_expired'));
+  $iujk_no          = Helper::old_prop_each($data,'iujk_no');
+  // $iujk_no          = old('iujk_no',Helper::prop_exists($data,'iujk_no'));
+  $iujk_tg_terbit   = Helper::old_prop_each($data,'iujk_tg_terbit');
+  $iujk_tg_expired  = Helper::old_prop_each($data,'iujk_tg_expired');
   // $old_file_sd = old('file_old_sd',Helper::prop_exists($data,'file_old_sd','array'));
-  $nama_sertifikat_dokumen      = old('nama_sertifikat_dokumen',Helper::prop_exists($data,'nama_sertifikat_dokumen'));
-  $file_sertifikat_dokumen_old  = old('file_sertifikat_dokumen_old',Helper::prop_exists($data,'file_sertifikat_dokumen_old'));
+  $nama_sertifikat_dokumen      = Helper::old_prop_each($data,'nama_sertifikat_dokumen');
+  $file_sertifikat_dokumen_old  = Helper::old_prop_each($data,'file_sertifikat_dokumen_old');
 @endphp
-@if(count(old('iujk_no',Helper::prop_exists($data,'iujk_no')))>1)
-  @foreach (old('iujk_no',Helper::prop_exists($data,'iujk_no')) as $key => $value)
+
+@if(count($iujk_no)>0)
+  @foreach ($iujk_no as $key => $value)
     <div class="sertifikat">
       <div class="form-horizontal">
         <div class="row">
           <div class="form-group button-delete" style="position:relative;margin-top: 25px;margin-bottom: 60px;margin-right:12px;">
-            @if(count(old('iujk_no',Helper::prop_exists($data,'iujk_no')))>1)
+            @if(count($iujk_no)>1)
               <button type="button" class="btn btn-danger delete-sertifikat" style="position: absolute;right: 5px;top: -10px;border-radius: 0;"><i class="glyphicon glyphicon-trash"></i></button>
             @endif
           </div>

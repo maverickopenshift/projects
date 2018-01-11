@@ -14,7 +14,8 @@ class KlasifikasiUsaha extends Migration
     public function up()
     {
         Schema::create('klasifikasi_usaha', function (Blueprint $table) {
-          $table->bigIncrements('id');
+          $table->increments('id');
+          $table->string('kode');
           $table->longText('text');
           $table->timestamps();
           $table->softDeletes();

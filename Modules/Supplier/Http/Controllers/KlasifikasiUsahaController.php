@@ -60,6 +60,7 @@ class KlasifikasiUsahaController extends Controller
     public function update(Request $request)
   	{
           $rules = array (
+              'kode' => 'required|unique:klasifikasi_usaha,kode,'.$request->id.'|min:3',
               'text' => 'required|unique:klasifikasi_usaha,text,'.$request->id.'|min:3',
           );
           $validator = Validator::make($request->all(), $rules);
@@ -69,6 +70,7 @@ class KlasifikasiUsahaController extends Controller
               ));
           else {
               $data = KlasifikasiUsaha::where('id','=',$request->id)->first();
+              $data->kode = $request->kode;
               $data->text = $request->text;
               $data->save();
               return response()->json($data);
@@ -77,6 +79,7 @@ class KlasifikasiUsahaController extends Controller
     public function add(Request $request)
     {
         $rules = array (
+            'kode' => 'required|unique:klasifikasi_usaha,kode|min:3',
             'text' => 'required|unique:klasifikasi_usaha,text|min:3',
         );
         $validator = Validator::make($request->all(), $rules);
@@ -86,6 +89,7 @@ class KlasifikasiUsahaController extends Controller
             ));
         else {
             $data = new KlasifikasiUsaha();
+            $data->kode = $request->kode;
             $data->text = $request->text;
             $data->save ();
             return response()->json($data);
@@ -97,14 +101,30 @@ class KlasifikasiUsahaController extends Controller
           return response()->json($data);
     }
 
+    // public function getSelect(Request $request){
+    //     $search = trim($request->q);
+    //
+    //     if (empty($search)) {
+    //         return \Response::json([]);
+    //     }
+    //     $data =  KlasifikasiUsaha::select(['text as value','text as data'])->where('text',"like",'%'.$search.'%')->limit(30)->get();
+    //     $data = ['suggestions'=>$data];
+    //     return \Response::json($data);
+    // }
+
     public function getSelect(Request $request){
         $search = trim($request->q);
 
-        if (empty($search)) {
-            return \Response::json([]);
+        // if (empty($search)) {
+        //     return \Response::json([]);
+        // }
+        $data = KlasifikasiUsaha::select('id','text','kode');
+        if(!empty($search)){
+          $data->where(function($q) use ($search) {
+              $q->orWhere('text', 'like', '%'.$search.'%');
+          });
         }
-        $data =  KlasifikasiUsaha::select(['text as value','text as data'])->where('text',"like",'%'.$search.'%')->limit(30)->get();
-        $data = ['suggestions'=>$data];
+        $data = $data->paginate(30);
         return \Response::json($data);
     }
 }

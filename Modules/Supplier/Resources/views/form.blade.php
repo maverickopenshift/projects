@@ -173,7 +173,7 @@ $(function () {
             if(data.status == true){
               bootbox.alert({
                   title:"Pemberitahuan",
-                  message: "Data berhasil ditolak",
+                  message: "Data berhasil dikembalikan",
                   callback: function (result) {
                       window.location = '{!!route('supplier')!!}'
                   }

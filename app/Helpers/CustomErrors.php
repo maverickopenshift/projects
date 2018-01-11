@@ -21,8 +21,8 @@ class CustomErrors
             'nm_vendor_uq.min' => 'Nama Inisial Perusahaan minimal 3 karakter',
             'nm_vendor_uq.regex' => 'Nama Inisial Perusahaan harus huruf dan angka',
 
-            'klasifikasi_usaha.*.required' => 'Klasifikasi usaha harus diisi',
-            'klasifikasi_usaha.*.regex' => 'Klasifikasi usaha harus huruf dan angka',
+            'klasifikasi_usaha_id.*.required' => 'Klasifikasi usaha harus diisi',
+            'klasifikasi_usaha_id.*.regex' => 'Klasifikasi usaha harus huruf dan angka',
 
             'pengalaman_kerja.required' => 'Pengalaman Kerja harus diisi',
             'pengalaman_kerja.min' => 'Pengalaman Kerja minimal 30 karakter',

@@ -8,6 +8,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
     Route::post('/klasifikasiusaha/update', ['middleware' => ['permission:ubah-klasifikasi-usaha'],'uses' => 'KlasifikasiUsahaController@update'])->name('supplier.klasifikasi.update');
     Route::post('/klasifikasiusaha/add', ['middleware' => ['permission:tambah-klasifikasi-usaha'],'uses' => 'KlasifikasiUsahaController@add'])->name('supplier.klasifikasi.add');
     Route::delete('/klasifikasiusaha/delete', ['middleware' => ['permission:hapus-klasifikasi-usaha'],'uses' => 'KlasifikasiUsahaController@delete'])->name('supplier.klasifikasi.delete');
+    Route::get('/get-klasifikasi', 'KlasifikasiUsahaController@getSelect')->name('supplier.get-klasifikasi');
 
 
     Route::get('/badanusaha', ['middleware' => ['permission:lihat-badan-usaha'],'uses' => 'BadanUsahaController@index'])->name('supplier.badanusaha');

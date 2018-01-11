@@ -43,9 +43,9 @@
             <thead>
             <tr>
                 <th width="20">No.</th>
-                <th width="50">Kode SAP</th>
                 <th width="100">Supplier</th>
                 <th width="100">ID</th>
+                <th width="50">Kode SAP</th>
                 <th width="200">Alamat</th>
                 <th width="150">Kota</th>
                 <th width="100">Telepon</th>
@@ -157,9 +157,9 @@ $(function() {
       ajax: '{!! route('supplier.data') !!}',
       columns: [
           {data : 'DT_Row_Index',orderable:false,searchable:false},
-          { data: 'id_sap', name: 'id_sap' },
           { data: 'nm_vendor', name: 'nm_vendor' },
           { data: 'kd_vendor', name: 'kd_vendor' },
+          { data: 'id_sap', name: 'id_sap' },
           { data: 'alamat', name: 'alamat' },
           { data: 'kota', name: 'kota' },
           { data: 'telepon', name: 'telepon' },

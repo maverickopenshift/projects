@@ -26,15 +26,8 @@ class SupplierController extends Controller
     {
       $username=auth()->user()->username;
       $sql = supplier::where('kd_vendor','=',$username)->first();
-
-      $notif = "Belum Disetujui";
-            if($sql){
-              if($sql->vendor_status  == '1'){
-                $notif="Sudah Disetujui";
-              }
-            }
-        $data['page_title'] = 'Supplier';
-        return view('supplier::index')->with($data);
+      $data['page_title'] = 'Supplier';
+      return view('supplier::index')->with($data);
     }
     public function data()
     {
@@ -60,7 +53,7 @@ class SupplierController extends Controller
               }else if($data->vendor_status==1){
                 $sts = "Sudah Disetujui";
               }else if($data->vendor_status==2){
-                $sts = "Tidak Disetujui";
+                $sts = "Data Dikembalikan";
               }else{
                 $sts = "-";
               }

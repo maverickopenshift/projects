@@ -31,7 +31,16 @@ class SupplierController extends Controller
     }
     public function data()
     {
+      // dd($request);
+      // $search = trim($request->q);
+        // dd($request->user_id);
         $sql = Supplier::with('user','supplierSap')->get();
+
+        // if(!empty($search)){
+        //   $sql->where(function($q) use ($search) {
+        //       $q->orWhere('vendor_status', '=', '%'.$search.'%');
+        //   });
+        // }
         // dd($sql);
         return Datatables::of($sql)
             ->addIndexColumn()

@@ -18,14 +18,28 @@
                 {{ csrf_field() }}
                 <div class="col-sm-10">
                   <input type="file" name="supplier_sap" class="supplier_sap hide"/>
-                  <button class="btn btn-primary btn-sm upload-supplier_sap" type="button" style="display:none"><i class="fa fa-upload"></i> Upload Supplier from SMILE</button>
+                  <button class="btn btn-primary btn-sm upload-supplier_sap" type="button"><i class="fa fa-upload"></i> Upload Supplier from SMILE</button>
                   <span class="error error-supplier_sap text-danger"></span>
                 </div>
                 <button class="btn btn-primary btn-sm btn_submit hide" type="submit"></button>
               </form>
             @endif
           </div>
-      </h3>
+        </h3>
+        <br>
+          <div class="form-group input-group" role="group" style="margin-top: 10px; margin-bottom: -2px">
+            <label for="nm_direktur_utama" class="col-sm-4 control-label">Filter :</label>
+            <div class="col-sm-10">
+              <select class="form-control filter">
+                <option value="">Semua</option>
+                <option value="Sudah Disetujui">Sudah Disetujui</option>
+                <option value="Belum Disetujui">Belum Disetujui</option>
+                <option value="Data Dikembalikan">Data Dikembalikan</option>
+                <option value=",">Sudah Mapping SAP</option>
+                <option value="-">Belum Mapping SAP</option>
+              </select>
+            </div>
+          </div>
 
       <div class="box-tools pull-right">
         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -136,7 +150,7 @@ $(function() {
     });
   });
 
-
+var stat = "nol";
 
   datatablesMe = $('#datatables').on('xhr.dt', function ( e, settings, json, xhr ) {
       //console.log(JSON.stringify(xhr));
@@ -154,6 +168,7 @@ $(function() {
       },
       order : [[ 8, 'desc' ]],
       pageLength: 50,
+
       ajax: '{!! route('supplier.data') !!}',
       columns: [
           {data : 'DT_Row_Index',orderable:false,searchable:false},
@@ -170,6 +185,16 @@ $(function() {
           { data: 'vendor_status', name: 'vendor_status' },
           { data: 'action', name: 'action',orderable:false,searchable:false }
       ]
+  });
+  $(".filter").change(function () {
+    var val = this.value;
+    if(val == '-'){
+      datatablesMe.columns( 3 ).search(this.value).draw();
+    }else if(val == ','){
+      datatablesMe.columns( 3 ).search(this.value).draw();
+    }else{
+      datatablesMe.columns( 11 ).search(this.value).draw();
+    }
   });
 });
 </script>

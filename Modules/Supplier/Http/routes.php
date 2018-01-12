@@ -17,8 +17,8 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
     Route::delete('/badanusaha/delete', ['middleware' => ['permission:lihat-badan-usaha'],'uses' => 'BadanUsahaController@delete'])->name('supplier.badanusaha.delete');
 
 
-    Route::get('/', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@index'])->name('supplier');
-    Route::get('/data', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@data'])->name('supplier.data');
+    Route::get('/status/{status}', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@index'])->name('supplier');
+    Route::get('/data/{status}', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@data'])->name('supplier.data');
     Route::post('/store', ['middleware' => ['permission:tambah-supplier'],'uses' => 'SupplierAddController@store'])->name('supplier.store');
     Route::get('/create', ['middleware' => ['permission:tambah-supplier'],'uses' => 'SupplierAddController@index'])->name('supplier.create');
     // Route::get('/{id}/{status}', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@index'])->name('supplier.edit');

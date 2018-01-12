@@ -131,7 +131,7 @@ $(function () {
                   title:"Pemberitahuan",
                   message: "Data berhasil disetujui",
                   callback: function (result) {
-                      window.location = '{!!route('supplier')!!}'
+                      window.location = '{!!route('supplier',['status'=>'proses'])!!}'
                   }
               });
             }
@@ -175,7 +175,7 @@ $(function () {
                   title:"Pemberitahuan",
                   message: "Data berhasil dikembalikan",
                   callback: function (result) {
-                      window.location = '{!!route('supplier')!!}'
+                      window.location = '{!!route('supplier',['status'=>'proses'])!!}'
                   }
               });
             }

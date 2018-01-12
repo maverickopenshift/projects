@@ -53,7 +53,7 @@
             </tbody>
         </table>
         <div class="form-group text-center top50 btn_smpn">
-          <a href="{{route('supplier')}}" class="btn btn-warning" style="padding:5px 20px;font-weight:bold;font-size:16px;margin-right:10px">BACK</a>
+          <a href="{{route('supplier', ['status' => 'all'])}}" class="btn btn-warning" style="padding:5px 20px;font-weight:bold;font-size:16px;margin-right:10px">BACK</a>
           @if(count($sap)>0)
           <button type="submit" class="btn btn-success btn-sbm" style="padding:5px 20px;font-weight:bold;font-size:16px;">SIMPAN</button>
         @endif
@@ -95,7 +95,7 @@
               title:"Pemberitahuan",
               message: "Data berhasil dimapping",
               callback: function (result) {
-                window.location = '{!!route('supplier')!!}'
+                window.location = '{!!route('supplier', ['status' => 'all'])!!}'
               }
           });
         }

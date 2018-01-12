@@ -233,7 +233,7 @@ class SupplierAddController extends Controller
       $log_activity->komentar = $request->komentar;
       $log_activity->save();
 
-      return redirect()->route('supplier')->with('message', 'Data supplier berhasil ditambahkan!');
+      return redirect()->route('supplier', ['status' => 'all'])->with('message', 'Data supplier berhasil ditambahkan!');
     }
   }
 

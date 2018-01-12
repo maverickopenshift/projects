@@ -22,19 +22,31 @@ class SupplierController extends Controller
      * Display a listing of the resource.
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
       $username=auth()->user()->username;
-      $sql = supplier::where('kd_vendor','=',$username)->first();
+      $sql = supplier::where('kd_vendor','=',$username);
+      $status = $request->status;
+      if($status == "proses"){
+        $sql->where('vendor_status', '=', '0');
+      }
+      $sql->first();
       $data['page_title'] = 'Supplier';
+      $data['sts'] = $status;
       return view('supplier::index')->with($data);
     }
-    public function data()
+    public function data(Request $request)
     {
+      $sql = Supplier::with('user','supplierSap');
+      $status = $request->status;
+      if($status == "proses"){
+        $sql->where('vendor_status', '=', '0');
+      }
+      $sql->get();
       // dd($request);
       // $search = trim($request->q);
         // dd($request->user_id);
-        $sql = Supplier::with('user','supplierSap')->get();
+        // $sql = Supplier::with('user','supplierSap')->get();
 
         // if(!empty($search)){
         //   $sql->where(function($q) use ($search) {
@@ -77,14 +89,17 @@ class SupplierController extends Controller
               if(\Auth::user()->hasPermission('ubah-supplier')){
                   $act .='<a href="'.route('supplier.lihat',['id'=>$data->id,'status'=>'lihat']).'" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-list-alt"></i> Lihat</a> <br>';
               }
-              if(\Auth::user()->hasPermission('ubah-supplier')){
-                if($data->id_sap==="" || $data->id_sap==null){
-                  $act .='<a href="'.route('supplier.mapping.sap',['id'=>$data->id]).'" class="btn btn-success btn-xs">Link To SAP</a> <br>';
-                }else{
-                  $act .='<button class="btn btn-danger btn-xs unlink_btn" data-id="'.$data->id.'">Unlink To SAP</button> <br>';
-                }
+              if($data->vendor_status !== 0){
+                if(\Auth::user()->hasPermission('ubah-supplier')){
+                  if($data->id_sap==="" || $data->id_sap==null){
+                    $act .='<a href="'.route('supplier.mapping.sap',['id'=>$data->id]).'" class="btn btn-success btn-xs">Link To SAP</a> <br>';
+                  }else{
+                    $act .='<button class="btn btn-danger btn-xs unlink_btn" data-id="'.$data->id.'">Unlink To SAP</button> <br>';
+                  }
 
+                }
               }
+
   //             if(\Auth::user()->hasPermission('ubah-supplier')){
   //                 $act .='<button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#form-modal"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'">
   // <i class="glyphicon glyphicon-edit"></i> Edit Status</button>';

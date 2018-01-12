@@ -405,7 +405,9 @@ class SupplierEditController extends Controller
       $log_activity->komentar = $request->komentar;
       $log_activity->save();
 
-      return redirect()->route('supplier.lihat', ['id' => $request->id, 'status' => 'lihat'])->withData($data)->with('message', 'Data berhasil disimpan!');
+      // return redirect()->route('supplier.lihat', ['id' => $request->id, 'status' => 'lihat'])->withData($data)->with('message', 'Data berhasil disimpan!');
+
+      return redirect()->route('supplier', ['status' => 'proses'])->withData($data)->with('message', 'Data berhasil disimpan!');
 
     }
   }

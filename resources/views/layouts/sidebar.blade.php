@@ -89,7 +89,8 @@
                 <span>Manajemen Supplier</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 @permission('lihat-supplier')
-                  <li class="{{Request::is("supplier/create") || Request::is("supplier/*/edit") || Request::is("supplier")?'active':''}}" ><a href="{{route('supplier')}}">Supplier</a></li>
+                  <li class="{{Request::is("supplier/create") || Request::is("supplier/*/edit") || Request::is("supplier/status/proses")?'active':''}}" ><a href="{{route('supplier',['status'=>'proses'])}}">Perlu Diproses</a></li>
+                  <li class="{{Request::is("supplier/create") || Request::is("supplier/*/edit") || Request::is("supplier/status/all")?'active':''}}" ><a href="{{route('supplier',['status'=>'all'])}}">Supplier</a></li>
                   <li class="{{Request::is("supplier/sap")?'active':''}}" ><a href="{{route('suppliersap')}}">Supplier SAP</a></li>
                 @endpermission
 

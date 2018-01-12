@@ -4,15 +4,16 @@
 <div class="box box-danger">
   <div class="loading2"></div>
     <div class="box-header with-border">
-      <h3 class="box-title">
-          <div class="btn-group" role="group" aria-label="...">
+      <h3 class="box-title title_group">
+        <span class="status" style="display:none">{{$sts}}</span>
+          <div class="btn-group add_sup_group" role="group" aria-label="...">
             @if(\Auth::user()->hasPermission('tambah-supplier'))
               <a href="{{route('supplier.create')}}" class="btn btn-default">
                   <i class="glyphicon glyphicon-plus"></i> Add Supplier
               </a>
             @endif
           </div>
-          <div class="btn-group" role="group" aria-label="...">
+          <div class="btn-group add_smile_group" role="group" aria-label="...">
             @if(\Auth::user()->hasPermission('tambah-supplier'))
               <form action="{{route('supplier.upload.sap')}}" class="" method="post" enctype="multipart/form-data">
                 {{ csrf_field() }}
@@ -27,7 +28,7 @@
           </div>
         </h3>
         <br>
-          <div class="form-group input-group" role="group" style="margin-top: 10px; margin-bottom: -2px">
+          <div class="form-group input-group filter_group" role="group" style="margin-top: 10px; margin-bottom: -2px">
             <label for="nm_direktur_utama" class="col-sm-4 control-label">Filter :</label>
             <div class="col-sm-10">
               <select class="form-control filter">
@@ -80,7 +81,10 @@
 @push('scripts')
 <script>
 var datatablesMe;
+var $status = $('.status').text();
+// console.log($status);
 $(function() {
+
   $('.upload-supplier_sap').on('click', function(event) {
     /* Act on the event */
     event.stopPropagation();
@@ -133,7 +137,7 @@ $(function() {
                   title:"Pemberitahuan",
                   message: "Data berhasil dihapus",
                   callback: function (result) {
-                      window.location = '{!!route('supplier')!!}'
+                      window.location = '{!!route('supplier',['status'=>'all'])!!}'
                   }
               });
             }
@@ -150,7 +154,12 @@ $(function() {
     });
   });
 
-var stat = "nol";
+if($status == "proses"){
+  $('.add_sup_group').hide();
+  $('.add_smile_group').hide();
+  $('.filter_group').hide();
+  $('.title_group').text('Supplier Perlu Diproses');
+}
 
   datatablesMe = $('#datatables').on('xhr.dt', function ( e, settings, json, xhr ) {
       //console.log(JSON.stringify(xhr));
@@ -169,7 +178,8 @@ var stat = "nol";
       order : [[ 8, 'desc' ]],
       pageLength: 50,
 
-      ajax: '{!! route('supplier.data') !!}',
+        ajax: '{!! route('supplier.data',['status'=> $sts]) !!}',
+
       columns: [
           {data : 'DT_Row_Index',orderable:false,searchable:false},
           { data: 'nm_vendor', name: 'nm_vendor' },

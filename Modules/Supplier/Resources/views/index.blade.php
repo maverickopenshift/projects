@@ -17,7 +17,7 @@
             @if(\Auth::user()->hasPermission('tambah-supplier'))
               <form action="{{route('supplier.upload.sap')}}" class="" method="post" enctype="multipart/form-data">
                 {{ csrf_field() }}
-                <div class="col-sm-10">
+                <div class="col-sm-10" style="display:none">
                   <input type="file" name="supplier_sap" class="supplier_sap hide"/>
                   <button class="btn btn-primary btn-sm upload-supplier_sap" type="button"><i class="fa fa-upload"></i> Upload Supplier from SMILE</button>
                   <span class="error error-supplier_sap text-danger"></span>

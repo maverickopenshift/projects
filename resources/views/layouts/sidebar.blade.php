@@ -8,12 +8,12 @@
         <ul class="sidebar-menu">
           <li>
               <a href="{{url('/')}}">
-                  <img src="{{asset('/images/logo.png')}}" alt="Consys">
+                  <img src="{{asset('/images/logo_new.png')}}" alt="Consys">
               </a>
           </li>
-            @permission('manajemen-dashboard')
-            <li class="treeview {{Request::is("documents/dasboard")?'active':''}}">
-                <a href="{{route('doc',['status'=>'selesai'])}}"> <img src="{{asset('/images/icon-dashboard.png')}}" title="Dashboard" />
+            @permission('lihat-kontrak')
+            <li class="treeview {{Request::is("/")?'active':''}}">
+                <a href="{{url('/')}}"> <img src="{{asset('/images/icon-dashboard.png')}}" title="Dashboard" />
                     <span>Dashboard</span></a>
             </li>
             @endpermission

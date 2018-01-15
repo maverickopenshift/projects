@@ -17,6 +17,7 @@ let mix = require('laravel-mix');
         .copyDirectory('node_modules/admin-lte/bootstrap/fonts','public/fonts')
         .copyDirectory('resources/assets/js/ckeditor','public/js/ckeditor')
         .copyDirectory('node_modules/jstree','public/js/jstree')
+        .copyDirectory('node_modules/highcharts','public/js/highcharts')
         .copy('node_modules/admin-lte/plugins/iCheck/square/blue.png','public/css/blue.png')
         .copy('node_modules/admin-lte/plugins/iCheck/square/blue@2x.png','public/css/blue@2x.png')
         .copy('resources/assets/images','public/images')

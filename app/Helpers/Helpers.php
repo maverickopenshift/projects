@@ -386,4 +386,63 @@ public static function select_atasan($pegawai,$val=null)
       }
       return false;
     }
+    public static function month_name($val){
+      if($val=='1'){
+        $month = 'Januari';
+      }
+      else if($val=='2'){
+        $month = 'Februari';
+      }
+      else if($val=='3'){
+        $month = 'Maret';
+      }
+      else if($val=='4'){
+        $month = 'April';
+      }
+      else if($val=='5'){
+        $month = 'Mei';
+      }
+      else if($val=='6'){
+        $month = 'Juni';
+      }
+      else if($val=='7'){
+        $month = 'Juli';
+      }
+      else if($val=='8'){
+        $month = 'Agustus';
+      }
+      else if($val=='9'){
+        $month = 'September';
+      }
+      else if($val=='10'){
+        $month = 'Oktober';
+      }
+      else if($val=='11'){
+        $month = 'November';
+      }
+      else{
+        $month = 'Desember';
+      }
+      return $month;
+    }
+    public static function select_month($val){
+      $select ='<select class="form-control" name="m">';
+        for ($i=1; $i <=12; $i++) { 
+          $v = ($i<10)?'0'.$i:$i;
+          $selected = ($v==$val)?'selected="selected"':'';
+          $select .= '<option value="'.$v.'" '.$selected.'>'.self::month_name($i).'</option>';
+        }
+      $select .='</select>';
+      return $select;
+    }
+    public static function select_year($val){
+      $year_s = 2001;
+      $select ='<select class="form-control" name="y">';
+        for ($i=$year_s; $i <=date('Y'); $i++) { 
+          $selected = ($i==$val)?'selected="selected"':'';
+          $select .= '<option value="'.$i.'" '.$selected.'>'.$i.'</option>';
+        }
+      $select .='</select>';
+      return $select;
+    }
 }

@@ -23,7 +23,7 @@ class SpCreateController
     }
     public function store($request)
     {
-      // dd($request->po_no);
+      // dd($request->input());
       $type = $request->type;
       $doc_nilai_material = $request->doc_nilai_material;
       $doc_nilai_jasa = $request->doc_nilai_jasa;

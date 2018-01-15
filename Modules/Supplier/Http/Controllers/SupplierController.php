@@ -135,7 +135,7 @@ class SupplierController extends Controller
         // if (empty($search)) {
         //     return \Response::json([]);
         // }
-        $data = Supplier::select('id','nm_vendor','kd_vendor','bdn_usaha');
+        $data = Supplier::select('id','nm_vendor','kd_vendor','bdn_usaha')->where('vendor_status', '=', '1');
         if(!empty($search)){
           $data->where(function($q) use ($search) {
               $q->orWhere('nm_vendor', 'like', '%'.$search.'%');

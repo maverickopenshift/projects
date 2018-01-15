@@ -20,6 +20,10 @@
           <label class="col-sm-2 control-label">Nomer {{$doc_type['title']}}</label>
           <div class="col-sm-10 text-me">{{$doc->doc_no or '-'}}</div>
         </div>
+        <div class="form-group ">
+          <label class="col-sm-2 control-label">Judul {{$doc_type['title']}}</label>
+          <div class="col-sm-10 text-me">{{$doc->doc_title or '-'}}</div>
+        </div>
         <div class="form-group">
           <label for="akte_awal_tg" class="col-sm-2 control-label">Tanggal Mulai {{$doc_type['title']}}</label>
           <div class="col-sm-10 text-me">
@@ -80,7 +84,7 @@
                         <tr>
                           <td>{{($key+1)}}</td>
                           <td>@if(!empty($dt->meta_file))
-                          <!--  
+                          <!--
                           <a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
                           -->
                             <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">

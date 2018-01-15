@@ -32,17 +32,17 @@
         @include('supplier::partials.alert-message')
 
         <div id="alertBS"></div>
-        <table class="table table-condensed table-striped" id="datatables">
+        <table class="table table-condensed table-striped" id="datatables" style="width:100%">
             <thead>
             <tr>
-                <th width="">No.</th>
-                <th width="150">Supplier</th>
-                <th width="50">ID</th>
-                <th width="180">Alamat</th>
-                <th width="100">Kota</th>
-                <th width="50">Upload By</th>
-                <th width="150">Upload At</th>
-                <th width="50">Action</th>
+                <th>No.</th>
+                <th>Supplier</th>
+                <th>ID</th>
+                <th>Alamat</th>
+                <th>Kota</th>
+                <th>Upload By</th>
+                <th>Upload At</th>
+                <th>Action</th>
             </tr>
             </thead>
         </table>

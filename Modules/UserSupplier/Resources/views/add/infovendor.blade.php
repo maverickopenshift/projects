@@ -113,7 +113,7 @@
 <script>
 var urlKlasifikasi = '{!!route('supplier.klasifikasi.getselect')!!}';
 $(function() {
-  autocomp('klasifikasi_usaha',urlKlasifikasi);
+  // autocomp('klasifikasi_usaha',urlKlasifikasi);
   add_select('klasifikasi_usaha');
   delete_select('klasifikasi_usaha');
 });

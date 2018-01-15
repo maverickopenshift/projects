@@ -31,8 +31,8 @@
     <label for="nm_vendor" class="col-sm-2 control-label">No Kontrak {{$doc_type['title']}}</label>
     <div class="col-sm-10"> - </div>
   </div>
-  <div class="form-group">
-    <label for="nm_vendor" class="col-sm-2 control-label">Judul {{$doc_type['title']}}</label>
+  <div class="form-group {{ $errors->has('doc_title') ? ' has-error' : '' }}">
+    <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Judul {{$doc_type['title']}}</label>
     <div class="col-sm-10">
       <input type="text" class="form-control text-me" name="doc_title"  value="{{old('doc_title',Helper::prop_exists($doc,'doc_title'))}}"  placeholder="Masukan Judul {{$doc_type['title']}}" autocomplete="off">
       @if ($errors->has('doc_title'))

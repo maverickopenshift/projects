@@ -33,6 +33,7 @@ class AmandemenSpEditController extends Controller
     $rules = [];
 
     if(in_array($status,['0','2'])){
+      $rules['doc_title']        =  'required|min:2';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -130,7 +131,7 @@ class AmandemenSpEditController extends Controller
     if ($validator->fails ()){
       return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
-    
+
     if(in_array($status,['0','2'])){
       $doc = Documents::where('id',$id)->first();;
       $doc->doc_title = $request->doc_title;
@@ -141,7 +142,7 @@ class AmandemenSpEditController extends Controller
       $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
       $doc->doc_pihak1 = $request->doc_pihak1;
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
-      $doc->doc_pihak2_nama = $request->doc_pihak2_nama;      
+      $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       if((\Laratrust::hasRole('admin'))){
         $doc->user_id  = $request->user_id;
       }
@@ -150,7 +151,7 @@ class AmandemenSpEditController extends Controller
       $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
       $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
       $doc->save();
-    }    
+    }
 
     if(count($new_lamp_up)>0){
       DocMeta::where([

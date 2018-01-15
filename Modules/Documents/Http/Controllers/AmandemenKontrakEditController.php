@@ -23,16 +23,17 @@ class AmandemenKontrakEditController extends Controller
   {
       //oke
   }
-  
+
   public function store($request)
   {
-    
+
     $type = $request->type;
     $id = $request->id;
     $status = Documents::where('id',$id)->first()->doc_signing;
     $rules = [];
-    
+
     if(in_array($status,['0','2'])){
+      $rules['doc_title']        =  'required|min:2';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -67,7 +68,7 @@ class AmandemenKontrakEditController extends Controller
       }
       $request->merge(['doc_lampiran' => $new_lamp]);
     }
-    
+
     $rule_scope_pasal = (count($request['scope_pasal'])>1)?'required':'sometimes|nullable';
     $rule_scope_judul = (count($request['scope_judul'])>1)?'required':'sometimes|nullable';
     $rule_scope_isi = (count($request['scope_isi'])>1)?'required':'sometimes|nullable';
@@ -127,7 +128,7 @@ class AmandemenKontrakEditController extends Controller
     $request->merge(['lt_file' => $new_lt_file]);
 
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-    
+
     if ($validator->fails ()){
       return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
@@ -151,15 +152,15 @@ class AmandemenKontrakEditController extends Controller
       $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
       $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
       $doc->save();
-    }    
-    
+    }
+
     if(count($request->f_judul)>0){
       DocMeta::where([
         ['documents_id','=',$doc->id],
         ['meta_type','=','sow_boq']
         ])->delete();
       foreach($request->f_judul as $key => $val){
-        if(!empty($val)){          
+        if(!empty($val)){
 
           if($val=="Harga"){
             $f_name="harga";
@@ -171,7 +172,7 @@ class AmandemenKontrakEditController extends Controller
             $f_name="lainnya";
             $desc=$request->f_isi[$key];
           }
-          
+
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = 'sow_boq';

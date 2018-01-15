@@ -26,6 +26,7 @@ class AmandemenSpCreateController
     $type = $request->type;
     $rules = [];
     if($request->statusButton == '0'){
+    $rules['doc_title']        =  'required|min:2';
     $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
     $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
     $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';

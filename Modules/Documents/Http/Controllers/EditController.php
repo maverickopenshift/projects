@@ -169,16 +169,18 @@ class EditController extends Controller
         $boq['hs_satuan'][$key]     = $val->satuan;
         $boq['hs_mtu'][$key]        = $val->mtu;
         $boq['hs_harga'][$key]      = $val->harga;
+        $boq['hs_harga_jasa'][$key] = $val->harga_jasa;
         $boq['hs_qty'][$key]        = $val->qty;
         $boq['hs_keterangan'][$key] = $val->desc;
       }
       $dt->hs_kode_item = $boq['hs_kode_item'];
-      $dt->hs_item   = $boq['hs_item'];
-      $dt->hs_satuan  = $boq['hs_satuan'];
-      $dt->hs_mtu= $boq['hs_mtu'];
-      $dt->hs_harga   = $boq['hs_harga'];
-      $dt->hs_qty     = $boq['hs_qty'];
-      $dt->hs_keterangan     = $boq['hs_keterangan'];
+      $dt->hs_item      = $boq['hs_item'];
+      $dt->hs_satuan    = $boq['hs_satuan'];
+      $dt->hs_mtu       = $boq['hs_mtu'];
+      $dt->hs_harga     = $boq['hs_harga'];
+      $dt->hs_harga_jasa   = $boq['hs_harga_jasa'];
+      $dt->hs_qty       = $boq['hs_qty'];
+      $dt->hs_keterangan= $boq['hs_keterangan'];
     }
     if(count($dt->asuransi)>0){
       foreach($dt->asuransi as $key => $val){
@@ -245,11 +247,11 @@ class EditController extends Controller
                                   ->join('pegawai as b','a.nik','=','b.n_nik')
                                   ->where('a.users_id',$dt->user_id)->first();
     $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
+
     return view('documents::form-edit')->with($data);
   }
   public function store(Request $request)
   {
-
     $id = $request->id;
     $type = $request->type;
     $status = Documents::where('id',$id)->first()->doc_signing;
@@ -347,12 +349,13 @@ class EditController extends Controller
       $request->merge(['doc_lampiran' => $new_lamp]);
     }
 
-    $rules['doc_sow']          =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['hs_kode_item.*']   =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['doc_sow']          =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['hs_kode_item.*']   =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
     $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
     $rules['hs_satuan.*']      =  'sometimes|nullable|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
     $rules['hs_mtu.*']         =  'sometimes|nullable|max:5|min:1|regex:/^[a-z0-9 .\-]+$/i';
     $rules['hs_harga.*']       =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
+    $rules['hs_harga_harga.*'] =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
     $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
     $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
     if(\Laratrust::hasRole('admin')){
@@ -676,12 +679,14 @@ class EditController extends Controller
           $doc_boq->item = $request['hs_item'][$key];
           $doc_boq->satuan = $request['hs_satuan'][$key];
           $doc_boq->mtu = $request['hs_mtu'][$key];
-          $q_harga = Helpers::input_rupiah($val);
           $doc_boq->harga = Helpers::input_rupiah($q_harga);
+          $doc_boq->harga_jasa = Helpers::input_rupiah($q_harga);
           $hs_type = 'harga_satuan';
           if(in_array($type,['turnkey','sp'])){
             $q_qty = Helpers::input_rupiah($request['hs_qty'][$key]);
-            $q_total = $q_qty*$q_harga;
+            $q_harga = Helpers::input_rupiah($request['hs_harga'][$key]);
+            $q_harga_jasa = Helpers::input_rupiah($request['hs_harga_jasa'][$key]);
+            $q_total = $q_qty*($q_harga+$q_harga_jasa);
             $doc_boq->qty = $q_qty;
             $doc_boq->harga_total = $q_total;
             $hs_type = 'boq';
@@ -695,7 +700,7 @@ class EditController extends Controller
 
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     if($request->statusButton == '0'){
-      return redirect()->route('doc',['status'=>'tracking']);
+      return redirect()->route('doc',['status'=>'proses']);
     }else{
       return redirect()->route('doc',['status'=>'draft']);
     }

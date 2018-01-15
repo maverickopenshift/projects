@@ -18,12 +18,12 @@ class CatalogController extends Controller
                         ->selectRaw('a.*,b.display_name as category_name')
                         ->join('catalog_category as b','b.id','=','a.catalog_category_id')
                         ->get();        
-
+        $data['page_title'] = 'List Item Katalog';
         return view('catalog::catalog')->with($data);
     } 
 
     public function get_no_kontrak(Request $request){
-    	$documents=Documents::selectRaw('id, doc_no as text')->where('doc_signing',1)->get();
+    	$documents=Documents::selectRaw("id, concat(doc_no,' ',doc_title) as text")->where('doc_signing',1)->get();
 
         return Response::json($documents);
     } 

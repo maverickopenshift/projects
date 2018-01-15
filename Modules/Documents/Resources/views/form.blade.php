@@ -17,8 +17,6 @@
       <ul class="nav nav-tabs">
         <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a>
         <input type="hidden" id="statusButton" name="statusButton"></li>
-
-
         @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter']))
           @if(in_array($doc_type->name,['amandemen_kontrak']))
             <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
@@ -37,7 +35,7 @@
           @endif
         @endif
 
-        @if(!in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter','mou']) )
+        @if(!in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter','mou']))
         <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
         @endif
 
@@ -82,11 +80,16 @@
           </div>
           <div class="tab-pane ok" id="tab_3">
             @include('documents::partials.alert-errors')
+
+            {{--
             @if(in_array($doc_type->name,['surat_pengikatan']))
               @include('documents::doc-form.surat_pengikatan-latar-belakang')
             @elseif(!in_array($doc_type->name,['mou']))
               @include('documents::doc-form.latar-belakang')
             @endif
+            --}}
+                        
+            @include('documents::doc-form.latar-belakang-fix')
             
             <div class="clearfix"></div>
             <div class="row">
@@ -143,8 +146,6 @@ $(function () {
 
   $(document).on('click', '#btn-draft', function(event) {
     $('#statusButton').val('2');
-    // var sttaus = $('#statusButton').val();
-    // alert(sttaus);die();
   });
 
   $(document).on('click', '#btn-submit', function(event) {

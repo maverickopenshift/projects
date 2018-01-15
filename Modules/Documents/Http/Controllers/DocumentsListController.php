@@ -16,6 +16,7 @@ class DocumentsListController extends Controller
   {
       $this->documents = $doc;
   }
+  
   public function list($request,$status_no)
   {
     $status = $request->status;
@@ -62,9 +63,7 @@ class DocumentsListController extends Controller
         if(!empty($jenis)){
           $documents->where('documents.doc_type',$jenis);
         }
-//          echo $search;
-//          echo $status_no;
-//          echo($documents->toSql());exit;
+
         if(!\Auth::user()->hasRole('admin')){
           $documents->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
           $documents->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');

@@ -31,7 +31,14 @@
                       <li class="{{Request::is("documents/create/turnkey")?'active':''}}" ><a href="{{route('doc.create',['type'=>'turnkey'])}}">Turnkey</a></li>
                       <li class="{{Request::is("documents/create/sp")?'active':''}}" ><a href="{{route('doc.create',['type'=>'sp'])}}">Surat Pesanan (SP)</a></li>
                       <li class="{{Request::is("documents/create/amandemen_sp")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_sp'])}}">Amandemen SP</a></li>
-                      <li class="{{Request::is("documents/create/amandemen_kontrak")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_kontrak'])}}">Amandemen Kontrak</a></li>
+
+                      <li class="{{Request::is("documents/create/amandemen_kontrak")?'active':''}}" >
+                        <a href="#"><span>Amandemen Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
+                        <ul class="treeview-menu ">
+                          <li class="{{Request::is("documents/create/amandemen_kontrak")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_kontrak'])}}">Kontrak KHS</a></li>
+                          <li class="{{Request::is("documents/create/amandemen_kontrak")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_kontrak'])}}">Kontrak Turnkey</a></li>
+                        </ul>
+                      </li>                      
                       <li class="{{Request::is("documents/create/adendum")?'active':''}}" ><a href="{{route('doc.create',['type'=>'adendum'])}}">Addendum</a></li>
                       <li class="{{Request::is("documents/create/side_letter")?'active':''}}" ><a href="{{route('doc.create',['type'=>'side_letter'])}}">Side Letter</a></li>
                       <li class="{{Request::is("documents/create/mou")?'active':''}}" ><a href="{{route('doc.create',['type'=>'mou'])}}">MoU</a></li>
@@ -40,7 +47,7 @@
                 @endpermission
 
                 @permission('lihat-kontrak')
-                  @if(Laratrust::hasRole('approver')==false && Laratrust::hasRole('admin')==false)
+                  @if(Laratrust::hasRole('approver')==false && Laratrust::hasRole('admin')==false) 
                     <li class="{{Request::is("documents/status/draft")?'active':''}}" ><a href="{{route('doc',['status'=>'draft'])}}">Draft </a></li>
                   @endif
                   <li class="{{Request::is("documents/status/proses")?'active':''}}" ><a href="{{route('doc',['status'=>'proses'])}}">Perlu Diproses</a></li>
@@ -112,13 +119,13 @@
             @permission('lihat-catalog')
             <li class="treeview {{Request::is('catalog/*') ?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-user.png')}}" title="Catalog" />
-                <span>Catalog</span> <i class="fa fa-angle-left pull-right"></i></a>
+                <span>Manajemen Katalog</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 @permission('catalog-category')
-                  <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Category</a></li>
+                  <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Kategori</a></li>
                 @endpermission
                 @permission('catalog-product')
-                  <li class="{{Request::is('catalog/product') ?'active':''}}"><a href="{{route('catalog.product')}}">Product</a></li>
+                  <li class="{{Request::is('catalog/product') ?'active':''}}"><a href="{{route('catalog.product')}}">Item Katalog</a></li>
                 @endpermission
                 @permission('lihat-catalog')
                   <li class="{{Request::is('catalog/catalog_list') ?'active':''}}"><a href="{{route('catalog.list')}}">List Kategori & Product</a></li>

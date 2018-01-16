@@ -194,19 +194,21 @@ class SupplierAddController extends Controller
       $data->save();
 
       foreach($request->iujk_no as $l => $val){
-        $nama = $request['nama_sertifikat_dokumen'][$l];
-        $fileName   = $kd_vendor.'_'.str_slug($nama).'_'.time().'.pdf';
-        $request['file_sertifikat_dokumen'][$l]->storeAs('supplier/sertifikat_dokumen', $fileName);
-
-        $mt_data = new SupplierMetadata();
-        $mt_data->id_object    = $data->id;
-        $mt_data->object_type  = 'vendor';
-        $mt_data->object_key   = 'sertifikat_dokumen';
-        $mt_data->object_value = json_encode(['iujk_no'=>$request['iujk_no'][$l], 'iujk_tg_terbit'=>$request['iujk_tg_terbit'][$l],
-                                'iujk_tg_expired'=>$request['iujk_tg_expired'][$l], 'name'=>$request['nama_sertifikat_dokumen'][$l],
-                                'file'=>$fileName]);
-        $mt_data->save();
-      };
+          $mt_data = new SupplierMetadata();
+          $mt_data->id_object    = $data->id;
+          $mt_data->object_type  = 'vendor';
+          $mt_data->object_key   = 'sertifikat_dokumen';
+          $fileName=$request['file_sertifikat_dokumen'][$l];
+          if(isset($request['doc_jaminan_file'][$l])){
+            $nama = $request['nama_sertifikat_dokumen'][$l];
+            $fileName   = $usr_nm.'_'.str_slug($nama).'_'.time().'.pdf';
+            $request['file_sertifikat_dokumen'][$l]->storeAs('supplier/sertifikat_dokumen', $fileName);
+          }
+          $mt_data->object_value = json_encode(['iujk_no'=>$request['iujk_no'][$l], 'iujk_tg_terbit'=>$request['iujk_tg_terbit'][$l],
+                                  'iujk_tg_expired'=>$request['iujk_tg_expired'][$l], 'name'=>$request['nama_sertifikat_dokumen'][$l],
+                                  'file'=>$fileName]);
+          $mt_data->save();
+      }
       // dd("msuk");
 
       $mt_data = new SupplierMetadata();

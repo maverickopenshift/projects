@@ -31,11 +31,11 @@ class DataSupplierController extends Controller
     $notif = "Kelengkapan data belum terisi";
             if($sql){
               if($sql->vendor_status  == '1'){
-                $notif="Data Sudah Disetujui";
+                $notif="Kelengkapan Data Sudah Disetujui";
               }else if($sql->vendor_status  == '2'){
-                $notif="Data Tidak Disetujui";
+                $notif="Kelengkapan Data dikembalikan oleh admin, mohon diperiksa kembali";
               }else{
-                $notif="Data sudah terkirim, menunggu persetujuan Admin";
+                $notif="Kelengkapan Data sudah terkirim, menunggu persetujuan Admin";
               }
             }
 

@@ -128,6 +128,18 @@
             </li>
             @endpermission
 
+            @permission('lihat-config')
+            <li class="treeview {{Request::is('config') ?'active':''}}">
+              <a href="#"><img src="{{asset('/images/icon-user.png')}}" title="Config" />
+                <span>Manajemen Config</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <ul class="treeview-menu">
+                @permission('lihat-config')
+                  <li class="{{Request::is('config') ?'active':''}}"><a href="{{route('config')}}">Config</a></li>
+                @endpermission
+              </ul>
+            </li>
+            @endpermission
+
         </ul><!-- /.sidebar-menu -->
     </section>
     <!-- /.sidebar -->

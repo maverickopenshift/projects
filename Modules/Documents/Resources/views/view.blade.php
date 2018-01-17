@@ -5,7 +5,7 @@
       <div class="loading2"></div>
       @php
         $title_sow = 'SOW,BOQ';
-        if($doc_type->name=='khs'){
+        if($doc_type->name=='khs' || $doc_type->name=='amandemen_kontrak_khs'){
           $title_sow = 'DAFTAR HARGA SATUAN';
         }elseif($doc_type->name=='mou'){
           $title_sow = 'RUANG LINGKUP';
@@ -38,7 +38,7 @@
         <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
         @endif
 
-        @if(in_array($doc_type->name,['turnkey','khs','surat_pengikatan','mou']))
+        @if(in_array($doc_type->name,['turnkey','khs','amandemen_kontrak_khs','surat_pengikatan','mou']))
           <li><a href="#tab_4" data-toggle="tab">PASAL KHUSUS</a></li>
         @endif
 
@@ -50,7 +50,7 @@
         <div class="tab-content">
           <div class="tab-pane active" id="tab_1">
             @include('documents::partials.alert-errors')
-            @if(in_array($doc_type->name,['turnkey','sp','khs','surat_pengikatan','mou']))
+            @if(in_array($doc_type->name,['turnkey','sp','khs','amandemen_kontrak_khs','surat_pengikatan','mou']))
               @include('documents::doc-view.general-info')
             @else
               @include('documents::doc-view.amademen')
@@ -62,9 +62,10 @@
               </div>
             </div>
           </div>
+
           <div class="tab-pane" id="tab_2">
             @include('documents::partials.alert-errors')
-            @if(in_array($doc_type->name,['turnkey','sp','khs','mou']))
+            @if(in_array($doc_type->name,['turnkey','sp','khs','amandemen_kontrak_khs','mou']))
               @include('documents::doc-view.sow-boq')
             @elseif(in_array($doc_type->name,['amandemen_kontrak','amandemen_sp']))
               @include('documents::doc-view.amandemen_kontrak-sow-boq')
@@ -77,6 +78,7 @@
               </div>
             </div>
           </div>
+
           <div class="tab-pane ok" id="tab_3">
             @include('documents::partials.alert-errors')
             @include('documents::doc-view.latar-belakang')
@@ -88,6 +90,7 @@
               </div>
             </div>
           </div>
+
           <div class="tab-pane" id="tab_4">
             @include('documents::partials.alert-errors')
             @include('documents::doc-view.pasal-penting')
@@ -99,6 +102,7 @@
               </div>
             </div>
           </div>
+
           <div class="tab-pane" id="tab_5">
             @include('documents::partials.alert-errors')
             @if(in_array($doc_type->name,['turnkey','sp']))
@@ -116,6 +120,7 @@
               </div>
             </div>
           </div>
+
         </div>
         <!-- /.tab-content -->
           @include('documents::partials.comments')
@@ -131,6 +136,7 @@ $(function () {
    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
   });
 });
+
 $(document).on('click', '.btn-reject', function(event) {
   event.preventDefault();
   /* Act on the event */
@@ -189,6 +195,7 @@ $(document).on('click', '.btn-reject', function(event) {
     }
   })
 });
+
 $(document).on('click', '.btn-setuju', function(event) {
   event.preventDefault();
   var content = $('.content-view');

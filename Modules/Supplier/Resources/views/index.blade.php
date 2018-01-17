@@ -28,20 +28,6 @@
           </div>
         </h3>
         <br>
-          <div class="form-group input-group filter_group" role="group" style="margin-top: 10px; margin-bottom: -2px">
-            <label for="nm_direktur_utama" class="col-sm-4 control-label">Filter :</label>
-            <div class="col-sm-10">
-              <select class="form-control filter">
-                <option value="">Semua</option>
-                <option value="Sudah Disetujui">Sudah Disetujui</option>
-                <option value="Belum Disetujui">Belum Disetujui</option>
-                <option value="Data Dikembalikan">Data Dikembalikan</option>
-                <option value=",">Sudah Mapping SAP</option>
-                <option value="-">Belum Mapping SAP</option>
-              </select>
-            </div>
-          </div>
-
       <div class="box-tools pull-right">
         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
         </button>
@@ -50,28 +36,101 @@
     </div>
     <!-- /.box-header -->
     <div class="box-body content-view">
+      <div class="form-group input-group filter_group">
+          <select class="form-control select-filter" style="width: 100%;">
+            <option value="">Semua</option>
+            <option value="1">Sudah Disetujui</option>
+            <option value="0">Belum Disetujui</option>
+            <option value="2">Data Dikembalikan</option>
+            <option value="sudah_mapping">Sudah Mapping SAP</option>
+            <option value="belum_mapping">Belum Mapping SAP</option>
+          </select>
+          <span class="input-group-btn">
+              <a class="btn btn-primary cari-filter">Cari</a>
+          </span>
+      </div>
       <div class="loading2"></div>
         @include('supplier::partials.alert-message')
 
         <div id="alertBS"></div>
-        <table class="table table-condensed table-striped" id="datatables">
+        <table class="table table-striped table-condensed" id="datatables" style="width:100%">
             <thead>
             <tr>
-                <th width="20">No.</th>
-                <th width="100">Supplier</th>
-                <th width="100">ID</th>
-                <th width="50">Kode SAP</th>
-                <th width="200">Alamat</th>
-                <th width="150">Kota</th>
-                <th width="100">Telepon</th>
-                <th width="100">Fax</th>
-                <th width="150">Email</th>
-                <th width="100">Created At</th>
-                <th width="100">Updated At</th>
-                <th width="100">Status Approval</th>
-                <th width="100">Action</th>
+                <th>No.</th>
+                <th>Supplier</th>
+                <th>ID</th>
+                <th>Kode SAP</th>
+                <th>Alamat</th>
+                <th>Kota</th>
+                <th>Telepon</th>
+                <th>Fax</th>
+                <th>Email</th>
+                <th>Created At</th>
+                <th>Updated At</th>
+                <th>Status Approval</th>
+                <th>Action</th>
             </tr>
             </thead>
+            <tbody class="table-supplier">
+              @php
+                $i=0;
+              @endphp
+              @foreach ($sql as $sqls)
+                <tr>
+                  <td>{{$i+1}}</td>
+                  <td>{{$sqls->nm_vendor}}</td>
+                  <td>{{$sqls->kd_vendor}}</td>
+                  @if ($sqls->id_sap=="" || $sqls->id_sap==null)
+                    {{-- <td>{{$sqls->user->id}}</td> --}}
+                    <td> - </td>
+                  @else
+                    @foreach ($sqls->supplierSap as $key => $v)
+                      @php
+                        $vendor[] = $v->vendor;
+                      @endphp
+                    @endforeach
+                    <td>{{implode(', ',$vendor)}} </td>
+                  @endif
+
+                  <td>{{$sqls->alamat}}</td>
+                  <td>{{$sqls->kota}}</td>
+                  <td>{{$sqls->telepon}}</td>
+                  <td>{{$sqls->fax}}</td>
+                  <td>{{$sqls->email}}</td>
+                  <td>{{$sqls->created_at}}</td>
+                  <td>{{$sqls->updated_at}}</td>
+                  @if ($sqls->vendor_status == '0')
+                    <td> <span class="label label-warning">Belum Disetujui</span></td>
+                  @elseif ($sqls->vendor_status == '1')
+                    <td><span class="label label-success">Sudah Disetujui</span></td>
+                  @elseif ($sqls->vendor_status == '2')
+                    <td><span class="label label-danger">Data Dikembalikan</span></td>
+                  @endif
+                  <td>
+                    <div class="">
+                    @if (\Auth::user()->hasPermission('ubah-supplier'))
+                      <a href="{{route('supplier.lihat',['id'=>$sqls->id,'status'=>'lihat'])}}" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-list-alt"></i> Lihat</a> <br>
+                    @endif
+                    @if ($sqls->vendor_status !== 0)
+                      @if (\Auth::user()->hasPermission('ubah-supplier'))
+                        @if ($sqls->id_sap =="" || $sqls->id_sap==null)
+                          <a href="{{route('supplier.mapping.sap',['id'=>$sqls->id])}}" class="btn btn-success btn-xs">Link To SAP</a> <br>
+                        @else
+                          <button class="btn btn-danger btn-xs unlink_btn" data-id="{{$sqls->id}}">Unlink To SAP</button> <br>
+                        @endif
+                      @endif
+                    @endif
+                    </div>
+                  </td>
+
+
+
+                </tr>
+                @php
+                  $i++;
+                @endphp
+              @endforeach
+            </tbody>
         </table>
     </div>
 <!-- /.box-body -->
@@ -84,6 +143,94 @@ var datatablesMe;
 var $status = $('.status').text();
 // console.log($status);
 $(function() {
+$('#datatables').DataTable();
+  $(document).on('click', '.cari-filter', function(event) {
+      var filter = $(".select-filter").val();
+      $.ajax({
+          url: "{{route('supplier.filter')}}?kode=" + filter,
+          dataType: 'json',
+          success: function(data)
+          {
+            if(data == null || data == ""){
+              $('.table-supplier').html("");
+              var html = '';
+              html += "<tr>"+
+                           "<td colspan='13' align='center'>Data Tidak Ditemukan</td>" +
+
+                       "</tr>";
+                       $('.table-supplier').html(html);
+            }else {
+
+              // console.log(data);
+              $('.table-supplier').html("");
+
+
+              var html = '';
+              var status_ve;
+              var  sap;
+              var vendor=[];
+              var i;
+              var j;
+              var link_sap;
+              for(i = 0; i < data.length; i++){
+                var jm = i+1;
+                if(data[i].vendor_status == 0){
+                  status_ve = "<span class='label label-warning'>Belum Disetujui</span>";
+                }else if (data[i].vendor_status == 1) {
+                  status_ve = "<span class='label label-success'>Sudah Disetujui</span>";
+                }else if(data[i].vendor_status == 2){
+                  status_ve = "<span class='label label-danger'>Data Dikembalikan</span>";
+                }else {
+                  status_ve = " - ";
+                }
+
+                @if (\Auth::user()->hasPermission('ubah-supplier'))
+                var tb_lihat =  '<a href="/supplier/'+data[i].id+'/lihat" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-list-alt"></i> Lihat</a> <br>';
+                @endif
+
+                if(data[i].vendor_status !== 0){
+                  @if (\Auth::user()->hasPermission('ubah-supplier'))
+                    if(data[i].id_sap =="" || data[i].id_sap==null){
+                      link_sap = '<a href="/supplier/sap-mapping-'+data[i].id+'" class="btn btn-success btn-xs">Link To SAP</a> <br>';
+                    }else{
+                      link_sap = '<button class="btn btn-danger btn-xs unlink_btn" data-id="'+data[i].id+'">Unlink To SAP</button> <br>';
+                    }
+                  @endif
+                }
+
+                if(data[i].id_sap =="" || data[i].id_sap ==null){
+                  sap = "-";
+                }else{
+                  var $supplier = data[i].supplier_sap;
+                  console.log($supplier.length);
+                  for (j = 0; j < $supplier.length; j++) {
+                    var arr = vendor.push($supplier[j].vendor);
+                  }
+
+                  sap = vendor.join(", ");
+                  // console.log(energy);
+                }
+                 html += "<tr>"+
+                              "<td>"+ jm +"</td>" +
+                              "<td>" + data[i].nm_vendor + "</td>" +
+                              "<td>" + data[i].kd_vendor + "</td>" +
+                              "<td>" + sap + "</td>" +
+                              "<td>" + data[i].alamat + "</td>" +
+                              "<td>" + data[i].kota + "</td>" +
+                              "<td>" + data[i].telepon + "</td>" +
+                              "<td>" + data[i].fax + "</td>" +
+                              "<td>" + data[i].email + "</td>" +
+                              "<td>" + data[i].created_at + "</td>" +
+                              "<td>" + data[i].updated_at + "</td>" +
+                              "<td>" + status_ve + "</td>" +
+                              "<td>" + tb_lihat + link_sap + "</td>" +
+                          "</tr>";
+                  }
+              $('.table-supplier').html(html);
+          }
+        }
+      });
+  });
 
   $('.upload-supplier_sap').on('click', function(event) {
     /* Act on the event */
@@ -160,52 +307,16 @@ if($status == "proses"){
   $('.filter_group').hide();
   $('.title_group').text('Supplier Perlu Diproses');
 }
-
-  datatablesMe = $('#datatables').on('xhr.dt', function ( e, settings, json, xhr ) {
-      //console.log(JSON.stringify(xhr));
-      if(xhr.responseText=='Unauthorized.'){
-        location.reload();
-      }
-      }).DataTable({
-      processing: true,
-      serverSide: true,
-      // autoWidth : true,
-      scrollX   : true,
-      fixedColumns:   {
-            leftColumns: 4,
-            rightColumns:2
-      },
-      order : [[ 8, 'desc' ]],
-      pageLength: 50,
-
-        ajax: '{!! route('supplier.data',['status'=> $sts]) !!}',
-
-      columns: [
-          {data : 'DT_Row_Index',orderable:false,searchable:false},
-          { data: 'nm_vendor', name: 'nm_vendor' },
-          { data: 'kd_vendor', name: 'kd_vendor' },
-          { data: 'id_sap', name: 'id_sap' },
-          { data: 'alamat', name: 'alamat' },
-          { data: 'kota', name: 'kota' },
-          { data: 'telepon', name: 'telepon' },
-          { data: 'fax', name: 'fax' },
-          { data: 'email', name: 'email' },
-          { data: 'created_at', name: 'created_at' },
-          { data: 'updated_at', name: 'updated_at' },
-          { data: 'vendor_status', name: 'vendor_status' },
-          { data: 'action', name: 'action',orderable:false,searchable:false }
-      ]
-  });
-  $(".filter").change(function () {
-    var val = this.value;
-    if(val == '-'){
-      datatablesMe.columns( 3 ).search(this.value).draw();
-    }else if(val == ','){
-      datatablesMe.columns( 3 ).search(this.value).draw();
-    }else{
-      datatablesMe.columns( 11 ).search(this.value).draw();
-    }
-  });
+  // $(".filter").change(function () {
+  //   var val = this.value;
+  //   if(val == '-'){
+  //     datatablesMe.columns( 3 ).search(this.value).draw();
+  //   }else if(val == ','){
+  //     datatablesMe.columns( 3 ).search(this.value).draw();
+  //   }else{
+  //     datatablesMe.columns( 11 ).search(this.value).draw();
+  //   }
+  // });
 });
 </script>
 @endpush

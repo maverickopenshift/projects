@@ -63,8 +63,8 @@ class MappingSapController extends Controller
         $id_sap = $user->id_sap;
         $cb_array = explode(",",$id_sap);
         $sap_update = Sap::whereIn('id',$cb_array)->update(['supplier_id' => ""]);
-        
-          $user->id_sap = "";
+
+          $user->id_sap = null;
           $user->save();
 
 

@@ -28,6 +28,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
     Route::post('/return', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@return'])->name('supplier.return');
     Route::post('/update', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@update'])->name('supplier.update');
     Route::get('/get-select', 'SupplierController@getSelect')->name('supplier.get-select');
+    Route::get('/cari-supplier', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@filtersupplier'])->name('supplier.filter');
 
     Route::get('/sap', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierSapController@index'])->name('suppliersap');
     Route::get('/sap-data', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierSapController@data'])->name('supplier.sap.data');

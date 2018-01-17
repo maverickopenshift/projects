@@ -1,7 +1,7 @@
 <div class="box">
   <div class="box-header with-border">
     <h3 class="box-title">
-      @if($doc_type['title']=="Turnkey" || $doc_type['title']=="SP")
+      @if($doc_type['title']=="Turnkey" || $doc_type['title']=="SP" || $doc_type['title']=="amandemen_kontrak_turnkey" )
         SOW,BOQ
       @elseif($doc_type['title']=="MoU")
         Ruang Lingkup Kerjasama
@@ -13,7 +13,7 @@
 
   <div class="box-body">
     <div class="form-horizontal">
-      @if(in_array($doc_type->name,['turnkey','khs','mou']))
+      @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey','khs','amandemen_kontrak_khs','mou']))
         <div class="form-group {{ $errors->has('doc_sow') ? ' has-error' : '' }}">
           <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label>
           <div class="col-sm-10">
@@ -33,11 +33,10 @@
           $harga_jasa = Helper::old_prop_each($doc,'hs_harga_jasa');
           $qty = Helper::old_prop_each($doc,'hs_qty');
           $keterangan = Helper::old_prop_each($doc,'hs_keterangan');
-          if($doc_type->name=='khs'){
+          if($doc_type->name=='khs' || $doc_type->name=='amandemen_kontrak_khs'){
             $title_hs = 'Daftar Harga Satuan';
             $tm_download = 'harga_satuan';
-          }
-          else{
+          }else{
             $title_hs = 'BoQ';
             $tm_download = 'boq';
           }
@@ -62,7 +61,7 @@
                   <th  style="width:70px;">Qty</th>
                 @endif
                 <th style="width:100px;">Satuan</th>
-                <th style="width:70px;">Currency</th>
+                <th>Currency</th>
                 <th>Harga</th>
                 <th>Harga Jasa</th>
                 @if($doc_type->name!='khs')
@@ -102,10 +101,10 @@
 
                     <td  class="{{ $errors->has('hs_mtu.'.$key) ? ' has-error' : '' }}">
                       @php
-                        if($hs_mtu[$key]=="RP"){
+                        if($mtu[$key]=="RP"){
                             $a="selected";
                             $b="";
-                        }else if($hs_mtu[$key]=="USD"){
+                        }else if($mtu[$key]=="USD"){
                             $a="";
                             $b="selected";
                         }else{
@@ -113,8 +112,7 @@
                             $b="";
                         }
                       @endphp
-                      <select name="hs_mtu[]" class="form-control select2" style="width: 100%;">
-                          <option value=""></option>
+                      <select name="hs_mtu[]" class="form-control" style="width: 100%;">
                           <option value="RP" {{$a}}>RP</option>
                           <option value="USD" {{$b}}>USD</option>
                       </select>
@@ -154,8 +152,7 @@
                   @endif
                   <td><input type="text" class="form-control" name="hs_satuan[]" placeholder="Satuan.."></td>
                   <td>
-                    <select name="hs_mtu[]" class="form-control select2" style="width: 100%;">
-                      <option value=""></option>
+                    <select name="hs_mtu[]" class="form-control" style="width: 100%;">
                       <option value="RP">RP</option>
                       <option value="USD">USD</option>
                     </select>
@@ -198,10 +195,6 @@
 <script>
 $(function() {
 
-  // $(".select2").select2({
-  //   placeholder:"Silahkan Pilih"
-  // });
-
   $('.upload-daftar_harga').on('click', function(event) {
     event.stopPropagation();
     event.preventDefault();
@@ -233,6 +226,7 @@ $(function() {
     }
   });
 
+
 });
 
 function handleDaftarHargaFileSelect(file) {
@@ -254,6 +248,7 @@ function handleDaftarHargaFileSelect(file) {
       @endphp
 
       if(fields.length!==fields_length_set || JSON.stringify(fields_dec)!==JSON.stringify(fields)){
+        console.log(fields.length);
         $('.error-daftar_harga').html('Format CSV tidak valid!');
         return false;
       }
@@ -265,7 +260,7 @@ function handleDaftarHargaFileSelect(file) {
 
       var $this = $('#table-hargasatuan');
       var tbody = $this.find('tbody');
-      tbody.html('');
+      //tbody.html('');
       var parse_row,btn_del;
 
       if(results.data.length>1){
@@ -274,31 +269,44 @@ function handleDaftarHargaFileSelect(file) {
 
       $.each(results.data,function(index, el) {
         if(results.data[index].KODE_ITEM!=""){
-          $('#table-hargasatuan').find(".select2").each(function(index){
-            if($(this).data('select2')) {
-              $(this).select2('destroy');
-            }
-          });
 
           row_html = templateHS(results.data[index],index);
           row_html = $(row_html).clone();
           row_html.find('.action').html(btn_del);
           parse_row += $('<tr>').append(row_html).html();
-
-          $(".select2").select2({
-            placeholder:"Silahkan Pilih"
-          });
         }
       });
 
-      tbody.html(parse_row);
+      tbody.append(parse_row);
+
+      var row =  $('#table-hargasatuan').find('tbody>tr');
+      $.each(row,function(index, el) {
+        var mdf = $(this).find('.action');
+        var mdf_new_row = $(this).find('td');
+        mdf_new_row.eq(0).html(index+1);
+
+        if(row.length==1){
+          mdf.html('');
+        }else{
+          mdf.html(btn_del);
+        }
+      });
+
     }
   });
 }
 
 function templateHS(data,index) {
-  //var harga = data.HARGA,qty,harga_total;
-  //console.log(data.HARGA,qty,harga_total);
+  var qty,harga_total,a,b;
+
+  if(data.MTU=="USD"){
+    a="";
+    b="selected";
+  }else{
+    a="selected";
+    b="";
+  }
+
   @php
     if($doc_type->name!='khs'){
       echo "qty = '<td><input type=\"text\" class=\"form-control input-rupiah hitung_total\" name=\"hs_qty[]\" value=\"'+data.QTY+'\" /></td>';";
@@ -313,7 +321,12 @@ function templateHS(data,index) {
     <td><input type="text" class="form-control" name="hs_item[]" value="'+data.ITEM+'" /></td>\
     '+qty+'\
     <td><input type="text" class="form-control" name="hs_satuan[]" value="'+data.SATUAN+'" /></td>\
-    <td><input type="text" class="form-control" name="hs_mtu[]" value="'+data.MTU+'" /></td>\
+    <td>\
+      <select name="hs_mtu[]" class="form-control" style="width: 100%;">\
+        <option value="RP" '+ a +'>RP</option>\
+        <option value="USD" '+ b +'>USD</option>\
+      </select>\
+    </td>\
     <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_harga[]" value="'+formatRupiah(data.HARGA)+'" /></td>\
     <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_harga_jasa[]" value="'+formatRupiah(data.HARGA_JASA)+'" /></td>\
     '+harga_total+'\
@@ -325,14 +338,8 @@ function templateHS(data,index) {
 $(document).on('click', '.add-harga_satuan', function(event) {
   event.preventDefault();
   var btn_del = '<button type="button" class="btn btn-danger btn-xs delete-hs"><i class="glyphicon glyphicon-remove"></i> hapus</button>';
-  /* Act on the event */
-  var $this = $('#table-hargasatuan');
 
-  $('#table-hargasatuan').find(".select2").each(function(index){
-    if($(this).data('select2')) {
-      $(this).select2('destroy');
-    }
-  });
+  var $this = $('#table-hargasatuan');
 
   var row = $this.find('tbody>tr');
   var new_row = row.eq(0).clone();
@@ -344,7 +351,7 @@ $(document).on('click', '.add-harga_satuan', function(event) {
   mdf_new_row.eq(2).find('.error').remove();
   mdf_new_row.eq(3).find('input').val('');
   mdf_new_row.eq(3).find('.error').remove();
-  mdf_new_row.eq(4).find('select').val('');
+  mdf_new_row.eq(4).find('select').val(mdf_new_row.eq(4).find('select option:first').val());
   mdf_new_row.eq(4).find('.error').remove();
   mdf_new_row.eq(5).find('input').val('');
   mdf_new_row.eq(5).find('.error').remove();
@@ -377,10 +384,6 @@ $(document).on('click', '.add-harga_satuan', function(event) {
       mdf.html(btn_del);
     }
 
-  });
-
-  $(".select2").select2({
-    placeholder:"Silahkan Pilih"
   });
 });
 
@@ -445,5 +448,6 @@ $(document).on('keyup', '.hitung_total', function(event) {
     _this.parent().parent().find('td').eq(8).text(formatRupiah(harga_total));
   }
 });
+
 </script>
 @endpush

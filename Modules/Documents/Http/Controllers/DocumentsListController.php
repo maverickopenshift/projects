@@ -16,7 +16,7 @@ class DocumentsListController extends Controller
   {
       $this->documents = $doc;
   }
-  
+
   public function list($request,$status_no)
   {
     $status = $request->status;
@@ -81,11 +81,16 @@ class DocumentsListController extends Controller
             $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-eye"></i> LIHAT</a>';
           }
           if(!\Laratrust::hasRole('approver') && !\Laratrust::hasRole('monitor') ){
-            $edit = '<a class="btn btn-xs btn-info" href="'.route('doc.edit',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-edit"></i> EDIT</a>
-              <a class="btn btn-xs btn-danger" data-id="'.$value['id'].'" data-toggle="modal" data-target="#modal-delete"><i class="fa fa-trash"></i></a>
-            ';
+            $edit = '<a class="btn btn-xs btn-info" href="'.route('doc.edit',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-edit"></i> EDIT</a>';
+            $hapus = '<a class="btn btn-xs btn-danger" data-id="'.$value['id'].'" data-toggle="modal" data-target="#modal-delete"><i class="fa fa-trash"></i></a>';
           }
-          $value['link'] = $view.$edit;
+          if($status_no == "3"){
+            $value['link'] = $view.$edit.$hapus;
+          }
+          else {
+            $value['link'] = $view;
+          }
+
           $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason']);
           $value['sup_name']= $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
 

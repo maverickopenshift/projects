@@ -203,35 +203,6 @@ $(function() {
             var v = $('.f_carikategori').val();
             $('#jstree').jstree(true).search(v);
         }, 250);
-<<<<<<< HEAD
-=======
-    });
-
-    table_kategori = $('#daftar_kategori').on('xhr.dt', function ( e, settings, json, xhr ) {
-        if(xhr.responseText=='Unauthorized.'){
-            location.reload();
-        }
-    }).DataTable({
-        processing: true,
-        serverSide: true,
-        autoWidth : false,
-        order : [[ 1, 'desc' ]],
-        pageLength: 50,
-        ajax: {
-            "url": "{!! route('catalog.category.datatables') !!}?parent_id=0",
-            "type": "POST",
-            'headers': {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        },
-        columns: [
-            { data: 'DT_Row_Index',orderable:false,searchable:false},
-            { data: 'code', name: 'code' },
-            { data: 'display_name', name: 'display_name' },
-            { data: 'desc', name: 'desc' },
-            { data: 'action', name: 'action',orderable:false,searchable:false },
-        ]
->>>>>>> 2947944f411e8e685cad3bf8f88d5650cce553d7
     });
 
     table_product = $('#daftar_product').on('xhr.dt', function ( e, settings, json, xhr ) {
@@ -385,26 +356,6 @@ $(function() {
         }
     });
 
-<<<<<<< HEAD
-=======
-    function get_kategori(id, parent){
-        $(".f_parentid_select").empty().trigger('change');
-
-        $.ajax({
-            url: "{{route('catalog.category.get_category_induk')}}?id=" + id + "&parent_id=0",
-            dataType: 'json',
-            success: function(data)
-            {
-                $(".f_parentid_select").select2({
-                    data: data
-                });
-
-                $(".f_parentid_select").val(parent).trigger('change');
-            }
-        });
-    }
-
->>>>>>> catalog
     function get_produk_induk(parent){
         $("#f_produk_parent").empty().trigger('change');
 
@@ -421,12 +372,6 @@ $(function() {
             }
         });
     }
-<<<<<<< HEAD
-<<<<<<< HEAD
- 
-=======
-=======
->>>>>>> 2947944f411e8e685cad3bf8f88d5650cce553d7
 
     var formModal = $('#form-modal-category');
     formModal.on('show.bs.modal', function (event) {
@@ -510,7 +455,6 @@ $(function() {
             }
         });
     });
->>>>>>> catalog
 
     var formModal = $('#form-modal-product');
     formModal.on('show.bs.modal', function (event) {
@@ -523,8 +467,6 @@ $(function() {
         modal.find('.modal-title').text(title)
 
         var data = button.data('data');
-
-        console.log(data.price_jasa);
 
         get_produk_induk(data.catalog_category_id);
 

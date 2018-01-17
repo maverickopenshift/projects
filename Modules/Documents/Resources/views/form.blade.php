@@ -8,7 +8,7 @@
     <div class="nav-tabs-custom">
       @php
         $title_sow = 'SOW,BOQ';
-        if($doc_type->name=='khs'){
+        if($doc_type->name=='khs' || $doc_type->name=='amandemen_kontrak_khs'){
           $title_sow = 'DAFTAR HARGA SATUAN';
         }elseif($doc_type->name=='mou'){
           $title_sow = 'RUANG LINGKUP';
@@ -39,11 +39,11 @@
         <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
         @endif
 
-        @if(in_array($doc_type->name,['khs','turnkey','surat_pengikatan','mou']))
+        @if(in_array($doc_type->name,['khs','amandemen_kontrak_khs','turnkey','amandemen_kontrak_turnkey','surat_pengikatan','mou']))
           <li><a href="#tab_4" data-toggle="tab">PASAL KHUSUS</a></li>
         @endif
 
-        @if(in_array($doc_type->name,['turnkey','sp']))
+        @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey','sp']))
           <li><a href="#tab_5" data-toggle="tab">JAMINAN DAN ASURANSI</a></li>
         @endif
       </ul>
@@ -51,7 +51,7 @@
         <div class="tab-content">
           <div class="tab-pane active" id="tab_1">
             @include('documents::partials.alert-errors')
-            @if(in_array($doc_type->name,['turnkey','sp','khs','surat_pengikatan','mou']))
+            @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey','sp','khs','amandemen_kontrak_khs','surat_pengikatan','mou']))
               @include('documents::doc-form.general-info')
             @else
               @include('documents::doc-form.amademen')
@@ -65,7 +65,7 @@
           </div>
           <div class="tab-pane" id="tab_2">
             @include('documents::partials.alert-errors')
-            @if(in_array($doc_type->name,['turnkey','sp','khs','mou']))
+            @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey','sp','khs','amandemen_kontrak_khs','mou']))
               @include('documents::doc-form.sow-boq')
             @elseif(in_array($doc_type->name,['amandemen_kontrak','amandemen_sp']))
               @include('documents::doc-form.amandemen_kontrak-sow-boq')
@@ -86,8 +86,8 @@
             @elseif(!in_array($doc_type->name,['mou']))
               @include('documents::doc-form.latar-belakang')
             @endif
-            
-            {{--        
+
+            {{--            
             @include('documents::doc-form.latar-belakang-fix')
             --}}
             <div class="clearfix"></div>
@@ -98,7 +98,7 @@
               </div>
             </div>
           </div>
-          @if(in_array($doc_type->name,['khs','turnkey','surat_pengikatan','mou']))
+          @if(in_array($doc_type->name,['khs','amandemen_kontrak_khs','turnkey','amandemen_kontrak_turnkey','surat_pengikatan','mou']))
           <div class="tab-pane" id="tab_4">
             @include('documents::partials.alert-errors')
             @include('documents::doc-form.pasal-penting')
@@ -113,7 +113,7 @@
           @endif
           <div class="tab-pane" id="tab_5">
             @include('documents::partials.alert-errors')
-            @if(in_array($doc_type->name,['turnkey','sp']))
+            @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey','sp']))
               @include('documents::doc-form.jaminan-asuransi')
             @elseif(in_array($doc_type->name,['side_letter']))
               @include('documents::doc-form.side_letter-scope-perubahan')

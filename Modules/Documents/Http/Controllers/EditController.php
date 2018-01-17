@@ -679,8 +679,8 @@ class EditController extends Controller
           $doc_boq->item = $request['hs_item'][$key];
           $doc_boq->satuan = $request['hs_satuan'][$key];
           $doc_boq->mtu = $request['hs_mtu'][$key];
-          $doc_boq->harga = Helpers::input_rupiah($q_harga);
-          $doc_boq->harga_jasa = Helpers::input_rupiah($q_harga);
+          $doc_boq->harga = Helpers::input_rupiah($request['hs_harga'][$key]);
+          $doc_boq->harga_jasa = Helpers::input_rupiah($request['hs_harga_jasa'][$key]);
           $hs_type = 'harga_satuan';
           if(in_array($type,['turnkey','sp'])){
             $q_qty = Helpers::input_rupiah($request['hs_qty'][$key]);

@@ -4,21 +4,21 @@
 <div class="box box-danger">
   <div class="loading2"></div>
     <div class="box-header with-border">
-      <h3 class="box-title">
-          <div class="btn-group" role="group" aria-label="...">
+
+          <div class="btn-group" role="group" >
             @if(\Auth::user()->hasPermission('tambah-supplier'))
-              <form action="{{route('supplier.upload.sap')}}" class="" method="post" enctype="multipart/form-data">
+              <form action="{{route('supplier.upload.sap')}}" class="" method="post" id="form-user" enctype="multipart/form-data">
                 {{ csrf_field() }}
-                <div class="col-sm-10">
+                <div class="col-md-12">
                   <input type="file" name="supplier_sap" class="supplier_sap hide"/>
-                  <button class="btn btn-primary btn-sm upload-supplier_sap" type="button" style="display:none"><i class="fa fa-upload"></i> Upload Supplier from SAP</button>
-                  <span class="error error-supplier_sap text-danger"></span>
+                  <button class="btn btn-primary btn-sm upload-supplier_sap" type="button"><i class="fa fa-upload"></i> Upload Supplier from SAP</button>
+                  {{-- <span>Format File Tidak Valid</span> --}}
+                  <span>{!!Helper::error_help($errors,'supplier_sap')!!}</span>
                 </div>
                 <button class="btn btn-primary btn-sm btn_submit hide" type="submit"></button>
               </form>
             @endif
           </div>
-      </h3>
 
       <div class="box-tools pull-right">
         <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -32,17 +32,17 @@
         @include('supplier::partials.alert-message')
 
         <div id="alertBS"></div>
-        <table class="table table-condensed table-striped" id="datatables">
+        <table class="table table-condensed table-striped" id="datatables" style="width:100%">
             <thead>
             <tr>
-                <th width="">No.</th>
-                <th width="">Supplier</th>
-                <th width="">ID</th>
-                <th width="">Alamat</th>
-                <th width="">Kota</th>
-                <th width="">Upload By</th>
-                <th width="">Upload At</th>
-                <th width="">Action</th>
+                <th>No.</th>
+                <th>Supplier</th>
+                <th>ID</th>
+                <th>Alamat</th>
+                <th>Kota</th>
+                <th>Upload By</th>
+                <th>Upload At</th>
+                <th>Action</th>
             </tr>
             </thead>
         </table>
@@ -62,10 +62,49 @@ $(function() {
     var $file = $('.supplier_sap').click();
   });
   $('.supplier_sap').on('change', function(event) {
+    // $('.btn_submit').click();
     event.stopPropagation();
     event.preventDefault();
-    $('.btn_submit').click();
+
+    var loading = $('.loading2');
+    var form_user =  $('#form-user');
+    loading.show();
+    $.ajax({
+      url: form_user.attr('action'),
+      type: 'post',
+      processData: false,
+      contentType: false,
+      data: new FormData(document.getElementById("form-user")),
+      dataType: 'json',
+    })
+    .done(function(data) {
+      if(data.status){
+        console.log("sukses");
+        bootbox.alert({
+            title:"Pemberitahuan",
+            message: "Data berhasil diupload",
+            callback: function (result) {
+              window.location = '{!!route('suppliersap')!!}'
+            }
+        });
+      }
+      else{
+        bootbox.alert({
+            title:"Pemberitahuan",
+            message: "Format CSV Tidak Valid!",
+            callback: function (result) {
+              window.location = '{!!route('suppliersap')!!}'
+            }
+        });
+      }
+      loading.hide();
+    })
+    .always(function(){
+      loading.hide();
+    });
   });
+
+
 
   datatablesMe = $('#datatables').on('xhr.dt', function ( e, settings, json, xhr ) {
       //console.log(JSON.stringify(xhr));
@@ -77,11 +116,9 @@ $(function() {
       serverSide: true,
       autoWidth : true,
       scrollX   : true,
-      fixedColumns:   {
-            // leftColumns: 2,
-      },
+
       order : [[ 0, 'desc' ]],
-      pageLength: 50,
+      pageLength: 10,
       ajax: '{!! route('supplier.sap.data') !!}',
       columns: [
           {data : 'DT_Row_Index',orderable:false,searchable:false},

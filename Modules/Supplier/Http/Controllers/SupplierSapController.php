@@ -8,6 +8,7 @@ use Illuminate\Routing\Controller;
 use App\User;
 use Modules\Supplier\Entities\SupplierSap;
 use Modules\Supplier\Entities\SupplierMetadata;
+use App\Helpers\Helpers;
 use Datatables;
 use Response;
 

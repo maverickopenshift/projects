@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class KlasifikasiUsaha extends Migration
+class AlterBoq extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class KlasifikasiUsaha extends Migration
      */
     public function up()
     {
-        Schema::create('klasifikasi_usaha', function (Blueprint $table) {
-          $table->increments('id');
-          $table->string('kode');
-          $table->longText('text');
-          $table->timestamps();
-          $table->softDeletes();
+        Schema::table('doc_boq', function (Blueprint $table) {
+            $table->string('harga_jasa')->nullable();
         });
     }
 

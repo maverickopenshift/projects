@@ -25,6 +25,23 @@ class SupplierEditController extends Controller
         abort(500);
       }
       $supplier->asset = $supplier->asset+0;
+
+      $dt_sertifikat_dokumen = SupplierMetadata::get_sertifikat_dokumen($id);
+      foreach($dt_sertifikat_dokumen as $k=>$dt_sertifikat_dokumen){
+        $d = json_decode($dt_sertifikat_dokumen->object_value);
+        $iujk_no[] = $d->iujk_no;
+        $iujk_tg_terbit[] = $d->iujk_tg_terbit;
+        $iujk_tg_expired[] = $d->iujk_tg_expired;
+        $name[] = $d->name;
+        $file[] = $d->file;
+      }
+      $supplier->iujk_no = $iujk_no;
+      $supplier->iujk_tg_terbit = $iujk_tg_terbit;
+      $supplier->iujk_tg_expired = $iujk_tg_expired;
+      $supplier->nama_sertifikat_dokumen = $name;
+      $supplier->file_sertifikat_dokumen_old = $file;
+      //dd($supplier);
+
       $dt_klasifikasi = SupplierMetadata::select('object_value')->where([
         ['id_object','=',$id],
         ['object_key','=','klasifikasi_usaha']
@@ -79,19 +96,6 @@ class SupplierEditController extends Controller
       }
       $supplier->file_old_ld = $file_old_ld;
 
-      $dt_sertifikat_dokumen = SupplierMetadata::get_sertifikat_dokumen($id);
-      foreach($dt_sertifikat_dokumen as $k=>$dt_sertifikat_dokumen){
-        $d = json_decode($dt_sertifikat_dokumen->object_value);
-        $sertifikat_dokumen[$k]['name'] = $d->name;
-        $sertifikat_dokumen[$k]['file'] = $d->file;
-      }
-      $supplier->sertifikat_dokumen = $sertifikat_dokumen;
-
-      foreach($sertifikat_dokumen as $k=>$v){
-        $file_old_sd[] = $v['file'];
-      }
-      $supplier->file_old_sd = $file_old_sd;
-      //dd($supplier);
       //$data = $sup;
       $page_title = ucfirst($request->status).' Supplier';
       $action_type = $request->status;
@@ -101,26 +105,27 @@ class SupplierEditController extends Controller
   public function update(Request $request)
   {
     $id = $request->id;
-    // dd($request->komentar);
+    $asset = $request->asset;
+    // dd($request->input());
     $rules = array (
-        'komentar'          => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
-        'bdn_usaha'         => 'required|max:250|min:2|regex:/^[a-z0-9 .\-]+$/i',
-        'nm_vendor'         => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'nm_vendor_uq'      => 'max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'komentar'          => 'required|max:250|min:2',
+        'bdn_usaha'         => 'required|max:250|min:2',
+        'nm_vendor'         => 'required|max:500|min:3',
+        'nm_vendor_uq'      => 'max:500|min:3',
         'prinsipal_st'      => 'required|boolean',
-        'klasifikasi_usaha.*' => 'required|regex:/^[a-z0-9 .\-]+$/i',
-        'pengalaman_kerja'  => 'required|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
+        'klasifikasi_usaha.*' => 'required',
+        'pengalaman_kerja'  => 'required|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
         'alamat'            => 'required|max:1000|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
         'kota'              => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'kd_pos'            => 'required|digits_between:3,20',
-        'telepon'           => 'required|digits_between:7,20',
-        'fax'               => 'required|digits_between:7,20',
+        'kd_pos'            => 'required|max:5',
+        'telepon'           => 'required|digits_between:7,12',
+        'fax'               => 'required|digits_between:7,12',
         // 'email'             => 'required|max:50|min:4|email',
         // 'password'          => 'required|max:50|min:6|confirmed',
         'web_site'          => 'sometimes|nullable|url',
         'induk_perus'       => 'sometimes|nullable|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'anak_perusahaan.*' => 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'asset'             => 'required|max:500|min:3|digits_between:3,50',
+        'asset'             => 'required|max:500|min:3|regex:/^[0-9 .]+$/i',
         'bank_nama'         => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'bank_cabang'       => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'bank_norek'        => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -128,9 +133,9 @@ class SupplierEditController extends Controller
         'akte_awal_no'      => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'akte_awal_tg'      => 'required|date_format:"Y-m-d"',
         'akte_awal_notaris' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'akte_akhir_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'akte_akhir_tg'     => 'required|date_format:"Y-m-d"',
-        'akte_akhir_notaris'=> 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'akte_akhir_no'     => 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'akte_akhir_tg'     => 'sometimes|nullable|date_format:"Y-m-d"',
+        'akte_akhir_notaris'=> 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'siup_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'siup_tg_terbit'     => 'required|date_format:"Y-m-d"',
         'siup_tg_expired'     => 'required|date_format:"Y-m-d"',
@@ -144,9 +149,6 @@ class SupplierEditController extends Controller
         'idp_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'idp_tg_terbit'     => 'required|date_format:"Y-m-d"',
         'idp_tg_expired'     => 'required|date_format:"Y-m-d"',
-        'iujk_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'iujk_tg_terbit'     => 'required|date_format:"Y-m-d"',
-        'iujk_tg_expired'     => 'required|date_format:"Y-m-d"',
         'nm_direktur_utama'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'nm_komisaris_utama'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'cp1_nama'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -155,7 +157,12 @@ class SupplierEditController extends Controller
         'jml_peg_domestik'     => 'required|integer',
         'jml_peg_asing'     => 'required|integer',
         'legal_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        // 'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+
+        'iujk_no.*'                    => 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'iujk_tg_terbit.*'             => 'sometimes|nullable|date_format:"Y-m-d"',
+        'iujk_tg_expired.*'            => 'sometimes|nullable|date_format:"Y-m-d"',
+        'nama_sertifikat_dokumen.*'    => 'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i',
     );
 
     $check_new_legal_dok = false;
@@ -192,32 +199,59 @@ class SupplierEditController extends Controller
     //dd($request->input());
 
     //dd($request['file_old_ld']);
-    $check_new_sertifikat_dok = false;
-    foreach($request->sertifikat_dokumen as $l => $v){
-      $sertifikat_dokumen[$l]['name'] = $v['name'];
-      if(isset($v['file'])){
-        $filenya = $v['file'];
-        $sertifikat_dokumen[$l]['file'] = $filenya;
+
+    // $check_new_sertifikat_dok = false;
+    // foreach($request->sertifikat_dokumen as $l => $v){
+    //   $sertifikat_dokumen[$l]['name'] = $v['name'];
+    //   if(isset($v['file'])){
+    //     $filenya = $v['file'];
+    //     $sertifikat_dokumen[$l]['file'] = $filenya;
+    //   }
+    //   else{
+    //     if(count($request->sertifikat_dokumen)==count($request->file_old_sd)){
+    //       $filenya = $request->file_old_sd[$l];
+    //       $sertifikat_dokumen[$l]['file'] = $filenya;
+    //     }
+    //     else{
+    //       $filenya = isset($request->file_old_sd[$l])?$request->file_old_sd[$l]:"";
+    //       $sertifikat_dokumen[$l]['file'] = $filenya;
+    //     }
+    //
+    //   }
+    //   if(is_object($filenya) || empty($filenya) || (empty($filenya) && is_object($filenya))){
+    //     $check_new_sertifikat_dok = true;
+    //   }
+    //   if($check_new_sertifikat_dok) {
+    //       $rules['sertifikat_dokumen.'.$l.'.file'] = 'required|mimes:pdf';
+    //   }
+    // }
+    // $request->merge(['sertifikat_dokumen' => $sertifikat_dokumen]);
+
+    $check_new_lampiran = false;
+    foreach($request->file_sertifikat_dokumen_old as $k => $v){
+      if(isset($request->file_sertifikat_dokumen[$k]) && is_object($request->file_sertifikat_dokumen[$k]) && !empty($v)){//jika ada file baru
+        $new_lamp[] = '';
+        $new_lamp_up[] = $request->file_sertifikat_dokumen[$k];
+        $rules['file_sertifikat_dokumen.'.$k] = 'sometimes|nullable|mimes:pdf';
       }
-      else{
-        if(count($request->sertifikat_dokumen)==count($request->file_old_sd)){
-          $filenya = $request->file_old_sd[$l];
-          $sertifikat_dokumen[$l]['file'] = $filenya;
+      else if(empty($v)){
+        $rules['file_sertifikat_dokumen.'.$k] = 'sometimes|nullable|mimes:pdf';
+        if(!isset($request->file_sertifikat_dokumen[$k])){
+          $new_lamp[] = $v;
+          $new_lamp_up[] = $v;
         }
         else{
-          $filenya = isset($request->file_old_sd[$l])?$request->file_old_sd[$l]:"";
-          $sertifikat_dokumen[$l]['file'] = $filenya;
+          $new_lamp[] = '';
+          $new_lamp_up[] = $request->file_sertifikat_dokumen[$k];
         }
-
       }
-      if(is_object($filenya) || empty($filenya) || (empty($filenya) && is_object($filenya))){
-        $check_new_sertifikat_dok = true;
-      }
-      if($check_new_sertifikat_dok) {
-          $rules['sertifikat_dokumen.'.$l.'.file'] = 'required|mimes:pdf';
+      else{
+        $new_lamp[] = $v;
+        $new_lamp_up[] = $v;
       }
     }
-    $request->merge(['sertifikat_dokumen' => $sertifikat_dokumen]);
+    $request->merge(['file_sertifikat_dokumen' => $new_lamp]);
+    $request->merge(['asset' => $asset]);
 
     $validator = Validator::make($request->all(), $rules,CustomErrors::supplier());
     //dd($request->input());
@@ -228,6 +262,7 @@ class SupplierEditController extends Controller
     }
     else {
 // dd("hai");
+// dd($request->input());
       $id = $request->id;
 
       $data = Supplier::where('id',$id)->first();
@@ -238,6 +273,10 @@ class SupplierEditController extends Controller
       $user = User::where('username',$data->kd_vendor)->first();
       $user->name = $request->nm_vendor;
       $user->phone = $request->telepon;
+        $bdn_usaha = $request->bdn_usaha;
+        $inisial = $request->nm_vendor_uq;
+        $gabung = $bdn_usaha." - ".$inisial;
+      $user->data = $gabung;
       $user->save();
 
       $data->bdn_usaha = $request->bdn_usaha;
@@ -251,7 +290,7 @@ class SupplierEditController extends Controller
       $data->fax = $request->fax;
       $data->web_site = $request->web_site;
       $data->induk_perus = $request->induk_perus;
-      $data->asset = $request->asset;
+      $data->asset = Helpers::input_rupiah($request->asset);
       $data->bank_nama = $request->bank_nama;
       $data->bank_cabang = $request->bank_cabang;
       $data->bank_norek = $request->bank_norek;
@@ -274,9 +313,9 @@ class SupplierEditController extends Controller
       $data->idp_no = $request->idp_no;
       $data->idp_tg_terbit = $request->idp_tg_terbit;
       $data->idp_tg_expired = $request->idp_tg_expired;
-      $data->iujk_no = $request->iujk_no;
-      $data->iujk_tg_terbit = $request->iujk_tg_terbit;
-      $data->iujk_tg_expired = $request->iujk_tg_expired;
+      // $data->iujk_no = $request->iujk_no;
+      // $data->iujk_tg_terbit = $request->iujk_tg_terbit;
+      // $data->iujk_tg_expired = $request->iujk_tg_expired;
       $data->cp1_nama = $request->cp1_nama;
       $data->cp1_telp = $request->cp1_telp;
       $data->cp1_email = $request->cp1_email;
@@ -286,6 +325,31 @@ class SupplierEditController extends Controller
       // $data->Komen = $request->reason;
       $data->save();
 
+      SupplierMetadata::where([
+        ['id_object','=',$data->id],
+        ['object_type','=','vendor'],
+        ['object_key','=','sertifikat_dokumen']
+        ])->delete();
+        foreach($request->iujk_no as $l => $val){
+          $mt_data = new SupplierMetadata();
+          $mt_data->id_object    = $data->id;
+          $mt_data->object_type  = 'vendor';
+          $mt_data->object_key   = 'sertifikat_dokumen';
+
+          if(is_object($new_lamp_up[$l])){
+            $nama = $request['nama_sertifikat_dokumen'][$l];
+            $fileName   = $data->kd_vendor.'_'.str_slug($nama).'_'.time().'.pdf';
+            $new_lamp_up[$l]->storeAs('supplier/sertifikat_dokumen', $fileName);
+          }
+          else{
+            $fileName = $new_lamp_up[$l];
+          }
+          $mt_data->object_value = json_encode(['iujk_no'=>$request['iujk_no'][$l], 'iujk_tg_terbit'=>$request['iujk_tg_terbit'][$l],
+                                  'iujk_tg_expired'=>$request['iujk_tg_expired'][$l], 'name'=>$request['nama_sertifikat_dokumen'][$l],
+                                  'file'=>$fileName]);
+          $mt_data->save();
+        };
+// dd("yo");
       $mt_data = SupplierMetadata::where([
         ['id_object','=',$data->id],
         ['object_type','=','vendor'],
@@ -376,27 +440,6 @@ class SupplierEditController extends Controller
         $mt_data->save();
       };
 
-      SupplierMetadata::where([
-        ['id_object','=',$data->id],
-        ['object_type','=','vendor'],
-        ['object_key','=','sertifikat_dokumen']
-        ])->delete();
-      foreach($request->sertifikat_dokumen as $l => $val){
-        if(is_object($val['file'])){
-          $fileName   = Helpers::set_filename($data->kd_vendor,$val['name']);
-          $val['file']->storeAs('supplier/sertifikat_dokumen', $fileName);
-        }
-        else{
-          $fileName = $val['file'];
-        }
-        $mt_data = new SupplierMetadata();
-        $mt_data->id_object    = $data->id;
-        $mt_data->object_type  = 'vendor';
-        $mt_data->object_key   = 'sertifikat_dokumen';
-        $mt_data->object_value = json_encode(['name'=>$val['name'],'file'=>$fileName]);
-        $mt_data->save();
-      };
-
       $log_activity = new SupplierActivity();
       $log_activity->users_id = Auth::id();
       $log_activity->supplier_id = $request->id;
@@ -405,7 +448,9 @@ class SupplierEditController extends Controller
       $log_activity->komentar = $request->komentar;
       $log_activity->save();
 
-      return redirect()->route('supplier.lihat', ['id' => $request->id, 'status' => 'lihat'])->withData($data)->with('message', 'Data berhasil disimpan!');
+      // return redirect()->route('supplier.lihat', ['id' => $request->id, 'status' => 'lihat'])->withData($data)->with('message', 'Data berhasil disimpan!');
+
+      return redirect()->route('supplier', ['status' => 'proses'])->withData($data)->with('message', 'Data berhasil disimpan!');
 
     }
   }

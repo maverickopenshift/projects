@@ -32,7 +32,8 @@
             <thead>
             <tr>
                 <th width="20">No.</th>
-                <th width="">Text</th>
+                <th width="">Kode</th>
+                <th width="">Sub Klasifikasi</th>
                 <th width="">Created At</th>
                 <th width="">Updated At</th>
                 <th width="">Action</th>
@@ -58,11 +59,12 @@
         processing: true,
         serverSide: true,
         autoWidth : false,
-        order : [[ 1, 'desc' ]],
+        order : [[ 1, 'asc' ]],
         pageLength: 50,
         ajax: '{!! route('supplier.klasifikasi.data') !!}',
         columns: [
             {data : 'DT_Row_Index',orderable:false,searchable:false},
+            { data: 'kode', name: 'kode' },
             { data: 'text', name: 'text' },
             { data: 'created_at', name: 'created_at' },
             { data: 'updated_at', name: 'updated_at' },

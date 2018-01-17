@@ -22,23 +22,45 @@ class SupplierController extends Controller
      * Display a listing of the resource.
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
       $username=auth()->user()->username;
-      $sql = supplier::where('kd_vendor','=',$username)->first();
-
-      $notif = "Belum Disetujui";
-            if($sql){
-              if($sql->vendor_status  == '1'){
-                $notif="Sudah Disetujui";
-              }
-            }
-        $data['page_title'] = 'Supplier';
-        return view('supplier::index')->with($data);
-    }
-    public function data()
-    {
+      $status = $request->status;
+      if($status == "proses"){
+        $sql = Supplier::with('user','supplierSap')
+        ->where('vendor_status', '=', '0')->get();
+      }else{
         $sql = Supplier::with('user','supplierSap')->get();
+      }
+      // dd($sql);
+
+
+// dd($sql->status);
+      // dd($sql->id_sap);
+      // $data['data'] = $sql;
+      $kode_sap = "99999";
+      $page_title = 'Supplier';
+      $sts = $status;
+      return view('supplier::index')->with(compact('sql','page_title','sts'));
+    }
+    public function data(Request $request)
+    {
+      $sql = Supplier::with('user','supplierSap');
+      $status = $request->status;
+      if($status == "proses"){
+        $sql->where('vendor_status', '=', '0');
+      }
+      $sql->get();
+      // dd($request);
+      // $search = trim($request->q);
+        // dd($request->user_id);
+        // $sql = Supplier::with('user','supplierSap')->get();
+
+        // if(!empty($search)){
+        //   $sql->where(function($q) use ($search) {
+        //       $q->orWhere('vendor_status', '=', '%'.$search.'%');
+        //   });
+        // }
         // dd($sql);
         return Datatables::of($sql)
             ->addIndexColumn()
@@ -60,7 +82,7 @@ class SupplierController extends Controller
               }else if($data->vendor_status==1){
                 $sts = "Sudah Disetujui";
               }else if($data->vendor_status==2){
-                $sts = "Tidak Disetujui";
+                $sts = "Data Dikembalikan";
               }else{
                 $sts = "-";
               }
@@ -75,14 +97,17 @@ class SupplierController extends Controller
               if(\Auth::user()->hasPermission('ubah-supplier')){
                   $act .='<a href="'.route('supplier.lihat',['id'=>$data->id,'status'=>'lihat']).'" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-list-alt"></i> Lihat</a> <br>';
               }
-              if(\Auth::user()->hasPermission('ubah-supplier')){
-                if($data->id_sap==="" || $data->id_sap==null){
-                  $act .='<a href="'.route('supplier.mapping.sap',['id'=>$data->id]).'" class="btn btn-success btn-xs">Link To SAP</a> <br>';
-                }else{
-                  $act .='<button class="btn btn-danger btn-xs unlink_btn" data-id="'.$data->id.'">Unlink To SAP</button> <br>';
-                }
+              if($data->vendor_status !== 0){
+                if(\Auth::user()->hasPermission('ubah-supplier')){
+                  if($data->id_sap==="" || $data->id_sap==null){
+                    $act .='<a href="'.route('supplier.mapping.sap',['id'=>$data->id]).'" class="btn btn-success btn-xs">Link To SAP</a> <br>';
+                  }else{
+                    $act .='<button class="btn btn-danger btn-xs unlink_btn" data-id="'.$data->id.'">Unlink To SAP</button> <br>';
+                  }
 
+                }
               }
+
   //             if(\Auth::user()->hasPermission('ubah-supplier')){
   //                 $act .='<button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#form-modal"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'">
   // <i class="glyphicon glyphicon-edit"></i> Edit Status</button>';
@@ -118,7 +143,7 @@ class SupplierController extends Controller
         // if (empty($search)) {
         //     return \Response::json([]);
         // }
-        $data = Supplier::select('id','nm_vendor','kd_vendor','bdn_usaha');
+        $data = Supplier::select('id','nm_vendor','kd_vendor','bdn_usaha')->where('vendor_status', '=', '1');
         if(!empty($search)){
           $data->where(function($q) use ($search) {
               $q->orWhere('nm_vendor', 'like', '%'.$search.'%');
@@ -127,5 +152,19 @@ class SupplierController extends Controller
         }
         $data = $data->paginate(30);
         return \Response::json($data);
+    }
+    public function filtersupplier(Request $request){
+      $isi = $request->kode;
+      // dd($isi);
+      if($isi == "sudah_mapping"){
+        $data = Supplier::with('user','supplierSap')->whereNotNull('id_sap')->Where('id_sap','<>','')->get();
+      }else if($isi == "belum_mapping"){
+        $data = Supplier::with('user','supplierSap')->whereNull('id_sap')->get();
+      }else if($isi == ""){
+        $data = Supplier::with('user','supplierSap')->get();
+      }else {
+        $data = Supplier::with('user','supplierSap')->where('vendor_status',$isi)->get();
+      }
+        return Response::json($data);
     }
 }

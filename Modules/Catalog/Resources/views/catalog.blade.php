@@ -79,7 +79,7 @@ if(isset($data->id)){
                         <input type="text" class="form-control" id="f_kodeproduk" name="f_kodeproduct" placeholder="Kode Produk ...">
                         <div class="error-f_kodeproduk"></div>
                     </div>
-                    
+
                     <div class="form-group formerror-f_namaproduk">
                         <label>Nama Produk</label>
                         <input type="text" class="form-control" id="f_namaproduk" name="f_namaproduct"  placeholder="Nama Produk ...">
@@ -88,7 +88,7 @@ if(isset($data->id)){
 
                     <div class="form-group formerror-f_produk_parentid">
                         <label>Induk Kategori</label>
-                        <select class="form-control select2" id="f_produk_parent" name="f_produk_parent" style="width: 100%;" required>                      
+                        <select class="form-control select2" id="f_produk_parent" name="f_produk_parent" style="width: 100%;" required>
                         </select>
                         <div class="error-f_produk_parentid"></div>
                     </div>
@@ -104,7 +104,7 @@ if(isset($data->id)){
                         <select class="form-control select2" id="f_matauangproduk" name="f_mtuproduct" style="width: 100%;" required>
                             <option value=""></option>
                             <option value="RP">RP</option>
-                            <option value="USD">USD</option>                       
+                            <option value="USD">USD</option>
                         </select>
                         <div class="error-f_matauangproduk"></div>
                     </div>
@@ -203,7 +203,36 @@ $(function() {
             var v = $('.f_carikategori').val();
             $('#jstree').jstree(true).search(v);
         }, 250);
-    }); 
+<<<<<<< HEAD
+=======
+    });
+
+    table_kategori = $('#daftar_kategori').on('xhr.dt', function ( e, settings, json, xhr ) {
+        if(xhr.responseText=='Unauthorized.'){
+            location.reload();
+        }
+    }).DataTable({
+        processing: true,
+        serverSide: true,
+        autoWidth : false,
+        order : [[ 1, 'desc' ]],
+        pageLength: 50,
+        ajax: {
+            "url": "{!! route('catalog.category.datatables') !!}?parent_id=0",
+            "type": "POST",
+            'headers': {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        },
+        columns: [
+            { data: 'DT_Row_Index',orderable:false,searchable:false},
+            { data: 'code', name: 'code' },
+            { data: 'display_name', name: 'display_name' },
+            { data: 'desc', name: 'desc' },
+            { data: 'action', name: 'action',orderable:false,searchable:false },
+        ]
+>>>>>>> 2947944f411e8e685cad3bf8f88d5650cce553d7
+    });
 
     table_product = $('#daftar_product').on('xhr.dt', function ( e, settings, json, xhr ) {
         if(xhr.responseText=='Unauthorized.'){
@@ -228,8 +257,8 @@ $(function() {
             { data: 'price'},
             { data: 'price_jasa'},
             { data: 'currency'},
-            { data: 'desc'},            
-            { data: 'action', name: 'action',orderable:false,searchable:false },        
+            { data: 'desc'},
+            { data: 'action', name: 'action',orderable:false,searchable:false },
         ]
     });
 
@@ -259,8 +288,8 @@ $(function() {
                 { data: 'price'},
                 { data: 'price_jasa'},
                 { data: 'currency'},
-                { data: 'desc'},            
-                { data: 'action', name: 'action',orderable:false,searchable:false },        
+                { data: 'desc'},
+                { data: 'action', name: 'action',orderable:false,searchable:false },
             ]
         });
     }
@@ -313,7 +342,7 @@ $(function() {
         var type=$(this).attr('data-type');
         btnDelete.button('loading');
         console.log(type);
-        
+
         if(type=="category"){
             $.ajax({
                 url: "{!! route('catalog.category.delete') !!}",
@@ -332,7 +361,7 @@ $(function() {
                         alertBS('Data ini memiliki child, tidak bisa dihapus','danger')
                         btnDelete.button('reset');
                         btnDelete.attr('data-is','');
-                        modalDelete.modal('hide');                    
+                        modalDelete.modal('hide');
                     }
                 }
             });
@@ -356,6 +385,26 @@ $(function() {
         }
     });
 
+<<<<<<< HEAD
+=======
+    function get_kategori(id, parent){
+        $(".f_parentid_select").empty().trigger('change');
+
+        $.ajax({
+            url: "{{route('catalog.category.get_category_induk')}}?id=" + id + "&parent_id=0",
+            dataType: 'json',
+            success: function(data)
+            {
+                $(".f_parentid_select").select2({
+                    data: data
+                });
+
+                $(".f_parentid_select").val(parent).trigger('change');
+            }
+        });
+    }
+
+>>>>>>> catalog
     function get_produk_induk(parent){
         $("#f_produk_parent").empty().trigger('change');
 
@@ -363,23 +412,112 @@ $(function() {
             url: "{{route('catalog.product.get_product_induk')}}",
             dataType: 'json',
             success: function(data)
-            {                
+            {
                 $("#f_produk_parent").select2({
                     data: data
                 });
 
                 $("#f_produk_parent").val(parent).trigger('change');
             }
-        });        
+        });
     }
+<<<<<<< HEAD
+<<<<<<< HEAD
  
+=======
+=======
+>>>>>>> 2947944f411e8e685cad3bf8f88d5650cce553d7
+
+    var formModal = $('#form-modal-category');
+    formModal.on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget)
+        var modal = $(this)
+
+        var title = button.data('title');
+        var btnSave = modal.find('.btn-simpan')
+        btnSave.button('reset')
+
+        var data = button.data('data');
+        get_kategori(data.id,data.parent_id);
+
+        modal.find('.modal-body input#f_id').val(data.id);
+        modal.find('.modal-body input#f_parentid').val(data.parent_id);
+        modal.find('.modal-body input#f_kodekategori').val(data.code);
+        modal.find('.modal-body input#f_namakategori').val(data.display_name);
+        modal.find('.modal-body textarea#f_deskripsikategori').val(data.desc);
+    });
+
+    $(document).on('submit','#form-me-category',function (event) {
+        event.preventDefault();
+
+        var formMe = $(this)
+
+        var attErrorKode = formMe.find('.error-f_kodekategori')
+        var attErrorName = formMe.find('.error-f_namakategori')
+        var attErrorDesc = formMe.find('.error-f_deskripsikategori')
+
+        formMe.find('.formerror-f_kodekategori').removeClass("has-error");
+        formMe.find('.formerror-f_namakategori').removeClass("has-error");
+        formMe.find('.formerror-f_deskripsikategori').removeClass("has-error");
+        attErrorKode.html('')
+        attErrorName.html('')
+        attErrorDesc.html('')
+
+        var btnSave = formMe.find('.btn-simpan')
+        btnSave.button('loading')
+
+        $.ajax({
+            url: formMe.attr('action'),
+            type: 'post',
+            data: formMe.serialize(),
+            dataType: 'json',
+            success: function(response){
+                if(response.errors){
+                    alertBS('Something Wrong','danger');
+
+                    if(response.errors.f_kodekategori){
+                        attErrorKode.html('<span class="help-block">'+response.errors.f_kodekategori+'</span>');
+                        formMe.find('.formerror-f_kodekategori').addClass("has-error");
+                    }
+                    if(response.errors.f_namakategori){
+                        attErrorName.html('<span class="help-block">'+response.errors.f_namakategori+'</span>');
+                        formMe.find('.formerror-f_namakategori').addClass("has-error");
+                    }
+                    if(response.errors.f_deskripsikategori){
+                        attErrorDesc.html('<span class="help-block">'+response.errors.f_deskripsikategori+'</span>');
+                        formMe.find('.formerror-f_deskripsikategori').addClass("has-error");
+                    }
+                    btnSave.button('reset');
+                }
+                else{
+                    if(response==1){
+                        alertBS('Data berhasil di update','success');
+                        $('#jstree').jstree(true).refresh();
+
+                        $('#jstree').on('refresh.jstree', function() {
+                            $("#jstree").jstree("open_all");
+                        });
+                        $("#form-modal-category").modal('hide');
+                        refresh_kategori(0);
+                    }else{
+                        alertBS('Terjadi Kesalahan, Kode kategori tidak boleh sama','danger');
+                        attErrorKode.html('<span class="help-block"> Kode kategori tidak boleh sama </span>');
+                        formMe.find('.formerror-f_kodekategori').addClass("has-error");
+                    }
+                    btnSave.button('reset');
+
+                }
+            }
+        });
+    });
+>>>>>>> catalog
 
     var formModal = $('#form-modal-product');
     formModal.on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget)
         var modal = $(this)
 
-        var title = button.data('title');        
+        var title = button.data('title');
         var btnSave = modal.find('.btn-save')
         btnSave.button('reset')
         modal.find('.modal-title').text(title)
@@ -389,13 +527,13 @@ $(function() {
         console.log(data.price_jasa);
 
         get_produk_induk(data.catalog_category_id);
-        
+
         modal.find('.modal-body input#f_id').val(data.id);
         modal.find('.modal-body input#f_parentid').val(data.catalog_category_id);
         modal.find('.modal-body input#f_kodeproduk').val(data.code);
         modal.find('.modal-body input#f_namaproduk').val(data.name);
         modal.find('.modal-body input#f_unitproduk').val(data.unit);
-        modal.find('.modal-body select#f_matauangproduk').val(data.currency).trigger('change');        
+        modal.find('.modal-body select#f_matauangproduk').val(data.currency).trigger('change');
         modal.find('.modal-body input#f_hargaproduk').val(data.price);
         modal.find('.modal-body input#f_hargajasa').val(data.price_jasa);
         modal.find('.modal-body textarea#f_descproduk').val(data.desc);
@@ -405,7 +543,7 @@ $(function() {
         event.preventDefault();
 
         var formMe = $(this)
-        
+
         var attError_f_kodeproduk = formMe.find('.error-f_kodeproduk')
         var attError_f_namaproduk = formMe.find('.error-f_namaproduk')
         var attError_f_unitproduk = formMe.find('.error-f_unitproduk')
@@ -429,10 +567,10 @@ $(function() {
         attError_f_hargaproduk.html('')
         attError_f_hargajasa.html('')
         attError_f_descproduk.html('')
-        
+
         var btnSave = formMe.find('.btn-simpan')
         btnSave.button('loading')
-        
+
         $.ajax({
             url: formMe.attr('action'),
             type: 'post',
@@ -440,9 +578,9 @@ $(function() {
             dataType: 'json',
             success: function(response){
                 if(response.errors){
-                    
+
                     alertBS_2('Something Wrong','danger');
-                    
+
                     if(response.errors.f_kodeproduk){
                         attError_f_kodeproduk.html('<span class="help-block">'+response.errors.f_kodeproduk+'</span>');
                         formMe.find('.formerror-f_kodeproduk').addClass("has-error");
@@ -479,7 +617,7 @@ $(function() {
                     refresh_product(0);
                     btnSave.button('reset');
                     $('#form-modal-product').modal('hide');
-                }                
+                }
             }
         });
     });

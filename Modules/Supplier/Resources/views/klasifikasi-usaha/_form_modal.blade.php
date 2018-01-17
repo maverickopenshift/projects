@@ -8,11 +8,20 @@
                     <h4 class="modal-title">Edit Klasifikasi Usaha</h4>
                 </div>
                 <div class="modal-body">
+                    <div class="form-group {{ $errors->has('kode') ? ' has-error' : '' }}">
+                        <input type="hidden" id="id" name="id" />
+                        <label>Kode Klasifikasi</label>
+                        <input type="text" id="kode" name="kode" value="" class="form-control" placeholder="Masukkan Kode Klasifikasi Usaha ..." autocomplete="off">
+                        @if ($errors->has('kode'))
+                            <span class="help-block">
+                                <strong>{{ $errors->first('kode') }}</strong>
+                            </span>
+                        @endif
+                    </div>
                     <div class="form-group">
                         <div class="error-global"></div>
-                        <input type="hidden" id="id" name="id" />
-                        <label>Text</label>
-                        <input type="text" id="text" name="text" value="" class="form-control" placeholder="Enter ..." required autocomplete="off">
+                        <label>Sub Klasifikasi</label>
+                        <input type="text" id="text" name="text" value="" class="form-control" placeholder="Masukkan Klasifikasi Usaha ..." autocomplete="off">
                         <div class="error-text"></div>
                     </div>
                 </div>
@@ -61,10 +70,12 @@
                 var data = button.data('data');
                 //data = JSON.parse(data);
                 modal.find('.modal-body input#id').val(data.id)
+                modal.find('.modal-body input#text').val(data.kode)
                 modal.find('.modal-body input#text').val(data.text)
                 modal.find('form').attr('action','{!! route('supplier.klasifikasi.update') !!}')
             }
             else{
+                modal.find('.modal-body input#kode').val('')
                 modal.find('.modal-body input#text').val('')
                 modal.find('form').attr('action','{!! route('supplier.klasifikasi.add') !!}')
             }

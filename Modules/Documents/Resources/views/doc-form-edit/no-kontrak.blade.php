@@ -13,9 +13,22 @@
     <div class="result-kontrak top20"></div>
   </div>
 </div>
-<div class="form-group judul-man" style="display:none;">
-  <label for="nm_vendor" class="col-sm-2 control-label">Judul</label>
-  <div class="col-sm-10 text-me"></div>
+<div class="judul-man" style="display:none;">
+  <div class="form-group">
+    <label for="nm_vendor" class="col-sm-2 control-label">No Kontrak {{$doc_type['title']}}</label>
+    <div class="col-sm-10"> - </div>
+  </div>
+  <div class="form-group {{ $errors->has('doc_title') ? ' has-error' : '' }}">
+    <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Judul {{$doc_type['title']}}</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control text-me" name="doc_title"  value="{{old('doc_title',Helper::prop_exists($doc,'doc_title'))}}"  placeholder="Masukan Judul {{$doc_type['title']}}" autocomplete="off">
+      @if ($errors->has('doc_title'))
+          <span class="help-block">
+              <strong>{{ $errors->first('doc_title') }}</strong>
+          </span>
+      @endif
+    </div>
+  </div>
 </div>
 @push('scripts')
   <script>
@@ -191,12 +204,13 @@
                         });
           t_type +=    '</tbody>\
                       </table>';
-          judul = '{!!strtoupper($doc_type->title)!!} #'+(s_type.length+1)+" || "+data.name;
+          judul = '{!!strtoupper($doc_type->title)!!} #'+(s_type.length+1)+' || '+data.value+' ('+data.name+')';
       }
       else{
-        judul = '{!!strtoupper($doc_type->title)!!} #1 || '+data.name;
+        judul = '{!!strtoupper($doc_type->title)!!} #1 || '+data.value+' ('+data.name+')';
       }
-    $('.judul-man').show().find('.text-me').html(judul+'<input type="hidden" value="'+judul+'" name="doc_title"/>');
+    // $('.judul-man').show().find('.text-me').html(judul+'<input type="hidden" value="'+judul+'" name="doc_title"/>');
+    $('.judul-man').show().find('.text-me').val(judul);
     table.html(t_table+t_type);
   }
   $(document).on('click', '.toggle-me', function(event) {

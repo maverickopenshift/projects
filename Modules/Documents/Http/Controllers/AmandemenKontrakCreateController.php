@@ -25,6 +25,7 @@ class AmandemenKontrakCreateController
     $type = $request->type;
     $rules = [];
     if($request->statusButton == '0'){
+    $rules['doc_title']        =  'required|min:2';
     $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
     $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
     $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -95,7 +96,7 @@ class AmandemenKontrakCreateController
         $new_file_up[] = $v;
       }
     }
-    
+
     $request->merge(['lt_file' => $new_file]);
 
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());

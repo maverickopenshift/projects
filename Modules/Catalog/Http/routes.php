@@ -9,7 +9,7 @@ Route::group(['middleware' => 'web', 'prefix' => 'catalog', 'namespace' => 'Modu
 
     Route::get('/category/get_category_induk/', ['middleware' => ['permission:lihat-catalog'],'uses' => 'CategoryController@get_category_induk'])->name('catalog.category.get_category_induk');
     Route::get('/category/get_category_all/{parent_id}', ['middleware' => ['permission:lihat-catalog'],'uses' => 'CategoryController@get_category_all'])->name('catalog.category.get_category_all');
-    
+
     Route::delete('/category/delete', ['middleware' => ['permission:hapus-catalog-category'],'uses' => 'CategoryController@delete'])->name('catalog.category.delete');
 
     Route::get('/product', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductController@index'])->name('catalog.product');

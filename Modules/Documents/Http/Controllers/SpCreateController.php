@@ -23,7 +23,7 @@ class SpCreateController
     }
     public function store($request)
     {
-      // dd($request->po_no);
+      // dd($request->input());
       $type = $request->type;
       $doc_nilai_material = $request->doc_nilai_material;
       $doc_nilai_jasa = $request->doc_nilai_jasa;
@@ -54,7 +54,8 @@ class SpCreateController
 
       if($request->statusButton == '0'){
       $rules['parent_kontrak']   =  'required|kontrak_exists';
-      $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_title']        =  'required|min:2';
+      $rules['doc_desc']         =  'sometimes|nullable|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';

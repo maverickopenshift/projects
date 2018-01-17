@@ -40,7 +40,7 @@ $f_parentid=old('f_parentid');
         <div class="box box-danger">
             <div class="box-header with-border">
                 <i class="fa fa-cogs"></i>
-                <h3 class="box-title">Daftar Kategori</h3>                
+                <h3 class="box-title">Daftar Kategori</h3>
             </div>
             <div class="box-body form-horizontal">
                 <div class="form-group">
@@ -93,11 +93,11 @@ $f_parentid=old('f_parentid');
                             @if(count($f_kodeproduct)>0)
                                 @foreach ($f_kodeproduct as $key => $value)
                                 <tr class="tabel-product">
-                                    <td class="{{ $errors->has('f_kodeproduct.'.$key) ? ' has-error' : '' }}"> 
+                                    <td class="{{ $errors->has('f_kodeproduct.'.$key) ? ' has-error' : '' }}">
                                         <input type="text" value="{{$f_kodeproduct[$key]}}" name="f_kodeproduct[]" placeholder="Kode.." class="form-control">
                                         {!!Helper::error_help($errors,'f_kodeproduct.'.$key)!!}
                                     </td>
-                                    <td class="{{ $errors->has('f_namaproduct.'.$key) ? ' has-error' : '' }}"> 
+                                    <td class="{{ $errors->has('f_namaproduct.'.$key) ? ' has-error' : '' }}">
                                         <input type="text" value="{{$f_namaproduct[$key]}}" name="f_namaproduct[]" placeholder="Nama .." class="form-control">
                                         {!!Helper::error_help($errors,'f_namaproduct.'.$key)!!}
                                     </td>
@@ -106,22 +106,22 @@ $f_parentid=old('f_parentid');
                                         {!!Helper::error_help($errors,'f_unitproduct.'.$key)!!}
                                     </td>
                                     <td class="{{ $errors->has('f_mtuproduct.'.$key) ? ' has-error' : '' }}">
-                                        @php
-                                            if($f_mtuproduct[$key]=="RP"){
-                                                $a="selected";
-                                                $b="";
-                                            }else if($f_mtuproduct[$key]=="USD"){
-                                                $a="";
-                                                $b="selected";
-                                            }else{
-                                                $a="";
-                                                $b="";
-                                            }
-                                        @endphp
+                                      @php
+                                          if($f_mtuproduct[$key]=="RP"){
+                                              $a="selected";
+                                              $b="";
+                                          }else if($f_mtuproduct[$key]=="USD"){
+                                              $a="";
+                                              $b="selected";
+                                          }else{
+                                              $a="";
+                                              $b="";
+                                          }
+                                      @endphp
                                         <select name="f_mtuproduct[]" class="form-control select2" style="width: 100%;">
                                             <option value=""></option>
                                             <option value="RP" {{$a}}>RP</option>
-                                            <option value="USD" {{$b}}>USD</option>                       
+                                            <option value="USD" {{$b}}>USD</option>
                                         </select>
                                         {!!Helper::error_help($errors,'f_mtuproduct.'.$key)!!}
                                     </td>
@@ -151,10 +151,10 @@ $f_parentid=old('f_parentid');
                                 @endforeach
                             @else
                             <tr class="tabel-product">
-                                <td> 
+                                <td>
                                     <input type="text" name="f_kodeproduct[]" placeholder="Kode.." class="form-control">
                                 </td>
-                                <td> 
+                                <td>
                                     <input type="text" name="f_namaproduct[]" placeholder="Nama .." class="form-control">
                                 </td>
                                 <td>
@@ -164,7 +164,7 @@ $f_parentid=old('f_parentid');
                                     <select name="f_mtuproduct[]" class="form-control select2" style="width: 100%;">
                                         <option value=""></option>
                                         <option value="RP">RP</option>
-                                        <option value="USD">USD</option>                       
+                                        <option value="USD">USD</option>
                                     </select>
                                 </td>
                                 <td>
@@ -209,7 +209,7 @@ $f_parentid=old('f_parentid');
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title" id="myModalLabel">Data BOQ</h4> 
+                <h4 class="modal-title" id="myModalLabel">Data BOQ</h4>
             </div>
             <div class="modal-body">
                 <div class="form-group input-group">
@@ -295,7 +295,7 @@ $(function() {
                     echo "var fields_dec = ['KODE_ITEM','ITEM','SATUAN','MTU','HARGA','KETERANGAN'];";
                     echo "var fields_length_set = 6;";
                 @endphp
-                
+
                 if(fields.length!==fields_length_set || JSON.stringify(fields_dec)!==JSON.stringify(fields)){
                     alertBS("Format file tidak valid");
                     //$('.error-daftar_harga').html('Format CSV tidak valid!');
@@ -307,18 +307,17 @@ $(function() {
                     //$('.error-daftar_harga').html('Data tidak ada!');
                     return false;
                 }                
-
                 $.each(results.data,function(index, el) {
                     if(results.data[index].KODE_ITEM!=""){
                         $('.table-parent-product').find(".select2").each(function(index){
                             if($(this).data('select2')) {
                                 $(this).select2('destroy');
-                            } 
+                            }
                         });
 
                         var new_row = $('.tabel-product:last').clone(true).insertAfter(".tabel-product:last");
                         var input_new_row = new_row.find('td');
-                        
+
                         input_new_row.eq(0).find('input').val(results.data[index].KODE_ITEM);
                         input_new_row.eq(0).find('.error').remove();
                         input_new_row.eq(0).removeClass("has-error");
@@ -344,7 +343,7 @@ $(function() {
                         $(".select2").select2({
                             placeholder:"Silahkan Pilih"
                         });
-                    }                    
+                    }
                 });
             }
         });
@@ -394,7 +393,7 @@ $(function() {
     $('.table-parent-product').on('click', '.btn-delete', function(e){
         var rowCount = $('.table-parent-product tr:last').index() + 1;
         if(rowCount!=1){
-            $(this).closest('tr').remove();    
+            $(this).closest('tr').remove();
         }else{
             alertBS('Jika jumlah baris hanya ada 1 tidak bisa di hapus, silahkan tambah sebelum menghapus','danger');
         }
@@ -404,12 +403,12 @@ $(function() {
         $('.table-parent-product').find(".select2").each(function(index){
             if($(this).data('select2')) {
                 $(this).select2('destroy');
-            } 
+            }
         });
 
         var new_row = $('.tabel-product:last').clone(true).insertAfter(".tabel-product:last");
         var input_new_row = new_row.find('td');
-        
+
         input_new_row.eq(0).find('input').val("");
         input_new_row.eq(0).find('.error').remove();
         input_new_row.eq(0).removeClass("has-error");
@@ -443,7 +442,6 @@ $(function() {
             dataType: 'json',
             success: function(data)
             {
-                console.log(data);
                 $(".select-kontrak").select2({
                     data: data
                 });
@@ -473,8 +471,8 @@ $(function() {
                                 "<td>" + data[i].harga_jasa + "</td>" +
                                 "<td>" + data[i].desc + "</td>" +
                             "</tr>";
-                            
-                    }   
+
+                    }
                 $('.table-boq').html(html);
             }
         });
@@ -494,12 +492,12 @@ $(function() {
                         $('.table-parent-product').find(".select2").each(function(index){
                             if($(this).data('select2')) {
                                 $(this).select2('destroy');
-                            } 
+                            }
                         });
 
                         var new_row = $('.tabel-product:last').clone(true).insertAfter(".tabel-product:last");
                         var input_new_row = new_row.find('td');
-                        
+
                         input_new_row.eq(0).find('input').val(data[0].kode_item);
                         input_new_row.eq(0).find('.error').remove();
                         input_new_row.eq(0).removeClass("has-error");
@@ -521,14 +519,13 @@ $(function() {
                         input_new_row.eq(6).find('input').val(data[0].desc);
                         input_new_row.eq(6).find('.error').remove();
                         input_new_row.eq(6).removeClass("has-error");
-                        
                         $(".select2").select2({
                             placeholder:"Silahkan Pilih"
                         });
 
                         $("#modalboq").modal('hide');
                     }
-                });            
+                });
             }
         });
     });

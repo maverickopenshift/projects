@@ -5,13 +5,13 @@
 </div>
 
 @php
-  $iujk_no          = Helper::old_prop_each($data,'iujk_no');
-  // $iujk_no          = old('iujk_no',Helper::prop_exists($data,'iujk_no'));
-  $iujk_tg_terbit   = Helper::old_prop_each($data,'iujk_tg_terbit');
-  $iujk_tg_expired  = Helper::old_prop_each($data,'iujk_tg_expired');
-  // $old_file_sd = old('file_old_sd',Helper::prop_exists($data,'file_old_sd','array'));
-  $nama_sertifikat_dokumen      = Helper::old_prop_each($data,'nama_sertifikat_dokumen');
-  $file_sertifikat_dokumen_old  = Helper::old_prop_each($data,'file_sertifikat_dokumen_old');
+  $iujk_no          = Helper::old_prop_each($supplier,'iujk_no');
+  // $iujk_no          = old('iujk_no',Helper::prop_exists($supplier,'iujk_no'));
+  $iujk_tg_terbit   = Helper::old_prop_each($supplier,'iujk_tg_terbit');
+  $iujk_tg_expired  = Helper::old_prop_each($supplier,'iujk_tg_expired');
+  // $old_file_sd = old('file_old_sd',Helper::prop_exists($supplier,'file_old_sd','array'));
+  $nama_sertifikat_dokumen      = Helper::old_prop_each($supplier,'nama_sertifikat_dokumen');
+  $file_sertifikat_dokumen_old  = Helper::old_prop_each($supplier,'file_sertifikat_dokumen_old');
 @endphp
 
 @if(count($iujk_no)>0)

@@ -58,6 +58,7 @@ class SpEditController extends Controller
       $rules = [];
       if(in_array($status,['0','2'])){
         $rules['parent_kontrak']   =  'required|kontrak_exists';
+        $rules['doc_title']        =  'required|min:2';
         $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
         $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';

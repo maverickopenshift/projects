@@ -8,6 +8,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
     Route::post('/klasifikasiusaha/update', ['middleware' => ['permission:ubah-klasifikasi-usaha'],'uses' => 'KlasifikasiUsahaController@update'])->name('supplier.klasifikasi.update');
     Route::post('/klasifikasiusaha/add', ['middleware' => ['permission:tambah-klasifikasi-usaha'],'uses' => 'KlasifikasiUsahaController@add'])->name('supplier.klasifikasi.add');
     Route::delete('/klasifikasiusaha/delete', ['middleware' => ['permission:hapus-klasifikasi-usaha'],'uses' => 'KlasifikasiUsahaController@delete'])->name('supplier.klasifikasi.delete');
+    Route::get('/get-klasifikasi', 'KlasifikasiUsahaController@getSelect')->name('supplier.get-klasifikasi');
 
 
     Route::get('/badanusaha', ['middleware' => ['permission:lihat-badan-usaha'],'uses' => 'BadanUsahaController@index'])->name('supplier.badanusaha');
@@ -17,8 +18,8 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
     Route::delete('/badanusaha/delete', ['middleware' => ['permission:lihat-badan-usaha'],'uses' => 'BadanUsahaController@delete'])->name('supplier.badanusaha.delete');
 
 
-    Route::get('/', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@index'])->name('supplier');
-    Route::get('/data', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@data'])->name('supplier.data');
+    Route::get('/status/{status}', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@index'])->name('supplier');
+    Route::get('/data/{status}', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@data'])->name('supplier.data');
     Route::post('/store', ['middleware' => ['permission:tambah-supplier'],'uses' => 'SupplierAddController@store'])->name('supplier.store');
     Route::get('/create', ['middleware' => ['permission:tambah-supplier'],'uses' => 'SupplierAddController@index'])->name('supplier.create');
     // Route::get('/{id}/{status}', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@index'])->name('supplier.edit');
@@ -27,6 +28,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
     Route::post('/return', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@return'])->name('supplier.return');
     Route::post('/update', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@update'])->name('supplier.update');
     Route::get('/get-select', 'SupplierController@getSelect')->name('supplier.get-select');
+    Route::get('/cari-supplier', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@filtersupplier'])->name('supplier.filter');
 
     Route::get('/sap', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierSapController@index'])->name('suppliersap');
     Route::get('/sap-data', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierSapController@data'])->name('supplier.sap.data');

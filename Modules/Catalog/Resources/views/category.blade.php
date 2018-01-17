@@ -42,7 +42,7 @@
                 </div>
                 <div id="jstree"></div>
             </div>
-        </div>        
+        </div>
     </div>
     <div class="col-md-8">
         <div class="box box-danger">
@@ -57,13 +57,13 @@
                     <input type="hidden" class="f_parentid" name="f_parentid">
                     <input type="hidden" class="f_id" name="f_id">
                     {{ csrf_field() }}
-                    
+
                     <div id="formerror-f_kodekategori" class="form-group">
                         <label class="col-sm-3 control-label">Kode Kategori</label>
                         <div class="col-sm-8">
                             <input type="text" name="f_kodekategori" placeholder="Kode Kategori.." class="form-control f_kodekategori">
                             <div class="error-f_kodekategori"></div>
-                        </div>                        
+                        </div>
                     </div>
 
                     <div id="formerror-f_namakategori" class="form-group">
@@ -71,16 +71,16 @@
                         <div class="col-sm-8">
                             <input type="text" name="f_namakategori" placeholder="Nama Kategori.." class="form-control f_namakategori">
                             <div class="error-f_namakategori"></div>
-                        </div>                       
+                        </div>
                     </div>
 
                     <div id="formerror-f_namakategori" class="form-group">
                         <label class="col-sm-3 control-label">Induk Kategori</label>
                         <div class="col-sm-8">
-                            <select name="f_parentid_select" class="form-control f_parentid_select">                   
+                            <select name="f_parentid_select" class="form-control f_parentid_select">
                             </select>
                             <div class="error-f_namakategori"></div>
-                        </div>                       
+                        </div>
                     </div>
 
                     <div id="formerror-f_deskripsikategori" class="form-group">
@@ -88,7 +88,7 @@
                         <div class="col-sm-8">
                             <textarea class="form-control f_deskripsikategori"  name="f_deskripsikategori" placeholder="Deskripsi.."></textarea>
                             <div class="error-f_deskripsikategori"></div>
-                        </div>                        
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -100,7 +100,7 @@
                     </div>
                 </form>
             </div>
-        </div>     
+        </div>
     </div>
 </div>
 
@@ -127,11 +127,11 @@
 @push('scripts')
 <script>
 $(function() {
-    normal();     
+    normal();
 
     $('#jstree')
         .on("changed.jstree", function (e, data) {
-            if(data.selected.length) {               
+            if(data.selected.length) {
                 $(".f_kodekategori").prop( "disabled", false);
                 $(".f_namakategori").prop( "disabled", false);
                 $(".f_parentid_select").prop( "disabled", false);
@@ -191,8 +191,8 @@ $(function() {
     });
 
     function normal(){
-        $(".btn-edit").hide();    
-        $(".btn-delete").hide();    
+        $(".btn-edit").hide();
+        $(".btn-delete").hide();
         $(".btn-simpan").hide();
 
         $('.f_id').val(0);
@@ -216,7 +216,7 @@ $(function() {
 
         $(".f_parentid_select").select2({
             placeholder:"Silahkan Pilih",
-        }); 
+        });
 
         var attErrorKode = $('#fileinfo').find('.error-f_kodekategori')
         var attErrorName = $('#fileinfo').find('.error-f_namakategori')
@@ -238,23 +238,23 @@ $(function() {
             url: "{{route('catalog.category.get_category_induk')}}?id=" + id + "&parent_id=0",
             dataType: 'json',
             success: function(data)
-            {                
+            {
                 $(".f_parentid_select").select2({
                     data: data
                 });
 
                 $(".f_parentid_select").val(parent).trigger('change');
             }
-        });        
+        });
     }
-    
-    $(document).on('click', '.add-kategori', function(event) { 
+
+    $(document).on('click', '.add-kategori', function(event) {
 
         $(".f_parentname").html("Tambah Induk Kategori");
 
         $(".btn-edit").attr('data-id',0);
         $(".btn-delete-modal").attr('data-id',0);
-        
+
         $('.f_id').val(0);
         $('.f_parentid').val(0);
         $('.f_kodekategori').val("");
@@ -283,13 +283,13 @@ $(function() {
         });
 
         $(".btn-simpan").show();
-        $(".btn-edit").hide();    
-        $(".btn-delete").hide();  
+        $(".btn-edit").hide();
+        $(".btn-delete").hide();
     });
 
     $(document).on('click', '.add-subkategori', function(event) {
         console.log($("#jstree").jstree().get_selected(true)[0].text);
-        
+
         $(".f_kodekategori").prop( "disabled", false);
         $(".f_namakategori").prop( "disabled", false);
         $(".f_parentid_select").prop( "disabled", false);
@@ -298,7 +298,7 @@ $(function() {
         $(".btn-delete").prop( "disabled", true);
         $(".btn-simpan").prop( "disabled", false);
 
-        $(".btn-edit").hide();    
+        $(".btn-edit").hide();
         $(".btn-delete").hide();
         $(".btn-simpan").show();
 
@@ -336,13 +336,13 @@ $(function() {
                 if(response==0){
                     alertBS('Terjadi Kesalahan, Data ini memiliki child','danger');
                 }else{
-                    alertBS('Data berhasil di hapus','success');    
-                }               
+                    alertBS('Data berhasil di hapus','success');
+                }
 
                 $('#jstree').jstree(true).refresh();
 
                 $('#jstree').on('refresh.jstree', function() {
-                    $("#jstree").jstree("open_all");          
+                    $("#jstree").jstree("open_all");
                 });
 
                 $('.btn-delete-modal').attr('data-id','');
@@ -370,7 +370,7 @@ $(function() {
         attErrorDesc.html('')
         var btnSave = formMe.find('.btn-simpan')
         btnSave.button('loading')
-        
+
         $.ajax({
             url: formMe.attr('action'),
             type: 'post',
@@ -399,9 +399,9 @@ $(function() {
                         $('#jstree').jstree(true).refresh();
 
                         $('#jstree').on('refresh.jstree', function() {
-                            $("#jstree").jstree("open_all");          
+                            $("#jstree").jstree("open_all");
                         });
-                        
+
                         normal();
                     }else{
                         alertBS('Terjadi Kesalahan, Kode kategori tidak boleh sama','danger');
@@ -409,7 +409,7 @@ $(function() {
                         attErrorKode.html('<span class="help-block"> Kode kategori tidak boleh sama </span>');
                         $("#formerror-f_kodekategori").addClass("has-error");
                     }
-                    
+
                     btnSave.button('reset');
                 }
             }

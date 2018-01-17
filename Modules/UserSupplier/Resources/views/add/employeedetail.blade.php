@@ -30,14 +30,11 @@
             </div>
           </div>
           <div class="form-group">
-            <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Contact Person</label>
-            <div class="col-sm-10">
-            </div>
             <div class="clearfix"></div>
-            <hr  />
+            <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Contact Person</label><hr  />
           </div>
           <div class="form-group {{ $errors->has('cp1_nama') ? ' has-error' : '' }}">
-            <label for="cp1_nama" class="col-sm-2 control-label">Nama</label>
+            <label for="cp1_nama" class="col-sm-2 control-label"><span class="text-red">*</span> Nama</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="cp1_nama" value="{{ old('cp1_nama',Helper::prop_exists($data,'cp1_nama')) }}" placeholder="" autocomplete="off">
               @if ($errors->has('cp1_nama'))
@@ -48,7 +45,7 @@
             </div>
           </div>
           <div class="form-group {{ $errors->has('cp1_telp') ? ' has-error' : '' }}">
-            <label for="cp1_telp" class="col-sm-2 control-label">No Telepon</label>
+            <label for="cp1_telp" class="col-sm-2 control-label"><span class="text-red">*</span> No Telepon</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="cp1_telp" value="{{ old('cp1_telp',Helper::prop_exists($data,'cp1_telp')) }}" placeholder="" autocomplete="off">
               @if ($errors->has('cp1_telp'))
@@ -59,7 +56,7 @@
             </div>
           </div>
           <div class="form-group {{ $errors->has('cp1_email') ? ' has-error' : '' }}">
-            <label for="cp1_email" class="col-sm-2 control-label">Alamat Email</label>
+            <label for="cp1_email" class="col-sm-2 control-label"><span class="text-red">*</span> Alamat Email</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="cp1_email" value="{{ old('cp1_email',Helper::prop_exists($data,'cp1_email')) }}" placeholder="" autocomplete="off">
               @if ($errors->has('cp1_email'))

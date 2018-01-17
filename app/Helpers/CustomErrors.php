@@ -186,7 +186,6 @@ class CustomErrors
             'iujk_no.*.max' => 'Nomer Sertifikat maksimal 500 karakter',
             'iujk_no.*.min' => 'Nomer Sertifikat minimal 3 karakter',
             'iujk_no.*.regex' => 'Nomer Sertifikat  harus huruf dan angka',
-<<<<<<< HEAD
 
             'iujk_tg_terbit.*.required' => 'Tanggal Terbit Sertifikat keahlian harus diisi',
 
@@ -197,18 +196,6 @@ class CustomErrors
             'nama_sertifikat_dokumen.*.min' => 'Nama Sertifikat minimal 3 karakter',
             'nama_sertifikat_dokumen.*.regex' => 'Nama Sertifikat  harus huruf dan angka',
 
-=======
-
-            'iujk_tg_terbit.*.required' => 'Tanggal Terbit Sertifikat keahlian harus diisi',
-
-            'iujk_tg_expired.*.required' => 'Tanggal Masa Berlaku Sertifikat keahlian harus diisi',
-
-            'nama_sertifikat_dokumen.*.required' => 'Nama Sertifikat harus diisi',
-            'nama_sertifikat_dokumen.*.max' => 'Nama Sertifikat maksimal 500 karakter',
-            'nama_sertifikat_dokumen.*.min' => 'Nama Sertifikat minimal 3 karakter',
-            'nama_sertifikat_dokumen.*.regex' => 'Nama Sertifikat  harus huruf dan angka',
-
->>>>>>> 2947944f411e8e685cad3bf8f88d5650cce553d7
             'file_sertifikat_dokumen.*.required' => 'File Sertifikat harus diisi',
             'file_sertifikat_dokumen.*.mimes' => 'File Sertifikat harus format PDF',
 

@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['middleware' => 'web', 'prefix' => 'catalog', 'namespace' => 'Modules\Catalog\Http\Controllers'], function()
+Route::group(['middleware' => ['web','auth'], 'prefix' => 'catalog', 'namespace' => 'Modules\Catalog\Http\Controllers'], function()
 {
     Route::get('/category', ['middleware' => ['permission:catalog-category'],'uses' => 'CategoryController@index'])->name('catalog.category');
     Route::post('/category/datatables', ['middleware' => ['permission:lihat-catalog'],'uses' => 'CategoryController@datatables'])->name('catalog.category.datatables');

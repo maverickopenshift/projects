@@ -431,7 +431,27 @@ class EntryDocumentController extends Controller
           $pic->save();
         }
       }
-
+      /*
+      if(count($request->f_latar_belakang_judul)>0){
+        foreach($request->f_latar_belakang_judul as $key => $val){
+          if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
+            
+            $doc_meta = new DocMeta();
+            $doc_meta->documents_id = $doc->id;
+            $doc_meta->meta_type = $request['f_latar_belakang_judul'][$key];
+            $doc_meta->meta_name = $request['f_latar_belakang_tanggal'][$key];
+            $doc_meta->meta_desc = $request['f_latar_belakang_isi'][$key];
+            if(isset($request['f_latar_belakang_file'][$key])){
+              $fileName   = Helpers::set_filename('doc_',strtolower($val));
+              $file = $request['lt_file'][$key];
+              $file->storeAs('document/'.$request->type.'_latar_belakang', $fileName);
+              $doc_meta->meta_file = $fileName;
+            }
+            $doc_meta->save();
+          }
+        }
+      }
+      */
       if(count($request->lt_name)>0){
         foreach($request->lt_name as $key => $val){
           if(!empty($val)

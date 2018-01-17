@@ -69,6 +69,7 @@
                 modal.find('.modal-body input#display_name').val(data.object_key)
                 modal.find('.modal-body input#description').val(data.object_value)
                 modal.find('form').attr('action','{!! route('config.update') !!}')
+                modal.find('.modal-body input#display_name').attr('disabled',true)
             }
             else{
                 modal.find('.modal-body input#display_name').val('')

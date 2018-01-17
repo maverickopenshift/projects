@@ -68,7 +68,6 @@ class ConfigController extends Controller
      public function update(Request $request)
    	{
            $rules = array (
-               'display_name' => 'required|max:250|min:3',
                'description' => 'required|min:1',
            );
            $validator = Validator::make($request->all(), $rules);
@@ -78,7 +77,6 @@ class ConfigController extends Controller
                ));
            else {
                $data = Config::where('id','=',$request->id)->first();
-               $data->object_key = str_slug($request->display_name);
                $data->object_value = $request->description;
                $data->save();
                return response()->json($data);

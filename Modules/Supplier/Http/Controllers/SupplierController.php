@@ -25,15 +25,23 @@ class SupplierController extends Controller
     public function index(Request $request)
     {
       $username=auth()->user()->username;
-      $sql = supplier::where('kd_vendor','=',$username);
       $status = $request->status;
       if($status == "proses"){
-        $sql->where('vendor_status', '=', '0');
+        $sql = Supplier::with('user','supplierSap')
+        ->where('vendor_status', '=', '0')->get();
+      }else{
+        $sql = Supplier::with('user','supplierSap')->get();
       }
-      $sql->first();
-      $data['page_title'] = 'Supplier';
-      $data['sts'] = $status;
-      return view('supplier::index')->with($data);
+      // dd($sql);
+
+
+// dd($sql->status);
+      // dd($sql->id_sap);
+      // $data['data'] = $sql;
+      $kode_sap = "99999";
+      $page_title = 'Supplier';
+      $sts = $status;
+      return view('supplier::index')->with(compact('sql','page_title','sts'));
     }
     public function data(Request $request)
     {
@@ -144,5 +152,19 @@ class SupplierController extends Controller
         }
         $data = $data->paginate(30);
         return \Response::json($data);
+    }
+    public function filtersupplier(Request $request){
+      $isi = $request->kode;
+      // dd($isi);
+      if($isi == "sudah_mapping"){
+        $data = Supplier::with('user','supplierSap')->whereNotNull('id_sap')->Where('id_sap','<>','')->get();
+      }else if($isi == "belum_mapping"){
+        $data = Supplier::with('user','supplierSap')->whereNull('id_sap')->get();
+      }else if($isi == ""){
+        $data = Supplier::with('user','supplierSap')->get();
+      }else {
+        $data = Supplier::with('user','supplierSap')->where('vendor_status',$isi)->get();
+      }
+        return Response::json($data);
     }
 }

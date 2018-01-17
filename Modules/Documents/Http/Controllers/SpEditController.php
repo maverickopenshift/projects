@@ -26,6 +26,7 @@ class SpEditController extends Controller
     }
     public function store($request)
     {
+      // dd($request->input());
       $type = $request->type;
       $id = $request->id;
       $status = Documents::where('id',$id)->first()->doc_signing;
@@ -192,12 +193,13 @@ class SpEditController extends Controller
 
         $nilai_jasa               = Helpers::input_rupiah($request->doc_nilai_jasa);
         $nilai_material           = Helpers::input_rupiah($request->doc_nilai_material);
-        $nilai_ppn                = config('app.ppn_set');
+        $nilai_ppn                = $request->ppn;
         $nilai_total              = $nilai_jasa+$nilai_material;
-
+// dd($nilai_total);
         $doc->doc_nilai_material  = $nilai_material;
         $doc->doc_nilai_jasa      = $nilai_jasa;
         $doc->doc_nilai_ppn       = $nilai_ppn;
+        $doc->doc_nilai_total     = $nilai_total;
         $doc->doc_nilai_total_ppn = (($nilai_ppn/100)*$nilai_total)+$nilai_total;
 
         $doc->doc_po_no = $request->doc_po;

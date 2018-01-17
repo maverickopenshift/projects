@@ -106,7 +106,7 @@
         {!!Helper::error_help($errors,'doc_lampiran')!!}
       </div>
     </div> --}}
-    
+
   @if($doc_type->name!="mou" && $doc_type->name!="surat_pengikatan")
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
     @if($doc_type->name!="sp")
@@ -161,7 +161,7 @@
               <th style="width:250px">Material</th>
               <th style="width:250px">Jasa</th>
               <th>Total</th>
-              <th  style="width:50px">PPN</th>
+              <th  style="width:100px">PPN</th>
               <th>Total PPN</th>
             </tr>
           </thead>
@@ -181,9 +181,20 @@
                   </div>
                     {!!Helper::error_help($errors,'doc_nilai_jasa')!!}
                 </td>
-                <td class="text-right" style="vertical-align: middle;">0</td>
-                <td class="text-right" style="vertical-align: middle;">{!!config('app.ppn_set')!!} %</td>
-                <td class="text-right" style="vertical-align: middle;">0</td>
+                <td class="text-right" style="vertical-align: middle;"><span class="doc_nilai_total">{{Helper::old_prop($doc,'doc_nilai_total')}}</span>
+                  <input type="hidden" class="form-control" name="doc_nilai_total" value="{{Helper::old_prop($doc,'doc_nilai_total')}}" autocomplete="off">
+                </td>
+                <td class="text-right" style="vertical-align: middle;">
+                  <div class="input-group {{ $errors->has('ppn') ? ' has-error' : '' }}">
+                    <input type="hidden" class="form-control" name="ppn" value="{{Helper::old_prop($ppn,'ppn')}}" autocomplete="off">
+                    <input type="text" class="form-control ppn_sp" name="ppn" value="{{Helper::old_prop($ppn,'ppn')}}" autocomplete="off" disabled>
+                    <span class="input-group-addon">%</span>
+                  </div>
+                    {!!Helper::error_help($errors,'ppn')!!}
+                </td>
+                <td class="text-right" style="vertical-align: middle;"><span class="doc_nilai_total_ppn">{{Helper::old_prop($doc,'doc_nilai_total_ppn')}}</span>
+                  <input type="hidden" class="form-control" name="doc_nilai_total_ppn" value="{{Helper::old_prop($doc,'doc_nilai_total_ppn')}}" autocomplete="off">
+                </td>
               </tr>
           </tbody>
           </table>
@@ -194,11 +205,11 @@
   @endif
 
   @if($doc_type->name!="surat_pengikatan" and $doc_type->name!="mou")
-  <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">    
+  <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
       @include('documents::doc-form.pic')
   </div>
   @endif
-  
+
     @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
     <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
     <div class="form-group {{ $errors->has('doc_po') ? ' has-error' : '' }}">

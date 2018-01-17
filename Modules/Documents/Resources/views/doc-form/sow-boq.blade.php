@@ -10,7 +10,7 @@
       @endif
     </h3>
   </div>
-    
+
   <div class="box-body">
     <div class="form-horizontal">
       @if(in_array($doc_type->name,['turnkey','khs','mou']))
@@ -116,7 +116,7 @@
                       <select name="hs_mtu[]" class="form-control select2" style="width: 100%;">
                           <option value=""></option>
                           <option value="RP" {{$a}}>RP</option>
-                          <option value="USD" {{$b}}>USD</option>                       
+                          <option value="USD" {{$b}}>USD</option>
                       </select>
                       {!!Helper::error_help($errors,'hs_mtu.'.$key)!!}
                     </td>
@@ -157,7 +157,7 @@
                     <select name="hs_mtu[]" class="form-control select2" style="width: 100%;">
                       <option value=""></option>
                       <option value="RP">RP</option>
-                      <option value="USD">USD</option>                       
+                      <option value="USD">USD</option>
                     </select>
                   </td>
                   <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_harga[]" placeholder="Harga Barang.."></td>
@@ -198,9 +198,9 @@
 <script>
 $(function() {
 
-  $(".select2").select2({
-    placeholder:"Silahkan Pilih"
-  });
+  // $(".select2").select2({
+  //   placeholder:"Silahkan Pilih"
+  // });
 
   $('.upload-daftar_harga').on('click', function(event) {
     event.stopPropagation();
@@ -213,7 +213,7 @@ $(function() {
   $('.daftar_harga').on('change', function(event) {
     event.stopPropagation();
     event.preventDefault();
-    var validfile = [".csv", ".xls"];  
+    var validfile = [".csv", ".xls"];
     var namefile = $('.daftar_harga').val().split('\\').pop();
     var valid = 0;
 
@@ -362,7 +362,7 @@ $(document).on('click', '.add-harga_satuan', function(event) {
         ";
       }
     @endphp
-  
+
   $this.find('tbody').append(new_row);
 
   var row = $this.find('tbody>tr');
@@ -392,7 +392,7 @@ $(document).on('click', '.delete-hs', function(event) {
   $.each(row,function(index, el) {
     var mdf_new_row = $(this).find('td');
     mdf_new_row.eq(0).html(index+1);
-    var mdf = $(this).find('.action');    
+    var mdf = $(this).find('.action');
 
     if(row.length==1){
       mdf.html('');
@@ -404,7 +404,7 @@ $(document).on('click', '.delete-hs', function(event) {
 $(document).on('keyup', '.hitung_total', function(event) {
   var _this = $(this),harga_total;
   var td_length = _this.parent().parent().find('td');
- 
+
   if(td_length.length==11){
     if(_this.attr('name')=='hs_qty[]'){
       var qty = _this.val();

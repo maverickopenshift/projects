@@ -298,7 +298,7 @@ $(document).on('change', '.mata-uang', function(event) {
   //console.log($('.select-user-vendor').val());
 });
 $(document).on('keyup', '.hitung_sp', function(event) {
-  var _this = $(this),ppn={!!config('app.ppn_set')!!},total_ppn=0,total=0,td=_this.parent().parent().parent();
+  var _this = $(this),ppn=$('.ppn_sp').val(),total_ppn=0,total=0,td=_this.parent().parent().parent();
   var td_length = td.find('td');
   console.log(td_length.length);
   if(td_length.length==5){
@@ -330,8 +330,12 @@ $(document).on('keyup', '.hitung_sp', function(event) {
     }
     total_ppn = convertNumber(total_ppn);
     total = convertNumber(total);
-    td.find('td').eq(2).text(formatRupiah(total));
-    td.find('td').eq(4).text(formatRupiah(total_ppn));
+    // td.find('td').eq(2).text(formatRupiah(total));
+    // td.find('td').eq(4).text(formatRupiah(total_ppn));
+    td.find('.doc_nilai_total').text(formatRupiah(total));
+    td.find('input[name="doc_nilai_total"]').val(total);
+    td.find('.doc_nilai_total_ppn').text(formatRupiah(total_ppn));
+    td.find('input[name="doc_nilai_total_ppn"]').val(total_ppn);
   }
 });
 

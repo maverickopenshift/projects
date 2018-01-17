@@ -14,6 +14,7 @@ use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocPo;
 use Modules\Documents\Entities\DocActivity;
+use Modules\Config\Entities\Config;
 use Modules\Documents\Http\Controllers\SuratPengikatanCreateController as SuratPengikatanCreate;
 use Modules\Documents\Http\Controllers\SideLetterCreateController as SideLetterCreate;
 use Modules\Documents\Http\Controllers\MouCreateController as MouCreate;
@@ -36,7 +37,7 @@ class EntryDocumentController extends Controller
     protected $AmandemenKontrakCreate;
     protected $AdendumCreate;
     protected $SideLetterCreate;
-    
+
     public function __construct(Request $req,MouCreate $MouCreate,SuratPengikatanCreate $SuratPengikatanCreate,SpCreate $spCreate,AmandemenSpCreate $AmandemenSpCreate,AmandemenKontrakCreate $AmandemenKontrakCreate,SideLetterCreate $SideLetterCreate){
       $this->SuratPengikatanCreate  = $SuratPengikatanCreate;
       $this->MouCreate              = $MouCreate;
@@ -63,20 +64,27 @@ class EntryDocumentController extends Controller
      */
     public function index(Request $req)
     {
-        $doc_type = DocType::where('name','=',$req->type)->first();
-        if(!$doc_type){
-          abort(404);
-        }
-        $field = Documents::get_fields();
-        $data['page_title'] = 'Entry - '.$doc_type['title'];
-        $data['doc_type'] = $doc_type;
-        $data['doc'] = [];
-        $data['doc']['doc_pihak1'] = 'PT. TELEKOMUNIKASI INDONESIA Tbk';
-        // dd($doc_type);
-        $data['data'] = $this->fields;
-        $data['pegawai'] = \App\User::get_user_pegawai();
+      $doc_type = DocType::where('name','=',$req->type)->first();
+      if(!$doc_type){
+        abort(404);
+      }
+      $field = Documents::get_fields();
+      $data['page_title'] = 'Entry - '.$doc_type['title'];
+      $data['doc_type'] = $doc_type;
+      $data['doc'] = [];
+      $data['doc']['doc_pihak1'] = 'PT. TELEKOMUNIKASI INDONESIA Tbk';
+      // dd($doc_type);
+      $field = Documents::get_fields();
+      $data['data'] = $this->fields;
+      $data['pegawai'] = \App\User::get_user_pegawai();
+      $ppn = Config::where('object_key','=','ppn-sp')->first();
+      $ppn->ppn = $ppn->object_value;
+      // dd($ppn->ppn);
+      $data['ppn'] = $ppn;
 
-        return view('documents::form')->with($data);
+
+      // dd($data);
+      return view('documents::form')->with($data);
     }
 
     /**
@@ -115,7 +123,7 @@ class EntryDocumentController extends Controller
       }
       $doc_value = $request->doc_value;
       $request->merge(['doc_value' => Helpers::input_rupiah($request->doc_value)]);
-      
+
       $m_hs_harga=[];
       $m_hs_qty=[];
 
@@ -357,7 +365,7 @@ class EntryDocumentController extends Controller
           $doc_meta->meta_desc = $request->f_no_mou;
           $doc_meta->save();
         }
-      }      
+      }
 
       if(in_array($type,['turnkey','sp'])){
         if(count($request->doc_po_no)>0){

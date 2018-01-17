@@ -10,36 +10,38 @@ use Modules\Documents\Entities\DocType;
 use Modules\Documents\Entities\Documents;
 use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
+use Modules\Documents\Entities\DocMetaSideLetter;
 use Modules\Documents\Entities\DocPic;
-use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocTemplate;
-
 use App\Helpers\Helpers;
 use Validator;
 use DB;
 use Auth;
 
-class AmandemenSpEditController extends Controller
+class SideLetterEditController extends Controller
 {
   public function __construct()
   {
       //oke
   }
+  
   public function store($request)
   {
+    
+
     $type = $request->type;
     $id = $request->id;
     $status = Documents::where('id',$id)->first()->doc_signing;
     $rules = [];
-
+    
     if(in_array($status,['0','2'])){
-      $rules['doc_title']        =  'required|min:2';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
@@ -67,13 +69,13 @@ class AmandemenSpEditController extends Controller
       }
       $request->merge(['doc_lampiran' => $new_lamp]);
     }
-
-    $rule_scope_name = (count($request['scope_name'])>1)?'required':'sometimes|nullable';
-    $rule_scope_awal = (count($request['scope_awal'])>1)?'required':'sometimes|nullable';
-    $rule_scope_akhir = (count($request['scope_akhir'])>1)?'required':'sometimes|nullable';
-    $rules['scope_name.*']  =  $rule_scope_name.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['scope_awal.*']  =  $rule_scope_awal.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-    $rules['scope_akhir.*']  =  $rule_scope_akhir.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    
+    $rule_scope_pasal = (count($request['scope_pasal'])>1)?'required':'sometimes|nullable';
+    $rule_scope_judul = (count($request['scope_judul'])>1)?'required':'sometimes|nullable';
+    $rule_scope_isi = (count($request['scope_isi'])>1)?'required':'sometimes|nullable';
+    $rules['scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
     foreach($request->scope_file_old as $k => $v){
       if(isset($request->scope_file[$k]) && is_object($request->scope_file[$k]) && !empty($v)){//jika ada file baru
@@ -99,7 +101,7 @@ class AmandemenSpEditController extends Controller
     }
     $request->merge(['scope_file' => $new_scope_file]);
 
-    $rules['lt_desc.*']  =  'required|date_format:"Y-m-d"';
+    $rules['lt_desc.*']  =  'required|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['lt_name.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
     foreach($request->lt_file_old as $k => $v){
@@ -127,13 +129,13 @@ class AmandemenSpEditController extends Controller
     $request->merge(['lt_file' => $new_lt_file]);
 
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-
+    
     if ($validator->fails ()){
       return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
 
     if(in_array($status,['0','2'])){
-      $doc = Documents::where('id',$id)->first();;
+      $doc = Documents::where('id',$id)->first();
       $doc->doc_title = $request->doc_title;
       $doc->doc_date = $request->doc_startdate;
       $doc->doc_startdate = $request->doc_startdate;
@@ -147,7 +149,7 @@ class AmandemenSpEditController extends Controller
         $doc->user_id  = $request->user_id;
       }
       $doc->doc_parent = 0;
-      $doc->doc_parent_id = $request->parent_sp;
+      $doc->doc_parent_id = $request->parent_kontrak;
       $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
       $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
       $doc->save();
@@ -236,23 +238,20 @@ class AmandemenSpEditController extends Controller
       }
     }
 
-    if(count($request['scope_name'])>0){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','scope_perubahan']
-        ])->delete();
-      foreach($request['scope_name'] as $key => $val){
-        if(!empty($request['scope_name'][$key])
-            && !empty($request['scope_awal'][$key])
-            && !empty($request['scope_akhir'][$key])
+    if(count($request->scope_pasal)>0){
+      DocMetaSideLetter::where('documents_id','=',$doc->id)->delete();
+      foreach($request->scope_pasal as $key => $val){
+        if(!empty($val)
+            && !empty($request['scope_judul'][$key])
+            && !empty($request['scope_isi'][$key])
         ){
-
-          $doc_meta = new DocMeta();
+          $doc_meta = new DocMetaSideLetter();
           $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'scope_perubahan';
-          $doc_meta->meta_name = $request['scope_name'][$key];
-          $doc_meta->meta_title = $request['scope_awal'][$key];
-          $doc_meta->meta_desc = $request['scope_akhir'][$key];
+          $doc_meta->meta_pasal  = $request['scope_pasal'][$key];
+          $doc_meta->meta_judul  = $request['scope_judul'][$key];
+          $doc_meta->meta_isi    = $request['scope_isi'][$key];
+          $doc_meta->meta_awal = $request['scope_awal'][$key];
+          $doc_meta->meta_akhir = $request['scope_akhir'][$key];
 
           if(is_object($new_scope_file_up[$key])){
             $fileName   = Helpers::set_filename('doc_scope_perubahan_',strtolower($val));

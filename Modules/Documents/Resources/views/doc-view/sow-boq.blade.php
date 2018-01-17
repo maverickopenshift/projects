@@ -38,57 +38,59 @@
             @endphp
             <div class="form-group">
               <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
-            <div class="table-responsive">
-              <table class="table table-condensed table-striped">
-                  <thead>
-                    <tr>
-                        <th style="width:50px;">No.</th>
-                        <th>Kode Item</th>
-                        <th>Item</th>
-                        @if($doc_type->name!='khs')
-                          <th  style="width:70px;">Qty</th>
-                        @endif
-                        <th style="width:100px;">Satuan</th>
-                        <th style="width:70px;">Currency</th>
-                        <th>Harga</th>
-                        @if($doc_type->name!='khs')
-                          <th style="width:100px;">Harga Total</th>
-                        @endif
-                        <th>Keterangan</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    @if(count($doc->boq)>0)
-                      @foreach ($doc->boq as $key=>$dt)
-                        <tr>
-                          <td>{{($key+1)}}</td>
-                          <td>{{($dt->kode_item)}}</td>
-                          <td>{{($dt->item)}}</td>
-                          @if($doc_type->name!='khs')
-                          <td>{{($dt->qty)}}</td>
-                          @endif
-                          <td>{{($dt->satuan)}}</td>
-                          <td>{{($dt->mtu)}}</td>
-                          <td>{{($dt->harga)}}</td>
-                          @if($doc_type->name!='khs')
-                          <td>{{($dt->harga_total)}}</td>
-                          @endif
-                          <td>{{($dt->desc)}}</td>
-                        </tr>
-                      @endforeach
-                    @else
+              <div class="table-responsive col-sm-10">
+                <table class="table table-condensed table-striped">
+                    <thead>
                       <tr>
-                        @if($doc_type->name!='khs')
-                          <td colspan="9" align="center">-</td>
-                        @else
-                          <td colspan="7" align="center">-</td>
-                        @endif
+                          <th style="width:50px;">No.</th>
+                          <th>Kode Item</th>
+                          <th>Item</th>
+                          @if($doc_type->name!='khs')
+                            <th  style="width:70px;">Qty</th>
+                          @endif
+                          <th style="width:100px;">Satuan</th>
+                          <th style="width:70px;">Currency</th>
+                          <th>Harga</th>
+                          <th>Harga Jasa</th>
+                          @if($doc_type->name!='khs')
+                            <th style="width:100px;">Harga Total</th>
+                          @endif
+                          <th>Keterangan</th>
                       </tr>
-                    @endif
-                  </tbody>
-              </table>
-          </div>
-        </div>
+                    </thead>
+                    <tbody>
+                      @if(count($doc->boq)>0)
+                        @foreach ($doc->boq as $key=>$dt)
+                          <tr>
+                            <td>{{($key+1)}}</td>
+                            <td>{{($dt->kode_item)}}</td>
+                            <td>{{($dt->item)}}</td>
+                            @if($doc_type->name!='khs')
+                            <td>{{($dt->qty)}}</td>
+                            @endif
+                            <td>{{($dt->satuan)}}</td>
+                            <td>{{($dt->mtu)}}</td>
+                            <td>{{($dt->harga)}}</td>
+                            <td>{{($dt->harga_jasa)}}</td>
+                            @if($doc_type->name!='khs')
+                            <td>{{($dt->harga_total)}}</td>
+                            @endif
+                            <td>{{($dt->desc)}}</td>
+                          </tr>
+                        @endforeach
+                      @else
+                        <tr>
+                          @if($doc_type->name!='khs')
+                            <td colspan="9" align="center">-</td>
+                          @else
+                            <td colspan="7" align="center">-</td>
+                          @endif
+                        </tr>
+                      @endif
+                    </tbody>
+                </table>
+              </div>
+            </div>
           @if($doc_type['title']=="SP")
             <div class="form-group">
               <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran Teknis</label>

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class VendorRevisi extends Migration
+class AlterBoq extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class VendorRevisi extends Migration
      */
     public function up()
     {
-      Schema::table('supplier', function (Blueprint $table) {
-          $table->string('bank_kota')->nullable();
-      });
+        Schema::table('doc_boq', function (Blueprint $table) {
+            $table->string('harga_jasa')->nullable();
+        });
     }
 
     /**

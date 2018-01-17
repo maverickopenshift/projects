@@ -16,7 +16,33 @@
             </div>
             <div class="form-group">
               <label for="doc_asuransi" class="col-sm-2 control-label">Isi</label>
-              <div class="col-sm-10 text-me">{{$dt->meta_desc or '-'}}</div>
+              <div class="col-sm-10 text-me">
+                @php
+                  if($dt->meta_title=="Jangka Waktu"){
+                    $pecah=explode("|",$dt->meta_desc);
+
+                    if(isset($pecah[0])){
+                      $f_tangga11=$pecah[0];
+                    }else{
+                      $f_tangga11="";
+                    }
+
+                    if(isset($pecah[1])){
+                      $f_tanggal2=$pecah[1];
+                    }else{
+                      $f_tanggal2="";
+                    }      
+
+                    $desc="$f_tangga11 - $f_tanggal2";
+
+                    echo $desc;
+                  }else{
+                    $desc=$dt->meta_desc;
+
+                    echo $desc;
+                  }
+                @endphp
+              </div>
             </div>
         </div>
       @endforeach

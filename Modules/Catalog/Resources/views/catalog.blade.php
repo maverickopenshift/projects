@@ -10,7 +10,7 @@ if(isset($data->id)){
 @endphp
 <style type="text/css">
     #jstree{
-        max-width: 200px;
+        max-width: 90%;
     }
 
     #jstree a {
@@ -37,28 +37,6 @@ if(isset($data->id)){
         <div class="box box-danger">
             <div class="box-header with-border">
                 <i class="fa fa-cogs"></i>
-                <h3 class="box-title f_parentname_kategori">Daftar Kategori</h3>
-            </div>
-            <!-- /.box-header -->
-            <div class="box-body">
-                <div id="alertBS"></div>
-                <table class="table table-striped" id="daftar_kategori">
-                    <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Kode</th>
-                        <th>Nama</th>
-                        <th>Deksripsi</th>
-                        <th width="20%">Aksi</th>
-                    </tr>
-                    </thead>
-                </table>
-            </div>
-        </div>
-
-        <div class="box box-danger">
-            <div class="box-header with-border">
-                <i class="fa fa-cogs"></i>
                 <h3 class="box-title f_parentname_product">Daftar Product</h3>
             </div>
             <!-- /.box-header -->
@@ -70,7 +48,8 @@ if(isset($data->id)){
                             <th>No</th>
                             <th>Kode</th>
                             <th>Nama</th>
-                            <th>Harga</th>
+                            <th>Harga Material</th>
+                            <th>Harga Jasa</th>
                             <th>Satuan</th>
                             <th>Deksripsi</th>
                             <th width="20%">Aksi</th>
@@ -78,53 +57,6 @@ if(isset($data->id)){
                     </thead>
                 </table>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" role="dialog" id="form-modal-category">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <form id="form-me-category" action="{{route('catalog.category.proses')}}" method="post">
-
-                {{ csrf_field() }}
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Edit Kategori</h4>
-                </div>
-                <div class="modal-body">
-                    <input type="hidden" id="f_id" name="f_id">
-                    <input type="hidden" id="f_parentid" name="f_parentid">
-                    <div class="form-group formerror-f_kodekategori">
-                        <label>Kode Kategori</label>
-                        <input type="text" placeholder="Kode Kategori.." class="form-control" id="f_kodekategori" name="f_kodekategori" required>
-                        <div class="error-f_kodekategori"></div>
-                    </div>
-
-                    <div class="form-group formerror-f_namakategori">
-                        <label>Nama Kategori</label>
-                        <input type="text" placeholder="Nama Kategori.." class="form-control" id="f_namakategori" name="f_namakategori" required>
-                        <div class="error-f_namakategori"></div>
-                    </div>
-
-                    <div class="form-group formerror-f_parentid_select">
-                        <label>Induk Kategori</label>
-                        <select name="f_parentid_select" class="form-control select2 f_parentid_select" style="width: 100%;" required>
-                        </select>
-                        <div class="error-f_parentid_select"></div>
-                    </div>
-
-                    <div class="form-group formerror-f_deskripsikategori">
-                        <label>Deskripsi</label>
-                        <textarea class="form-control" id="f_deskripsikategori" name="f_deskripsikategori" placeholder="Deskripsi.."></textarea>
-                        <div class="error-f_deskripsikategori"></div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary btn-simpan" data-loading-text="Please wait..." autocomplete="off">Simpan</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>
@@ -178,9 +110,15 @@ if(isset($data->id)){
                     </div>
 
                     <div class="form-group formerror-f_hargaproduk">
-                        <label>Harga Produk</label>
+                        <label>Harga Material</label>
                         <input type="text" class="form-control input-rupiah" id="f_hargaproduk" name="f_hargaproduct"  placeholder="Harga Produk ...">
                         <div class="error-f_hargaproduk"></div>
+                    </div>
+
+                    <div class="form-group formerror-f_hargajasa">
+                        <label>Harga Jasa</label>
+                        <input type="text" class="form-control input-rupiah" id="f_hargajasa" name="f_hargajasa"  placeholder="Harga Produk ...">
+                        <div class="error-f_hargajasa"></div>
                     </div>
 
                     <div class="form-group formerror-f_descproduk">
@@ -237,12 +175,10 @@ $(function() {
         .on("changed.jstree", function (e, data) {
             if(data.selected.length) {
                 $(".f_parentname_product").html("Daftar Product - " + data.instance.get_node(data.selected[0]).text);
-                $(".f_parentname_kategori").html("Daftar Kategori - " + data.instance.get_node(data.selected[0]).text);
                 $(".f_parentid").val(data.instance.get_node(data.selected[0]).id);
                 $(".btn-edit").attr('data-id',data.instance.get_node(data.selected[0]).id)
                 $(".btn-delete").attr('data-id',data.instance.get_node(data.selected[0]).id)
 
-                refresh_kategori(data.instance.get_node(data.selected[0]).id);
                 refresh_product(data.instance.get_node(data.selected[0]).id);
             }
         })
@@ -267,6 +203,8 @@ $(function() {
             var v = $('.f_carikategori').val();
             $('#jstree').jstree(true).search(v);
         }, 250);
+<<<<<<< HEAD
+=======
     });
 
     table_kategori = $('#daftar_kategori').on('xhr.dt', function ( e, settings, json, xhr ) {
@@ -293,6 +231,7 @@ $(function() {
             { data: 'desc', name: 'desc' },
             { data: 'action', name: 'action',orderable:false,searchable:false },
         ]
+>>>>>>> 2947944f411e8e685cad3bf8f88d5650cce553d7
     });
 
     table_product = $('#daftar_product').on('xhr.dt', function ( e, settings, json, xhr ) {
@@ -316,6 +255,7 @@ $(function() {
             { data: 'code'},
             { data: 'name'},
             { data: 'price'},
+            { data: 'price_jasa'},
             { data: 'currency'},
             { data: 'desc'},
             { data: 'action', name: 'action',orderable:false,searchable:false },
@@ -346,6 +286,7 @@ $(function() {
                 { data: 'code'},
                 { data: 'name'},
                 { data: 'price'},
+                { data: 'price_jasa'},
                 { data: 'currency'},
                 { data: 'desc'},
                 { data: 'action', name: 'action',orderable:false,searchable:false },
@@ -444,6 +385,8 @@ $(function() {
         }
     });
 
+<<<<<<< HEAD
+=======
     function get_kategori(id, parent){
         $(".f_parentid_select").empty().trigger('change');
 
@@ -461,6 +404,7 @@ $(function() {
         });
     }
 
+>>>>>>> catalog
     function get_produk_induk(parent){
         $("#f_produk_parent").empty().trigger('change');
 
@@ -477,6 +421,12 @@ $(function() {
             }
         });
     }
+<<<<<<< HEAD
+<<<<<<< HEAD
+ 
+=======
+=======
+>>>>>>> 2947944f411e8e685cad3bf8f88d5650cce553d7
 
     var formModal = $('#form-modal-category');
     formModal.on('show.bs.modal', function (event) {
@@ -560,6 +510,7 @@ $(function() {
             }
         });
     });
+>>>>>>> catalog
 
     var formModal = $('#form-modal-product');
     formModal.on('show.bs.modal', function (event) {
@@ -573,6 +524,8 @@ $(function() {
 
         var data = button.data('data');
 
+        console.log(data.price_jasa);
+
         get_produk_induk(data.catalog_category_id);
 
         modal.find('.modal-body input#f_id').val(data.id);
@@ -582,6 +535,7 @@ $(function() {
         modal.find('.modal-body input#f_unitproduk').val(data.unit);
         modal.find('.modal-body select#f_matauangproduk').val(data.currency).trigger('change');
         modal.find('.modal-body input#f_hargaproduk').val(data.price);
+        modal.find('.modal-body input#f_hargajasa').val(data.price_jasa);
         modal.find('.modal-body textarea#f_descproduk').val(data.desc);
     });
 
@@ -595,6 +549,7 @@ $(function() {
         var attError_f_unitproduk = formMe.find('.error-f_unitproduk')
         var attError_f_matauangproduk = formMe.find('.error-f_matauangproduk')
         var attError_f_hargaproduk = formMe.find('.error-f_hargaproduk')
+        var attError_f_hargajasa = formMe.find('.error-f_hargajasa')
         var attError_f_descproduk = formMe.find('.error-f_descproduk')
 
         formMe.find('.formerror-f_kodeproduk').removeClass("has-error");
@@ -602,6 +557,7 @@ $(function() {
         formMe.find('.formerror-f_unitproduk').removeClass("has-error");
         formMe.find('.formerror-f_matauangproduk').removeClass("has-error");
         formMe.find('.formerror-f_hargaproduk').removeClass("has-error");
+        formMe.find('.formerror-f_hargajasa').removeClass("has-error");
         formMe.find('.formerror-f_descproduk').removeClass("has-error");
 
         attError_f_kodeproduk.html('')
@@ -609,6 +565,7 @@ $(function() {
         attError_f_unitproduk.html('')
         attError_f_matauangproduk.html('')
         attError_f_hargaproduk.html('')
+        attError_f_hargajasa.html('')
         attError_f_descproduk.html('')
 
         var btnSave = formMe.find('.btn-simpan')
@@ -643,6 +600,10 @@ $(function() {
                     if(response.errors.f_hargaproduk){
                         attError_f_hargaproduk.html('<span class="help-block">'+response.errors.f_hargaproduk+'</span>');
                         formMe.find('.formerror-f_hargaproduk').addClass("has-error");
+                    }
+                    if(response.errors.f_hargajasa){
+                        attError_f_hargajasa.html('<span class="help-block">'+response.errors.f_hargajasa+'</span>');
+                        formMe.find('.formerror-f_hargajasa').addClass("has-error");
                     }
                     if(response.errors.f_descproduk){
                         attError_f_descproduk.html('<span class="help-block">'+response.errors.f_descproduk+'</span>');

@@ -13,6 +13,7 @@ $f_namaproduct=Helper::old_prop_each($product,'f_namaproduct');
 $f_unitproduct=Helper::old_prop_each($product,'f_unitproduct');
 $f_mtuproduct=Helper::old_prop_each($product,'f_mtuproduct');
 $f_hargaproduct=Helper::old_prop_each($product,'f_hargaproduct');
+$f_hargajasa=Helper::old_prop_each($product,'f_hargajasa');
 $f_descproduct=Helper::old_prop_each($product,'f_descproduct');
 $f_parentid=old('f_parentid');
 @endphp
@@ -56,8 +57,8 @@ $f_parentid=old('f_parentid');
         <div class="box box-danger test-product">
             <div class="box-header with-border">
                 <i class="fa fa-cogs"></i>
-                <h3 class="box-title f_parentname">Tambah Product</h3>
-            </div>
+                <h3 class="box-title f_parentname">Tambah Item Katalog</h3>
+            </div>    
             <form method="post" action="{{route('catalog.product.add')}}">
                 <input type="hidden" class="f_parentid" name="f_parentid" value="{{$f_parentid}}">
                 {{ csrf_field() }}
@@ -82,7 +83,8 @@ $f_parentid=old('f_parentid');
                                 <th>Nama</th>
                                 <th>Unit</th>
                                 <th>Mata Uang</th>
-                                <th>Harga</th>
+                                <th>Harga Barang</th>
+                                <th>Harga Jasa</th>
                                 <th>Deksripsi</th>
                                 <th>Aksi</th>
                             </tr>
@@ -124,8 +126,12 @@ $f_parentid=old('f_parentid');
                                         {!!Helper::error_help($errors,'f_mtuproduct.'.$key)!!}
                                     </td>
                                     <td class="{{ $errors->has('f_hargaproduct.'.$key) ? ' has-error' : '' }}">
-                                        <input type="text" value="{{$f_hargaproduct[$key]}}" name="f_hargaproduct[]" placeholder="Harga.." class="form-control input-rupiah">
+                                        <input type="text" value="{{$f_hargaproduct[$key]}}" name="f_hargaproduct[]" placeholder="Harga Barang.." class="form-control input-rupiah">
                                         {!!Helper::error_help($errors,'f_hargaproduct.'.$key)!!}
+                                    </td>
+                                    <td class="{{ $errors->has('f_hargajasa.'.$key) ? ' has-error' : '' }}">
+                                        <input type="text" value="{{$f_hargajasa[$key]}}" name="f_hargajasa[]" placeholder="Harga Jasa.." class="form-control input-rupiah">
+                                        {!!Helper::error_help($errors,'f_hargajasa.'.$key)!!}
                                     </td>
                                     <td class="{{ $errors->has('f_descproduct.'.$key) ? ' has-error' : '' }}">
                                         <input type="text" value="{{$f_descproduct[$key]}}" name="f_descproduct[]" placeholder="Deskripsi.." class="form-control">
@@ -162,7 +168,10 @@ $f_parentid=old('f_parentid');
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="text" name="f_hargaproduct[]" placeholder="Harga.." class="form-control input-rupiah">
+                                    <input type="text" name="f_hargaproduct[]" placeholder="Harga Barang.." class="form-control input-rupiah">
+                                </td>
+                                <td>
+                                    <input type="text" name="f_hargajasa[]" placeholder="Harga Jasa.." class="form-control input-rupiah">
                                 </td>
                                 <td>
                                     <input type="text" name="f_descproduct[]" placeholder="Deskripsi.." class="form-control">
@@ -221,7 +230,8 @@ $f_parentid=old('f_parentid');
                                     <th>Nama</th>
                                     <th>Unit</th>
                                     <th>Mata Uang</th>
-                                    <th>Harga</th>
+                                    <th>Harga Material</th>
+                                    <th>Harga Jasa</th>
                                     <th>Deksripsi</th>
                                 </tr>
                             </thead>
@@ -279,8 +289,7 @@ $(function() {
             header: true,
             dynamicTyping: true,
             complete: function(results) {
-
-                //dataPapaParse = results;
+                
                 var fields = results.meta.fields;
                 @php
                     echo "var fields_dec = ['KODE_ITEM','ITEM','SATUAN','MTU','HARGA','KETERANGAN'];";
@@ -297,10 +306,7 @@ $(function() {
                     console.log("data tidak ada");
                     //$('.error-daftar_harga').html('Data tidak ada!');
                     return false;
-                }
-
-                console.log(JSON.stringify(results.data));
-
+                }                
                 $.each(results.data,function(index, el) {
                     if(results.data[index].KODE_ITEM!=""){
                         $('.table-parent-product').find(".select2").each(function(index){
@@ -327,9 +333,12 @@ $(function() {
                         input_new_row.eq(4).find('input').val(results.data[index].HARGA);
                         input_new_row.eq(4).find('.error').remove();
                         input_new_row.eq(4).removeClass("has-error");
-                        input_new_row.eq(5).find('input').val(results.data[index].KETERANGAN);
+                        input_new_row.eq(5).find('input').val(results.data[index].HARGA_JASA);
                         input_new_row.eq(5).find('.error').remove();
                         input_new_row.eq(5).removeClass("has-error");
+                        input_new_row.eq(6).find('input').val(results.data[index].KETERANGAN);
+                        input_new_row.eq(6).find('.error').remove();
+                        input_new_row.eq(6).removeClass("has-error");
 
                         $(".select2").select2({
                             placeholder:"Silahkan Pilih"
@@ -418,6 +427,9 @@ $(function() {
         input_new_row.eq(5).find('input').val("");
         input_new_row.eq(5).find('.error').remove();
         input_new_row.eq(5).removeClass("has-error");
+        input_new_row.eq(6).find('input').val("");
+        input_new_row.eq(6).find('.error').remove();
+        input_new_row.eq(6).removeClass("has-error");
 
         $(".select2").select2({
             placeholder:"Silahkan Pilih"
@@ -445,7 +457,7 @@ $(function() {
             dataType: 'json',
             success: function(data)
             {
-                console.log(data);
+                console.log(id_kontrak);
                 $('.table-boq').html("");
                 var html = '';
                 for(var i = 0; i < data.length; i++){
@@ -456,6 +468,7 @@ $(function() {
                                 "<td>" + data[i].satuan + "</td>" +
                                 "<td>" + data[i].mtu + "</td>" +
                                 "<td>" + data[i].harga + "</td>" +
+                                "<td>" + data[i].harga_jasa + "</td>" +
                                 "<td>" + data[i].desc + "</td>" +
                             "</tr>";
 
@@ -500,10 +513,12 @@ $(function() {
                         input_new_row.eq(4).find('input').val(data[0].harga);
                         input_new_row.eq(4).find('.error').remove();
                         input_new_row.eq(4).removeClass("has-error");
-                        input_new_row.eq(5).find('input').val(data[0].desc);
+                        input_new_row.eq(5).find('input').val(data[0].harga_jasa);
                         input_new_row.eq(5).find('.error').remove();
                         input_new_row.eq(5).removeClass("has-error");
-
+                        input_new_row.eq(6).find('input').val(data[0].desc);
+                        input_new_row.eq(6).find('.error').remove();
+                        input_new_row.eq(6).removeClass("has-error");
                         $(".select2").select2({
                             placeholder:"Silahkan Pilih"
                         });

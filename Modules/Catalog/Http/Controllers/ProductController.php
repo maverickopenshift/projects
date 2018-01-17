@@ -21,6 +21,7 @@ class ProductController extends Controller
                         ->selectRaw('a.*,b.display_name as category_name')
                         ->join('catalog_category as b','b.id','=','a.catalog_category_id')
                         ->get();          
+        $data['page_title'] = 'Item Katalog';
         return view('catalog::product')->with($data);
     }
 
@@ -83,10 +84,25 @@ class ProductController extends Controller
             $rules['f_unitproduct.'.$key]   ='required|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
             $rules['f_mtuproduct.'.$key]    ='required';
             $rules['f_hargaproduct.'.$key]  ='required|max:500|min:1|regex:/^[0-9 .]+$/i';
+            $rules['f_hargajasa.'.$key]  ='required|max:500|min:1|regex:/^[0-9 .]+$/i';
             $rules['f_descproduct.'.$key]   ='required|max:500|regex:/^[a-z0-9 .\-]+$/i';
         }
         
         $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
+        $validator->after(function ($validator) use ($request) {
+            $count = array_count_values($request->f_kodeproduct);
+            foreach($request->f_kodeproduct as $key => $val)
+            {
+                if($count[$val]>1) {
+                    $validator->errors()->add("f_kodeproduct.$key", "Kode Tidak Boleh Sama!");
+                }else{
+                    $count_product=CatalogProduct::where('code',$val)->count();
+                    if($count_product!=0){
+                        $validator->errors()->add("f_kodeproduct.$key", "Kode Tidak Boleh Sama! Sudah ada di database");       
+                    }
+                }
+            }
+        });
 
         if ($validator->fails ()){
             return redirect()->back()->withInput($request->input())->withErrors($validator);
@@ -102,6 +118,7 @@ class ProductController extends Controller
                         $proses->unit = $request['f_unitproduct'][$key];
                         $proses->currency = $request['f_mtuproduct'][$key];
                         $proses->price = $request['f_hargaproduct'][$key];
+                        $proses->price_jasa = $request['f_hargajasa'][$key];
                         $proses->desc = $request['f_descproduct'][$key];
                         $proses->keyword = "";
                         $proses->save();
@@ -120,6 +137,7 @@ class ProductController extends Controller
             'f_unitproduct' => 'required|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i',
             'f_mtuproduct' => 'required',
             'f_hargaproduct' => 'required|max:500|min:1|regex:/^[0-9 .]+$/i',
+            'f_hargajasa' => 'required|max:500|min:1|regex:/^[0-9 .]+$/i',
             'f_descproduct' => 'required|max:500|regex:/^[a-z0-9 .\-]+$/i',
         );
         $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
@@ -135,6 +153,7 @@ class ProductController extends Controller
             $proses->unit = $request->f_unitproduct;
             $proses->currency = $request->f_mtuproduct;
             $proses->price = $request->f_hargaproduct;
+            $proses->price_jasa = $request->f_hargajasa;
             $proses->desc = $request->f_descproduct;
             $proses->keyword = "";
             $proses->save();   
@@ -151,6 +170,7 @@ class ProductController extends Controller
         $proses->unit = $request->f_unitproduct;
         $proses->currency = $request->f_matauang;
         $proses->price = $request->f_hargaproduct;
+        $proses->price_jasa = $request->f_hargajasa;
         $proses->desc = $request->f_descproduct;
         $proses->keyword = "";   
 

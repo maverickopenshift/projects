@@ -99,11 +99,12 @@ class SpEditController extends Controller
         $rules['doc_nilai_jasa']       =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
       }
 
-      $rules['hs_kode_item.*']   =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['hs_kode_item.*']   =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_satuan.*']      =  'sometimes|nullable|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_mtu.*']         =  'sometimes|nullable|max:5|min:1|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_harga.*']       =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
+      $rules['hs_harga_jasa.*']  =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['hs_keterangan.*']  =  'sometimes|nullable|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
@@ -170,7 +171,7 @@ class SpEditController extends Controller
       }
 
       if(in_array($status,['0','2'])){
-         $doc = Documents::where('id',$id)->first();
+        $doc = Documents::where('id',$id)->first();
         $doc->doc_title = $request->doc_title;
         $doc->doc_desc = $request->doc_desc;
         $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
@@ -179,6 +180,7 @@ class SpEditController extends Controller
         $doc->doc_pihak1 = $request->doc_pihak1;
         $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
         $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
+        $doc->doc_signing = intval($request->statusButton);
         if((\Laratrust::hasRole('admin'))){
           $doc->user_id  = $request->user_id;
         }
@@ -215,7 +217,6 @@ class SpEditController extends Controller
         $doc->doc_sow = $request->doc_sow;
         $doc->save();
       }
-
 
       if(count($request->doc_po_no)>0){
         $doc_po = DocPo::where('id',$id)->first();
@@ -346,12 +347,16 @@ class SpEditController extends Controller
             $doc_boq->item = $request['hs_item'][$key];
             $doc_boq->satuan = $request['hs_satuan'][$key];
             $doc_boq->mtu = $request['hs_mtu'][$key];
-            $q_harga = Helpers::input_rupiah($val);
-            $doc_boq->harga = Helpers::input_rupiah($q_harga);
+            //$q_harga = Helpers::input_rupiah($val);
+            $doc_boq->harga = Helpers::input_rupiah($request['hs_harga'][$key]);
+            $doc_boq->harga_jasa = Helpers::input_rupiah($request['hs_harga_jasa'][$key]);
             $hs_type = 'harga_satuan';
             if(in_array($type,['turnkey','sp'])){
               $q_qty = Helpers::input_rupiah($request['hs_qty'][$key]);
-              $q_total = $q_qty*$q_harga;
+              $q_harga = Helpers::input_rupiah($request['hs_harga'][$key]);
+              $q_harga_jasa = Helpers::input_rupiah($request['hs_harga_jasa'][$key]);
+
+              $q_total = $q_qty*($q_harga+$q_harga_jasa);
               $doc_boq->qty = $q_qty;
               $doc_boq->harga_total = $q_total;
               $hs_type = 'boq';

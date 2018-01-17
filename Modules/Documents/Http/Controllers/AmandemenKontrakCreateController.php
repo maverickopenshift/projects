@@ -143,7 +143,7 @@ class AmandemenKontrakCreateController
             $desc=$request->f_harga[$key];
           }elseif($val=="Jangka Waktu"){
             $f_name="jangka_waktu";
-            $desc=$request->f_tanggal1[$key] ." - ". $request->f_tanggal2[$key];
+            $desc=$request->f_tanggal1[$key] ."|". $request->f_tanggal2[$key];
           }elseif($val=="Lainnya"){
             $f_name="lainnya";
             $desc=$request->f_isi[$key];

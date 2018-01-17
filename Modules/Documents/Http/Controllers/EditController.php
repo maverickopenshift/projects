@@ -13,6 +13,7 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Http\Controllers\SuratPengikatanEditController as SuratPengikatanEdit;
+use Modules\Documents\Http\Controllers\SideLetterEditController as SideLetterEdit;
 use Modules\Documents\Http\Controllers\MouEditController as MouEdit;
 use Modules\Documents\Http\Controllers\AmandemenSpEditController as AmandemenSpEdit;
 use Modules\Documents\Http\Controllers\SpEditController as SpEdit;
@@ -32,8 +33,9 @@ class EditController extends Controller
   protected $amandemenSpEdit;
   protected $spEdit;
   protected $amademenKontrakEdit;
+  protected $SideLetterEdit;
 
-  public function __construct(Documents $documents,SuratPengikatanEdit $SuratPengikatanEdit,MouEdit $MouEdit,AmandemenSpEdit $amandemenSpEdit,SpEdit $spEdit, AmademenKontrakEdit $amademenKontrakEdit)
+  public function __construct(Documents $documents,SuratPengikatanEdit $SuratPengikatanEdit,MouEdit $MouEdit,AmandemenSpEdit $amandemenSpEdit,SpEdit $spEdit, AmademenKontrakEdit $amademenKontrakEdit, SideLetterEdit $SideLetterEdit)
   {
       $this->documents = $documents;
       $this->SuratPengikatanEdit = $SuratPengikatanEdit;
@@ -41,6 +43,7 @@ class EditController extends Controller
       $this->amandemenSpEdit = $amandemenSpEdit;
       $this->spEdit = $spEdit;
       $this->amademenKontrakEdit = $amademenKontrakEdit;
+      $this->SideLetterEdit = $SideLetterEdit;
   }
   public function index(Request $request)
   {
@@ -48,7 +51,7 @@ class EditController extends Controller
     $id = $request->id;
     $type = $request->type;
     $doc = $this->documents->where('documents.id','=',$id);
-    $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','sow_boq','scope_perubahan','users','latar_belakang_surat_pengikatan','latar_belakang_mou')
+    $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','sow_boq','scope_perubahan','users','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter')
               ->first();
 // dd($dt);
     if(!$dt || !$this->documents->check_permission_doc($id,$type)){
@@ -101,6 +104,7 @@ class EditController extends Controller
         }
       }
     }
+    
     if(count($dt->scope_perubahan)>0){
       foreach($dt->scope_perubahan as $key => $val){
         $scop['name'][$key]  = $val->meta_name;
@@ -122,6 +126,26 @@ class EditController extends Controller
       $dt->scope_file     = $scop['file'];
       $dt->scope_file_old = $scop['file'];
     }
+
+    if(count($dt->scope_perubahan_side_letter)>0){
+      foreach($dt->scope_perubahan_side_letter as $key => $val){
+        $scop['pasal'][$key]  = $val->meta_pasal;
+        $scop['judul'][$key]  = $val->meta_judul;
+        $scop['isi'][$key]  = $val->meta_isi;
+        $scop['awal'][$key]  = $val->meta_awal;
+        $scop['akhir'][$key] = $val->meta_akhir;
+        $scop['file'][$key]  = $val->meta_file;
+      }
+      
+      $dt->scope_pasal    = $scop['pasal'];
+      $dt->scope_judul    = $scop['judul'];
+      $dt->scope_isi      = $scop['isi'];
+      $dt->scope_awal     = $scop['awal'];
+      $dt->scope_akhir    = $scop['akhir'];
+      $dt->scope_file     = $scop['file'];
+      $dt->scope_file_old = $scop['file'];
+    }
+
     if(count($dt->pic)>0){
       foreach($dt->pic as $key => $val){
         $pic['pic_posisi'][$key]  = $val->posisi;
@@ -145,16 +169,18 @@ class EditController extends Controller
         $boq['hs_satuan'][$key]     = $val->satuan;
         $boq['hs_mtu'][$key]        = $val->mtu;
         $boq['hs_harga'][$key]      = $val->harga;
+        $boq['hs_harga_jasa'][$key] = $val->harga_jasa;
         $boq['hs_qty'][$key]        = $val->qty;
         $boq['hs_keterangan'][$key] = $val->desc;
       }
       $dt->hs_kode_item = $boq['hs_kode_item'];
-      $dt->hs_item   = $boq['hs_item'];
-      $dt->hs_satuan  = $boq['hs_satuan'];
-      $dt->hs_mtu= $boq['hs_mtu'];
-      $dt->hs_harga   = $boq['hs_harga'];
-      $dt->hs_qty     = $boq['hs_qty'];
-      $dt->hs_keterangan     = $boq['hs_keterangan'];
+      $dt->hs_item      = $boq['hs_item'];
+      $dt->hs_satuan    = $boq['hs_satuan'];
+      $dt->hs_mtu       = $boq['hs_mtu'];
+      $dt->hs_harga     = $boq['hs_harga'];
+      $dt->hs_harga_jasa   = $boq['hs_harga_jasa'];
+      $dt->hs_qty       = $boq['hs_qty'];
+      $dt->hs_keterangan= $boq['hs_keterangan'];
     }
     if(count($dt->asuransi)>0){
       foreach($dt->asuransi as $key => $val){
@@ -226,7 +252,6 @@ class EditController extends Controller
   }
   public function store(Request $request)
   {
-
     $id = $request->id;
     $type = $request->type;
     $status = Documents::where('id',$id)->first()->doc_signing;
@@ -246,7 +271,10 @@ class EditController extends Controller
     if($type=='mou'){
       return $this->MouEdit->store($request);
     }
-    if(in_array($type,['amandemen_kontrak','adendum','side_letter'])){
+    if($type=='side_letter'){
+      return $this->SideLetterEdit->store($request);
+    }
+    if(in_array($type,['amandemen_kontrak','adendum'])){
       return $this->amademenKontrakEdit->store($request);
     }
 
@@ -321,12 +349,13 @@ class EditController extends Controller
       $request->merge(['doc_lampiran' => $new_lamp]);
     }
 
-    $rules['doc_sow']          =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['hs_kode_item.*']   =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['doc_sow']          =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['hs_kode_item.*']   =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
     $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
     $rules['hs_satuan.*']      =  'sometimes|nullable|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
     $rules['hs_mtu.*']         =  'sometimes|nullable|max:5|min:1|regex:/^[a-z0-9 .\-]+$/i';
     $rules['hs_harga.*']       =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
+    $rules['hs_harga_harga.*'] =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
     $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
     $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
     if(\Laratrust::hasRole('admin')){
@@ -650,12 +679,14 @@ class EditController extends Controller
           $doc_boq->item = $request['hs_item'][$key];
           $doc_boq->satuan = $request['hs_satuan'][$key];
           $doc_boq->mtu = $request['hs_mtu'][$key];
-          $q_harga = Helpers::input_rupiah($val);
           $doc_boq->harga = Helpers::input_rupiah($q_harga);
+          $doc_boq->harga_jasa = Helpers::input_rupiah($q_harga);
           $hs_type = 'harga_satuan';
           if(in_array($type,['turnkey','sp'])){
             $q_qty = Helpers::input_rupiah($request['hs_qty'][$key]);
-            $q_total = $q_qty*$q_harga;
+            $q_harga = Helpers::input_rupiah($request['hs_harga'][$key]);
+            $q_harga_jasa = Helpers::input_rupiah($request['hs_harga_jasa'][$key]);
+            $q_total = $q_qty*($q_harga+$q_harga_jasa);
             $doc_boq->qty = $q_qty;
             $doc_boq->harga_total = $q_total;
             $hs_type = 'boq';
@@ -669,7 +700,7 @@ class EditController extends Controller
 
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     if($request->statusButton == '0'){
-      return redirect()->route('doc',['status'=>'tracking']);
+      return redirect()->route('doc',['status'=>'proses']);
     }else{
       return redirect()->route('doc',['status'=>'draft']);
     }

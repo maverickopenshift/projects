@@ -203,6 +203,35 @@ $(function() {
             var v = $('.f_carikategori').val();
             $('#jstree').jstree(true).search(v);
         }, 250);
+<<<<<<< HEAD
+=======
+    });
+
+    table_kategori = $('#daftar_kategori').on('xhr.dt', function ( e, settings, json, xhr ) {
+        if(xhr.responseText=='Unauthorized.'){
+            location.reload();
+        }
+    }).DataTable({
+        processing: true,
+        serverSide: true,
+        autoWidth : false,
+        order : [[ 1, 'desc' ]],
+        pageLength: 50,
+        ajax: {
+            "url": "{!! route('catalog.category.datatables') !!}?parent_id=0",
+            "type": "POST",
+            'headers': {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        },
+        columns: [
+            { data: 'DT_Row_Index',orderable:false,searchable:false},
+            { data: 'code', name: 'code' },
+            { data: 'display_name', name: 'display_name' },
+            { data: 'desc', name: 'desc' },
+            { data: 'action', name: 'action',orderable:false,searchable:false },
+        ]
+>>>>>>> 2947944f411e8e685cad3bf8f88d5650cce553d7
     });
 
     table_product = $('#daftar_product').on('xhr.dt', function ( e, settings, json, xhr ) {
@@ -393,8 +422,11 @@ $(function() {
         });
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
  
 =======
+=======
+>>>>>>> 2947944f411e8e685cad3bf8f88d5650cce553d7
 
     var formModal = $('#form-modal-category');
     formModal.on('show.bs.modal', function (event) {

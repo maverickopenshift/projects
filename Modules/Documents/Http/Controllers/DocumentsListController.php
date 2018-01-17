@@ -84,11 +84,11 @@ class DocumentsListController extends Controller
             $edit = '<a class="btn btn-xs btn-info" href="'.route('doc.edit',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-edit"></i> EDIT</a>';
             $hapus = '<a class="btn btn-xs btn-danger" data-id="'.$value['id'].'" data-toggle="modal" data-target="#modal-delete"><i class="fa fa-trash"></i></a>';
           }
-          if($status_no == "3"){
-            $value['link'] = $view.$edit.$hapus;
+          if($status_no == "0"){
+            $value['link'] = $view;
           }
           else {
-            $value['link'] = $view;
+            $value['link'] = $view.$edit.$hapus;
           }
 
           $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason']);

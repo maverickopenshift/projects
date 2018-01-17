@@ -93,11 +93,12 @@ class SpCreateController
       $rules['doc_nilai_material']   =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['doc_nilai_jasa']       =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
 
-      $rules['hs_kode_item.*']   =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['hs_kode_item.*']   =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_satuan.*']      =  'sometimes|nullable|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_mtu.*']         =  'sometimes|nullable|max:5|min:1|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_harga.*']       =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
+      $rules['hs_harga_jasa.*']  =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['hs_keterangan.*']  =  'sometimes|nullable|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
@@ -334,16 +335,20 @@ class SpCreateController
             $doc_boq->item = $request['hs_item'][$key];
             $doc_boq->satuan = $request['hs_satuan'][$key];
             $doc_boq->mtu = $request['hs_mtu'][$key];
-            $q_harga = Helpers::input_rupiah($val);
-            $doc_boq->harga = Helpers::input_rupiah($q_harga);
+            $doc_boq->harga = Helpers::input_rupiah($request['hs_harga'][$key]);
+            $doc_boq->harga_jasa = Helpers::input_rupiah($request['hs_harga_jasa'][$key]);
             $hs_type = 'harga_satuan';
             if(in_array($type,['turnkey','sp'])){
               $q_qty = Helpers::input_rupiah($request['hs_qty'][$key]);
-              $q_total = $q_qty*$q_harga;
+              $q_harga = Helpers::input_rupiah($request['hs_harga'][$key]);
+              $q_harga_jasa = Helpers::input_rupiah($request['hs_harga_jasa'][$key]);
+              $q_total = $q_qty*($q_harga+$q_harga_jasa);
+
               $doc_boq->qty = $q_qty;
               $doc_boq->harga_total = $q_total;
               $hs_type = 'boq';
             }
+
             $doc_boq->desc = $request['hs_keterangan'][$key];
             $doc_boq->data = json_encode(array('type'=>$hs_type));
             $doc_boq->save();

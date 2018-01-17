@@ -15,7 +15,8 @@ use Validator;
 class CategoryController extends Controller
 {
     public function index(Request $request){
-        return view('catalog::category');
+        $data['page_title'] = 'Katalog';
+        return view('catalog::category')->with($data);
     }
 
     public function get_category(Request $request){
@@ -125,7 +126,7 @@ class CategoryController extends Controller
 
     public function proses(Request $request){
         $rules = array (
-            'f_kodekategori' => 'required|min:5|max:10|regex:/^[0-9]+$/i',
+            'f_kodekategori' => 'required|min:5|max:10|regex:/^[a-z0-9]+$/i',
             'f_namakategori' => 'required|min:5|max:250|regex:/^[a-z0-9 .\-]+$/i',
             'f_deskripsikategori' => 'required|min:5|max:500|regex:/^[a-z0-9 .\-]+$/i',
         );

@@ -10,7 +10,7 @@
 @endphp
 <style type="text/css">
     #jstree{
-        max-width: 200px;
+        max-width: 90%;
     }
 
     #jstree a {

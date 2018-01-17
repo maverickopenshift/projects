@@ -27,7 +27,7 @@
   <!-- /.login-logo -->
     <div class="login-box-body" style="border-radius: 10px;">
       <div class="login-logo">
-          <img src="images/logo.png" alt="Consys">
+          <img src="images/logo_new.png" alt="Consys">
       </div>
 
     <form action="{{ url('/login') }}" method="post">

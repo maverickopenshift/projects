@@ -51,6 +51,7 @@
                           <th style="width:100px;">Satuan</th>
                           <th style="width:70px;">Currency</th>
                           <th>Harga</th>
+                          <th>Harga Jasa</th>
                           @if($doc_type->name!='khs')
                             <th style="width:100px;">Harga Total</th>
                           @endif
@@ -70,6 +71,7 @@
                             <td>{{($dt->satuan)}}</td>
                             <td>{{($dt->mtu)}}</td>
                             <td>{{($dt->harga)}}</td>
+                            <td>{{($dt->harga_jasa)}}</td>
                             @if($doc_type->name!='khs')
                             <td>{{($dt->harga_total)}}</td>
                             @endif

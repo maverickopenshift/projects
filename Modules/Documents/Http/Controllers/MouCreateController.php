@@ -15,6 +15,7 @@ use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocPo;
 use Modules\Documents\Entities\DocActivity;
+use Modules\Documents\Entities\DocComment as Comments;
 
 use App\Helpers\Helpers;
 use Validator;
@@ -30,7 +31,7 @@ class MouCreateController extends Controller
 
     public function store(Request $request)
     {
-
+      // dd($request->statusButton);
       $type = $request->type;
       $doc_value = $request->doc_value;
       $request->merge(['doc_value' => Helpers::input_rupiah($request->doc_value)]);
@@ -130,7 +131,7 @@ class MouCreateController extends Controller
         }
 
         if ($validator->fails ()){
-          dd($validator->getMessageBag()->toArray());
+          // dd($validator->getMessageBag()->toArray());
           return redirect()->back()
                       ->withInput($request->input())
                       ->withErrors($validator);
@@ -149,7 +150,7 @@ class MouCreateController extends Controller
                         ->withErrors($validator);
           }
       }
-      //dd("berhasil");
+      // dd("berhasil");
       $doc = new Documents();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
@@ -227,12 +228,20 @@ class MouCreateController extends Controller
         }
       }
 
-      $log_activity = new DocActivity();
-      $log_activity->users_id = Auth::id();
-      $log_activity->documents_id = $doc->id;
-      $log_activity->activity = "Submitted";
-      $log_activity->date = new \DateTime();
-      $log_activity->save();
+      $comment = new Comments();
+      $comment->content = $request->komentar;
+      $comment->documents_id = $doc->id;
+      $comment->users_id = \Auth::id();
+      $comment->status = 1;
+      $comment->data = "Submitted";
+      $comment->save();
+
+      // $log_activity = new DocActivity();
+      // $log_activity->users_id = Auth::id();
+      // $log_activity->documents_id = $doc->id;
+      // $log_activity->activity = "Submitted";
+      // $log_activity->date = new \DateTime();
+      // $log_activity->save();
 
 /*
       if(count($request->hs_harga)>0){

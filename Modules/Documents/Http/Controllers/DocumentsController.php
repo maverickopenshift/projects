@@ -291,15 +291,23 @@ class DocumentsController extends Controller
           $doc->doc_data =  json_encode(['signing_by_userid'=>\Auth::id()]);
           $doc->save();
 
-          $log_activity = new DocActivity();
-          $log_activity->users_id = Auth::id();
-          $log_activity->documents_id = $request->id;
-          $log_activity->activity = "Approved";
-          $log_activity->date = new \DateTime();
-          $log_activity->save();
+          $comment = new Comments();
+          $comment->content = $request->komentar;
+          $comment->documents_id = $request->id;
+          $comment->users_id = \Auth::id();
+          $comment->status = 1;
+          $comment->data = "Approved";
+          $comment->save();
+
+          // $log_activity = new DocActivity();
+          // $log_activity->users_id = Auth::id();
+          // $log_activity->documents_id = $request->id;
+          // $log_activity->activity = "Approved";
+          // $log_activity->date = new \DateTime();
+          // $log_activity->save();
 
           //$request->session()->flash('alert-success', 'Data berhasil disetujui!');
-          return Response::json(['status'=>true,'hai'=>'haloo','doc_no'=>$doc->doc_no,'csrf_token'=>csrf_token()]);
+          return Response::json(['status'=>true,'doc_no'=>$doc->doc_no,'csrf_token'=>csrf_token()]);
         }
         return Response::json(['status'=>false]);
       }
@@ -350,14 +358,15 @@ class DocumentsController extends Controller
             $comment->documents_id = $request->id;
             $comment->users_id = \Auth::id();
             $comment->status = 1;
+            $comment->data = "Returned";
             $comment->save();
 
-            $log_activity = new DocActivity();
-            $log_activity->users_id = Auth::id();
-            $log_activity->documents_id = $request->id;
-            $log_activity->activity = "Returned";
-            $log_activity->date = new \DateTime();
-            $log_activity->save();
+            // $log_activity = new DocActivity();
+            // $log_activity->users_id = Auth::id();
+            // $log_activity->documents_id = $request->id;
+            // $log_activity->activity = "Returned";
+            // $log_activity->date = new \DateTime();
+            // $log_activity->save();
             $dt_c = Comments::where('id',$comment->id)->with('user')->first();
             //$request->session()->flash('alert-success', 'Data berhasil disetujui!');
             return Response::json(['status'=>true,'doc_no'=>$doc->doc_no,'csrf_token'=>csrf_token(),'data'=>$dt_c]);

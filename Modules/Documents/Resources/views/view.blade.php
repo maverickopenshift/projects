@@ -139,62 +139,59 @@ $(function () {
 
 $(document).on('click', '.btn-reject', function(event) {
   event.preventDefault();
-  /* Act on the event */
-  var btn = $(this);
-  swal({
-    // html: '<div class="form-group">\
-    //         <label class="text-left">Masukan Alasan</label>\
-    //         <textarea rows="6" class="form-control reason-text"></textarea>\
-    //       </div>',
-    title:'Masukan Komentar',
-    input:'textarea',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    confirmButtonText: 'Submit',
-    cancelButtonText: 'Batal',
-    showLoaderOnConfirm: true,
-    preConfirm: function (text) {
-       return new Promise(function (resolve, reject) {
-         $.ajaxSetup({
-           headers: {
-                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-             }
-         });
-         $.ajax({
-           url: '{!!route('doc.reject')!!}',
-           type: 'POST',
-           dataType: 'json',
-           data: {id: '{!!$id!!}',reason: text}
-         })
-         .done(function(data) {
-           if(data.status){
-             $('meta[name="csrf-token"]').attr('content',data.csrf_token);
-             $('.direct-chat-messages').find('.alert').remove();
-             btn.parent().find('.btn-setuju').remove();
-             btn.remove();
-             $('.direct-chat-messages').append(template_comment(data.data));
-             resolve();
-           }
-           else{
-             reject(data.msg)
-           }
-         });
-
-       })
-    },
-  }).then(function (text) {
-    swal({
-      type: 'success',
-      html: 'Dokumen berhasil direject'
-    })
-  }, function (dismiss) {
-    // dismiss can be 'cancel', 'overlay',
-    // 'close', and 'timer'
-    if (dismiss === 'cancel') {
-
-    }
-  })
-});
+  var content = $('.content-view');
+  var loading = content.find('.loading2');
+  bootbox.confirm({
+    title:"Konfirmasi",
+    message: "Apakah Anda Yakin Ingin Mereturn Dokumen ini?",
+        buttons: {
+            confirm: {
+                label: 'Yakin',
+                className: 'btn-success btn-sm'
+            },
+            cancel: {
+                label: 'Tidak',
+                className: 'btn-danger btn-sm'
+            }
+        },
+        callback: function (result) {
+            if(result){
+              bootbox.prompt({
+              title: "Masukan Komentar",
+              inputType: 'textarea',
+              callback: function (komen) {
+                if(komen){
+                  loading.show();
+                  $.ajaxSetup({
+                    headers: {
+                          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                      }
+                  });
+                  $.ajax({
+                    url: '{!!route('doc.reject')!!}',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {id: '{!!$id!!}',reason: komen}
+                  })
+                  .done(function(data) {
+                    if(data.status){
+                      bootbox.alert({
+                          title:"Pemberitahuan",
+                          message: "Data berhasil dikembalikan",
+                          callback: function (result) {
+                              window.location = '{!!route('doc',['status'=>'selesai'])!!}'
+                          }
+                      });
+                    }
+                    loading.hide();
+                })
+              }
+            }
+          });
+        }
+      }
+    });
+  });
 
 $(document).on('click', '.btn-setuju', function(event) {
   event.preventDefault();
@@ -227,6 +224,11 @@ $(document).on('click', '.btn-setuju', function(event) {
             },
             callback: function (result) {
                 if(result){
+                  bootbox.prompt({
+                  title: "Masukan Komentar",
+                  inputType: 'textarea',
+                  callback: function (komen) {
+                    if(komen){
                   loading.show();
                   $.ajaxSetup({
                     headers: {
@@ -237,7 +239,7 @@ $(document).on('click', '.btn-setuju', function(event) {
                     url: '{!!route('doc.approve')!!}',
                     type: 'POST',
                     dataType: 'JSON',
-                    data: {id: '{!!$id!!}',}
+                    data: {id: '{!!$id!!}',komentar: komen}
                   })
                   .done(function(data) {
                     if(data.status){
@@ -255,7 +257,10 @@ $(document).on('click', '.btn-setuju', function(event) {
                     loading.hide();
                   });
                 }
+              }
+            });
             }
+          }
       });
     }
     loading.hide();

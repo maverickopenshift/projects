@@ -12,6 +12,7 @@ use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
+use Modules\Documents\Entities\DocComment as Comments;
 use App\Helpers\Helpers;
 use Validator;
 use DB;
@@ -147,6 +148,7 @@ class AmandemenKontrakEditController extends Controller
       if((\Laratrust::hasRole('admin'))){
         $doc->user_id  = $request->user_id;
       }
+      $doc->doc_signing = '0';
       $doc->doc_parent = 0;
       $doc->doc_parent_id = $request->parent_kontrak;
       $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
@@ -269,11 +271,25 @@ class AmandemenKontrakEditController extends Controller
       }
     }
 
-    $request->session()->flash('alert-success', 'Data berhasil disimpan');
-    if($request->statusButton == '0'){
-      return redirect()->route('doc',['status'=>'tracking']);
+    if(in_array($status,['0','2'])){
+      $comment = new Comments();
+      $comment->content = $request->komentar;
+      $comment->documents_id = $doc->id;
+      $comment->users_id = \Auth::id();
+      $comment->status = 1;
+      $comment->data = "Submitted";
+      $comment->save();
     }else{
-      return redirect()->route('doc',['status'=>'draft']);
+      $comment = new Comments();
+      $comment->content = $request->komentar;
+      $comment->documents_id = $doc->id;
+      $comment->users_id = \Auth::id();
+      $comment->status = 1;
+      $comment->data = "Edited";
+      $comment->save();
     }
+
+    $request->session()->flash('alert-success', 'Data berhasil disimpan');
+    return redirect()->route('doc',['status'=>'tracking']);
   }
 }

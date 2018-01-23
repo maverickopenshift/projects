@@ -11,7 +11,7 @@
     <!-- /.box-header -->
     <div class="box-body">
       @php
-        $sow_boq = Helper::old_prop_each($doc,'sow_boq');  
+        $sow_boq = Helper::old_prop_each($doc,'sow_boq');
         $f_judul = Helper::old_prop_each($doc,'f_judul');
         $f_harga = Helper::old_prop_each($doc,'f_harga');
         $f_tanggal1 = Helper::old_prop_each($doc,'f_tanggal1');
@@ -19,12 +19,12 @@
         $f_isi = Helper::old_prop_each($doc,'f_isi');
       @endphp
 
-      @if(count($sow_boq)>=1)      
+      @if(count($sow_boq)>=1)
         @foreach ($sow_boq as $key => $value)
         @php
           $f_judul = Helper::old_prop_each($value,'meta_title');
           $f_desc = Helper::old_prop_each($value,'meta_desc');
-          
+
           $f_harga="";
           $f_tanggal1="";
           $f_tanggal2="";
@@ -45,8 +45,8 @@
               $f_tanggal2=$pecah[1];
             }else{
               $f_tanggal2="";
-            }          
-            
+            }
+
           }elseif($f_judul=="Lainnya"){
             $f_isi=$f_desc;
           }else{
@@ -58,14 +58,14 @@
         @endphp
 
         <div class="form-horizontal perubahan" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-            
+
             <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
               <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Sow-Boq <span class="total_pasal">{{$key+1}}</span></div>
               @if(count($sow_boq)>1)
                 <button type="button" class="btn btn-danger delete-pasal" style="position: absolute;right: 5px;top: -10px;border-radius: 0;"><i class="glyphicon glyphicon-trash"></i></button>
               @endif
             </div>
-            
+
             <div class="form-group">
               <label for="f_judul" class="col-sm-2 control-label">Judul</label>
               <div class="col-sm-6">
@@ -178,7 +178,7 @@
             </div>
         </div>
       @endif
-      @include('documents::partials.buttons')
+      @include('documents::partials.button-edit')
     </div>
 
 
@@ -188,7 +188,7 @@
 <script>
 function freeText() {
   var row = $('.perubahan');
-  $.each(row,function(index, el) {  
+  $.each(row,function(index, el) {
     var judul = $(this).find('.f_judul').find(":selected").val();
 
     if(judul=="Harga"){
@@ -212,7 +212,7 @@ function freeText() {
       $(this).find('.show_tanggal2').hide();
       $(this).find('.show_lainnya').hide();
     }
-    
+
   });
 }
 
@@ -234,7 +234,7 @@ $(function() {
     mdf_new_row.eq(1).find('.f_judul').val('');
     mdf_new_row.eq(1).find('.error').remove();
 
-    mdf_new_row.eq(2).find('.f_isi').val('');    
+    mdf_new_row.eq(2).find('.f_isi').val('');
     mdf_new_row.eq(2).find('.error').remove();
     mdf_new_row.eq(2).hide();
 

@@ -228,14 +228,16 @@ class SideLetterCreateController
         }
       }
     }
-
-    $comment = new Comments();
-    $comment->content = $request->komentar;
-    $comment->documents_id = $doc->id;
-    $comment->users_id = \Auth::id();
-    $comment->status = 1;
-    $comment->data = "Submitted";
-    $comment->save();
+    
+  if($request->statusButton == '0'){
+      $comment = new Comments();
+      $comment->content = $request->komentar;
+      $comment->documents_id = $doc->id;
+      $comment->users_id = \Auth::id();
+      $comment->status = 1;
+      $comment->data = "Submitted";
+      $comment->save();
+    }
 
     // $log_activity = new DocActivity();
     // $log_activity->users_id = Auth::id();

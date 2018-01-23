@@ -13,6 +13,7 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocMetaSideLetter;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
+use Modules\Documents\Entities\DocComment as Comments;
 use App\Helpers\Helpers;
 use Validator;
 use DB;
@@ -24,16 +25,16 @@ class SideLetterEditController extends Controller
   {
       //oke
   }
-  
+
   public function store($request)
   {
-    
+
 
     $type = $request->type;
     $id = $request->id;
     $status = Documents::where('id',$id)->first()->doc_signing;
     $rules = [];
-    
+
     if(in_array($status,['0','2'])){
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
@@ -69,7 +70,7 @@ class SideLetterEditController extends Controller
       }
       $request->merge(['doc_lampiran' => $new_lamp]);
     }
-    
+
     $rule_scope_pasal = (count($request['scope_pasal'])>1)?'required':'sometimes|nullable';
     $rule_scope_judul = (count($request['scope_judul'])>1)?'required':'sometimes|nullable';
     $rule_scope_isi = (count($request['scope_isi'])>1)?'required':'sometimes|nullable';
@@ -129,7 +130,7 @@ class SideLetterEditController extends Controller
     $request->merge(['lt_file' => $new_lt_file]);
 
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-    
+
     if ($validator->fails ()){
       return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
@@ -148,20 +149,21 @@ class SideLetterEditController extends Controller
       if((\Laratrust::hasRole('admin'))){
         $doc->user_id  = $request->user_id;
       }
+      $doc->doc_signing = '0';
       $doc->doc_parent = 0;
       $doc->doc_parent_id = $request->parent_kontrak;
       $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
       $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
       $doc->save();
-    }    
-    
+    }
+
     if(count($request->f_judul)>0){
       DocMeta::where([
         ['documents_id','=',$doc->id],
         ['meta_type','=','sow_boq']
         ])->delete();
       foreach($request->f_judul as $key => $val){
-        if(!empty($val)){          
+        if(!empty($val)){
 
           if($val=="Harga"){
             $f_name="harga";
@@ -173,7 +175,7 @@ class SideLetterEditController extends Controller
             $f_name="lainnya";
             $desc=$request->f_isi[$key];
           }
-          
+
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = 'sow_boq';
@@ -267,11 +269,25 @@ class SideLetterEditController extends Controller
       }
     }
 
-    $request->session()->flash('alert-success', 'Data berhasil disimpan');
-    if($request->statusButton == '0'){
-      return redirect()->route('doc',['status'=>'tracking']);
+    if(in_array($status,['0','2'])){
+      $comment = new Comments();
+      $comment->content = $request->komentar;
+      $comment->documents_id = $doc->id;
+      $comment->users_id = \Auth::id();
+      $comment->status = 1;
+      $comment->data = "Submitted";
+      $comment->save();
     }else{
-      return redirect()->route('doc',['status'=>'draft']);
+      $comment = new Comments();
+      $comment->content = $request->komentar;
+      $comment->documents_id = $doc->id;
+      $comment->users_id = \Auth::id();
+      $comment->status = 1;
+      $comment->data = "Edited";
+      $comment->save();
     }
+
+    $request->session()->flash('alert-success', 'Data berhasil disimpan');
+    return redirect()->route('doc',['status'=>'tracking']);
   }
 }

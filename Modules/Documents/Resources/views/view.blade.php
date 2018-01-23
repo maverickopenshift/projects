@@ -141,9 +141,10 @@ $(document).on('click', '.btn-reject', function(event) {
   event.preventDefault();
   var content = $('.content-view');
   var loading = content.find('.loading2');
+  var no_kontrak = '{{$doc->doc_no}}';
   bootbox.confirm({
     title:"Konfirmasi",
-    message: "Apakah Anda Yakin Ingin Mereturn Dokumen ini?",
+    message: "Apakah Anda Yakin Ingin Mengembalikan Dokumen ini?",
         buttons: {
             confirm: {
                 label: 'Yakin',
@@ -171,7 +172,7 @@ $(document).on('click', '.btn-reject', function(event) {
                     url: '{!!route('doc.reject')!!}',
                     type: 'POST',
                     dataType: 'json',
-                    data: {id: '{!!$id!!}',reason: komen}
+                    data: {id: '{!!$id!!}',reason: komen, no_kontrak: no_kontrak}
                   })
                   .done(function(data) {
                     if(data.status){
@@ -197,6 +198,8 @@ $(document).on('click', '.btn-setuju', function(event) {
   event.preventDefault();
   var content = $('.content-view');
   var loading = content.find('.loading2');
+  var no_kontrak = '{{$doc->doc_no}}';
+  if(no_kontrak == ""){
   $.ajax({
     url: '{!!route('doc.getKontrak')!!}',
     type: 'GET',
@@ -239,7 +242,7 @@ $(document).on('click', '.btn-setuju', function(event) {
                     url: '{!!route('doc.approve')!!}',
                     type: 'POST',
                     dataType: 'JSON',
-                    data: {id: '{!!$id!!}',komentar: komen}
+                    data: {id: '{!!$id!!}',komentar: komen, no_kontrak: no_kontrak}
                   })
                   .done(function(data) {
                     if(data.status){
@@ -265,6 +268,72 @@ $(document).on('click', '.btn-setuju', function(event) {
     }
     loading.hide();
   })
+}else{
+  var judul_kontrak = '{{$doc->doc_title}}';
+  var nm_pihak1 = '{{$pegawai_pihak1->v_nama_karyawan}}';
+  var nik_pihak1 = '{{$pegawai_pihak1->n_nik}}';
+  var jbtn_pihak1 = '{{$pegawai_pihak1->v_short_posisi}}';
+  var loker = '{{$pegawai->c_kode_unit}}';
+  var nm_loker = '{{$pegawai->v_short_unit}}';
+  bootbox.confirm({
+    size:"large",
+    title:"Konfirmasi",
+    message: "Pastikan Data Yang Anda Masukkan Sudah Benar.<br><br>"+
+    "Nomor Kontrak: <strong>"+no_kontrak+"</strong><br>"+
+    "Judul Kontrak: <strong>"+judul_kontrak+"</strong><br>"+
+    "Nama Penandatangan/NIK/Jabatan: <strong>"+nm_pihak1+"/"+nik_pihak1+"/"+jbtn_pihak1+"</strong><br>"+
+    "Loker: <strong>"+loker+"/"+nm_loker+"</strong><br>",
+        buttons: {
+            confirm: {
+                label: 'Yakin',
+                className: 'btn-success btn-sm'
+            },
+            cancel: {
+                label: 'Tidak',
+                className: 'btn-danger btn-sm'
+            }
+        },
+        callback: function (result) {
+            if(result){
+              bootbox.prompt({
+              title: "Masukan Komentar",
+              inputType: 'textarea',
+              callback: function (komen) {
+                if(komen){
+              loading.show();
+              $.ajaxSetup({
+                headers: {
+                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                  }
+              });
+              $.ajax({
+                url: '{!!route('doc.approve')!!}',
+                type: 'POST',
+                dataType: 'JSON',
+                data: {id: '{!!$id!!}',komentar: komen, no_kontrak: no_kontrak}
+              })
+              .done(function(data) {
+                if(data.status){
+                  bootbox.alert({
+                      title:"Pemberitahuan",
+                      message: "Data berhasil disetujui",
+                      callback: function (result) {
+                          window.location = '{!!route('doc',['status'=>'selesai'])!!}'
+                      }
+                  });
+                }
+                loading.hide();
+              })
+              .always(function(){
+                loading.hide();
+              });
+            }
+          }
+        });
+        }
+      }
+  });
+}
 });
 </script>
 @endpush

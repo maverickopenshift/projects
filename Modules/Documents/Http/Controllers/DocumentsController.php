@@ -282,14 +282,25 @@ class DocumentsController extends Controller
     public function approve(Request $request)
     {
       if ($request->ajax()) {
-        $doc = $this->documents->where('id',$request->id)->whereNull('doc_no')->first();
-        if($doc){
+        if($request->no_kontrak == null){
+          $doc = $this->documents->where('id',$request->id)->whereNull('doc_no')->first();
+
           $doc->doc_no = $this->documents->create_no_kontrak($doc->doc_template_id,$doc->id);
           $doc->doc_signing = 1;
           $doc->doc_status = 0;
           $doc->doc_signing_date = \DB::raw('NOW()');
           $doc->doc_data =  json_encode(['signing_by_userid'=>\Auth::id()]);
           $doc->save();
+        }else{
+          $doc = $this->documents->where('id',$request->id)->first();
+
+          $doc->doc_signing = 1;
+          $doc->doc_status = 0;
+          $doc->doc_signing_date = \DB::raw('NOW()');
+          $doc->doc_data =  json_encode(['signing_by_userid'=>\Auth::id()]);
+          $doc->save();
+        }
+        if($doc){
 
           $comment = new Comments();
           $comment->content = $request->komentar;
@@ -338,7 +349,13 @@ class DocumentsController extends Controller
     public function reject(Request $request)
     {
       if ($request->ajax()) {
-        $doc = $this->documents->where('id',$request->id)->whereNull('doc_no')->first();
+
+        if($request->no_kontrak == ""){
+          $doc = $this->documents->where('id',$request->id)->whereNull('doc_no')->first();
+        }
+        else{
+          $doc = $this->documents->where('id',$request->id)->first();
+        }
         if($doc){
           $rules['reason'] = 'required|min:5|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
           $validator = Validator::make($request->all(), $rules,['reason.required'=>'Alasan harus diisi!','reason.regex'=>'Format penulisan tidak valid!','reason.min'=>'Inputan minimal 5 karakter']);

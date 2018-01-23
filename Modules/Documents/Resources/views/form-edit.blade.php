@@ -148,6 +148,7 @@ $(function () {
     var content = $('.content-view');
     var loading = content.find('.loading2');
     bootbox.confirm({
+      title:"Konfirmasi",
       message: "Apakah anda yakin untuk submit?",
       buttons: {
           confirm: {

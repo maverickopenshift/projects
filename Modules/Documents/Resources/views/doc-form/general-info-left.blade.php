@@ -4,8 +4,6 @@
       @include('documents::doc-form.no-kontrak')
     @else
 
-    {{old('doc_title')}}
-    {{old('doc_title',Helper::prop_exists($doc,'doc_title'))}}
     <div class="form-group  {{ $errors->has('doc_title') ? ' has-error' : '' }}">
       <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Judul {{$doc_type['title']}}</label>
       <div class="col-sm-10">

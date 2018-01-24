@@ -92,7 +92,7 @@ class EditController extends Controller
       $dt->parent_kontrak = $dt->doc_parent_id;
       $dt->parent_kontrak_text = $this->documents->select('doc_no')->where('id','=',$dt->doc_parent_id)->first()->doc_no;
     }    
-
+    
     if(in_array($type,['khs', 'turnkey','surat_pengikatan','sp','amandemen_sp','adendum','side_letter'])){
       $dt->lt_judul_kesanggupan_mitra     = $dt->latar_belakang_kesanggupan_mitra[0]['meta_name'];
       $dt->lt_tanggal_kesanggupan_mitra   = $dt->latar_belakang_kesanggupan_mitra[0]['meta_desc'];

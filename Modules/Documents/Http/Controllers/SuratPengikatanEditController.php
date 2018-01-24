@@ -231,6 +231,7 @@ class SuratPengikatanEditController extends Controller
       }
     }
 
+if(in_array($status,['0','2'])){
     if(count($new_lamp_up)>0){
       DocMeta::where([
         ['documents_id','=',$doc->id],
@@ -254,6 +255,7 @@ class SuratPengikatanEditController extends Controller
         }
       }
     }
+  }
 
     if(count($request['lt_name'])>0){
       DocMeta::where([

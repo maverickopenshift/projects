@@ -188,6 +188,7 @@ class MouEditController extends Controller
       }
     }
 
+    if(in_array($status,['0','2'])){
     if(count($new_lamp_up)>0){
       DocMeta::where([
         ['documents_id','=',$doc->id],
@@ -211,6 +212,7 @@ class MouEditController extends Controller
         }
       }
     }
+  }
 
     if(in_array($status,['0','2'])){
       $comment = new Comments();

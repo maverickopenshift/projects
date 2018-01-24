@@ -35,7 +35,7 @@ class SideLetterEditController extends Controller
     $status = Documents::where('id',$id)->first()->doc_signing;
     $rules = [];
 
-    if(in_array($status,['0','2'])){
+    if(in_array($status,['0','2','3','1'])){
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -135,7 +135,7 @@ class SideLetterEditController extends Controller
       return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
 
-    if(in_array($status,['0','2'])){
+    if(in_array($status,['0','2','3','1'])){
       $doc = Documents::where('id',$id)->first();
       $doc->doc_title = $request->doc_title;
       $doc->doc_date = $request->doc_startdate;

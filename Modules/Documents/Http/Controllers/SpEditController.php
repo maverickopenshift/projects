@@ -155,11 +155,13 @@ class SpEditController extends Controller
       $request->merge(['lt_file' => $new_lt_file]);
 
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-      $validator->after(function ($validator) use ($request) {
-        if (!isset($request['pic_nama'][0])) {
-            $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
-        }
-      });
+      if(in_array($status,['0','2'])){
+        $validator->after(function ($validator) use ($request) {
+          if (!isset($request['pic_nama'][0])) {
+              $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
+          }
+        });
+      }
 
       if(isset($hs_harga) && count($hs_harga)>0){
         $request->merge(['hs_harga'=>$hs_harga]);
@@ -169,6 +171,7 @@ class SpEditController extends Controller
       }
 
       if ($validator->fails ()){
+        // dd($request->input());
         return redirect()->back()->withInput($request->input())->withErrors($validator);
       }
 
@@ -235,6 +238,7 @@ class SpEditController extends Controller
         $doc_po->save();
       }
 
+if(in_array($status,['0','2'])){
       if(count($new_lamp_up)>0){
         DocMeta::where([
           ['documents_id','=',$doc->id],
@@ -258,6 +262,7 @@ class SpEditController extends Controller
           }
         }
       }
+    }
 
       if(count($request->doc_asuransi)>0){
         DocAsuransi::where([

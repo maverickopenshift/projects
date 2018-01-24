@@ -33,7 +33,7 @@ class AmandemenSpEditController extends Controller
     $status = Documents::where('id',$id)->first()->doc_signing;
     $rules = [];
 
-    if(in_array($status,['0','2'])){
+    if(in_array($status,['0','2','3','1'])){
       $rules['doc_title']        =  'required|min:2';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
@@ -133,14 +133,14 @@ class AmandemenSpEditController extends Controller
       return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
 
-    if(in_array($status,['0','2'])){
+    if(in_array($status,['0','2','3','1'])){
       $doc = Documents::where('id',$id)->first();;
       $doc->doc_title = $request->doc_title;
       $doc->doc_date = $request->doc_startdate;
       $doc->doc_startdate = $request->doc_startdate;
       $doc->doc_enddate = $request->doc_enddate;
       $doc->doc_desc = $request->doc_desc;
-      $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
+      // $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
       $doc->doc_pihak1 = $request->doc_pihak1;
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;

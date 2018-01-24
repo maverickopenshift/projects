@@ -81,7 +81,10 @@
 
           <div class="tab-pane ok" id="tab_3">
             @include('documents::partials.alert-errors')
+            {{--
             @include('documents::doc-view.latar-belakang')
+            --}}
+            @include('documents::doc-view.latar-belakang-fix')
             <div class="clearfix"></div>
             <div class="row">
               <div class="col-sm-12">

@@ -120,7 +120,11 @@ class MouCreateController extends Controller
         }
 
         $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-
+        $validator->after(function ($validator) use ($request) {
+          if($request->doc_enddate < $request->doc_startdate){
+            $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+          }
+        });
         $request->merge(['doc_value' => $doc_value]);
         if(isset($hs_harga) && count($hs_harga)>0){
           $request->merge(['hs_harga'=>$hs_harga]);

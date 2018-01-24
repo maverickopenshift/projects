@@ -51,6 +51,7 @@
                     {!!Helper::error_help($errors,'lt_desc.'.$key)!!}
                   </div>
                 </div>
+
                 <div class="form-group {{ $errors->has('lt_file.'.$key) ? ' has-error' : '' }}">
                   <label for="lt_file" class="col-sm-2 control-label"><span class="text-red">*</span> File</label>
                   <div class="col-sm-4">
@@ -61,9 +62,6 @@
                         <button class="btn btn-default click-upload" type="button">Browse</button>
                         <input type="hidden" name="lt_file_old[]" value="{{$lt_file_old[$key]}}">
                         @if(isset($lt_file_old[$key]))
-                        <!--
-                          <a target="_blank" class="btn btn-primary btn-lihat" href="{{route('doc.file.asuransi',['filename'=>$lt_file_old[$key],'type'=>$doc_type->name])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat</a>
-                        -->
                           <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file.asuransi',['filename'=>$lt_file_old[$key],'type'=>$doc_type->name])}}">
                           <i class="glyphicon glyphicon-paperclip"></i>  Lihat
                           </a>
@@ -75,6 +73,7 @@
                     {!!Helper::error_help($errors,'lt_file.'.$key)!!}
                   </div>
                 </div>
+                
             </div>
         @endforeach
       @else
@@ -123,14 +122,15 @@
                 <small class="text-danger"><i> (Wajib di isi) </i></small>
               </div>
             </div>
+
             <div class="form-group">
               <label for="lt_name" class="col-sm-2 control-label"><span class="text-red">*</span> Judul</label>
               <div class="col-sm-4">
                 <input type="text" class="form-control" name="" disabled="true" autocomplete="off" value="Surat Kesanggupan Mitra">
                 <input type="text" class="form-control" name="lt_name[]" style="Display:none" autocomplete="off" value="Surat Kesanggupan Mitra">
               </div>
-
             </div>
+            
             <div class="form-group">
               <label for="lt_desc" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal</label>
               <div class="col-sm-4">
@@ -142,6 +142,7 @@
                 </div>
               </div>
             </div>
+
             <div class="form-group">
               <label for="lt_file" class="col-sm-2 control-label"><span class="text-red">*</span> File</label>
               <div class="col-sm-4">
@@ -155,6 +156,7 @@
                 </div>
               </div>
             </div>
+
         </div>
       @endif
       @include('documents::partials.buttons')

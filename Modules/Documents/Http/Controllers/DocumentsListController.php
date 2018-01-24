@@ -16,7 +16,7 @@ class DocumentsListController extends Controller
   {
       $this->documents = $doc;
   }
-  
+
   public function list($request,$status_no)
   {
     $status = $request->status;
@@ -69,9 +69,16 @@ class DocumentsListController extends Controller
           $documents->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
           $documents->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
         }
-        $documents = $documents->with(['jenis','supplier','pic']);
+        $documents = $documents->with(['pegawai','users','jenis','supplier','pic']);
         $documents = $documents->paginate($limit);
         $documents->getCollection()->transform(function ($value)use ($status_no) {
+          // dd($value);
+          $n_nik = $value->pegawai->n_nik;
+          $v_nama_karyawan = $value->pegawai->v_nama_karyawan;
+
+          $username = $value->users->username;
+          $name = $value->users->name;
+
           $value['total_child']=0;
           $edit = '';
           if($value['doc_signing']==0 && \Laratrust::can('approve-kontrak')){
@@ -81,12 +88,22 @@ class DocumentsListController extends Controller
             $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-eye"></i> LIHAT</a>';
           }
           if(!\Laratrust::hasRole('approver') && !\Laratrust::hasRole('monitor') ){
-            $edit = '<a class="btn btn-xs btn-info" href="'.route('doc.edit',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-edit"></i> EDIT</a>
-              <a class="btn btn-xs btn-danger" data-id="'.$value['id'].'" data-toggle="modal" data-target="#modal-delete"><i class="fa fa-trash"></i></a>
-            ';
+            $edit = '<a class="btn btn-xs btn-info" href="'.route('doc.edit',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-edit"></i> EDIT</a>';
+            // $hps = '<a class="btn btn-xs btn-danger" data-id="'.$value['id'].'" data-toggle="modal" data-target="#modal-delete"><i class="fa fa-trash"></i></a>';
           }
-          $value['link'] = $view.$edit;
-          $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason']);
+          if($status_no == "0"){
+            $value['link'] = $view;
+          }
+          else {
+            $value['link'] = $view.$edit;
+          }
+
+          if($value['doc_signing'] == '0'){
+            $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason'])." <small> : ".$v_nama_karyawan." (".$n_nik.")</small>";
+          }
+          else{
+            $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason'])." <small> To ".$name." (".$username.")</small>";
+          }
           $value['sup_name']= $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
 
           //split judul kontrak (||)

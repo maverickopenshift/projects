@@ -3,9 +3,10 @@
 @section('content')
 
 
-    <form action="{{route('doc.store',['type'=>$doc_type->name])}}" class="form-kontrak" method="post" enctype="multipart/form-data">
+    <form action="{{route('doc.store',['type'=>$doc_type->name])}}" class="form-kontrak" name="feedback" method="post" enctype="multipart/form-data">
     {{ csrf_field() }}
     <div class="nav-tabs-custom">
+      <div class="loading2"></div>
       @php
         $title_sow = 'SOW,BOQ';
         if($doc_type->name=='khs' || $doc_type->name=='amandemen_kontrak_khs'){
@@ -80,16 +81,14 @@
           </div>
           <div class="tab-pane ok" id="tab_3">
             @include('documents::partials.alert-errors')
-
+            {{--
             @if(in_array($doc_type->name,['surat_pengikatan']))
               @include('documents::doc-form.surat_pengikatan-latar-belakang')
             @elseif(!in_array($doc_type->name,['mou']))
               @include('documents::doc-form.latar-belakang')
             @endif
-
-            {{--            
-            @include('documents::doc-form.latar-belakang-fix')
             --}}
+            @include('documents::doc-form.latar-belakang-fix')
             <div class="clearfix"></div>
             <div class="row">
               <div class="col-sm-12">
@@ -136,6 +135,7 @@
 @push('scripts')
 <script>
 $(function () {
+  var data = $('.form-control').val();
   $('.btnNext').click(function(){
    $('.nav-tabs > .active').next('li').find('a').trigger('click');
   });
@@ -147,8 +147,48 @@ $(function () {
     $('#statusButton').val('2');
   });
 
+  // $(document).on('click', '#btn-submit', function(event) {
+
+// if(document.feedback.field.value == ""){
+//   console.log("kosong coy");
+// }
+//
+//   });
+
   $(document).on('click', '#btn-submit', function(event) {
     $('#statusButton').val('0');
+    event.preventDefault();
+    var content = $('.content-view');
+    var loading = content.find('.loading2');
+    bootbox.confirm({
+      title:"Konfirmasi",
+      message: "Apakah anda yakin untuk submit?",
+      buttons: {
+          confirm: {
+              label: 'Yakin',
+              className: 'btn-success'
+          },
+          cancel: {
+              label: 'Tidak',
+              className: 'btn-danger'
+          }
+      },
+      callback: function (result) {
+        if(result){
+        bootbox.prompt({
+        title: "Masukan Komentar",
+        inputType: 'textarea',
+        callback: function (komen) {
+          if(komen){
+            loading.show();
+            $('.komentar').val(komen);
+            $('.btn_submit').click();
+            }
+          }
+        });
+      }
+      }
+    });
   });
 });
 </script>

@@ -130,7 +130,6 @@
 
     function fungsiSelectSp(data){
       var id_induk = data.id;
-      // console.log(id_induk);
       var selectKontrak = $(".select-sp").select2({
         placeholder : "Pilih SP....",
         ajax: {
@@ -145,7 +144,6 @@
                     page: params.page
                 };
             },
-            //id: function(data){ return data.store_id; },
             processResults: function (data, params) {
                 // parse the results into the format expected by Select2
                 // since we are using custom formatting functions we do not need to

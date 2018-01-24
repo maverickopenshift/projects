@@ -15,6 +15,7 @@ use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocPo;
 use Modules\Documents\Entities\DocActivity;
+use Modules\Documents\Entities\DocComment as Comments;
 
 use App\Helpers\Helpers;
 use Validator;
@@ -30,7 +31,7 @@ class MouCreateController extends Controller
 
     public function store(Request $request)
     {
-
+      // dd($request->statusButton);
       $type = $request->type;
       $doc_value = $request->doc_value;
       $request->merge(['doc_value' => Helpers::input_rupiah($request->doc_value)]);
@@ -69,7 +70,7 @@ class MouCreateController extends Controller
         $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-        $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
@@ -120,7 +121,11 @@ class MouCreateController extends Controller
         }
 
         $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-
+        $validator->after(function ($validator) use ($request) {
+          if($request->doc_enddate < $request->doc_startdate){
+            $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+          }
+        });
         $request->merge(['doc_value' => $doc_value]);
         if(isset($hs_harga) && count($hs_harga)>0){
           $request->merge(['hs_harga'=>$hs_harga]);
@@ -130,7 +135,7 @@ class MouCreateController extends Controller
         }
 
         if ($validator->fails ()){
-          dd($validator->getMessageBag()->toArray());
+          // dd($validator->getMessageBag()->toArray());
           return redirect()->back()
                       ->withInput($request->input())
                       ->withErrors($validator);
@@ -149,7 +154,7 @@ class MouCreateController extends Controller
                         ->withErrors($validator);
           }
       }
-      //dd("berhasil");
+      // dd("berhasil");
       $doc = new Documents();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
@@ -227,12 +232,22 @@ class MouCreateController extends Controller
         }
       }
 
-      $log_activity = new DocActivity();
-      $log_activity->users_id = Auth::id();
-      $log_activity->documents_id = $doc->id;
-      $log_activity->activity = "Submitted";
-      $log_activity->date = new \DateTime();
-      $log_activity->save();
+      if($request->statusButton == '0'){
+        $comment = new Comments();
+        $comment->content = $request->komentar;
+        $comment->documents_id = $doc->id;
+        $comment->users_id = \Auth::id();
+        $comment->status = 1;
+        $comment->data = "Submitted";
+        $comment->save();
+      }
+
+      // $log_activity = new DocActivity();
+      // $log_activity->users_id = Auth::id();
+      // $log_activity->documents_id = $doc->id;
+      // $log_activity->activity = "Submitted";
+      // $log_activity->date = new \DateTime();
+      // $log_activity->save();
 
 /*
       if(count($request->hs_harga)>0){

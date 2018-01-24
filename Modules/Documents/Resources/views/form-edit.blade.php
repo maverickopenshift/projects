@@ -6,6 +6,7 @@
     <form action="{{$action_url}}" class="form-kontrak" method="post" enctype="multipart/form-data">
     {{ csrf_field() }}
     <div class="nav-tabs-custom">
+      <div class="loading2"></div>
       @php
         $title_sow = 'SOW,BOQ';
         if($doc_type->name=='khs'){
@@ -84,11 +85,15 @@
           </div>
           <div class="tab-pane ok" id="tab_3">
             @include('documents::partials.alert-errors')
+            {{--
             @if(in_array($doc_type->name,['surat_pengikatan']))
               @include('documents::doc-form-edit.surat_pengikatan-latar-belakang')
             @else
               @include('documents::doc-form-edit.latar-belakang')
             @endif
+            --}}
+            
+            @include('documents::doc-form-edit.latar-belakang-fix')
             <div class="clearfix"></div>
             <div class="row">
               <div class="col-sm-12">
@@ -140,6 +145,41 @@ $(function () {
   });
   $('.btnPrevious').click(function(){
    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
+  });
+
+  $(document).on('click', '.btn-submit', function(event) {
+    event.preventDefault();
+    var content = $('.content-view');
+    var loading = content.find('.loading2');
+    bootbox.confirm({
+      title:"Konfirmasi",
+      message: "Apakah anda yakin untuk submit?",
+      buttons: {
+          confirm: {
+              label: 'Yakin',
+              className: 'btn-success'
+          },
+          cancel: {
+              label: 'Tidak',
+              className: 'btn-danger'
+          }
+      },
+      callback: function (result) {
+        if(result){
+        bootbox.prompt({
+        title: "Masukan Komentar",
+        inputType: 'textarea',
+        callback: function (komen) {
+          if(komen){
+            loading.show();
+            $('.komentar').val(komen);
+            $('.btn_submit').click();
+            }
+          }
+        });
+      }
+      }
+    });
   });
 });
 </script>

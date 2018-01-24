@@ -191,7 +191,7 @@ class DocumentsController extends Controller
     {
       $id = $request->id;
       $doc_type = DocType::where('name','=',$request->type)->first();
-      $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po','sow_boq','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter')->first();
+      $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po','sow_boq','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter','latar_belakang_optional','latar_belakang_ketetapan_pemenang','latar_belakang_kesanggupan_mitra','latar_belakang_rks')->first();
 
       if(!$doc_type || !$dt){
         abort(404);
@@ -218,18 +218,19 @@ class DocumentsController extends Controller
       $data['page_title'] = 'View Kontrak - '.$doc_type['title'];
       $data['doc'] = $dt;
       $data['id'] = $id;
-      // $data['no_kontrak'] = "-";
-      // $data['no_loker'] = "-";
+
       $data['pegawai'] = \App\User::get_user_pegawai();
       $data['pegawai_pihak1'] = \DB::table('pegawai')->where('n_nik',$dt->doc_pihak1_nama)->first();
       $data['pegawai_konseptor'] = \DB::table('users_pegawai as a')
                                   ->join('pegawai as b','a.nik','=','b.n_nik')
                                   ->where('a.users_id',$dt->user_id)->first();
       $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
-      
+
+      // dd($data);
       return view('documents::view')->with($data);
     }
     public function getPo(Request $request){
+      
       $search = trim($request->po);
 
       if (empty($search)) {
@@ -281,24 +282,43 @@ class DocumentsController extends Controller
     public function approve(Request $request)
     {
       if ($request->ajax()) {
-        $doc = $this->documents->where('id',$request->id)->whereNull('doc_no')->first();
-        if($doc){
+        if($request->no_kontrak == null){
+          $doc = $this->documents->where('id',$request->id)->whereNull('doc_no')->first();
+
           $doc->doc_no = $this->documents->create_no_kontrak($doc->doc_template_id,$doc->id);
           $doc->doc_signing = 1;
           $doc->doc_status = 0;
           $doc->doc_signing_date = \DB::raw('NOW()');
           $doc->doc_data =  json_encode(['signing_by_userid'=>\Auth::id()]);
           $doc->save();
+        }else{
+          $doc = $this->documents->where('id',$request->id)->first();
 
-          $log_activity = new DocActivity();
-          $log_activity->users_id = Auth::id();
-          $log_activity->documents_id = $request->id;
-          $log_activity->activity = "Approved";
-          $log_activity->date = new \DateTime();
-          $log_activity->save();
+          $doc->doc_signing = 1;
+          $doc->doc_status = 0;
+          $doc->doc_signing_date = \DB::raw('NOW()');
+          $doc->doc_data =  json_encode(['signing_by_userid'=>\Auth::id()]);
+          $doc->save();
+        }
+        if($doc){
+
+          $comment = new Comments();
+          $comment->content = $request->komentar;
+          $comment->documents_id = $request->id;
+          $comment->users_id = \Auth::id();
+          $comment->status = 1;
+          $comment->data = "Approved";
+          $comment->save();
+
+          // $log_activity = new DocActivity();
+          // $log_activity->users_id = Auth::id();
+          // $log_activity->documents_id = $request->id;
+          // $log_activity->activity = "Approved";
+          // $log_activity->date = new \DateTime();
+          // $log_activity->save();
 
           //$request->session()->flash('alert-success', 'Data berhasil disetujui!');
-          return Response::json(['status'=>true,'hai'=>'haloo','doc_no'=>$doc->doc_no,'csrf_token'=>csrf_token()]);
+          return Response::json(['status'=>true,'doc_no'=>$doc->doc_no,'csrf_token'=>csrf_token()]);
         }
         return Response::json(['status'=>false]);
       }
@@ -329,7 +349,13 @@ class DocumentsController extends Controller
     public function reject(Request $request)
     {
       if ($request->ajax()) {
-        $doc = $this->documents->where('id',$request->id)->whereNull('doc_no')->first();
+
+        if($request->no_kontrak == ""){
+          $doc = $this->documents->where('id',$request->id)->whereNull('doc_no')->first();
+        }
+        else{
+          $doc = $this->documents->where('id',$request->id)->first();
+        }
         if($doc){
           $rules['reason'] = 'required|min:5|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
           $validator = Validator::make($request->all(), $rules,['reason.required'=>'Alasan harus diisi!','reason.regex'=>'Format penulisan tidak valid!','reason.min'=>'Inputan minimal 5 karakter']);
@@ -349,14 +375,15 @@ class DocumentsController extends Controller
             $comment->documents_id = $request->id;
             $comment->users_id = \Auth::id();
             $comment->status = 1;
+            $comment->data = "Returned";
             $comment->save();
 
-            $log_activity = new DocActivity();
-            $log_activity->users_id = Auth::id();
-            $log_activity->documents_id = $request->id;
-            $log_activity->activity = "Returned";
-            $log_activity->date = new \DateTime();
-            $log_activity->save();
+            // $log_activity = new DocActivity();
+            // $log_activity->users_id = Auth::id();
+            // $log_activity->documents_id = $request->id;
+            // $log_activity->activity = "Returned";
+            // $log_activity->date = new \DateTime();
+            // $log_activity->save();
             $dt_c = Comments::where('id',$comment->id)->with('user')->first();
             //$request->session()->flash('alert-success', 'Data berhasil disetujui!');
             return Response::json(['status'=>true,'doc_no'=>$doc->doc_no,'csrf_token'=>csrf_token(),'data'=>$dt_c]);

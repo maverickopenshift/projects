@@ -58,7 +58,14 @@
         autoWidth : false,
         order : [[ 2, 'desc' ]],
         pageLength: 50,
-        ajax: '{!! route('doc.template.data') !!}',
+        //ajax: '{!! route('doc.template.data') !!}',
+        ajax: {
+            "url": "{!! route('doc.template.data') !!}",
+            "type": "POST",
+            'headers': {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+        },
         columns: [
             {data : 'DT_Row_Index',orderable:false,searchable:false},
             { data: 'type.title', name: 'type.title' },

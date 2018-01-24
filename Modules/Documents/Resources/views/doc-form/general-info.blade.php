@@ -22,7 +22,6 @@ $(function() {
   }
 
   $('.mtu-set').text($('.mata-uang').val());
-
   var selectUserVendor = $(".select-user-vendor").select2({
       placeholder : "Pilih Pihak II....",
       ajax: {

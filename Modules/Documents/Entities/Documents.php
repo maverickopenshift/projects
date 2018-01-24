@@ -65,6 +65,22 @@ class Documents extends Model
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','latar_belakang_surat_pengikatan');
     }
+    public function latar_belakang_rks()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','latar_belakang_rks');
+    }
+    public function latar_belakang_ketetapan_pemenang()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','latar_belakang_ketetapan_pemenang');
+    }
+    public function latar_belakang_kesanggupan_mitra()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','latar_belakang_kesanggupan_mitra');
+    }
+    public function latar_belakang_optional()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','latar_belakang_optional');
+    }
     public function latar_belakang_mou()
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','latar_belakang_mou');

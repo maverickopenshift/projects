@@ -156,6 +156,7 @@ class EntryDocumentController extends Controller
       }
 
       $rules = [];
+      // dd($request->input());
       if($request->statusButton == '0'){
 
         $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
@@ -175,21 +176,10 @@ class EntryDocumentController extends Controller
         }
 
 
-        $rules['doc_sow']          =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-
-        $rules['hs_kode_item.*']   =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['hs_satuan.*']      =  'sometimes|nullable|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['hs_mtu.*']         =  'sometimes|nullable|max:5|min:1|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['hs_harga.*']       =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
-        $rules['hs_harga_jasa.*']  =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
-        $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
-        $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
-
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
-
+        $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
         $check_new_lampiran = false;
         foreach($request->doc_lampiran_old as $k => $v){
           if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
@@ -214,6 +204,15 @@ class EntryDocumentController extends Controller
           }
         }
         $request->merge(['doc_lampiran' => $new_lamp]);
+
+        $rules['hs_kode_item.*']   =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
+        $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+        $rules['hs_satuan.*']      =  'sometimes|nullable|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
+        $rules['hs_mtu.*']         =  'sometimes|nullable|max:5|min:1|regex:/^[a-z0-9 .\-]+$/i';
+        $rules['hs_harga.*']       =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
+        $rules['hs_harga_jasa.*']  =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
+        $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
+        $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
         if(in_array($type,['turnkey','sp'])){
             $rule_doc_jaminan = (count($request['doc_jaminan'])>1)?'required':'sometimes|nullable';
@@ -365,6 +364,7 @@ class EntryDocumentController extends Controller
             $doc_meta = new DocMeta();
             $doc_meta->documents_id = $doc->id;
             $doc_meta->meta_type = 'lampiran_ttd';
+            $doc_meta->meta_name = $request['doc_lampiran_nama'][$key];
             if(isset($request['doc_lampiran'][$key])){
               $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
               $file = $request['doc_lampiran'][$key];

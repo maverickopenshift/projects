@@ -29,18 +29,17 @@ class SideLetterCreateController
     $rules = [];
 
     if($request->statusButton == '0'){
-
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
+      $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $check_new_lampiran = false;
       foreach($request->doc_lampiran_old as $k => $v){
         if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
-
           $new_lamp[] = '';
           $new_lamp_up[] = $request->doc_lampiran[$k];
           $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
@@ -156,6 +155,7 @@ class SideLetterCreateController
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = 'lampiran_ttd';
+          $doc_meta->meta_name = $request['doc_lampiran_nama'][$key];
           if(isset($request['doc_lampiran'][$key])){
             $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
             $file = $request['doc_lampiran'][$key];

@@ -75,8 +75,11 @@ class SuratPengikatanEditController extends Controller
       $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-      $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      
+      $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      // $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
+      // $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
+
+      $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $check_new_lampiran = false;
       foreach($request->doc_lampiran_old as $k => $v){
         if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
@@ -228,6 +231,7 @@ if(in_array($status,['0','2'])){
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = 'lampiran_ttd';
+          $doc_meta->meta_name = $request['doc_lampiran_nama'][$key];
           if(is_object($val)){
             $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
             $file = $request['doc_lampiran'][$key];
@@ -341,34 +345,6 @@ if(in_array($status,['0','2'])){
         }
       }
     }
-
-    /*
-    if(count($request['lt_name'])>0){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','latar_belakang']
-        ])->delete();
-      foreach($request['lt_name'] as $key => $val){
-        if(!empty($request['lt_name'][$key])){
-          $doc_meta = new DocMeta();
-          $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'latar_belakang';
-          $doc_meta->meta_name = $request['lt_name'][$key];
-          $doc_meta->meta_desc = $request['lt_desc'][$key];
-          if(is_object($new_lt_file_up[$key])){
-            $fileName   = Helpers::set_filename('doc_',strtolower($request['lt_name'][$key]));
-            $file = $new_lt_file_up[$key];
-            $file->storeAs('document/'.$request->type.'_latar_belakang', $fileName);
-            $doc_meta->meta_file = $fileName;
-          }
-          else{
-            $doc_meta->meta_file = $new_lt_file_up[$key];
-          }
-          $doc_meta->save();
-        }
-      }
-    }
-    */
 
     if(in_array($status,['0','2'])){
       $comment = new Comments();

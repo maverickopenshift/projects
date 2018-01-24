@@ -234,6 +234,7 @@ class SpCreateController
             $doc_meta = new DocMeta();
             $doc_meta->documents_id = $doc->id;
             $doc_meta->meta_type = 'lampiran_ttd';
+            $doc_meta->meta_name = $request['doc_lampiran_nama'][$key];
             if(isset($request['doc_lampiran'][$key])){
               $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
               $file = $request['doc_lampiran'][$key];

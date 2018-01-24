@@ -83,7 +83,7 @@
         </div>
       </div>
     @endif
-  </div>
+  </div> 
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
     @include('documents::doc-form.general-info-right')
     @include('documents::doc-form-edit.lampiran-1')

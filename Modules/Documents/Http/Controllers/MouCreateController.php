@@ -75,6 +75,7 @@ class MouCreateController extends Controller
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
+        $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
         $check_new_lampiran = false;
         foreach($request->doc_lampiran_old as $k => $v){
           if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
@@ -197,6 +198,7 @@ class MouCreateController extends Controller
             $doc_meta = new DocMeta();
             $doc_meta->documents_id = $doc->id;
             $doc_meta->meta_type = 'lampiran_ttd';
+            $doc_meta->meta_name = $request['doc_lampiran_nama'][$key];
             if(isset($request['doc_lampiran'][$key])){
               $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
               $file = $request['doc_lampiran'][$key];

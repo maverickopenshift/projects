@@ -90,13 +90,14 @@
             <div class="col-sm-10 text-me">{{$doc->doc_pihak2_nama}}</div>
           </div>
           <div class="form-group">
-            <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran 1</label>
+            <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran</label>
             <div class="col-sm-5">
               <div class="parent-pictable">
                   <table class="table table-condensed table-striped">
                       <thead>
                         <tr>
                           <th>Lampiran Ke</th>
+                          <th>Nama Lampiran</th>
                           <th>Lihat</th>
                         </tr>
                       </thead>
@@ -105,6 +106,7 @@
                         @foreach ($doc->lampiran_ttd as $key=>$dt)
                           <tr>
                             <td>{{($key+1)}}</td>
+                            <td>{{($dt->meta_name)?$dt->meta_name:' - '}}</td>
                             <td>@if(!empty($dt->meta_file))
                             <!--
                             <a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
@@ -119,7 +121,7 @@
                         @endforeach
                         @else
                           <tr>
-                              <td colspan="2" align="center">-</td>
+                              <td colspan="3" align="center">-</td>
                           </tr>
                         @endif
                       </tbody>

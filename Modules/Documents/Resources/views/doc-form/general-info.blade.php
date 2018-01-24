@@ -12,7 +12,11 @@
 <!-- /.box-body -->
 </div>
 @push('scripts')
-<script src="{{ mix('js/po_sap.js') }}"></script>
+  @if(config('app.env')=='production')
+    <script src="{{ mix('js/po_sap.js') }}"></script>
+  @else
+    <script src="{{ mix('js/po_dummy.js') }}"></script>
+  @endif
 <script>
 $(function() {
   add_select('doc_lampiran');

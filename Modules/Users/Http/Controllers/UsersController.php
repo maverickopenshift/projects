@@ -9,7 +9,8 @@ use App\User;
 use App\Role;
 use Modules\Users\Entities\UsersAtasan as Atasan;
 use Modules\Users\Entities\UsersApprover as Approver;
-use Modules\Users\Entities\UsersPegawai as Pegawai;
+use Modules\Users\Entities\UsersPegawai;
+use Modules\Users\Entities\Pegawai;
 use Modules\Users\Entities\UsersPgs;
 use Modules\Users\Entities\PegawaiNonorganik;
 use Modules\Documents\Entities\Documents as Doc;
@@ -41,20 +42,33 @@ class UsersController extends Controller
         return Datatables::of($sql)
             ->addIndexColumn()
             ->addColumn('action', function ($data) {
+              $user_type = User::check_usertype($data->username);
+              $other = '';
+              if($user_type=='organik'){
+                $modal = '#form-modal';
+                $peg = Pegawai::where('n_nik',$data->username)->first();
+                $other = htmlspecialchars(json_encode($peg), ENT_QUOTES, 'UTF-8');
+              }
+              else if($user_type=='nonorganik'){
+                $modal = '#form-modal-nonorganik';
+              }
+              else{
+                $modal = '#form-modal-edit';
+              }
               $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
               $roles = htmlspecialchars(json_encode($data->roles), ENT_QUOTES, 'UTF-8');
               $act= '<div>';
               if(\Auth::user()->hasPermission('ubah-user')){
-                  $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal-edit"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'">
+                  $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="'.$modal.'"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'" data-other="'.$other.'">
   <i class="glyphicon glyphicon-edit"></i> Edit
   </button>';
               }
-              if(\Auth::user()->hasPermission('ubah-user')){
+              if(\Auth::user()->hasPermission('ubah-user') && $user_type!='organik'){
                   $act .='<button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#modal-reset"  data-title="Reset" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'">
   <i class="glyphicon glyphicon-edit"></i> Reset Password
   </button>';
               }
-              if(\Auth::user()->hasPermission('hapus-user')){
+              if(\Auth::user()->hasPermission('hapus-user') && $user_type!='admin'){
                 $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-toggle="modal" data-target="#modal-delete">
 <i class="glyphicon glyphicon-trash"></i> Delete
 </button>';
@@ -111,7 +125,7 @@ class UsersController extends Controller
           else {
               $roles = $request->roles_edit;
               $data = User::where('id','=',$request->id)->first();
-              if(!Pegawai::is_pegawai($id)){
+              if(!UsersPegawai::is_pegawai($id)){
                 $data->name = $request->name;
                 $data->username = $request->username;
                 $data->email = $request->email;
@@ -121,7 +135,7 @@ class UsersController extends Controller
               $data->roles()->sync($roles);
               
               if (count($request->atasan_id)>0 && $request->has(['atasan_id'])) {
-                $peg = Pegawai::get_by_userid($id);  
+                $peg = UsersPegawai::get_by_userid($id);  
                   Atasan::where('users_pegawai_id',$peg->ids)->delete();
                   foreach($request->atasan_id as $key=>$v){
                     $atasan = new Atasan();
@@ -164,7 +178,7 @@ class UsersController extends Controller
             'phone'    => 'sometimes|nullable|max:15|min:5',
             'password' => 'required|confirmed|max:50|min:5',
             'roles'    => 'required|exists:roles,id',
-            'user_type'    => 'required|in:ubis,witel|max:5|min:4',
+            'user_type'    => 'required|in:ubis,witel,subsidiary|max:5|min:4',
             'select_divisi'    => 'required|exists:rptom,objiddivisi',
             'select_unit'    => 'required|exists:rptom,objidunit',
             'select_posisi'    => 'required|exists:rptom,objidposisi',
@@ -225,7 +239,7 @@ class UsersController extends Controller
             
             $peg_non->save();
             
-            $peg = new Pegawai();
+            $peg = new UsersPegawai();
             $peg->users_id = $data->id;
             $peg->nik = $data->username;
             $peg->save();
@@ -282,35 +296,42 @@ class UsersController extends Controller
     {
       if (!$request->ajax()) {abort(404);};
         $rules = array (
-            'name' => 'required|max:250|min:3',
-            'username' => 'required|unique:users,username|max:250|min:3',
-            'email' => 'required|unique:users,email|max:250|min:5',
-            'phone' => 'sometimes|nullable|max:15|min:5',
-            'password' => 'required|confirmed|max:50|min:5',
-            'roles.*' => 'required',
+            'user_search' => 'required|exists:pegawai,id',
+            'username' => 'sometimes|unique:users,username|max:250|min:3',
+            'email'    => 'sometimes|email|unique:users,email|max:250|min:5',
+            'phone'    => 'sometimes|nullable|max:15|min:5',
+            'roles' => 'required|exists:roles,id',
+            'user_type'    => 'required|in:ubis,witel|max:5|min:4',
         );
+        if($request->user_pgs=='yes'){
+          $rules['pgs_divisi_or'] = 'required|exists:rptom,objiddivisi';
+          $rules['pgs_unit_or'] = 'required|exists:rptom,objidunit';
+          $rules['pgs_jabatan_or'] = 'required|exists:rptom,objidposisi';
+          $rules['pgs_roles_or'] = 'required|exists:roles,id';
+        }
         $validator = Validator::make($request->all(), $rules);
         $validator->after(function ($validator) use ($request) {
-            if (!isset($request->roles)) {
-                $validator->errors()->add('roles', 'Roles harus dipilih');
-            }
+            // if (!isset($request->roles)) {
+            //     $validator->errors()->add('roles', 'Roles harus dipilih');
+            // }
         });
         if ($validator->fails ())
             return Response::json (array(
                 'errors' => $validator->getMessageBag()->toArray()
             ));
         else {
+            $peg = Pegawai::where('id',$request->user_search)->first();
             $data = new User();
-            $data->name = $request->name;
-            $data->username = $request->username;
+            $data->name = $peg->v_nama_karyawan;
+            $data->username = $peg->n_nik;
             $data->phone = $request->phone;
-            $data->email = $request->email;
-            $data->password = bcrypt($request->password);
-            $roles = $request->roles;
+            $data->email = $peg->n_nik.'@telkom.co.id';
+            $data->password = bcrypt(config('app.password_default'));
+            $data->user_type = $request->user_type;
             $data->save ();
-            $data->attachRoles($roles);
+            $data->attachRole($request->roles);
 
-            $peg = new Pegawai();
+            $peg = new UsersPegawai();
             $peg->users_id = $data->id;
             $peg->nik = $data->username;
             $peg->save();
@@ -323,16 +344,46 @@ class UsersController extends Controller
                   $atasan->save();
                 }
             }
-
-            $sendTo = $request->email;
-            $subject = 'User Registration - Do Not Reply';
-            $email_password= $request->password;
-            $email_username = $request->username;
-
-            Log::info('Start');
-            Mail::to($sendTo)
-                ->queue(new SendEmailUser($email_password, $email_username, $subject));
-            log::info('End');
+            if ($request->has(['approver_id'])) {
+                foreach($request->approver_id as $key=>$v){
+                  $approver = new Approver();
+                  $approver->users_pegawai_id = $peg->id;
+                  $approver->nik = $v;
+                  $approver->save();
+                }
+            }
+            if($request->user_pgs=='yes'){
+              $pgs = new UsersPgs();
+              $pgs->users_id = $data->id;
+              
+              $pgs_divisi =  DB::table('rptom')->where('objiddivisi',$request->pgs_divisi_or)->first();
+              $pgs->objiddivisi = $pgs_divisi->objiddivisi;
+              $pgs->c_kode_divisi = $pgs_divisi->c_kode_divisi;
+              $pgs->v_short_divisi = $pgs_divisi->v_short_divisi;
+              
+              $pgs_unit =  DB::table('rptom')->where('objidunit',$request->pgs_unit_or)->first();
+              $pgs->objidunit = $pgs_unit->objidunit;
+              $pgs->c_kode_unit = $pgs_unit->c_kode_unit;
+              $pgs->v_short_unit = $pgs_unit->v_short_unit;
+              
+              $pgs_posisi = DB::table('rptom')->where('objidposisi',$request->pgs_jabatan_or)->first();
+              $pgs->objidposisi = $pgs_posisi->objidposisi;
+              $pgs->c_kode_posisi = $pgs_posisi->c_kode_posisi;
+              $pgs->v_short_posisi = $pgs_posisi->v_short_posisi;
+              
+              $pgs->role_id = $request->pgs_roles_or;
+              $pgs->role_id_first = $request->roles;
+              $pgs->save();
+            }
+            // $sendTo = $request->email;
+            // $subject = 'User Registration - Do Not Reply';
+            // $email_password= $request->password;
+            // $email_username = $request->username;
+            // 
+            // Log::info('Start');
+            // Mail::to($sendTo)
+            //     ->queue(new SendEmailUser($email_password, $email_username, $subject));
+            // log::info('End');
 
             return response()->json($data);
         }
@@ -413,7 +464,7 @@ class UsersController extends Controller
             return \Response::json([]);
         }
         $data = Atasan::get_by_userid($id);
-        return \Response::json(['is_pegawai'=>Pegawai::is_pegawai($id),'pegawai'=>Pegawai::get_by_userid($id),'atasan'=>$data]);
+        return \Response::json(['is_pegawai'=>UsersPegawai::is_pegawai($id),'pegawai'=>UsersPegawai::get_by_userid($id),'atasan'=>$data]);
   }
   public function getSelect(Request $request){
         $type = trim($request->type);

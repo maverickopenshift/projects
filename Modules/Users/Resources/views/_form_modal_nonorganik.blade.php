@@ -39,6 +39,7 @@
                       <select class="form-control" style="width: 100%;" name="user_type" id="user_type">
                         <option value="ubis">Ubis</option>
                         <option value="witel">Witel</option>
+                        <option value="subsidiary">Subsidiary</option>
                       </select>
                       <div class="error-user_type"></div>
                     </div>

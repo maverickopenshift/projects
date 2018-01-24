@@ -11,6 +11,7 @@ use Modules\Users\Entities\UsersPgs;
 use App\User;
 use Response;
 use Validator;
+use App\Helpers\Helpers;
 use DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -52,7 +53,7 @@ class LoginController extends Controller
     {
          $field = filter_var($request->input('login'), FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
          $request->merge([$field => $request->input('login')]);
-         if($field == 'username' && $this->check_host()){
+         if($field == 'username' && config('app.env')=='production'){
            $ldap = new TelkomLdap();
            $server = $this->server_ldap;
            $username = $request->input('login');
@@ -84,10 +85,9 @@ class LoginController extends Controller
           $msg = 'These credentials do not match our records';
           $pgs = false;
           $pgs_list = [];
-          
           $field = filter_var($request->input('login'), FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
           $request->merge([$field => $request->input('login')]);
-          if($field == 'username' && $this->check_host()){
+          if($field == 'username' && config('app.env')=='production'){
             $ldap = new TelkomLdap();
             $server = $this->server_ldap;
             $username = $request->input('login');

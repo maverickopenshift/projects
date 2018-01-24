@@ -164,4 +164,46 @@ class User extends Authenticatable
                 ->where('roles.name',$role);
       return $data;
     }
+    public static function check_usertype($username){
+      if($username=='admin'){
+        return 'admin';
+      }
+      else if(self::is_vendor($username)){
+        return 'vendor';
+      }
+      else if(self::is_organik($username)){
+        return 'organik';
+      }
+      else if(self::is_nonorganik($username)){
+        return 'nonorganik';
+      }
+      else{
+        return 'anonimouse';
+      }
+    }
+    public static function is_vendor($username){
+      $count = \DB::table('supplier')->select('kd_vendor')
+                ->where('kd_vendor',$username)->count();
+      if($count>0){
+        return true;
+      }
+      return false;
+    }
+    public static function is_organik($username){
+      $count = \DB::table('pegawai')->select('n_nik')
+                ->where('n_nik',$username)->count();
+      if($count>0){
+        return true;
+      }
+      return false;
+    }
+    public static function is_nonorganik($username){
+      $count = \DB::table('pegawai_nonorganik')->select('n_nik')
+                ->where('n_nik',$username)->count();
+      if($count>0){
+        return true;
+      }
+      return false;
+    }
+    
 }

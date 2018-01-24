@@ -238,8 +238,14 @@ class DocumentsController extends Controller
       if (empty($search)) {
         return Response::json(['status'=>false]);
       }
-      $sap = Sap::get_po($search); 
-      return Response::json($sap);
+      if(config('app.env')=='production'){
+        $sap = Sap::get_po($search); 
+        return Response::json($sap);
+      }
+      else{
+        $sql = \DB::table('dummy_po')->where('no_po','=',$search)->get();
+        return Response::json(['status'=>true,'data'=>$sql,'length'=>count($sql)]);
+      }
     }
 
     public function getPic(Request $request){

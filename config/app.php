@@ -16,7 +16,8 @@ return [
 
     'ppn_set' => 10,
 
-    'password_default' => str_random(8),
+    // 'password_default' => str_random(8),
+    'password_default' => 'telkom2017!',
     
     'sap' => [
         'ashost' => '10.0.128.9',

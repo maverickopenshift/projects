@@ -13,6 +13,7 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocTemplate;
+use Modules\Documents\Entities\DocComment as Comments;
 
 
 use App\Helpers\Helpers;
@@ -31,10 +32,10 @@ class SuratPengikatanEditController extends Controller
   {
       //oke
   }
-  
+
   public function store(Request $request)
   {
-    
+
     $id = $request->id;
     $type = $request->type;
     $status = Documents::where('id',$id)->first()->doc_signing;
@@ -101,7 +102,7 @@ class SuratPengikatanEditController extends Controller
       }
       $request->merge(['doc_lampiran' => $new_lamp]);
     }
-  
+
     $rules['doc_sow']          =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
     $rules['hs_kode_item.*']   =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
@@ -167,7 +168,7 @@ class SuratPengikatanEditController extends Controller
       dd($validator);
       return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
-    
+
     if(in_array($status,['0','2'])){
       $doc = Documents::where('id',$id)->first();
       $doc->doc_title = $request->doc_title;
@@ -179,11 +180,11 @@ class SuratPengikatanEditController extends Controller
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       $doc->supplier_id = $request->supplier_id;
-      
+
       if((\Laratrust::hasRole('admin'))){
         $doc->user_id  = $request->user_id;
       }
-      
+      $doc->doc_signing = '0';
       $doc->doc_proc_process = $request->doc_proc_process;
       $doc->doc_mtu = $request->doc_mtu;
       $doc->doc_value = Helpers::input_rupiah($request->doc_value);
@@ -192,10 +193,11 @@ class SuratPengikatanEditController extends Controller
       $doc->save();
     }else{
       $doc = Documents::where('id',$id)->first();
+      $doc->doc_signing = '0';
       $doc->doc_sow = $request->doc_sow;
       $doc->save();
-    }    
- 
+    }
+
     if(count($request->ps_judul)>0){
       DocMeta::where([
         ['documents_id','=',$doc->id],
@@ -215,6 +217,7 @@ class SuratPengikatanEditController extends Controller
       }
     }
 
+if(in_array($status,['0','2'])){
     if(count($new_lamp_up)>0){
       DocMeta::where([
         ['documents_id','=',$doc->id],
@@ -238,6 +241,7 @@ class SuratPengikatanEditController extends Controller
         }
       }
     }
+  }
 
     // latar belakang wajib
     if(isset($request->lt_judul_rks)){
@@ -366,12 +370,27 @@ class SuratPengikatanEditController extends Controller
     }
     */
 
-    $request->session()->flash('alert-success', 'Data berhasil disimpan');
-    if($request->statusButton == '0'){
-      return redirect()->route('doc',['status'=>'tracking']);
+    if(in_array($status,['0','2'])){
+      $comment = new Comments();
+      $comment->content = $request->komentar;
+      $comment->documents_id = $doc->id;
+      $comment->users_id = \Auth::id();
+      $comment->status = 1;
+      $comment->data = "Submitted";
+      $comment->save();
     }else{
-      return redirect()->route('doc',['status'=>'draft']);
+      $comment = new Comments();
+      $comment->content = $request->komentar;
+      $comment->documents_id = $doc->id;
+      $comment->users_id = \Auth::id();
+      $comment->status = 1;
+      $comment->data = "Edited";
+      $comment->save();
     }
+
+    $request->session()->flash('alert-success', 'Data berhasil disimpan');
+    return redirect()->route('doc',['status'=>'tracking']);
+
   }
 
 }

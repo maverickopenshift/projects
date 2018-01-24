@@ -17,25 +17,25 @@
               @if(isset($lampiran_old[$key]))
                 <!--
                 <a target="_blank" class="btn btn-primary btn-lihat" href="{{route('doc.file.lampiran',['filename'=>$lampiran_old[$key],'type'=>$doc_type->name])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat</a>
-                
+
                 -->
 
                 <!--
                 <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#myModal">
                 <i class="glyphicon glyphicon-paperclip"></i>  Lihat
                 </a>
-                
+
 
                 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                   <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                        <h4 class="modal-title" id="myModalLabel">Modal title</h4> 
+                        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
                       </div>
                       <div class="modal-body">
                         <div style="text-align: center;">
-                          <iframe src="{{route('doc.file.lampiran',['filename'=>$lampiran_old[$key],'type'=>$doc_type->name])}}" 
+                          <iframe src="{{route('doc.file.lampiran',['filename'=>$lampiran_old[$key],'type'=>$doc_type->name])}}"
                           style="width:500px; height:500px;" frameborder="0"></iframe>
                           </div>
                       </div>
@@ -47,12 +47,12 @@
                   </div>
                 </div>
                 -->
-                
+
                 <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file.lampiran',['filename'=>$lampiran_old[$key],'type'=>$doc_type->name])}}">
                 <i class="glyphicon glyphicon-paperclip"></i>  Lihat
                 </a>
-                
-                
+
+
               @endif
               @if(count($lampiran)>1)
                 <button type="button" class="btn btn-danger delete-lampiran"><i class="glyphicon glyphicon-trash"></i></button>
@@ -78,7 +78,7 @@
   </div>
   <!-- <div class="clearfix"></div>-->
   <div class="col-sm-3 align-bottom">
-    <button type="button" class="btn btn-success add-lampiran align-bottom""><i class="glyphicon glyphicon-plus"></i> Tambah Lampiran</button>
+    <button type="button" class="btn btn-success add-lampiran align-bottom"><i class="glyphicon glyphicon-plus"></i> Tambah Lampiran</button>
   </div>
 </div>
 @push('scripts')

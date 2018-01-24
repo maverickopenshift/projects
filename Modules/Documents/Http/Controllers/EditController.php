@@ -12,6 +12,7 @@ use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
+use Modules\Documents\Entities\DocComment as Comments;
 use Modules\Documents\Http\Controllers\SuratPengikatanEditController as SuratPengikatanEdit;
 use Modules\Documents\Http\Controllers\SideLetterEditController as SideLetterEdit;
 use Modules\Documents\Http\Controllers\MouEditController as MouEdit;
@@ -124,7 +125,7 @@ class EditController extends Controller
       $dt->f_latar_belakang_isi = $lt_optional['f_latar_belakang_isi'];
       $dt->f_latar_belakang_file = $lt_optional['f_latar_belakang_file'];
     }
-    
+
     if(count($dt->scope_perubahan)>0){
       foreach($dt->scope_perubahan as $key => $val){
         $scop['name'][$key]  = $val->meta_name;
@@ -156,7 +157,7 @@ class EditController extends Controller
         $scop['akhir'][$key] = $val->meta_akhir;
         $scop['file'][$key]  = $val->meta_file;
       }
-      
+
       $dt->scope_pasal    = $scop['pasal'];
       $dt->scope_judul    = $scop['judul'];
       $dt->scope_isi      = $scop['isi'];
@@ -265,6 +266,7 @@ class EditController extends Controller
   }
   public function store(Request $request)
   {
+    // dd($request->input());
     $id = $request->id;
     $type = $request->type;
     $status = Documents::where('id',$id)->first()->doc_signing;
@@ -329,7 +331,7 @@ class EditController extends Controller
       $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
       $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
       if($type!='khs'){
@@ -478,7 +480,7 @@ class EditController extends Controller
       $doc->doc_pihak1 = $request->doc_pihak1;
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
-      $doc->doc_signing = intval($request->statusButton);
+      $doc->doc_signing = '0';
       if((\Laratrust::hasRole('admin'))){
         $doc->user_id = $request->user_id;
       }
@@ -493,7 +495,9 @@ class EditController extends Controller
       $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
       $doc->save();
     }else{
+      //kalo dokumennya di return/ di approve dan di edit datanya (status = 3 & 1)
       $doc = Documents::where('id',$id)->first();
+      $doc->doc_signing = '0';
       $doc->doc_sow = $request->doc_sow;
       $doc->save();
     }
@@ -718,7 +722,16 @@ class EditController extends Controller
     if($request->statusButtons == '0'){
       return redirect()->route('doc',['status'=>'proses']);
     }else{
-      return redirect()->route('doc',['status'=>'draft']);
+      $comment = new Comments();
+      $comment->content = $request->komentar;
+      $comment->documents_id = $doc->id;
+      $comment->users_id = \Auth::id();
+      $comment->status = 1;
+      $comment->data = "Edited";
+      $comment->save();
     }
+
+    $request->session()->flash('alert-success', 'Data berhasil disimpan');
+    return redirect()->route('doc',['status'=>'tracking']);
   }
 }

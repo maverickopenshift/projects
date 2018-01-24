@@ -59,7 +59,7 @@
           @endif
         </div>
         <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-          
+
           <div class="form-group">
             <label class="col-sm-2 control-label">Konseptor</label>
             <div class="col-sm-10 text-me">{{$pegawai_konseptor->n_nik}} - {{$pegawai_konseptor->v_nama_karyawan}}</div>
@@ -76,7 +76,7 @@
           <div class="form-group">
             <label class="col-sm-2 control-label">Pihak I </label>
             <div class="col-sm-10 text-me">{{$doc->doc_pihak1}}</div>
-          </div>          
+          </div>
           <div class="form-group">
             <label for="ttd_pihak1" class="col-sm-2 control-label">Penandatangan Pihak I</label>
             <div class="col-sm-10 text-me">{{$pegawai_pihak1->n_nik}} - {{$pegawai_pihak1->v_nama_karyawan}} - {{$pegawai_pihak1->v_short_posisi}}</div>
@@ -106,7 +106,7 @@
                           <tr>
                             <td>{{($key+1)}}</td>
                             <td>@if(!empty($dt->meta_file))
-                            <!--  
+                            <!--
                             <a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
                             -->
                             <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
@@ -170,7 +170,7 @@
                               <td>{{($doc->doc_nilai_material)}}</td>
                               <td>{{($doc->doc_nilai_jasa)}}</td>
                               <td>{{($doc->doc_nilai_total)}}</td>
-                              <td>{{($doc->doc_nilai_ppn)}}</td>
+                              <td>{{($doc->doc_nilai_ppn)}} %</td>
                               <td>{{($doc->doc_nilai_total_ppn)}}</td>
                             </tr>
                         </tbody>
@@ -182,7 +182,7 @@
         </div>
         @endif
 
-        @if($doc_type->name=="surat_pengikatan" and $doc_type->name=="mou")        
+        @if($doc_type->name=="surat_pengikatan" and $doc_type->name=="mou")
         <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group">
             <label for="prinsipal_st" class="col-sm-2 control-label">Unit Penanggungjawab PIC</label>

@@ -6,6 +6,7 @@
     <form action="{{$action_url}}" class="form-kontrak" method="post" enctype="multipart/form-data">
     {{ csrf_field() }}
     <div class="nav-tabs-custom">
+      <div class="loading2"></div>
       @php
         $title_sow = 'SOW,BOQ';
         if($doc_type->name=='khs'){
@@ -144,6 +145,41 @@ $(function () {
   });
   $('.btnPrevious').click(function(){
    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
+  });
+
+  $(document).on('click', '.btn-submit', function(event) {
+    event.preventDefault();
+    var content = $('.content-view');
+    var loading = content.find('.loading2');
+    bootbox.confirm({
+      title:"Konfirmasi",
+      message: "Apakah anda yakin untuk submit?",
+      buttons: {
+          confirm: {
+              label: 'Yakin',
+              className: 'btn-success'
+          },
+          cancel: {
+              label: 'Tidak',
+              className: 'btn-danger'
+          }
+      },
+      callback: function (result) {
+        if(result){
+        bootbox.prompt({
+        title: "Masukan Komentar",
+        inputType: 'textarea',
+        callback: function (komen) {
+          if(komen){
+            loading.show();
+            $('.komentar').val(komen);
+            $('.btn_submit').click();
+            }
+          }
+        });
+      }
+      }
+    });
   });
 });
 </script>

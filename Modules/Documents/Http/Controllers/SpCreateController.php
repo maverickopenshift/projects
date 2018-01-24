@@ -10,6 +10,7 @@ use Modules\Documents\Entities\DocPo;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocActivity;
+use Modules\Documents\Entities\DocComment as Comments;
 use App\Helpers\Helpers;
 use Validator;
 use DB;
@@ -57,6 +58,7 @@ class SpCreateController
       $rules = [];
 
       if($request->statusButton == '0'){
+
         $rules['parent_kontrak']   =  'required|kontrak_exists';
         $rules['doc_title']        =  'required|min:2';
         $rules['doc_desc']         =  'sometimes|nullable|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -70,6 +72,7 @@ class SpCreateController
 
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+
         }
 
         $check_new_lampiran = false;
@@ -156,6 +159,7 @@ class SpCreateController
           return redirect()->back()->withInput($request->input())->withErrors($validator);
         }
       }else{
+
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
@@ -187,12 +191,13 @@ class SpCreateController
 
       $nilai_jasa               = Helpers::input_rupiah($request->doc_nilai_jasa);
       $nilai_material           = Helpers::input_rupiah($request->doc_nilai_material);
-      $nilai_ppn                = config('app.ppn_set');
+      $nilai_ppn                = $request->ppn;
       $nilai_total              = $nilai_jasa+$nilai_material;
 
       $doc->doc_nilai_material  = $nilai_material;
       $doc->doc_nilai_jasa      = $nilai_jasa;
       $doc->doc_nilai_ppn       = $nilai_ppn;
+      $doc->doc_nilai_total     = $nilai_total;
       $doc->doc_nilai_total_ppn = (($nilai_ppn/100)*$nilai_total)+$nilai_total;
 
       $doc->doc_po_no = $request->doc_po;
@@ -370,12 +375,22 @@ class SpCreateController
         }
       }
 
-      $log_activity = new DocActivity();
-      $log_activity->users_id = Auth::id();
-      $log_activity->documents_id = $doc->id;
-      $log_activity->activity = "Submitted";
-      $log_activity->date = new \DateTime();
-      $log_activity->save();
+      if($request->statusButton == '0'){
+        $comment = new Comments();
+        $comment->content = $request->komentar;
+        $comment->documents_id = $doc->id;
+        $comment->users_id = \Auth::id();
+        $comment->status = 1;
+        $comment->data = "Submitted";
+        $comment->save();
+      }
+
+      // $log_activity = new DocActivity();
+      // $log_activity->users_id = Auth::id();
+      // $log_activity->documents_id = $doc->id;
+      // $log_activity->activity = "Submitted";
+      // $log_activity->date = new \DateTime();
+      // $log_activity->save();
 
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
       if($request->statusButton == '0'){

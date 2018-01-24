@@ -14,6 +14,8 @@ use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocPo;
 use Modules\Documents\Entities\DocActivity;
+use Modules\Config\Entities\Config;
+use Modules\Documents\Entities\DocComment as Comments;
 use Modules\Documents\Http\Controllers\SuratPengikatanCreateController as SuratPengikatanCreate;
 use Modules\Documents\Http\Controllers\SideLetterCreateController as SideLetterCreate;
 use Modules\Documents\Http\Controllers\MouCreateController as MouCreate;
@@ -36,7 +38,7 @@ class EntryDocumentController extends Controller
     protected $AmandemenKontrakCreate;
     protected $AdendumCreate;
     protected $SideLetterCreate;
-    
+
     public function __construct(Request $req,MouCreate $MouCreate,SuratPengikatanCreate $SuratPengikatanCreate,SpCreate $spCreate,AmandemenSpCreate $AmandemenSpCreate,AmandemenKontrakCreate $AmandemenKontrakCreate,SideLetterCreate $SideLetterCreate){
       $this->SuratPengikatanCreate  = $SuratPengikatanCreate;
       $this->MouCreate              = $MouCreate;
@@ -63,20 +65,32 @@ class EntryDocumentController extends Controller
      */
     public function index(Request $req)
     {
-        $doc_type = DocType::where('name','=',$req->type)->first();
-        if(!$doc_type){
-          abort(404);
-        }
-        $field = Documents::get_fields();
-        $data['page_title'] = 'Entry - '.$doc_type['title'];
-        $data['doc_type'] = $doc_type;
-        $data['doc'] = [];
-        $data['doc']['doc_pihak1'] = 'PT. TELEKOMUNIKASI INDONESIA Tbk';
-        // dd($doc_type);
-        $data['data'] = $this->fields;
-        $data['pegawai'] = \App\User::get_user_pegawai();
+      $doc_type = DocType::where('name','=',$req->type)->first();
+      if(!$doc_type){
+        abort(404);
+      }
+      $field = Documents::get_fields();
+      $data['page_title'] = 'Entry - '.$doc_type['title'];
+      $data['doc_type'] = $doc_type;
+      $data['doc'] = [];
+      $data['doc']['doc_pihak1'] = 'PT. TELEKOMUNIKASI INDONESIA Tbk';
+      // dd($doc_type);
+      $field = Documents::get_fields();
+      $data['data'] = $this->fields;
+      $data['pegawai'] = \App\User::get_user_pegawai();
+      $ppn = Config::where('object_key','=','ppn-sp')->first();
 
-        return view('documents::form')->with($data);
+      if($ppn){
+        $ppn->ppn = $ppn->object_value;
+      }else{
+        $ppn = "0";
+      }
+      // dd($ppn->ppn);
+      $data['ppn'] = $ppn;
+
+
+      // dd($data);
+      return view('documents::form')->with($data);
     }
 
     /**
@@ -115,7 +129,7 @@ class EntryDocumentController extends Controller
       }
       $doc_value = $request->doc_value;
       $request->merge(['doc_value' => Helpers::input_rupiah($request->doc_value)]);
-      
+
       $m_hs_harga=[];
       $m_hs_qty=[];
 
@@ -159,6 +173,7 @@ class EntryDocumentController extends Controller
         if($type!='khs'){
           $rules['doc_value']        =  'required|max:500|min:3|regex:/^[0-9 .]+$/i';
         }
+
 
         $rules['doc_sow']          =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
@@ -279,11 +294,12 @@ class EntryDocumentController extends Controller
         }
         $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
+
         if ($validator->fails ()){
           return redirect()->back()->withInput($request->input())->withErrors($validator);
         }
       }
-
+// dd($request->input());
       $doc = new Documents();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
@@ -323,8 +339,8 @@ class EntryDocumentController extends Controller
             $doc_meta2->save();
           }
         }
-      }      
-
+      }
+      
       // PO
       if(in_array($type,['turnkey','sp'])){
         if(count($request->doc_po_no)>0){
@@ -441,7 +457,7 @@ class EntryDocumentController extends Controller
       if(count($request->f_latar_belakang_judul)>0){
         foreach($request->f_latar_belakang_judul as $key => $val){
           if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
-            
+
             $doc_meta = new DocMeta();
             $doc_meta->documents_id = $doc->id;
             $doc_meta->meta_type = "latar_belakang_optional";
@@ -496,12 +512,22 @@ class EntryDocumentController extends Controller
         }
       }
 
-      $log_activity = new DocActivity();
-      $log_activity->users_id = Auth::id();
-      $log_activity->documents_id = $doc->id;
-      $log_activity->activity = "Submitted";
-      $log_activity->date = new \DateTime();
-      $log_activity->save();
+      if($request->statusButton == '0'){
+        $comment = new Comments();
+        $comment->content = $request->komentar;
+        $comment->documents_id = $doc->id;
+        $comment->users_id = \Auth::id();
+        $comment->status = 1;
+        $comment->data = "Submitted";
+        $comment->save();
+      }
+
+      // $log_activity = new DocActivity();
+      // $log_activity->users_id = Auth::id();
+      // $log_activity->documents_id = $doc->id;
+      // $log_activity->activity = "Submitted";
+      // $log_activity->date = new \DateTime();
+      // $log_activity->save();
 
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
       if($request->statusButton == '0'){

@@ -10,6 +10,7 @@ use Modules\Documents\Entities\DocMetaSideLetter;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocActivity;
+use Modules\Documents\Entities\DocComment as Comments;
 use App\Helpers\Helpers;
 use Validator;
 use DB;
@@ -21,13 +22,14 @@ class SideLetterCreateController
   {
       //oke
   }
-  
+
   public function store($request)
   {
     $type = $request->type;
     $rules = [];
 
     if($request->statusButton == '0'){
+
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -38,6 +40,7 @@ class SideLetterCreateController
       $check_new_lampiran = false;
       foreach($request->doc_lampiran_old as $k => $v){
         if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
+
           $new_lamp[] = '';
           $new_lamp_up[] = $request->doc_lampiran[$k];
           $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
@@ -252,7 +255,7 @@ class SideLetterCreateController
         ){
           $scope_judul = $request['scope_judul'][$key];
           $scope_isi = $request['scope_isi'][$key];
-          
+
           $doc_meta = new DocMetaSideLetter();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_pasal  = $request['scope_pasal'][$key];
@@ -272,12 +275,22 @@ class SideLetterCreateController
       }
     }
 
-    $log_activity = new DocActivity();
-    $log_activity->users_id = Auth::id();
-    $log_activity->documents_id = $doc->id;
-    $log_activity->activity = "Submitted";
-    $log_activity->date = new \DateTime();
-    $log_activity->save();
+  if($request->statusButton == '0'){
+      $comment = new Comments();
+      $comment->content = $request->komentar;
+      $comment->documents_id = $doc->id;
+      $comment->users_id = \Auth::id();
+      $comment->status = 1;
+      $comment->data = "Submitted";
+      $comment->save();
+    }
+
+    // $log_activity = new DocActivity();
+    // $log_activity->users_id = Auth::id();
+    // $log_activity->documents_id = $doc->id;
+    // $log_activity->activity = "Submitted";
+    // $log_activity->date = new \DateTime();
+    // $log_activity->save();
 
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     if($request->statusButton == '0'){

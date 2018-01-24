@@ -15,6 +15,7 @@ use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocPo;
 use Modules\Documents\Entities\DocActivity;
+use Modules\Documents\Entities\DocComment as Comments;
 
 use App\Helpers\Helpers;
 use Validator;
@@ -68,7 +69,7 @@ class SuratPengikatanCreateController extends Controller
         $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-        $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
@@ -160,7 +161,7 @@ class SuratPengikatanCreateController extends Controller
           return redirect()->back()->withInput($request->input())->withErrors($validator);
         }
       }
-      
+
       $doc = new Documents();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
@@ -316,12 +317,22 @@ class SuratPengikatanCreateController extends Controller
       }
       */
 
-      $log_activity = new DocActivity();
-      $log_activity->users_id = Auth::id();
-      $log_activity->documents_id = $doc->id;
-      $log_activity->activity = "Submitted";
-      $log_activity->date = new \DateTime();
-      $log_activity->save();
+      if($request->statusButton == '0'){
+        $comment = new Comments();
+        $comment->content = $request->komentar;
+        $comment->documents_id = $doc->id;
+        $comment->users_id = \Auth::id();
+        $comment->status = 1;
+        $comment->data = "Submitted";
+        $comment->save();
+      }
+
+      // $log_activity = new DocActivity();
+      // $log_activity->users_id = Auth::id();
+      // $log_activity->documents_id = $doc->id;
+      // $log_activity->activity = "Submitted";
+      // $log_activity->date = new \DateTime();
+      // $log_activity->save();
 
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
       if($request->statusButton == '0'){

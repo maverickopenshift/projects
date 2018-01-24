@@ -142,67 +142,67 @@ $(function () {
 
 $(document).on('click', '.btn-reject', function(event) {
   event.preventDefault();
-  /* Act on the event */
-  var btn = $(this);
-  swal({
-    // html: '<div class="form-group">\
-    //         <label class="text-left">Masukan Alasan</label>\
-    //         <textarea rows="6" class="form-control reason-text"></textarea>\
-    //       </div>',
-    title:'Masukan Komentar',
-    input:'textarea',
-    showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    confirmButtonText: 'Submit',
-    cancelButtonText: 'Batal',
-    showLoaderOnConfirm: true,
-    preConfirm: function (text) {
-       return new Promise(function (resolve, reject) {
-         $.ajaxSetup({
-           headers: {
-                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-             }
-         });
-         $.ajax({
-           url: '{!!route('doc.reject')!!}',
-           type: 'POST',
-           dataType: 'json',
-           data: {id: '{!!$id!!}',reason: text}
-         })
-         .done(function(data) {
-           if(data.status){
-             $('meta[name="csrf-token"]').attr('content',data.csrf_token);
-             $('.direct-chat-messages').find('.alert').remove();
-             btn.parent().find('.btn-setuju').remove();
-             btn.remove();
-             $('.direct-chat-messages').append(template_comment(data.data));
-             resolve();
-           }
-           else{
-             reject(data.msg)
-           }
-         });
-
-       })
-    },
-  }).then(function (text) {
-    swal({
-      type: 'success',
-      html: 'Dokumen berhasil direject'
-    })
-  }, function (dismiss) {
-    // dismiss can be 'cancel', 'overlay',
-    // 'close', and 'timer'
-    if (dismiss === 'cancel') {
-
-    }
-  })
-});
+  var content = $('.content-view');
+  var loading = content.find('.loading2');
+  var no_kontrak = '{{$doc->doc_no}}';
+  bootbox.confirm({
+    title:"Konfirmasi",
+    message: "Apakah Anda Yakin Ingin Mengembalikan Dokumen ini?",
+        buttons: {
+            confirm: {
+                label: 'Yakin',
+                className: 'btn-success btn-sm'
+            },
+            cancel: {
+                label: 'Tidak',
+                className: 'btn-danger btn-sm'
+            }
+        },
+        callback: function (result) {
+            if(result){
+              bootbox.prompt({
+              title: "Masukan Komentar",
+              inputType: 'textarea',
+              callback: function (komen) {
+                if(komen){
+                  loading.show();
+                  $.ajaxSetup({
+                    headers: {
+                          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                      }
+                  });
+                  $.ajax({
+                    url: '{!!route('doc.reject')!!}',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: {id: '{!!$id!!}',reason: komen, no_kontrak: no_kontrak}
+                  })
+                  .done(function(data) {
+                    if(data.status){
+                      bootbox.alert({
+                          title:"Pemberitahuan",
+                          message: "Data berhasil dikembalikan",
+                          callback: function (result) {
+                              window.location = '{!!route('doc',['status'=>'selesai'])!!}'
+                          }
+                      });
+                    }
+                    loading.hide();
+                })
+              }
+            }
+          });
+        }
+      }
+    });
+  });
 
 $(document).on('click', '.btn-setuju', function(event) {
   event.preventDefault();
   var content = $('.content-view');
   var loading = content.find('.loading2');
+  var no_kontrak = '{{$doc->doc_no}}';
+  if(no_kontrak == ""){
   $.ajax({
     url: '{!!route('doc.getKontrak')!!}',
     type: 'GET',
@@ -230,6 +230,11 @@ $(document).on('click', '.btn-setuju', function(event) {
             },
             callback: function (result) {
                 if(result){
+                  bootbox.prompt({
+                  title: "Masukan Komentar",
+                  inputType: 'textarea',
+                  callback: function (komen) {
+                    if(komen){
                   loading.show();
                   $.ajaxSetup({
                     headers: {
@@ -240,7 +245,7 @@ $(document).on('click', '.btn-setuju', function(event) {
                     url: '{!!route('doc.approve')!!}',
                     type: 'POST',
                     dataType: 'JSON',
-                    data: {id: '{!!$id!!}',}
+                    data: {id: '{!!$id!!}',komentar: komen, no_kontrak: no_kontrak}
                   })
                   .done(function(data) {
                     if(data.status){
@@ -258,11 +263,80 @@ $(document).on('click', '.btn-setuju', function(event) {
                     loading.hide();
                   });
                 }
+              }
+            });
             }
+          }
       });
     }
     loading.hide();
   })
+}else{
+  var judul_kontrak = '{{$doc->doc_title}}';
+  var nm_pihak1 = '{{$pegawai_pihak1->v_nama_karyawan}}';
+  var nik_pihak1 = '{{$pegawai_pihak1->n_nik}}';
+  var jbtn_pihak1 = '{{$pegawai_pihak1->v_short_posisi}}';
+  var loker = '{{$pegawai->c_kode_unit}}';
+  var nm_loker = '{{$pegawai->v_short_unit}}';
+  bootbox.confirm({
+    size:"large",
+    title:"Konfirmasi",
+    message: "Pastikan Data Yang Anda Masukkan Sudah Benar.<br><br>"+
+    "Nomor Kontrak: <strong>"+no_kontrak+"</strong><br>"+
+    "Judul Kontrak: <strong>"+judul_kontrak+"</strong><br>"+
+    "Nama Penandatangan/NIK/Jabatan: <strong>"+nm_pihak1+"/"+nik_pihak1+"/"+jbtn_pihak1+"</strong><br>"+
+    "Loker: <strong>"+loker+"/"+nm_loker+"</strong><br>",
+        buttons: {
+            confirm: {
+                label: 'Yakin',
+                className: 'btn-success btn-sm'
+            },
+            cancel: {
+                label: 'Tidak',
+                className: 'btn-danger btn-sm'
+            }
+        },
+        callback: function (result) {
+            if(result){
+              bootbox.prompt({
+              title: "Masukan Komentar",
+              inputType: 'textarea',
+              callback: function (komen) {
+                if(komen){
+              loading.show();
+              $.ajaxSetup({
+                headers: {
+                      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                  }
+              });
+              $.ajax({
+                url: '{!!route('doc.approve')!!}',
+                type: 'POST',
+                dataType: 'JSON',
+                data: {id: '{!!$id!!}',komentar: komen, no_kontrak: no_kontrak}
+              })
+              .done(function(data) {
+                if(data.status){
+                  bootbox.alert({
+                      title:"Pemberitahuan",
+                      message: "Data berhasil disetujui",
+                      callback: function (result) {
+                          window.location = '{!!route('doc',['status'=>'selesai'])!!}'
+                      }
+                  });
+                }
+                loading.hide();
+              })
+              .always(function(){
+                loading.hide();
+              });
+            }
+          }
+        });
+        }
+      }
+  });
+}
 });
 </script>
 @endpush

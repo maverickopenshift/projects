@@ -27,6 +27,9 @@ class Documents extends Model
     public function users(){
       return $this->hasOne('App\User','id','user_id');
     }
+    public function pegawai(){
+      return $this->hasOne('Modules\Users\Entities\Pegawai','n_nik','doc_pihak1_nama');
+    }
     public function jenis(){
       return $this->hasOne('Modules\Documents\Entities\DocTemplate','id','doc_template_id')->with('category','type');
       // return $this->hasManyThrough('Modules\Documents\Entities\DocTemplate', 'Modules\Documents\Entities\DocType');
@@ -93,7 +96,7 @@ class Documents extends Model
     public function sow_boq()
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','sow_boq');
-    }    
+    }
     public function asuransi()
     {
         return $this->hasMany('Modules\Documents\Entities\DocAsuransi');

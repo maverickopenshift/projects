@@ -227,7 +227,9 @@ class EditController extends Controller
     if(count($dt->lampiran_ttd)>0){
       foreach($dt->lampiran_ttd as $key => $val){
         $lampiran['file'][$key]  = $val->meta_file;
+        $lampiran['name'][$key]  = $val->meta_name;
       }
+      $dt->doc_lampiran_nama  = $lampiran['name'];
       $dt->doc_lampiran  = $lampiran['file'];
       $dt->doc_lampiran_old  = $lampiran['file'];
     }
@@ -248,7 +250,7 @@ class EditController extends Controller
                                   ->join('pegawai as b','a.nik','=','b.n_nik')
                                   ->where('a.users_id',$dt->user_id)->first();
     $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
-
+// dd($data);
     return view('documents::form-edit')->with($data);
   }
   public function store(Request $request)
@@ -325,6 +327,7 @@ class EditController extends Controller
         $rules['doc_value']        =  'required|max:500|min:3|regex:/^[0-9 .]+$/i';
       }
 
+      $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $check_new_lampiran = false;
       foreach($request->doc_lampiran_old as $k => $v){
         if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
@@ -538,6 +541,7 @@ class EditController extends Controller
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = 'lampiran_ttd';
+          $doc_meta->meta_name = $request['doc_lampiran_nama'][$key];
           if(is_object($val)){
             $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
             $file = $request['doc_lampiran'][$key];

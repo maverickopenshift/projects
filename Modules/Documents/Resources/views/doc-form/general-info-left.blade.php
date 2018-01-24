@@ -86,7 +86,7 @@
   </div>
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
     @include('documents::doc-form.general-info-right')
-    @include('documents::doc-form-edit.lampiran-1')
+    @include('documents::doc-form.lampiran-1')
   </div>
     {{-- <div class="form-group {{ $errors->has('doc_lampiran') ? ' has-error' : '' }}">
       <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Lampiran 1</label>

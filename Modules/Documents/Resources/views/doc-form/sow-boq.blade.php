@@ -2,11 +2,11 @@
   <div class="box-header with-border">
     <h3 class="box-title">
       @if($doc_type['title']=="Turnkey" || $doc_type['title']=="SP" || $doc_type['title']=="amandemen_kontrak_turnkey" )
-        SOW,BOQ
-      @elseif($doc_type['title']=="MoU")
+
+      @elseif($doc_type['title']=="Mou")
         Ruang Lingkup Kerjasama
       @else
-        Daftar Harga satuan
+
       @endif
     </h3>
   </div>
@@ -14,11 +14,16 @@
   <div class="box-body">
     <div class="form-horizontal">
       @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey','khs','amandemen_kontrak_khs','mou']))
-        <div class="form-group {{ $errors->has('doc_sow') ? ' has-error' : '' }}">
-          <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label>
-          <div class="col-sm-10">
-            <textarea class="form-control" name="doc_sow" cols="4" rows="4">{{Helper::old_prop($doc,'doc_sow')}}</textarea>
-            {!!Helper::error_help($errors,'doc_sow')!!}
+        <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+          <div class="form-group" style="position:relative;margin-bottom: 34px;">
+            <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">SOW</div>
+          </div>
+          <div class="form-group {{ $errors->has('doc_sow') ? ' has-error' : '' }}">
+            <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label>
+            <div class="col-sm-10">
+              <textarea class="form-control" name="doc_sow" cols="4" rows="4">{{Helper::old_prop($doc,'doc_sow')}}</textarea>
+              {!!Helper::error_help($errors,'doc_sow')!!}
+            </div>
           </div>
         </div>
       @endif
@@ -41,15 +46,19 @@
             $tm_download = 'boq';
           }
         @endphp
-      <div class="form-group top20">
-        <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
-        <div class="col-sm-10">
-          <input type="file" name="daftar_harga" class="daftar_harga hide" accept=".csv,.xls">
-          <button class="btn btn-primary btn-sm upload-daftar_harga" type="button"><i class="fa fa-upload"></i> Upload {{$title_hs}}</button>
-          <a href="{{route('doc.template.download',['filename'=>$tm_download])}}" class="btn btn-info  btn-sm" title="Download Sample Template"><i class="glyphicon glyphicon-download-alt"></i> Download sample template</a>
-          <span class="error error-daftar_harga text-danger"></span>
+        <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+        <div class="form-group" style="position:relative;margin-bottom: 34px;">
+          <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">{{$title_hs}}</div>
         </div>
-      </div>
+        <div class="form-group top20">
+          <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
+          <div class="col-sm-10">
+            <input type="file" name="daftar_harga" class="daftar_harga hide" accept=".csv,.xls">
+            <button class="btn btn-primary btn-sm upload-daftar_harga" type="button"><i class="fa fa-upload"></i> Upload {{$title_hs}}</button>
+            <a href="{{route('doc.template.download',['filename'=>$tm_download])}}" class="btn btn-info  btn-sm" title="Download Sample Template"><i class="glyphicon glyphicon-download-alt"></i> Download sample template</a>
+            <span class="error error-daftar_harga text-danger"></span>
+          </div>
+        </div>
       <div class="table-responsive">
         <table class="table table-condensed table-striped" id="table-hargasatuan">
             <thead>
@@ -169,6 +178,7 @@
             @endif
         </table>
       </div>
+    </div>
       @if($doc_type['title']=="SP")
         <div class="form-group  {{ $errors->has('doc_lampiran_teknis') ? ' has-error' : '' }}">
           <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran Teknis</label>

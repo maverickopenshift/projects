@@ -2,11 +2,11 @@
     <div class="box-header with-border">
       <h3 class="box-title">
         @if($doc_type['title']=="Turnkey" || $doc_type['title']=="SP")
-          SOW,BOQ
-        @elseif($doc_type['title']=="MoU")
+
+        @elseif($doc_type['title']=="Mou")
           Ruang Lingkup Kerjasama
         @else
-          Daftar Harga satuan
+
         @endif
       </h3>
     </div>
@@ -14,9 +14,14 @@
     <div class="box-body">
       <div class="form-horizontal">
         @if($doc_type['title']!="SP")
-          <div class="form-group ">
-            <label class="col-sm-2 control-label">Lingkup Pekerjaan</label>
-            <div class="col-sm-10 text-me">{{$doc->doc_sow or '-'}}</div>
+          <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+            <div class="form-group" style="position:relative;margin-bottom: 34px;">
+              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">SOW</div>
+            </div>
+            <div class="form-group ">
+              <label class="col-sm-2 control-label">Lingkup Pekerjaan</label>
+              <div class="col-sm-10 text-me">{{$doc->doc_sow or '-'}}</div>
+            </div>
           </div>
         @endif
             @php
@@ -36,6 +41,10 @@
                 $tm_download = 'boq';
               }
             @endphp
+            <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+            <div class="form-group" style="position:relative;margin-bottom: 34px;">
+              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">{{$title_hs}}</div>
+            </div>
             <div class="form-group">
               <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
               <div class="table-responsive col-sm-10">
@@ -91,6 +100,7 @@
                 </table>
               </div>
             </div>
+          </div>
           @if($doc_type['title']=="SP")
             <div class="form-group">
               <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran Teknis</label>
@@ -100,7 +110,7 @@
                     <a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
                 -->
                     <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}">
-                    <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran </a>    
+                    <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran </a>
                 @endif
               </div>
             </div>

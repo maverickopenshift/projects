@@ -3,11 +3,11 @@
   <div class="box-header with-border">
     <h3 class="box-title">
       @if($doc_type['title']=="Turnkey" || $doc_type['title']=="SP")
-        SOW,BOQ
+
       @elseif($doc_type['title']=="MoU")
         Ruang Lingkup Kerjasama
       @else
-        Daftar Harga satuan
+
       @endif
     </h3>
   </div>
@@ -15,11 +15,16 @@
   <div class="box-body">
     <div class="form-horizontal">
         @if(in_array($doc_type->name,['turnkey','khs','mou']))
-          <div class="form-group {{ $errors->has('doc_sow') ? ' has-error' : '' }}">
-            <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label>
-            <div class="col-sm-10">
-              <textarea class="form-control" name="doc_sow" cols="4" rows="4">{{Helper::old_prop($doc,'doc_sow')}}</textarea>
-              {!!Helper::error_help($errors,'doc_sow')!!}
+          <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+            <div class="form-group" style="position:relative;margin-bottom: 34px;">
+              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">SOW</div>
+            </div>
+            <div class="form-group {{ $errors->has('doc_sow') ? ' has-error' : '' }}">
+              <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label>
+              <div class="col-sm-10">
+                <textarea class="form-control" name="doc_sow" cols="4" rows="4">{{Helper::old_prop($doc,'doc_sow')}}</textarea>
+                {!!Helper::error_help($errors,'doc_sow')!!}
+              </div>
             </div>
           </div>
         @endif
@@ -42,6 +47,10 @@
               $tm_download = 'boq';
             }
           @endphp
+          <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+          <div class="form-group" style="position:relative;margin-bottom: 34px;">
+            <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">{{$title_hs}}</div>
+          </div>
         <div class="form-group top20">
           <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
           <div class="col-sm-10">
@@ -110,7 +119,7 @@
                             @endphp
                             <select name="hs_mtu[]" class="form-control" style="width: 100%;">
                                 <option value="RP" {{$a}}>RP</option>
-                                <option value="USD" {{$b}}>USD</option>                       
+                                <option value="USD" {{$b}}>USD</option>
                             </select>
                             {!!Helper::error_help($errors,'hs_mtu.'.$key)!!}
                           </td>
@@ -157,7 +166,7 @@
                       <td>
                         <select name="hs_mtu[]" class="form-control selectx2" style="width: 100%;">
                           <option value="RP">RP</option>
-                          <option value="USD">USD</option>                       
+                          <option value="USD">USD</option>
                         </select>
                       </td>
                       {{--
@@ -175,9 +184,10 @@
               @endif
           </table>
         </div>
-       
+      </div>
+
         @if($doc_type['title']=="SP")
-         
+
             <div class="form-group {{ $errors->has('doc_lampiran_teknis') ? ' has-error' : '' }}">
               <label for="doc_lampiran_teknis" class="col-sm-2 control-label">Lampiran Teknis</label>
               <div class="col-sm-6">
@@ -190,7 +200,7 @@
                     @if(isset($doc->doc_lampiran_teknis))
                       <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}">
                       <i class="glyphicon glyphicon-paperclip"></i>  Lihat
-                      </a>  
+                      </a>
                     @endif
                   </div>
                 </div>
@@ -218,7 +228,7 @@ $(function() {
   $('.daftar_harga').on('change', function(event) {
     event.stopPropagation();
     event.preventDefault();
-    var validfile = [".csv", ".xls"];  
+    var validfile = [".csv", ".xls"];
     var namefile = $('.daftar_harga').val().split('\\').pop();
     var valid = 0;
 
@@ -268,7 +278,7 @@ function handleDaftarHargaFileSelect(file) {
       }
       var $this = $('#table-hargasatuan');
       var tbody = $this.find('tbody');
-      
+
       var parse_row,btn_del;
       if(results.data.length>1){
         btn_del = '<button type="button" class="btn btn-danger btn-xs delete-hs"><i class="glyphicon glyphicon-remove"></i> hapus</button>';
@@ -458,7 +468,7 @@ $(function(e){
       var _this = $(this),harga_total;
       var td_length = _this.parent().parent().find('td');
       if(td_length.length==10){
-        
+
         if(_this.attr('name')=='hs_qty[]'){
           var qty = _this.val();
         }else{
@@ -476,11 +486,11 @@ $(function(e){
         }else{
           var harga_jasa = _this.parent().parent().find('input[name="hs_harga_jasa[]"]').val();
         }
-        
+
         if(harga==""){
           harga = 0
         }
-        
+
         if(qty==""){
           qty = 0
         }

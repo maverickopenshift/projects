@@ -8,6 +8,8 @@ use Modules\Documents\Entities\DocType;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Users\Entities\Pegawai;
 
+use Modules\Documents\Entities\Sap;
+
 class Documents extends Model
 {
     protected $fillable = [];
@@ -118,8 +120,9 @@ class Documents extends Model
         return $this->hasMany('Modules\Documents\Entities\DocPic')->with('pegawai');
     }
     public static function check_po($po){
-      $count = \DB::table('dummy_po')->where('no_po','=',$po)->count();
-      if($count>0){
+      //$count = \DB::table('dummy_po')->where('no_po','=',$po)->count();
+      $sap = Sap::get_po($po);
+      if($sap['length']>0){
         return true;
       }
       return false;

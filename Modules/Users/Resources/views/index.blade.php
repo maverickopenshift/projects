@@ -6,8 +6,11 @@
       <h3 class="box-title">
           <div class="btn-group" role="group" aria-label="...">
             @if(\Auth::user()->hasPermission('tambah-user'))
-              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#form-modal" data-title="Add">
-                  <i class="glyphicon glyphicon-plus"></i> Add User
+              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#form-modal" data-title="Add"  data-backdrop="static" data-keyboard="false">
+                  <i class="glyphicon glyphicon-plus"></i> Tambah User
+              </button>
+              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#form-modal-nonorganik" data-title="Add"  data-backdrop="static" data-keyboard="false">
+                  <i class="glyphicon glyphicon-plus"></i> Tambah User Non-Organik
               </button>
             @endif
           </div>
@@ -47,8 +50,16 @@
 <!-- /.box-body -->
 </div>
 @include('users::_form_modal')
+@include('users::_form_modal_nonorganik')
 @include('users::_form_modal_edit')
 @endsection
+@push('css')
+  <style>
+    .loading-modal{
+      background-image: url(images/loader.gif);background-color: rgba(255,255,255,0.6);position: absolute;width: 100%;height: 100%;z-index: 1;background-repeat: no-repeat;background-position: center center;display: none;
+    }
+  </style>
+@endpush
 @push('scripts')
 <script>
 var datatablesMe;

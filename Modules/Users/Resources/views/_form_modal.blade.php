@@ -38,6 +38,23 @@
                         <div class="error-phone"></div>
                     </div>
                     <div class="content-password"></div>
+                    <div class="content-approver"></div>
+                    <div class="table-approver table-responsive" style="display:none;">
+                      <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                              <th width="40">No.</th>
+                              <th class="hide"></th>
+                              <th width="200">Nama</th>
+                              <th width="150">Email</th>
+                              <th width="250">Jabatan</th>
+                              <th width="60">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                          </tbody>
+                      </table>
+                    </div>
                     <div class="content-atasan"></div>
                     <div class="table-atasan table-responsive" style="display:none;">
                       <table class="table table-bordered">
@@ -56,17 +73,14 @@
                       </table>
                     </div>
                     <div class="form-group">
-                    <label>Roles</label>
-                    <div class="error-roles"></div>
-                      @foreach ($roles as $role)
-                        <div class="form-group">
-                          <div class="checkbox">
-                            <label>
-                              <input id="roles{{$role->id}}" class="check-me" type="checkbox" name="roles[]" value="{{$role->id}}"> {{$role->display_name}}
-                            </label>
-                          </div>
-                        </div>
-                      @endforeach
+                      <label>Roles</label>
+                      <select class="form-control" style="width: 100%;" name="roles" id="roles">
+                        <option value="">Pilih Roles</option>
+                        @foreach ($roles as $role)
+                          <option value="{{$role->id}}">{{$role->display_name}}</option>
+                        @endforeach
+                      </select>
+                      <div class="error-roles"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -132,7 +146,7 @@
 @push('css')
   <style>
   span.select2-container {
-    z-index:10050 !important;
+    z-index:auto !important;
   }
   </style>
 @endpush
@@ -175,7 +189,9 @@
                 modal.find('.content-add').html('')
 
                 modal.find('.content-atasan').html('')
+                modal.find('.content-approver').html('')
                 modal.find('.table-atasan').hide().find('table>tbody').html('')
+                modal.find('.table-approver').hide().find('table>tbody').html('')
                 modal.find('form').attr('action','{!! route('users.update') !!}')
             }
             else{
@@ -191,6 +207,9 @@
                 modal.find('.content-atasan').html(contentAtasan())
                 modal.find('.content-atasan').hide();
                 modal.find('.table-atasan').hide().find('table>tbody').html('')
+                modal.find('.content-approver').html(contentApprover())
+                modal.find('.content-approver').hide();
+                modal.find('.table-approver').hide().find('table>tbody').html('')
                 selectUser("#user_search")
                 modal.find('form').attr('action','{!! route('users.add') !!}')
             }
@@ -386,7 +405,11 @@
           formModal.find('.table-atasan').find('table>tbody').html('');
           formModal.find('.table-atasan').hide();
           formModal.find('.content-atasan').show();
+          // formModal.find('.table-approver').find('table>tbody').html('');
+          // formModal.find('.table-approver').hide();
+          formModal.find('.content-approver').show();
           selectUser("#user_atasan",data.objiddivisi,data.v_band_posisi)
+          selectUser("#user_approver")
         });
         $(document).on('select2:select', '#user_atasan', function(event) {
           event.preventDefault();
@@ -408,14 +431,33 @@
           $this.find('table>tbody').append(new_row);
         });
         $(document).on('click', '.delete-atasan', function(event) {
-          var tbl_t = $(this).parent().parent();
+          var tbl_t = $(this).parent().parent().parent().parent().parent();
           $(this).parent().parent().remove();
-          var $this = $('.table-'+$(this).data('action'));
+          var $this = tbl_t.clone();
           var row = $this.find('table>tbody>tr');
           if(row.length==0){
             //mdf.html('');
-            $this.hide();
+            tbl_t.hide();
           }
+        });
+        $(document).on('select2:select', '#user_approver', function(event) {
+          event.preventDefault();
+          /* Act on the event */
+          var data = event.params.data;
+          $(this).val('');
+          $('#select2-user_approver-container').html('');
+          console.log(data);
+          var $this = $('.table-'+$(this).data('action'));
+          $this.show();
+          var row = $this.find('table>tbody>tr');
+          var new_row = $(templateApprover(data)).clone();
+          var mdf_new_row = new_row.find('td');
+          mdf_new_row.eq(0).html(row.length+1);
+          mdf_new_row.eq(1).find('input').val(data.n_nik);
+          mdf_new_row.eq(2).text(data.v_nama_karyawan);
+          mdf_new_row.eq(3).text(data.n_nik+'@telkom.co.id');
+          mdf_new_row.eq(4).text(data.v_short_posisi);
+          $this.find('table>tbody').append(new_row);
         });
     });
     function selectUser(attr,divisi,v_band_posisi) {
@@ -472,14 +514,14 @@
               },
               cache: true
           },
-          //escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+          escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
           minimumInputLength: 0,
           templateResult: aoTempResult ,
           templateSelection: aoTempSelect
       });
     }
     function aoTempResult(state) {
-        if (state.id === undefined || state.id === "") { return ; }
+        if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching....' ;  }
         var $state = $(
             '<span>' +  state.v_nama_karyawan +' <i>('+  state.n_nik + ')</i></span>'
         );
@@ -492,13 +534,13 @@
         return data.v_nama_karyawan +' - '+  data.n_nik ;
     }
     function content_password() {
-      return '<div class="form-group">\
+      return '<div class="form-group hide">\
           <div class="error-global"></div>\
           <label>Password</label>\
           <input type="password" id="password" name="password" value="" class="form-control" placeholder="Enter ..." required autocomplete="off">\
           <div class="error-password"></div>\
       </div>\
-      <div class="form-group">\
+      <div class="form-group hide">\
           <div class="error-global"></div>\
           <label>Confirm Password</label>\
           <input type="password" id="password_confirmation" name="password_confirmation" value="" class="form-control" placeholder="Enter ..." required autocomplete="off">\
@@ -549,10 +591,29 @@
                   </select>\
                 </div>';
     }
+    function contentApprover(attr) {
+      var attr = (attr===undefined)?'approver':attr;
+      return '<div class="form-group">\
+                  <label>Pilih Approver</label>\
+                  <select class="form-control select-user-approver" style="width: 100%;" name="user_approver" id="user_approver" data-action="'+attr+'">\
+                      <option value="">Pilih Approver</option>\
+                  </select>\
+                </div>';
+    }
     function templateAtasan(){
       return '<tr>\
               <td>1</td>\
               <td class="hide"><input type="hidden" name="atasan_id[]"></td>\
+              <td></td>\
+              <td></td>\
+              <td></td>\
+              <td class="action"><button type="button" class="btn btn-danger btn-xs delete-atasan"><i class="glyphicon glyphicon-remove"></i> hapus</button></td>\
+          </tr>';
+    }
+    function templateApprover(){
+      return '<tr>\
+              <td>1</td>\
+              <td class="hide"><input type="hidden" name="approver_id[]"></td>\
               <td></td>\
               <td></td>\
               <td></td>\

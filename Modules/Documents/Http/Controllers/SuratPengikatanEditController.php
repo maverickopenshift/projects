@@ -168,7 +168,6 @@ class SuratPengikatanEditController extends Controller
       $request->merge(['hs_qty'=>$hs_qty]);
     }
     if ($validator->fails ()){
-      dd($validator);
       return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
 

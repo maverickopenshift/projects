@@ -94,22 +94,26 @@ class EditController extends Controller
     }    
     
     if(in_array($type,['khs', 'turnkey','surat_pengikatan','sp','amandemen_sp','adendum','side_letter'])){
-      $dt->lt_judul_kesanggupan_mitra     = $dt->latar_belakang_kesanggupan_mitra[0]['meta_name'];
-      $dt->lt_tanggal_kesanggupan_mitra   = $dt->latar_belakang_kesanggupan_mitra[0]['meta_desc'];
-      $dt->lt_file_kesanggupan_mitra      = $dt->latar_belakang_kesanggupan_mitra[0]['meta_file'];
-      $dt->lt_file_kesanggupan_mitra_old  = $dt->latar_belakang_kesanggupan_mitra[0]['meta_file'];
+      if(isset($dt->latar_belakang_kesanggupan_mitra[0])){
+        $dt->lt_judul_kesanggupan_mitra     = $dt->latar_belakang_kesanggupan_mitra[0]['meta_name'];
+        $dt->lt_tanggal_kesanggupan_mitra   = $dt->latar_belakang_kesanggupan_mitra[0]['meta_desc'];
+        $dt->lt_file_kesanggupan_mitra      = $dt->latar_belakang_kesanggupan_mitra[0]['meta_file'];
+        $dt->lt_file_kesanggupan_mitra_old  = $dt->latar_belakang_kesanggupan_mitra[0]['meta_file'];
 
-      $dt->lt_judul_ketetapan_pemenang    = $dt->latar_belakang_ketetapan_pemenang[0]['meta_name'];
-      $dt->lt_tanggal_ketetapan_pemenang  = $dt->latar_belakang_ketetapan_pemenang[0]['meta_desc'];
-      $dt->lt_file_ketetapan_pemenang     = $dt->latar_belakang_ketetapan_pemenang[0]['meta_file'];
-      $dt->lt_file_ketetapan_pemenang_old = $dt->latar_belakang_ketetapan_pemenang[0]['meta_file'];
+        $dt->lt_judul_ketetapan_pemenang    = $dt->latar_belakang_ketetapan_pemenang[0]['meta_name'];
+        $dt->lt_tanggal_ketetapan_pemenang  = $dt->latar_belakang_ketetapan_pemenang[0]['meta_desc'];
+        $dt->lt_file_ketetapan_pemenang     = $dt->latar_belakang_ketetapan_pemenang[0]['meta_file'];
+        $dt->lt_file_ketetapan_pemenang_old = $dt->latar_belakang_ketetapan_pemenang[0]['meta_file'];
+      }      
     }
   
     if(in_array($type,['surat_pengikatan'])){
-      $dt->lt_judul_rks    = $dt->latar_belakang_rks[0]['meta_name'];
-      $dt->lt_tanggal_rks  = $dt->latar_belakang_rks[0]['meta_desc'];
-      $dt->lt_file_rks     = $dt->latar_belakang_rks[0]['meta_file'];
-      $dt->lt_file_rks_old = $dt->latar_belakang_rks[0]['meta_file'];
+      if(isset($dt->latar_belakang_rks[0])){
+        $dt->lt_judul_rks    = $dt->latar_belakang_rks[0]['meta_name'];
+        $dt->lt_tanggal_rks  = $dt->latar_belakang_rks[0]['meta_desc'];
+        $dt->lt_file_rks     = $dt->latar_belakang_rks[0]['meta_file'];
+        $dt->lt_file_rks_old = $dt->latar_belakang_rks[0]['meta_file'];
+      }
     }    
 
     if(count($dt->latar_belakang_optional)>0){
@@ -263,12 +267,10 @@ class EditController extends Controller
                                   ->join('pegawai as b','a.nik','=','b.n_nik')
                                   ->where('a.users_id',$dt->user_id)->first();
     $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
-// dd($data);
     return view('documents::form-edit')->with($data);
   }
   public function store(Request $request)
   {
-    // dd($request->input());
     $id = $request->id;
     $type = $request->type;
     $status = Documents::where('id',$id)->first()->doc_signing;
@@ -468,7 +470,6 @@ class EditController extends Controller
       $request->merge(['hs_qty'=>$hs_qty]);
     }
     if ($validator->fails ()){
-      dd($validator);
       return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
     
@@ -521,8 +522,6 @@ class EditController extends Controller
           $doc_meta2->meta_title =$request['ps_judul_new'][$key];
           $doc_meta2->meta_desc = $request['ps_isi'][$key];
           $doc_meta2->save();
-
-          //dd($doc_meta2);
         }
       }
     }
@@ -648,7 +647,7 @@ class EditController extends Controller
             $asr->doc_jaminan_startdate = $request['doc_jaminan_startdate'][$key];
             $asr->doc_jaminan_enddate = $request['doc_jaminan_enddate'][$key];
             $asr->doc_jaminan_desc = $request['doc_jaminan_desc'][$key];
-            // dd($asr);
+            
             if(is_object($new_jfile_up[$key])){
               $fileName   = Helpers::set_filename('doc_',strtolower($val));
               $file = $new_jfile_up[$key];

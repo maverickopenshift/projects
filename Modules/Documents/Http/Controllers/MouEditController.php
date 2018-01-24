@@ -13,7 +13,7 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocTemplate;
-
+use Modules\Documents\Entities\DocComment as Comments;
 
 use App\Helpers\Helpers;
 use Validator;
@@ -31,10 +31,10 @@ class MouEditController extends Controller
   {
       //oke
   }
-  
+
   public function store(Request $request)
   {
-    
+
     $id = $request->id;
     $type = $request->type;
     $status = Documents::where('id',$id)->first()->doc_signing;
@@ -75,9 +75,9 @@ class MouEditController extends Controller
       $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-      $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      // $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
+      // $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
@@ -138,7 +138,7 @@ class MouEditController extends Controller
     if ($validator->fails ()){
       return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
-    
+
     if(in_array($status,['0','2'])){
       $doc = Documents::where('id',$id)->first();
       $doc->doc_title = $request->doc_title;
@@ -150,11 +150,11 @@ class MouEditController extends Controller
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       $doc->supplier_id = $request->supplier_id;
-      
+
       if((\Laratrust::hasRole('admin'))){
         $doc->user_id  = $request->user_id;
       }
-      
+      $doc->doc_signing = '0';
       $doc->doc_proc_process = $request->doc_proc_process;
       $doc->doc_mtu = $request->doc_mtu;
       $doc->doc_value = Helpers::input_rupiah($request->doc_value);
@@ -163,11 +163,12 @@ class MouEditController extends Controller
       $doc->save();
     }else{
       $doc = Documents::where('id',$id)->first();
+      $doc->doc_signing = '0';
       $doc->doc_sow = $request->doc_sow;
       $doc->save();
     }
-    
-    
+
+
     if(count($request->ps_judul)>0){
       DocMeta::where([
         ['documents_id','=',$doc->id],
@@ -187,6 +188,7 @@ class MouEditController extends Controller
       }
     }
 
+    if(in_array($status,['0','2'])){
     if(count($new_lamp_up)>0){
       DocMeta::where([
         ['documents_id','=',$doc->id],
@@ -210,13 +212,28 @@ class MouEditController extends Controller
         }
       }
     }
+  }
+
+    if(in_array($status,['0','2'])){
+      $comment = new Comments();
+      $comment->content = $request->komentar;
+      $comment->documents_id = $doc->id;
+      $comment->users_id = \Auth::id();
+      $comment->status = 1;
+      $comment->data = "Submitted";
+      $comment->save();
+    }else{
+      $comment = new Comments();
+      $comment->content = $request->komentar;
+      $comment->documents_id = $doc->id;
+      $comment->users_id = \Auth::id();
+      $comment->status = 1;
+      $comment->data = "Edited";
+      $comment->save();
+    }
 
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
-    if($request->statusButton == '0'){
-      return redirect()->route('doc',['status'=>'proses']);
-    }else{
-      return redirect()->route('doc',['status'=>'draft']);
-    }
+    return redirect()->route('doc',['status'=>'tracking']);
   }
 
 }

@@ -15,6 +15,7 @@ use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocPo;
 use Modules\Documents\Entities\DocActivity;
 use Modules\Config\Entities\Config;
+use Modules\Documents\Entities\DocComment as Comments;
 use Modules\Documents\Http\Controllers\SuratPengikatanCreateController as SuratPengikatanCreate;
 use Modules\Documents\Http\Controllers\SideLetterCreateController as SideLetterCreate;
 use Modules\Documents\Http\Controllers\MouCreateController as MouCreate;
@@ -78,7 +79,12 @@ class EntryDocumentController extends Controller
       $data['data'] = $this->fields;
       $data['pegawai'] = \App\User::get_user_pegawai();
       $ppn = Config::where('object_key','=','ppn-sp')->first();
-      $ppn->ppn = $ppn->object_value;
+
+      if($ppn){
+        $ppn->ppn = $ppn->object_value;
+      }else{
+        $ppn = "0";
+      }
       // dd($ppn->ppn);
       $data['ppn'] = $ppn;
 
@@ -160,7 +166,7 @@ class EntryDocumentController extends Controller
             $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
             $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
             $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-            $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+            $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
             $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
             $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
 
@@ -294,7 +300,7 @@ class EntryDocumentController extends Controller
       }else{
           $rules['doc_template_id']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
           $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-          $rules['pic_posisi.*']     =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
+          // $rules['pic_posisi.*']     =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
           $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
           $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
           if(\Laratrust::hasRole('admin')){
@@ -306,7 +312,7 @@ class EntryDocumentController extends Controller
             return redirect()->back()->withInput($request->input())->withErrors($validator);
           }
       }
-
+// dd($request->input());
       $doc = new Documents();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
@@ -443,7 +449,7 @@ class EntryDocumentController extends Controller
       if(count($request->f_latar_belakang_judul)>0){
         foreach($request->f_latar_belakang_judul as $key => $val){
           if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
-            
+
             $doc_meta = new DocMeta();
             $doc_meta->documents_id = $doc->id;
             $doc_meta->meta_type = $request['f_latar_belakang_judul'][$key];
@@ -517,12 +523,22 @@ class EntryDocumentController extends Controller
         }
       }
 
-      $log_activity = new DocActivity();
-      $log_activity->users_id = Auth::id();
-      $log_activity->documents_id = $doc->id;
-      $log_activity->activity = "Submitted";
-      $log_activity->date = new \DateTime();
-      $log_activity->save();
+      if($request->statusButton == '0'){
+        $comment = new Comments();
+        $comment->content = $request->komentar;
+        $comment->documents_id = $doc->id;
+        $comment->users_id = \Auth::id();
+        $comment->status = 1;
+        $comment->data = "Submitted";
+        $comment->save();
+      }
+
+      // $log_activity = new DocActivity();
+      // $log_activity->users_id = Auth::id();
+      // $log_activity->documents_id = $doc->id;
+      // $log_activity->activity = "Submitted";
+      // $log_activity->date = new \DateTime();
+      // $log_activity->save();
 
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
       if($request->statusButton == '0'){

@@ -12,6 +12,7 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocAsuransi;
+use Modules\Documents\Entities\DocComment as Comments;
 
 use App\Helpers\Helpers;
 use Validator;
@@ -65,7 +66,7 @@ class SpEditController extends Controller
         $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
         $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-        $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_lampiran_teknis']     =  'sometimes|nullable|mimes:pdf';
         $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
         if(\Laratrust::hasRole('admin')){
@@ -154,11 +155,13 @@ class SpEditController extends Controller
       $request->merge(['lt_file' => $new_lt_file]);
 
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-      $validator->after(function ($validator) use ($request) {
-        if (!isset($request['pic_nama'][0])) {
-            $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
-        }
-      });
+      if(in_array($status,['0','2'])){
+        $validator->after(function ($validator) use ($request) {
+          if (!isset($request['pic_nama'][0])) {
+              $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
+          }
+        });
+      }
 
       if(isset($hs_harga) && count($hs_harga)>0){
         $request->merge(['hs_harga'=>$hs_harga]);
@@ -168,6 +171,7 @@ class SpEditController extends Controller
       }
 
       if ($validator->fails ()){
+        // dd($request->input());
         return redirect()->back()->withInput($request->input())->withErrors($validator);
       }
 
@@ -181,7 +185,7 @@ class SpEditController extends Controller
         $doc->doc_pihak1 = $request->doc_pihak1;
         $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
         $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
-        $doc->doc_signing = intval($request->statusButton);
+        $doc->doc_signing = '0';
         if((\Laratrust::hasRole('admin'))){
           $doc->user_id  = $request->user_id;
         }
@@ -216,6 +220,7 @@ class SpEditController extends Controller
         $doc->save();
       }else{
         $doc = Documents::where('id',$id)->first();
+        $doc->doc_signing = '0';
         $doc->doc_sow = $request->doc_sow;
         $doc->save();
       }
@@ -233,6 +238,7 @@ class SpEditController extends Controller
         $doc_po->save();
       }
 
+if(in_array($status,['0','2'])){
       if(count($new_lamp_up)>0){
         DocMeta::where([
           ['documents_id','=',$doc->id],
@@ -256,6 +262,7 @@ class SpEditController extends Controller
           }
         }
       }
+    }
 
       if(count($request->doc_asuransi)>0){
         DocAsuransi::where([
@@ -370,11 +377,25 @@ class SpEditController extends Controller
         }
       }
 
-      $request->session()->flash('alert-success', 'Data berhasil disimpan');
-      if($request->statusButton == '0'){
-        return redirect()->route('doc',['status'=>'tracking']);
+      if(in_array($status,['0','2'])){
+        $comment = new Comments();
+        $comment->content = $request->komentar;
+        $comment->documents_id = $doc->id;
+        $comment->users_id = \Auth::id();
+        $comment->status = 1;
+        $comment->data = "Submitted";
+        $comment->save();
       }else{
-        return redirect()->route('doc',['status'=>'draft']);
+        $comment = new Comments();
+        $comment->content = $request->komentar;
+        $comment->documents_id = $doc->id;
+        $comment->users_id = \Auth::id();
+        $comment->status = 1;
+        $comment->data = "Edited";
+        $comment->save();
       }
+
+      $request->session()->flash('alert-success', 'Data berhasil disimpan');
+      return redirect()->route('doc',['status'=>'tracking']);
     }
 }

@@ -79,7 +79,12 @@ class EntryDocumentController extends Controller
       $data['data'] = $this->fields;
       $data['pegawai'] = \App\User::get_user_pegawai();
       $ppn = Config::where('object_key','=','ppn-sp')->first();
-      $ppn->ppn = $ppn->object_value;
+
+      if($ppn){
+        $ppn->ppn = $ppn->object_value;
+      }else{
+        $ppn = "0";
+      }
       // dd($ppn->ppn);
       $data['ppn'] = $ppn;
 

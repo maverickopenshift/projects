@@ -681,7 +681,7 @@
         if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
             return;
         }
-        if(data.v_nama_karyawan === undefined || data.n_nik){
+        if(data.v_nama_karyawan === undefined || data.n_nik === undefined){
           return data.text;
         }
         return data.v_nama_karyawan +' - '+  data.n_nik ;

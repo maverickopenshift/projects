@@ -1,6 +1,6 @@
 <div class="modal fade" role="dialog" id="form-modal-edit">
     <div class="modal-dialog modal-lg" role="document" style="position:relative;">
-      <div class="loading-modal" style="background-image: url(images/loader.gif);background-color: rgba(255,255,255,0.6);position: absolute;width: 100%;height: 100%;z-index: 1;background-repeat: no-repeat;background-position: center center;"></div>
+      <div class="loading-modal" style="display:block;"></div>
         <div class="modal-content">
             <form id="form-me-edit" action="#" method="post">
                 {{ csrf_field() }}
@@ -80,7 +80,7 @@
 @push('css')
   <style>
   span.select2-container {
-    z-index:10050 !important;
+    z-index:auto !important;
   }
   </style>
 @endpush

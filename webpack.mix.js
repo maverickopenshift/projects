@@ -94,8 +94,14 @@ let mix = require('laravel-mix');
             'node_modules/vue-resource/dist/vue-resource.min.js',
         ], 'public/js/vue.js', './')
         .scripts([
-            'resources/assets/js/pdfjs/pdf.worker.js',
-        ], 'public/js/pdf.worker.js', './')
+            'resources/assets/js/po_sap.js',
+        ], 'public/js/po_sap.js', './')
+        .scripts([
+            'resources/assets/js/po_dummy.js',
+        ], 'public/js/po_dummy.js', './')
+        .scripts([
+            'resources/assets/js/pdfjs/pdf.js',
+        ], 'public/js/pdf.js', './')
         .scripts([
             'resources/assets/js/pdfjs/pdf.js',
         ], 'public/js/pdf.js', './')

@@ -46,36 +46,37 @@ class EditController extends Controller
       $this->amademenKontrakEdit = $amademenKontrakEdit;
       $this->SideLetterEdit = $SideLetterEdit;
   }
+  
   public function index(Request $request)
   {
-    //dd();
     $id = $request->id;
     $type = $request->type;
     $doc = $this->documents->where('documents.id','=',$id);
-    $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','sow_boq','scope_perubahan','users','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter')
+    $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','sow_boq','scope_perubahan','users','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter','latar_belakang_optional','latar_belakang_ketetapan_pemenang','latar_belakang_kesanggupan_mitra','latar_belakang_rks')
               ->first();
-// dd($dt);
+
     if(!$dt || !$this->documents->check_permission_doc($id,$type)){
       abort(404);
     }
+
     $pic = [];
     $boq = [];
-    $lt = [];
+    $lt  = [];
     $pasal = [];
     $lampiran = [];
+
     if($type=='amandemen_sp'){
       $qry = $this->documents->where('documents.id','=',$id)
                             ->join('documents as doc','doc.id','=', 'documents.doc_parent_id')
                             ->select('doc.doc_parent_id as ibu','documents.*')
                             ->first();
       $parent = ($qry->ibu!==null)?$qry->ibu:$dt->doc_parent_id;
-      // dd($parent);
       $dt->parent_kontrak = $parent;
       $dt->parent_kontrak_text = $this->documents->select('doc_no')->where('id','=',$parent)->first()->doc_no;
       $dt->parent_sp = $dt->doc_parent_id;
-      // dd($dt->parent_sp);
       $dt->parent_sp_text = $this->documents->select('doc_no')->where('id','=',$dt->doc_parent_id)->first()->doc_no;
     }
+
     if($type=='sp'){
       $qry = $this->documents->where('documents.id','=',$id)
                             ->join('documents as doc','doc.id','=', 'documents.doc_parent_id')
@@ -86,24 +87,47 @@ class EditController extends Controller
       $dt->parent_kontrak = $parent;
       $dt->parent_kontrak_text = $this->documents->select('doc_no')->where('id','=',$parent)->first()->doc_no;
     }
+
     if(in_array($type,['amandemen_kontrak','adendum','side_letter'])){
       $dt->parent_kontrak = $dt->doc_parent_id;
       $dt->parent_kontrak_text = $this->documents->select('doc_no')->where('id','=',$dt->doc_parent_id)->first()->doc_no;
+    }    
+    
+    if(in_array($type,['khs', 'turnkey','surat_pengikatan','sp','amandemen_sp','adendum','side_letter'])){
+      if(isset($dt->latar_belakang_kesanggupan_mitra[0])){
+        $dt->lt_judul_kesanggupan_mitra     = $dt->latar_belakang_kesanggupan_mitra[0]['meta_name'];
+        $dt->lt_tanggal_kesanggupan_mitra   = $dt->latar_belakang_kesanggupan_mitra[0]['meta_desc'];
+        $dt->lt_file_kesanggupan_mitra      = $dt->latar_belakang_kesanggupan_mitra[0]['meta_file'];
+        $dt->lt_file_kesanggupan_mitra_old  = $dt->latar_belakang_kesanggupan_mitra[0]['meta_file'];
+
+        $dt->lt_judul_ketetapan_pemenang    = $dt->latar_belakang_ketetapan_pemenang[0]['meta_name'];
+        $dt->lt_tanggal_ketetapan_pemenang  = $dt->latar_belakang_ketetapan_pemenang[0]['meta_desc'];
+        $dt->lt_file_ketetapan_pemenang     = $dt->latar_belakang_ketetapan_pemenang[0]['meta_file'];
+        $dt->lt_file_ketetapan_pemenang_old = $dt->latar_belakang_ketetapan_pemenang[0]['meta_file'];
+      }      
     }
-    if(in_array($type,['khs','turnkey'])){
-      if(count($dt->latar_belakang_surat_pengikatan)>0){
-        foreach($dt->latar_belakang_surat_pengikatan as $key => $val){
-          $dt->f_no_surat_pengikatan = $val->meta_desc;
-          $dt->text_surat_pengikatan = $this->documents->select('doc_no')->where('id','=',$val->meta_desc)->first()->doc_no;
-        }
+  
+    if(in_array($type,['surat_pengikatan'])){
+      if(isset($dt->latar_belakang_rks[0])){
+        $dt->lt_judul_rks    = $dt->latar_belakang_rks[0]['meta_name'];
+        $dt->lt_tanggal_rks  = $dt->latar_belakang_rks[0]['meta_desc'];
+        $dt->lt_file_rks     = $dt->latar_belakang_rks[0]['meta_file'];
+        $dt->lt_file_rks_old = $dt->latar_belakang_rks[0]['meta_file'];
+      }
+    }    
+
+    if(count($dt->latar_belakang_optional)>0){
+      foreach($dt->latar_belakang_optional as $key => $val){
+        $lt_optional['f_latar_belakang_judul'][$key]    = $val->meta_name;
+        $lt_optional['f_latar_belakang_tanggal'][$key]  = $val->meta_title;
+        $lt_optional['f_latar_belakang_isi'][$key]      = $val->meta_desc;  
+        $lt_optional['f_latar_belakang_file'][$key]      = $val->meta_file;                  
       }
 
-      if(count($dt->latar_belakang_mou)>0){
-        foreach($dt->latar_belakang_mou as $key => $val){
-          $dt->f_no_mou = $val->meta_desc;
-          $dt->text_mou = $this->documents->select('doc_no')->where('id','=',$val->meta_desc)->first()->doc_no;
-        }
-      }
+      $dt->f_latar_belakang_judul = $lt_optional['f_latar_belakang_judul'];
+      $dt->f_latar_belakang_tanggal = $lt_optional['f_latar_belakang_tanggal'];
+      $dt->f_latar_belakang_isi = $lt_optional['f_latar_belakang_isi'];
+      $dt->f_latar_belakang_file = $lt_optional['f_latar_belakang_file'];
     }
 
     if(count($dt->scope_perubahan)>0){
@@ -163,6 +187,7 @@ class EditController extends Controller
       $dt->pic_telp   = $pic['pic_telp'];
       $dt->pic_id     = $pic['pic_id'];
     }
+
     if(count($dt->boq)>0){
       foreach($dt->boq as $key => $val){
         $boq['hs_kode_item'][$key]  = $val->kode_item;
@@ -183,6 +208,7 @@ class EditController extends Controller
       $dt->hs_qty       = $boq['hs_qty'];
       $dt->hs_keterangan= $boq['hs_keterangan'];
     }
+
     if(count($dt->asuransi)>0){
       foreach($dt->asuransi as $key => $val){
         $jas['doc_jaminan'][$key]           = $val->doc_jaminan;
@@ -202,17 +228,6 @@ class EditController extends Controller
       $dt->doc_jaminan_file      = $jas['doc_jaminan_file'];
       $dt->doc_jaminan_file_old  = $jas['doc_jaminan_file'];
     }
-    if(count($dt->latar_belakang)>0){
-      foreach($dt->latar_belakang as $key => $val){
-        $lt['name'][$key]  = $val->meta_name;
-        $lt['desc'][$key]       = $val->meta_desc;
-        $lt['file'][$key]     = $val->meta_file;
-      }
-      $dt->lt_file  = $lt['file'];
-      $dt->lt_file_old  = $lt['file'];
-      $dt->lt_desc  = $lt['desc'];
-      $dt->lt_name  = $lt['name'];
-    }
 
     if(count($dt->pasal)>0){
       foreach($dt->pasal as $key => $val){
@@ -224,6 +239,7 @@ class EditController extends Controller
       $dt->ps_isi        = $ps['desc'];
       $dt->ps_judul_new  = $ps['title'];
     }
+
     if(count($dt->lampiran_ttd)>0){
       foreach($dt->lampiran_ttd as $key => $val){
         $lampiran['file'][$key]  = $val->meta_file;
@@ -233,13 +249,14 @@ class EditController extends Controller
       $dt->doc_lampiran  = $lampiran['file'];
       $dt->doc_lampiran_old  = $lampiran['file'];
     }
+
     $dt->doc_po = $dt->doc_po_no;
     $dt->supplier_text = $dt->supplier->bdn_usaha.'.'.$dt->supplier->nm_vendor;
     $dt->konseptor_text = $dt->users->name.' - '.$dt->users->username;
     $data['page_title'] = 'Edit Dokumen';
     $data['doc_type'] = $dt->jenis->type;
     $data['doc'] = $dt;
-     // dd($dt->toArray());
+    
     $data['pegawai'] = \App\User::get_user_pegawai();
     $data['action_type'] = 'edit';
     $data['action_url'] = route('doc.storeedit',['type'=>$dt->jenis->type->name,'id'=>$dt->id]);
@@ -250,12 +267,10 @@ class EditController extends Controller
                                   ->join('pegawai as b','a.nik','=','b.n_nik')
                                   ->where('a.users_id',$dt->user_id)->first();
     $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
-// dd($data);
     return view('documents::form-edit')->with($data);
   }
   public function store(Request $request)
   {
-    // dd($request->input());
     $id = $request->id;
     $type = $request->type;
     $status = Documents::where('id',$id)->first()->doc_signing;
@@ -334,8 +349,7 @@ class EditController extends Controller
           $new_lamp[] = '';
           $new_lamp_up[] = $request->doc_lampiran[$k];
           $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
-        }
-        else if(empty($v)){
+        }else if(empty($v)){
           $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
           if(!isset($request->doc_lampiran[$k])){
             $new_lamp[] = $v;
@@ -345,8 +359,7 @@ class EditController extends Controller
             $new_lamp[] = '';
             $new_lamp_up[] = $request->doc_lampiran[$k];
           }
-        }
-        else{
+        }else{
           $new_lamp[] = $v;
           $new_lamp_up[] = $v;
         }
@@ -406,33 +419,17 @@ class EditController extends Controller
         $request->merge(['doc_jaminan_file' => $new_jfile]);
     }
 
-    $rules['lt_desc.*']  =  'required|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['lt_name.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['lt_judul_ketetapan_pemenang']     = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
+    if($request->lt_file_ketetapan_pemenang_old==null){
+      $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
+    }    
 
-    $check_new_lt_file = false;
-    foreach($request->lt_file_old as $k => $v){
-      if(isset($request->lt_file[$k]) && is_object($request->lt_file[$k]) && !empty($v)){//jika ada file baru
-        $new_lt_file[] = '';
-        $new_lt_file_up[] = $request->lt_file[$k];
-        $rules['lt_file.'.$k]  =  'required|mimes:pdf';
-      }
-      else if(empty($v)){
-        $rules['lt_file.'.$k]  =  'required|mimes:pdf';
-        if(!isset($request->lt_file[$k])){
-          $new_lt_file[] = $v;
-          $new_lt_file_up[] = $v;
-        }
-        else{
-          $new_lt_file[] = '';
-          $new_lt_file_up[] = $request->lt_file[$k];
-        }
-      }
-      else{
-        $new_lt_file[] = $v;
-        $new_lt_file_up[] = $v;
-      }
-    }
-    $request->merge(['lt_file' => $new_lt_file]);
+    $rules['lt_judul_kesanggupan_mitra']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['lt_tanggal_kesanggupan_mitra']  = 'required|date_format:"Y-m-d"';
+    if($request->lt_file_kesanggupan_mitra_old==null){
+      $rules['lt_file_kesanggupan_mitra']     = 'required|mimes:pdf';
+    }   
 
     $rule_ps_judul = (count($request['ps_judul'])>1)?'required':'sometimes|nullable';
     $rule_ps_isi = (count($request['ps_isi'])>1)?'required':'sometimes|nullable';
@@ -450,8 +447,6 @@ class EditController extends Controller
     }
     $request->merge(['ps_judul_new' => $new_pasal]);
 
-
-
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
     if(in_array($status,['0','2'])){
@@ -459,6 +454,10 @@ class EditController extends Controller
       $validator->after(function ($validator) use ($request) {
           if (!isset($request['pic_nama'][0])) {
               $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
+          }
+
+          if($request->doc_enddate < $request->doc_startdate){
+            $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
           }
       });
     }
@@ -471,11 +470,9 @@ class EditController extends Controller
       $request->merge(['hs_qty'=>$hs_qty]);
     }
     if ($validator->fails ()){
-      return redirect()->back()
-                  ->withInput($request->input())
-                  ->withErrors($validator);
+      return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
-
+    
     if(in_array($status,['0','2'])){
       $doc = Documents::where('id',$id)->first();
       $doc->doc_title = $request->doc_title;
@@ -525,8 +522,6 @@ class EditController extends Controller
           $doc_meta2->meta_title =$request['ps_judul_new'][$key];
           $doc_meta2->meta_desc = $request['ps_isi'][$key];
           $doc_meta2->save();
-
-          //dd($doc_meta2);
         }
       }
     }
@@ -556,31 +551,79 @@ class EditController extends Controller
       }
     }
 
-    if(in_array($type,['turnkey','khs'])){
-      if(isset($request->f_no_surat_pengikatan)){
-        DocMeta::where([
-          ['documents_id','=',$doc->id],
-          ['meta_type','=','latar_belakang_surat_pengikatan']
-          ])->delete();
-        $doc_meta = new DocMeta();
-        $doc_meta->documents_id = $doc->id;
-        $doc_meta->meta_type = "latar_belakang_surat_pengikatan";
-        $doc_meta->meta_title = "Latar Belakang Surat Pengikatan";
-        $doc_meta->meta_desc = $request->f_no_surat_pengikatan;
-        $doc_meta->save();
+    // latar belakang wajib
+    if(isset($request->lt_judul_ketetapan_pemenang)){
+      DocMeta::where([
+        ['documents_id','=',$doc->id],
+        ['meta_type','=','latar_belakang_ketetapan_pemenang']
+        ])->delete();
+      $doc_meta = new DocMeta();
+      $doc_meta->documents_id = $doc->id;
+      $doc_meta->meta_type = "latar_belakang_ketetapan_pemenang";
+      $doc_meta->meta_name = "Latar Belakang Ketetapan Pemenang";
+      $doc_meta->meta_desc = $request->lt_tanggal_ketetapan_pemenang;
+
+      if(is_object($request->lt_file_ketetapan_pemenang)){
+        $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_ketetapan_pemenang));
+        $file       = $request->lt_file_ketetapan_pemenang;
+        $file->storeAs('document/'.$type.'_latar_belakang_ketetapan_pemenang', $fileName);
+        $doc_meta->meta_file = $fileName;
+      }else{
+        $doc_meta->meta_file = $request->lt_file_ketetapan_pemenang_old;
       }
 
-      if(isset($request->f_no_mou)){
-        DocMeta::where([
-          ['documents_id','=',$doc->id],
-          ['meta_type','=','latar_belakang_mou']
-          ])->delete();
-        $doc_meta = new DocMeta();
-        $doc_meta->documents_id = $doc->id;
-        $doc_meta->meta_type = "latar_belakang_mou";
-        $doc_meta->meta_title = "Latar Belakang Mou";
-        $doc_meta->meta_desc = $request->f_no_mou;
-        $doc_meta->save();
+      $doc_meta->save();
+    }
+
+    if(isset($request->lt_judul_kesanggupan_mitra)){
+      DocMeta::where([
+        ['documents_id','=',$doc->id],
+        ['meta_type','=','latar_belakang_kesanggupan_mitra']
+        ])->delete();
+      $doc_meta = new DocMeta();
+      $doc_meta->documents_id = $doc->id;
+      $doc_meta->meta_type = "latar_belakang_kesanggupan_mitra";
+      $doc_meta->meta_name = "Latar Belakang Kesanggupan Mitra";
+      $doc_meta->meta_desc = $request->lt_tanggal_kesanggupan_mitra;
+
+      if(is_object($request->lt_file_kesanggupan_mitra)){
+        $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_kesanggupan_mitra));
+        $file       = $request->lt_file_kesanggupan_mitra;
+        $file->storeAs('document/'.$type.'_latar_belakang_kesanggupan_mitra', $fileName);
+        $doc_meta->meta_file = $fileName;
+      }else{
+        $doc_meta->meta_file = $request->lt_file_kesanggupan_mitra_old;
+      }
+
+      $doc_meta->save();
+    }
+
+    // latar belakang optional
+    if(count($request->f_latar_belakang_judul)>0){
+      DocMeta::where([
+        ['documents_id','=',$doc->id],
+        ['meta_type','=','latar_belakang_optional']
+        ])->delete();
+      foreach($request->f_latar_belakang_judul as $key => $val){
+        if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
+          
+          $doc_meta = new DocMeta();
+          $doc_meta->documents_id = $doc->id;
+          $doc_meta->meta_type = "latar_belakang_optional";
+          $doc_meta->meta_name = $request['f_latar_belakang_judul'][$key];
+          $doc_meta->meta_title = $request['f_latar_belakang_tanggal'][$key];
+          $doc_meta->meta_desc = $request['f_latar_belakang_isi'][$key];
+
+          if(is_object($request['f_latar_belakang_file'][$key])){
+            $fileName   = Helpers::set_filename('doc_',strtolower($val));
+            $file       = $request['f_latar_belakang_file'][$key];
+            $file->storeAs('document/'.$request->type.'_latar_belakang_optional', $fileName);
+            $doc_meta->meta_file = $fileName;
+          }else{
+            $doc_meta->meta_file = $request['f_latar_belakang_file_old'][$key];
+          }
+          $doc_meta->save();
+        }
       }
     }
 
@@ -604,7 +647,7 @@ class EditController extends Controller
             $asr->doc_jaminan_startdate = $request['doc_jaminan_startdate'][$key];
             $asr->doc_jaminan_enddate = $request['doc_jaminan_enddate'][$key];
             $asr->doc_jaminan_desc = $request['doc_jaminan_desc'][$key];
-            // dd($asr);
+            
             if(is_object($new_jfile_up[$key])){
               $fileName   = Helpers::set_filename('doc_',strtolower($val));
               $file = $new_jfile_up[$key];
@@ -638,34 +681,6 @@ class EditController extends Controller
           $pic->telp = $request['pic_telp'][$key];
           $pic->posisi = $request['pic_posisi'][$key];
           $pic->save();
-        }
-      }
-    }
-
-    if(count($request['lt_name'])>0){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','latar_belakang']
-        ])->delete();
-      foreach($request['lt_name'] as $key => $val){
-        if(!empty($request['lt_name'][$key])
-            && !empty($request['lt_desc'][$key])
-        ){
-          $doc_meta = new DocMeta();
-          $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'latar_belakang';
-          $doc_meta->meta_name = $request['lt_name'][$key];
-          $doc_meta->meta_desc = $request['lt_desc'][$key];
-          if(is_object($new_lt_file_up[$key])){
-            $fileName   = Helpers::set_filename('doc_',strtolower($request['lt_name'][$key]));
-            $file = $new_lt_file_up[$key];
-            $file->storeAs('document/'.$request->type.'_latar_belakang', $fileName);
-            $doc_meta->meta_file = $fileName;
-          }
-          else{
-            $doc_meta->meta_file = $new_lt_file_up[$key];
-          }
-          $doc_meta->save();
         }
       }
     }
@@ -705,14 +720,10 @@ class EditController extends Controller
         }
       }
     }
-    if(in_array($status,['0','2'])){
-      $comment = new Comments();
-      $comment->content = $request->komentar;
-      $comment->documents_id = $doc->id;
-      $comment->users_id = \Auth::id();
-      $comment->status = 1;
-      $comment->data = "Submitted";
-      $comment->save();
+
+    $request->session()->flash('alert-success', 'Data berhasil disimpan');
+    if($request->statusButtons == '0'){
+      return redirect()->route('doc',['status'=>'proses']);
     }else{
       $comment = new Comments();
       $comment->content = $request->komentar;

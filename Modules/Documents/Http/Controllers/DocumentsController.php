@@ -20,6 +20,8 @@ use App\Helpers\Helpers;
 use Validator;
 use Auth;
 
+use Modules\Documents\Entities\Sap;
+
 class DocumentsController extends Controller
 {
     protected $documents;
@@ -191,7 +193,7 @@ class DocumentsController extends Controller
     {
       $id = $request->id;
       $doc_type = DocType::where('name','=',$request->type)->first();
-      $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po','sow_boq','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter')->first();
+      $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po','sow_boq','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter','latar_belakang_optional','latar_belakang_ketetapan_pemenang','latar_belakang_kesanggupan_mitra','latar_belakang_rks')->first();
 
       if(!$doc_type || !$dt){
         abort(404);
@@ -218,8 +220,7 @@ class DocumentsController extends Controller
       $data['page_title'] = 'View Kontrak - '.$doc_type['title'];
       $data['doc'] = $dt;
       $data['id'] = $id;
-      // $data['no_kontrak'] = "-";
-      // $data['no_loker'] = "-";
+
       $data['pegawai'] = \App\User::get_user_pegawai();
       $data['pegawai_pihak1'] = \DB::table('pegawai')->where('n_nik',$dt->doc_pihak1_nama)->first();
       $data['pegawai_konseptor'] = \DB::table('users_pegawai as a')
@@ -231,13 +232,20 @@ class DocumentsController extends Controller
       return view('documents::view')->with($data);
     }
     public function getPo(Request $request){
+      
       $search = trim($request->po);
 
       if (empty($search)) {
         return Response::json(['status'=>false]);
       }
-      $sql = \DB::table('dummy_po')->where('no_po','=',$search)->get();
-      return Response::json(['status'=>true,'data'=>$sql,'length'=>count($sql)]);
+      if(config('app.env')=='production'){
+        $sap = Sap::get_po($search); 
+        return Response::json($sap);
+      }
+      else{
+        $sql = \DB::table('dummy_po')->where('no_po','=',$search)->get();
+        return Response::json(['status'=>true,'data'=>$sql,'length'=>count($sql)]);
+      }
     }
 
     public function getPic(Request $request){

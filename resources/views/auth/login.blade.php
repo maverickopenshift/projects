@@ -16,6 +16,11 @@
   <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
   <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
   <![endif]-->
+  <style>
+    .loading-login{
+      background-image: url(images/loader.gif);background-color: rgba(255,255,255,0.6);position: absolute;width: 100%;height: 100%;z-index: 1;background-repeat: no-repeat;background-position: center center;display: none;top:0;left:0;border-radius: 10px;
+    }
+  </style>
   <script>
       window.Laravel = <?php echo json_encode([
           'csrfToken' => csrf_token(),
@@ -25,36 +30,23 @@
 <body class="hold-transition login-page">
 <div class="login-box">
   <!-- /.login-logo -->
-    <div class="login-box-body" style="border-radius: 10px;">
+    <div class="login-box-body" style="border-radius: 10px;position:relative;">
+      <div class="loading-login"></div>
       <div class="login-logo">
           <img src="images/logo_new.png" alt="Consys">
       </div>
 
-    <form action="{{ url('/login') }}" method="post">
+    <form action="#" id="form-login" data-action="{{route('login.ajax')}}" method="post">
       {{ csrf_field() }}
-      @if ($errors->has('error'))
-      <div class="alert alert-danger alert-dismissible">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-        {{ $errors->first('error') }}
+      <div class="alert alert-danger alert-dismissible alert-login" style="display:none;">
       </div>
-      @endif
-      <div class="form-group {{ $errors->has('login') ? ' has-error' : '' }}">
+      <div class="form-group">
         <label>User ID</label>
-        <input type="text" class="form-control" name="login" value="{{ old('login') }}" required autofocus>
-        @if ($errors->has('login'))
-            <span class="help-block">
-                <strong>{{ $errors->first('login') }}</strong>
-            </span>
-        @endif
+        <input type="text" class="form-control" name="login" required autofocus>
       </div>
-      <div class="form-group {{ $errors->has('password') ? ' has-error' : '' }}">
+      <div class="form-group">
         <label>Password</label>
         <input type="password" name="password" class="form-control" required>
-        @if ($errors->has('password'))
-            <span class="help-block">
-                <strong>{{ $errors->first('password') }}</strong>
-            </span>
-        @endif
       </div>
       <div class="row">
         <!-- /.col -->
@@ -72,7 +64,20 @@
         <!-- /.col -->
       </div>
     </form>
-    <!-- <a href="{{ url('/password/reset') }}" class="text-center">Forgot Your Password?</a> -->
+    <form action="#" id="form-pgs" data-action="{{route('home.pgschange')}}" method="post" style=display:none;>
+      {{ csrf_field() }}
+      <div class="alert alert-danger alert-dismissible alert-login" style="display:none;">
+      </div>
+      <div class="form-group">
+        <select class="form-control roles" name="roles" required>
+          <option value="">Pilih Roles</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-danger btn-block btn-flat">SUBMIT</button>
+      </div>
+        <!-- /.col -->
+    </form>
   </div>
   <!-- /.login-box-body -->
 </div>
@@ -85,6 +90,69 @@
       checkboxClass: 'icheckbox_square-blue',
       radioClass: 'iradio_square-blue',
       increaseArea: '20%' // optional
+    });
+  });
+  $(document).on('submit', '#form-login', function(event) {
+    event.preventDefault();
+    /* Act on the event */
+    var formMe = $(this);
+    var formPgs = $('#form-pgs');
+    var loginBox = $('.login-box-body');
+    var loading =loginBox.find('.loading-login');
+    loading.show();
+    var alert = loginBox.find('.alert-login');
+    alert.hide().html('');
+    var pgsRoles = formPgs.find('select.roles');
+    pgsRoles.find('option[value!=""]').remove();
+    $.ajax({
+      url: formMe.data('action'),
+      type: 'post',
+      dataType: 'json',
+      data: formMe.serialize()
+    })
+    .done(function(_response) {
+      if(_response.status){
+        if(_response.pgs){
+          loading.hide();
+          formMe.hide();
+          pgsRoles.append('<option value="'+_response.pgs_list[0].id+'">'+_response.pgs_list[0].title+'</option>');
+          pgsRoles.append('<option value="'+_response.pgs_list[1].id+'">'+_response.pgs_list[1].title+'</option>');
+          formPgs.show();
+        }
+        else{
+          window.location = '{!!route('home')!!}';
+        }
+      }
+      else{
+        alert.show().html(_response.msg);
+        loading.hide();
+      }
+    });
+    
+  });
+  $(document).on('submit', '#form-pgs', function(event) {
+    event.preventDefault();
+    /* Act on the event */
+    var formPgs = $(this);
+    var loginBox = $('.login-box-body');
+    var loading =loginBox.find('.loading-login');
+    loading.show();
+    var alert = loginBox.find('.alert-login');
+    alert.hide().html('');
+    $.ajax({
+      url: formPgs.data('action'),
+      type: 'post',
+      dataType: 'json',
+      data: formPgs.serialize()
+    })
+    .done(function(_response) {
+      if(_response.status){
+          window.location = '{!!route('home')!!}';
+      }
+      else{
+        alert.show().html(_response.msg);
+        loading.hide();
+      }
     });
   });
 </script>

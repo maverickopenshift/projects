@@ -8,12 +8,17 @@ use Illuminate\Routing\Controller;
 use App\User;
 use App\Role;
 use Modules\Users\Entities\UsersAtasan as Atasan;
-use Modules\Users\Entities\UsersPegawai as Pegawai;
+use Modules\Users\Entities\UsersApprover as Approver;
+use Modules\Users\Entities\UsersPegawai;
+use Modules\Users\Entities\Pegawai;
+use Modules\Users\Entities\UsersPgs;
+use Modules\Users\Entities\PegawaiNonorganik;
 use Modules\Documents\Entities\Documents as Doc;
 use Illuminate\Support\Facades\Log;
 use Datatables;
 use Validator;
 use Response;
+use DB;
 use App\Mail\SendEmailUser;
 use Mail;
 use App\Helpers\Helpers as Helper;
@@ -37,20 +42,33 @@ class UsersController extends Controller
         return Datatables::of($sql)
             ->addIndexColumn()
             ->addColumn('action', function ($data) {
+              $user_type = User::check_usertype($data->username);
+              $other = '';
+              if($user_type=='organik'){
+                $modal = '#form-modal';
+                $peg = Pegawai::where('n_nik',$data->username)->first();
+                $other = htmlspecialchars(json_encode($peg), ENT_QUOTES, 'UTF-8');
+              }
+              else if($user_type=='nonorganik'){
+                $modal = '#form-modal-nonorganik';
+              }
+              else{
+                $modal = '#form-modal-edit';
+              }
               $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
               $roles = htmlspecialchars(json_encode($data->roles), ENT_QUOTES, 'UTF-8');
               $act= '<div>';
               if(\Auth::user()->hasPermission('ubah-user')){
-                  $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal-edit"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'">
+                  $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="'.$modal.'"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'" data-other="'.$other.'">
   <i class="glyphicon glyphicon-edit"></i> Edit
   </button>';
               }
-              if(\Auth::user()->hasPermission('ubah-user')){
+              if(\Auth::user()->hasPermission('ubah-user') && $user_type!='organik'){
                   $act .='<button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#modal-reset"  data-title="Reset" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'">
   <i class="glyphicon glyphicon-edit"></i> Reset Password
   </button>';
               }
-              if(\Auth::user()->hasPermission('hapus-user')){
+              if(\Auth::user()->hasPermission('hapus-user') && $user_type!='admin'){
                 $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-toggle="modal" data-target="#modal-delete">
 <i class="glyphicon glyphicon-trash"></i> Delete
 </button>';
@@ -107,7 +125,7 @@ class UsersController extends Controller
           else {
               $roles = $request->roles_edit;
               $data = User::where('id','=',$request->id)->first();
-              if(!Pegawai::is_pegawai($id)){
+              if(!UsersPegawai::is_pegawai($id)){
                 $data->name = $request->name;
                 $data->username = $request->username;
                 $data->email = $request->email;
@@ -117,7 +135,7 @@ class UsersController extends Controller
               $data->roles()->sync($roles);
               
               if (count($request->atasan_id)>0 && $request->has(['atasan_id'])) {
-                $peg = Pegawai::get_by_userid($id);  
+                $peg = UsersPegawai::get_by_userid($id);  
                   Atasan::where('users_pegawai_id',$peg->ids)->delete();
                   foreach($request->atasan_id as $key=>$v){
                     $atasan = new Atasan();
@@ -149,39 +167,79 @@ class UsersController extends Controller
               return response()->json($data);
           }
     }
-    public function add(Request $request)
+    public function addNonorganik(Request $request)
     {
       if (!$request->ajax()) {abort(404);};
+      //dd($request->all());
         $rules = array (
-            'name' => 'required|max:250|min:3',
+            'name'     => 'required|max:250|min:3',
             'username' => 'required|unique:users,username|max:250|min:3',
-            'email' => 'required|unique:users,email|max:250|min:5',
-            'phone' => 'sometimes|nullable|max:15|min:5',
+            'email'    => 'required|email|unique:users,email|max:250|min:5',
+            'phone'    => 'sometimes|nullable|max:15|min:5',
             'password' => 'required|confirmed|max:50|min:5',
-            'roles.*' => 'required',
+            'roles'    => 'required|exists:roles,id',
+            'user_type'    => 'required|in:ubis,witel,subsidiary|max:5|min:4',
+            'select_divisi'    => 'required|exists:rptom,objiddivisi',
+            'select_unit'    => 'required|exists:rptom,objidunit',
+            'select_posisi'    => 'required|exists:rptom,objidposisi',
         );
+        if($request->user_pgs=='yes'){
+          $rules['pgs_divisi'] = 'required|exists:rptom,objiddivisi';
+          $rules['pgs_unit'] = 'required|exists:rptom,objidunit';
+          $rules['pgs_jabatan'] = 'required|exists:rptom,objidposisi';
+          $rules['pgs_roles'] = 'required|exists:roles,id';
+        }
         $validator = Validator::make($request->all(), $rules);
         $validator->after(function ($validator) use ($request) {
-            if (!isset($request->roles)) {
-                $validator->errors()->add('roles', 'Roles harus dipilih');
-            }
+            // if (!isset($request->roles)) {
+            //     $validator->errors()->add('roles', 'Roles harus dipilih');
+            // }
         });
         if ($validator->fails ())
             return Response::json (array(
                 'errors' => $validator->getMessageBag()->toArray()
             ));
         else {
+          //dd($request->all());
             $data = new User();
             $data->name = $request->name;
             $data->username = $request->username;
             $data->phone = $request->phone;
             $data->email = $request->email;
             $data->password = bcrypt($request->password);
-            $roles = $request->roles;
+            $data->user_type = $request->user_type;
             $data->save ();
-            $data->attachRoles($roles);
-
-            $peg = new Pegawai();
+            $data->attachRole($request->roles);
+            
+            $peg_non = new PegawaiNonorganik();
+            $peg_non->n_tahun = date('Y');
+            $peg_non->n_bulan = date('m');
+            $peg_non->n_nik = $request->username;
+            $peg_non->v_nama_karyawan = $request->name;
+            
+            $divisi = DB::table('rptom')->where('objiddivisi',$request->select_divisi)->first();
+            $peg_non->objiddivisi = $divisi->objiddivisi;
+            $peg_non->c_kode_divisi = $divisi->c_kode_divisi;
+            $peg_non->v_short_divisi = $divisi->v_short_divisi;
+            $peg_non->d_tgl_divisi = date('Y-m-d');
+            
+            $unit = DB::table('rptom')->where('objidunit',$request->select_unit)->first();
+            $peg_non->objidunit = $unit->objidunit;
+            $peg_non->c_kode_unit = $unit->c_kode_unit;
+            $peg_non->v_short_unit = $unit->v_short_unit;
+            $peg_non->v_long_unit = $unit->v_long_unit;
+            $peg_non->d_tgl_unit = date('Y-m-d');
+            
+            $posisi = DB::table('rptom')->where('objidposisi',$request->select_posisi)->first();
+            $peg_non->objidposisi = $posisi->objidposisi;
+            $peg_non->c_kode_posisi = $posisi->c_kode_posisi;
+            $peg_non->v_short_posisi = $posisi->v_short_posisi;
+            $peg_non->v_long_posisi = $posisi->v_long_posisi;
+            $peg_non->d_tgl_posisi = date('Y-m-d');
+            
+            $peg_non->save();
+            
+            $peg = new UsersPegawai();
             $peg->users_id = $data->id;
             $peg->nik = $data->username;
             $peg->save();
@@ -194,16 +252,138 @@ class UsersController extends Controller
                   $atasan->save();
                 }
             }
+            
+            if ($request->has(['approver_id'])) {
+                foreach($request->approver_id as $key=>$v){
+                  $approver = new Approver();
+                  $approver->users_pegawai_id = $peg->id;
+                  $approver->nik = $v;
+                  $approver->save();
+                }
+            }
+            if($request->user_pgs=='yes'){
+              $pgs = new UsersPgs();
+              $pgs->users_id = $data->id;
+              
+              $pgs_divisi =  DB::table('rptom')->where('objiddivisi',$request->pgs_divisi)->first();
+              $pgs->objiddivisi = $pgs_divisi->objiddivisi;
+              $pgs->c_kode_divisi = $pgs_divisi->c_kode_divisi;
+              $pgs->v_short_divisi = $pgs_divisi->v_short_divisi;
+              
+              $pgs_unit =  DB::table('rptom')->where('objidunit',$request->pgs_unit)->first();
+              $pgs->objidunit = $pgs_unit->objidunit;
+              $pgs->c_kode_unit = $pgs_unit->c_kode_unit;
+              $pgs->v_short_unit = $pgs_unit->v_short_unit;
+              
+              $pgs_posisi = DB::table('rptom')->where('objidposisi',$request->pgs_jabatan)->first();
+              $pgs->objidposisi = $pgs_posisi->objidposisi;
+              $pgs->c_kode_posisi = $pgs_posisi->c_kode_posisi;
+              $pgs->v_short_posisi = $pgs_posisi->v_short_posisi;
+              
+              $pgs->role_id = $request->pgs_roles;
+              $pgs->role_id_first = $request->roles;
+              $pgs->save();
+            }
+            // Log::info('Start');
+            // Mail::to($sendTo)
+            //     ->queue(new SendEmailUser($email_password, $email_username, $subject));
+            // log::info('End');
 
-            $sendTo = $request->email;
-            $subject = 'User Registration - Do Not Reply';
-            $email_password= $request->password;
-            $email_username = $request->username;
+            return response()->json($data);
+        }
+    }
+    public function add(Request $request)
+    {
+      if (!$request->ajax()) {abort(404);};
+        $rules = array (
+            'user_search' => 'required|exists:pegawai,id',
+            'username' => 'sometimes|unique:users,username|max:250|min:3',
+            'email'    => 'sometimes|email|unique:users,email|max:250|min:5',
+            'phone'    => 'sometimes|nullable|max:15|min:5',
+            'roles' => 'required|exists:roles,id',
+            'user_type'    => 'required|in:ubis,witel|max:5|min:4',
+        );
+        if($request->user_pgs=='yes'){
+          $rules['pgs_divisi_or'] = 'required|exists:rptom,objiddivisi';
+          $rules['pgs_unit_or'] = 'required|exists:rptom,objidunit';
+          $rules['pgs_jabatan_or'] = 'required|exists:rptom,objidposisi';
+          $rules['pgs_roles_or'] = 'required|exists:roles,id';
+        }
+        $validator = Validator::make($request->all(), $rules);
+        $validator->after(function ($validator) use ($request) {
+            // if (!isset($request->roles)) {
+            //     $validator->errors()->add('roles', 'Roles harus dipilih');
+            // }
+        });
+        if ($validator->fails ())
+            return Response::json (array(
+                'errors' => $validator->getMessageBag()->toArray()
+            ));
+        else {
+            $peg = Pegawai::where('id',$request->user_search)->first();
+            $data = new User();
+            $data->name = $peg->v_nama_karyawan;
+            $data->username = $peg->n_nik;
+            $data->phone = $request->phone;
+            $data->email = $peg->n_nik.'@telkom.co.id';
+            $data->password = bcrypt(config('app.password_default'));
+            $data->user_type = $request->user_type;
+            $data->save ();
+            $data->attachRole($request->roles);
 
-            Log::info('Start');
-            Mail::to($sendTo)
-                ->queue(new SendEmailUser($email_password, $email_username, $subject));
-            log::info('End');
+            $peg = new UsersPegawai();
+            $peg->users_id = $data->id;
+            $peg->nik = $data->username;
+            $peg->save();
+
+            if ($request->has(['atasan_id'])) {
+                foreach($request->atasan_id as $key=>$v){
+                  $atasan = new Atasan();
+                  $atasan->users_pegawai_id = $peg->id;
+                  $atasan->nik = $v;
+                  $atasan->save();
+                }
+            }
+            if ($request->has(['approver_id'])) {
+                foreach($request->approver_id as $key=>$v){
+                  $approver = new Approver();
+                  $approver->users_pegawai_id = $peg->id;
+                  $approver->nik = $v;
+                  $approver->save();
+                }
+            }
+            if($request->user_pgs=='yes'){
+              $pgs = new UsersPgs();
+              $pgs->users_id = $data->id;
+              
+              $pgs_divisi =  DB::table('rptom')->where('objiddivisi',$request->pgs_divisi_or)->first();
+              $pgs->objiddivisi = $pgs_divisi->objiddivisi;
+              $pgs->c_kode_divisi = $pgs_divisi->c_kode_divisi;
+              $pgs->v_short_divisi = $pgs_divisi->v_short_divisi;
+              
+              $pgs_unit =  DB::table('rptom')->where('objidunit',$request->pgs_unit_or)->first();
+              $pgs->objidunit = $pgs_unit->objidunit;
+              $pgs->c_kode_unit = $pgs_unit->c_kode_unit;
+              $pgs->v_short_unit = $pgs_unit->v_short_unit;
+              
+              $pgs_posisi = DB::table('rptom')->where('objidposisi',$request->pgs_jabatan_or)->first();
+              $pgs->objidposisi = $pgs_posisi->objidposisi;
+              $pgs->c_kode_posisi = $pgs_posisi->c_kode_posisi;
+              $pgs->v_short_posisi = $pgs_posisi->v_short_posisi;
+              
+              $pgs->role_id = $request->pgs_roles_or;
+              $pgs->role_id_first = $request->roles;
+              $pgs->save();
+            }
+            // $sendTo = $request->email;
+            // $subject = 'User Registration - Do Not Reply';
+            // $email_password= $request->password;
+            // $email_username = $request->username;
+            // 
+            // Log::info('Start');
+            // Mail::to($sendTo)
+            //     ->queue(new SendEmailUser($email_password, $email_username, $subject));
+            // log::info('End');
 
             return response()->json($data);
         }
@@ -284,6 +464,40 @@ class UsersController extends Controller
             return \Response::json([]);
         }
         $data = Atasan::get_by_userid($id);
-        return \Response::json(['is_pegawai'=>Pegawai::is_pegawai($id),'pegawai'=>Pegawai::get_by_userid($id),'atasan'=>$data]);
-    }
+        return \Response::json(['is_pegawai'=>UsersPegawai::is_pegawai($id),'pegawai'=>UsersPegawai::get_by_userid($id),'atasan'=>$data]);
+  }
+  public function getSelect(Request $request){
+        $type = trim($request->type);
+        $divisi = trim($request->divisi);
+        $unit = trim($request->unit);
+        $q = trim($request->q);
+        
+        if($type=='divisi'){
+          $data = User::get_all_disivi($q);
+          $data = $data->paginate(30);
+          return \Response::json($data);
+        }
+        if($type=='unit'){
+          $data = User::get_unit($q,$divisi);
+          $data = $data->paginate(30);
+          return \Response::json($data);
+        }
+        if($type=='posisi'){
+          $data = User::get_posisi($q,$unit);
+          $data = $data->paginate(30);
+          return \Response::json($data);
+        }
+        return \Response::json([]);
+  }
+  public function form(Request $request){
+    $t_type = ($request->type=='organik')?'Organik':'Non-Organik';
+    $data = [
+      'page_title' => 'Tambah User '.$t_type,
+      'type' => $request->type
+    ];
+    return view('users::form')->with($data);
+  }
+  public function store(Request $request){
+    exit;
+  }
 }

@@ -8,6 +8,8 @@ use Modules\Documents\Entities\DocType;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Users\Entities\Pegawai;
 
+use Modules\Documents\Entities\Sap;
+
 class Documents extends Model
 {
     protected $fillable = [];
@@ -65,6 +67,22 @@ class Documents extends Model
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','latar_belakang_surat_pengikatan');
     }
+    public function latar_belakang_rks()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','latar_belakang_rks');
+    }
+    public function latar_belakang_ketetapan_pemenang()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','latar_belakang_ketetapan_pemenang');
+    }
+    public function latar_belakang_kesanggupan_mitra()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','latar_belakang_kesanggupan_mitra');
+    }
+    public function latar_belakang_optional()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','latar_belakang_optional');
+    }
     public function latar_belakang_mou()
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','latar_belakang_mou');
@@ -102,8 +120,9 @@ class Documents extends Model
         return $this->hasMany('Modules\Documents\Entities\DocPic')->with('pegawai');
     }
     public static function check_po($po){
-      $count = \DB::table('dummy_po')->where('no_po','=',$po)->count();
-      if($count>0){
+      //$count = \DB::table('dummy_po')->where('no_po','=',$po)->count();
+      $sap = Sap::get_po($po);
+      if($sap['length']>0){
         return true;
       }
       return false;

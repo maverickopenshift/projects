@@ -85,11 +85,15 @@
           </div>
           <div class="tab-pane ok" id="tab_3">
             @include('documents::partials.alert-errors')
+            {{--
             @if(in_array($doc_type->name,['surat_pengikatan']))
               @include('documents::doc-form-edit.surat_pengikatan-latar-belakang')
             @else
               @include('documents::doc-form-edit.latar-belakang')
             @endif
+            --}}
+            
+            @include('documents::doc-form-edit.latar-belakang-fix')
             <div class="clearfix"></div>
             <div class="row">
               <div class="col-sm-12">

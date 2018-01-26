@@ -5,6 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Modules\Documents\Entities\Documents;
 
+use Response;
+use Validator;
+use DB;
+use Modules\Users\Entities\UsersPgs;
+use Illuminate\Support\Facades\Auth;
+
 class HomeController extends Controller
 {
     /**
@@ -50,5 +56,31 @@ class HomeController extends Controller
                             ->whereRaw('MONTH(created_at) = '.intval($month))
                             ->whereRaw('YEAR(created_at) = '.intval($year))
                             ->count();
+    }
+    public function pgsChange(Request $request)
+    {
+         if (!$request->ajax()) {abort(404);};
+         $id = Auth::id();
+         $user_pgs = UsersPgs::where('users_id',$id)->first();
+         if($user_pgs){
+           $rules = array (
+               'roles'    => 'required|exists:roles,id',
+           );
+           $validator = Validator::make($request->all(), $rules);
+           if ($validator->fails ()){
+             return response()->json(['status'=>false,'msg'=>'Roles yang Anda pilih tidak ditemukan']); 
+           }
+           $new_role = $request->roles;
+           $role = DB::table('role_user')->where('user_id',$id)->first();
+           $current_role = $role->role_id;
+           
+           DB::table('role_user')->where('user_id',$id)->update(['role_id'=>$new_role]);
+           $user_pgs->role_id = ($current_role!=$new_role)?$current_role:$user_pgs->role_id;
+           $user_pgs->role_id_first = $new_role;
+           $user_pgs->save();
+           return response()->json(['status'=>true,'msg'=>'success']); 
+         }
+         return response()->json(['status'=>false,'msg'=>'Anda bukan User PGS']); 
+         
     }
 }

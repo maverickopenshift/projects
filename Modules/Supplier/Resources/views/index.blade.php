@@ -36,8 +36,10 @@
     </div>
     <!-- /.box-header -->
     <div class="box-body content-view">
-      <div class="form-group input-group filter_group">
-          <select class="form-control select-filter" style="width: 100%;">
+      <div class="form-group input-group filter_group" style="width: 50%;">
+        <label class="col-sm-1 control-label"> FIlter: </label>
+        <div class="input-group ">
+          <select class="form-control select-filter">
             <option value="">Semua</option>
             <option value="1">Sudah Disetujui</option>
             <option value="0">Belum Disetujui</option>
@@ -48,6 +50,7 @@
           <span class="input-group-btn">
               <a class="btn btn-primary cari-filter">Cari</a>
           </span>
+        </div>
       </div>
       <div class="loading2"></div>
         @include('supplier::partials.alert-message')
@@ -143,7 +146,12 @@ var datatablesMe;
 var $status = $('.status').text();
 // console.log($status);
 $(function() {
-$('#datatables').DataTable();
+$('#datatables').DataTable({
+  processing: true,
+  autoWidth : true,
+  scrollX   : true,
+  pageLength: 10,
+});
   $(document).on('click', '.cari-filter', function(event) {
       var filter = $(".select-filter").val();
       $.ajax({

@@ -52,7 +52,7 @@
               @endforeach
             </tbody>
         </table>
-        <div class="form-group text-center top50 btn_smpn">
+        <div class="form-group text-center top btn_smpn">
           <a href="{{route('supplier', ['status' => 'all'])}}" class="btn btn-warning" style="padding:5px 20px;font-weight:bold;font-size:16px;margin-right:10px">BACK</a>
           @if(count($sap)>0)
           <button type="submit" class="btn btn-success btn-sbm" style="padding:5px 20px;font-weight:bold;font-size:16px;">SIMPAN</button>

@@ -26,8 +26,9 @@ class MappingSapController extends Controller
     $alamat = $supplier->alamat;
 
     $sap = Sap::where('city',$kota)
-    ->where('name_1', 'like', '%'.$nama_vendor.'%')
-    ->where('street', 'like', '%'.$alamat.'%')->get();
+    ->Orwhere('name_1', 'like', '%'.$nama_vendor.'%')
+    ->Orwhere('street', 'like', '%'.$alamat.'%')->get();
+    // dd($sap);
     $action_type="mapping";
     // dd($sap->toArray());
     $page_title = 'Supplier SAP';

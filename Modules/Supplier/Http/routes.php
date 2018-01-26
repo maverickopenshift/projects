@@ -70,4 +70,19 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
 
         return $response;
     })->name('supplier.sertifikat.file');
+
+    Route::get('/template-{filename}', function ($filename){
+        $path = public_path('template/template_' . $filename.'.csv');
+
+        if (!File::exists($path)) {
+            abort(404);
+        }
+
+        $type = File::mimeType($path);
+        $headers = array(
+             'Content-Type: '.$type,
+           );
+        $name = $filename.'_'.time().'.csv';
+        return response()->download($path, $name, $headers);
+    })->name('sap.template.download');
 });

@@ -119,6 +119,7 @@ class CustomErrors
             'siup_tg_terbit.required' => 'Tanggal Terbit SIUP harus diisi',
 
             'siup_tg_expired.required' => 'Tanggal Masa Berlaku SIUP harus diisi',
+            'siup_tg_expired.after' => 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!',
 
             'npwp_no.required_if' => 'Nomer NPWP harus diisi jika perusahaan kena pajak',
             'npwp_no.max' => 'Nomer NPWP maksimal 500 karakter',
@@ -135,6 +136,7 @@ class CustomErrors
             'tdp_tg_terbit.required' => 'Tanggal Terbit TDP harus diisi',
 
             'tdp_tg_expired.required' => 'Tanggal Masa Berlaku TDP harus diisi',
+            'tdp_tg_expired.after' => 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!',
 
             'idp_no.required' => 'Nomer IDP harus diisi',
             'idp_no.max' => 'Nomer IDP maksimal 500 karakter',
@@ -144,6 +146,8 @@ class CustomErrors
             'idp_tg_terbit.required' => 'Tanggal Terbit IDP harus diisi',
 
             'idp_tg_expired.required' => 'Tanggal Masa Berlaku IDP harus diisi',
+            'idp_tg_expired.after' => 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!',
+
 
             'nm_direktur_utama.required' => 'Nama Direktur Utama harus diisi',
             'nm_direktur_utama.max' => 'Nama Direktur Utama maksimal 500 karakter',
@@ -190,6 +194,7 @@ class CustomErrors
             'iujk_tg_terbit.*.required' => 'Tanggal Terbit Sertifikat keahlian harus diisi',
 
             'iujk_tg_expired.*.required' => 'Tanggal Masa Berlaku Sertifikat keahlian harus diisi',
+            'iujk_tg_expired.*.after' => 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!',
 
             'nama_sertifikat_dokumen.*.required' => 'Nama Sertifikat harus diisi',
             'nama_sertifikat_dokumen.*.max' => 'Nama Sertifikat maksimal 500 karakter',

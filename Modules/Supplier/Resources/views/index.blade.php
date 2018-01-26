@@ -37,7 +37,7 @@
     <!-- /.box-header -->
     <div class="box-body content-view">
       <div class="form-group input-group filter_group" style="width: 50%;">
-        <label class="col-sm-1 control-label"> FIlter: </label>
+
         <div class="input-group ">
           <select class="form-control select-filter">
             <option value="">Semua</option>

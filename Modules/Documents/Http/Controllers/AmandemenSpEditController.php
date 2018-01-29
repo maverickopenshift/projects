@@ -44,6 +44,10 @@ class AmandemenSpEditController extends Controller
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
+      
+      if($request['penomoran_otomatis']=='no'){
+        $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
+      }
       $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
       foreach($request->doc_lampiran_old as $k => $v){
         if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
@@ -137,6 +141,14 @@ class AmandemenSpEditController extends Controller
       if((\Laratrust::hasRole('admin'))){
         $doc->user_id  = $request->user_id;
       }
+      
+      if($request['penomoran_otomatis']=='no'){
+        $doc->doc_no = $request->doc_no;
+      }
+      else{
+        $doc->doc_no = null;
+      }
+      
       $doc->doc_signing = '0';
       $doc->doc_parent = 0;
       $doc->doc_parent_id = $request->parent_sp;

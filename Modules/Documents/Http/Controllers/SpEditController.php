@@ -72,6 +72,10 @@ class SpEditController extends Controller
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
+        
+        if($request['penomoran_otomatis']=='no'){
+          $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
+        }
         $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
         $check_new_lampiran = false;
         foreach($request->doc_lampiran_old as $k => $v){
@@ -174,6 +178,13 @@ class SpEditController extends Controller
         $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
         $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
         $doc->doc_signing = '0';
+        $doc->penomoran_otomatis = $request->penomoran_otomatis;
+        if($request['penomoran_otomatis']=='no'){
+          $doc->doc_no = $request->doc_no;
+        }
+        else{
+          $doc->doc_no = null;
+        }
         if((\Laratrust::hasRole('admin'))){
           $doc->user_id  = $request->user_id;
         }

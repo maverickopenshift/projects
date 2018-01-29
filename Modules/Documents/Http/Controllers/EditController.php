@@ -251,6 +251,8 @@ class EditController extends Controller
     }
 
     $dt->doc_po = $dt->doc_po_no;
+    $dt->doc_no = $dt->doc_no;
+    $dt->penomoran_otomatis = $dt->penomoran_otomatis;
     $dt->supplier_text = $dt->supplier->bdn_usaha.'.'.$dt->supplier->nm_vendor;
     $dt->konseptor_text = $dt->users->name.' - '.$dt->users->username;
     $data['page_title'] = 'Edit Dokumen';

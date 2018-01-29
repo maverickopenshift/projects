@@ -36,6 +36,9 @@ class AmandemenSpCreateController
     $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     // $rules['doc_lampiran.*']     =  'required|mimes:pdf';
     $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    if($request['penomoran_otomatis']=='no'){
+      $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
+    }
     foreach($request->doc_lampiran_old as $k => $v){
       if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
         $new_lamp[] = '';
@@ -87,6 +90,9 @@ class AmandemenSpCreateController
           $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
         }
       });
+      if($request['penomoran_otomatis']=='yes'){
+        $request->merge(['doc_no'=>false]);
+      }
       if ($validator->fails ()){
         return redirect()->back()
                     ->withInput($request->input())
@@ -122,6 +128,9 @@ class AmandemenSpCreateController
     $doc->doc_parent_id = $request->parent_sp;
     $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
     $doc->doc_signing = $request->statusButton;
+    if($request['penomoran_otomatis']=='no'){
+      $doc->doc_no = $request->doc_no;
+    }
     $doc->save();
 
     if(count($request->f_judul)>0){

@@ -106,6 +106,9 @@ class MouEditController extends Controller
         }
       }
       $request->merge(['doc_lampiran' => $new_lamp]);
+      if($request['penomoran_otomatis']=='no'){
+        $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
+      }
     }
 
     $rule_ps_judul = (count($request['ps_judul'])>1)?'required':'sometimes|nullable';
@@ -155,7 +158,14 @@ class MouEditController extends Controller
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       $doc->supplier_id = $request->supplier_id;
-
+      
+      if($request['penomoran_otomatis']=='no'){
+        $doc->doc_no = $request->doc_no;
+      }
+      else{
+        $doc->doc_no = null;
+      }
+      
       if((\Laratrust::hasRole('admin'))){
         $doc->user_id  = $request->user_id;
       }

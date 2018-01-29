@@ -74,7 +74,9 @@ class SuratPengikatanCreateController extends Controller
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
-
+        if($request['penomoran_otomatis']=='no'){
+          $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
+        }
         $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
         $check_new_lampiran = false;
         foreach($request->doc_lampiran_old as $k => $v){
@@ -146,7 +148,9 @@ class SuratPengikatanCreateController extends Controller
         if(isset($hs_qty) && count($hs_qty)>0){
           $request->merge(['hs_qty'=>$hs_qty]);
         }
-
+        if($request['penomoran_otomatis']=='yes'){
+          $request->merge(['doc_no'=>false]);
+        }
         if ($validator->fails ()){
           return redirect()->back()->withInput($request->input())->withErrors($validator);
         }
@@ -174,7 +178,10 @@ class SuratPengikatanCreateController extends Controller
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       $doc->user_id = (\Laratrust::hasRole('admin'))?$request->user_id:Auth::id();
       $doc->supplier_id = $request->supplier_id;
-
+      $doc->penomoran_otomatis = $request->penomoran_otomatis;
+      if($request['penomoran_otomatis']=='no'){
+        $doc->doc_no = $request->doc_no;
+      }
       if(in_array($type,['turnkey','sp','surat_pengikatan'])){
         $doc->doc_po_no = $request->doc_po;
       }

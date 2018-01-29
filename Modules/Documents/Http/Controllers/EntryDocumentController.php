@@ -170,7 +170,11 @@ class EntryDocumentController extends Controller
         $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
-
+        
+        if($request['penomoran_otomatis']=='no'){
+          $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
+        }
+        
         if($type!='khs'){
           $rules['doc_value']        =  'required|max:500|min:3|regex:/^[0-9 .]+$/i';
         }
@@ -276,7 +280,11 @@ class EntryDocumentController extends Controller
         if(isset($hs_qty) && count($hs_qty)>0){
           $request->merge(['hs_qty'=>$hs_qty]);
         }
-
+        
+        if($request['penomoran_otomatis']=='yes'){
+          $request->merge(['doc_no'=>false]);
+        }
+        
         if ($validator->fails ()){
           return redirect()->back()
                       ->withInput($request->input())
@@ -322,6 +330,13 @@ class EntryDocumentController extends Controller
       $doc->doc_sow = $request->doc_sow;
       $doc->doc_type = $request->type;
       $doc->doc_signing = $request->statusButton;
+      
+      
+      $doc->penomoran_otomatis = $request->penomoran_otomatis;
+      if($request['penomoran_otomatis']=='no'){
+        $doc->doc_no = $request->doc_no;
+      }
+      
       $doc->save();
 
       /// pasal khusus

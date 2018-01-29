@@ -104,6 +104,9 @@ class SuratPengikatanEditController extends Controller
         }
       }
       $request->merge(['doc_lampiran' => $new_lamp]);
+      if($request['penomoran_otomatis']=='no'){
+        $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
+      }
     }
 
     $rules['doc_sow']          =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -182,7 +185,13 @@ class SuratPengikatanEditController extends Controller
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       $doc->supplier_id = $request->supplier_id;
-
+      $doc->penomoran_otomatis = $request->penomoran_otomatis;
+      if($request['penomoran_otomatis']=='no'){
+        $doc->doc_no = $request->doc_no;
+      }
+      else{
+        $doc->doc_no = null;
+      }
       if((\Laratrust::hasRole('admin'))){
         $doc->user_id  = $request->user_id;
       }

@@ -31,7 +31,7 @@
               <span class="input-group-addon">
                 <input type="checkbox" class="cb-nama">
               </span>
-              <input class="form-control txt-nama" type="text" name="nama">
+              <input class="form-control txt-nama" type="text" name="nama" placeholder="masukkan Nama SAP">
             </div>
           </div>
         </div>

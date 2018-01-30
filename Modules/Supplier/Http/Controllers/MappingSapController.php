@@ -55,7 +55,7 @@ class MappingSapController extends Controller
     // dd($sap->toArray());
     $page_title = 'Supplier SAP';
 
-        return view('supplier::sap.mapping_sap')->with(compact('sap','page_title','action_type','id_sup'));
+        return view('supplier::sap.mapping_sap')->with(compact('sap','page_title','action_type','id_sup','supplier'));
     }
 
     public function simpan(Request $request)

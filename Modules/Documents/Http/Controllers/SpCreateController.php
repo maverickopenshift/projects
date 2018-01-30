@@ -10,6 +10,7 @@ use Modules\Documents\Entities\DocPo;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocActivity;
+use Modules\Config\Entities\Config;
 use Modules\Documents\Entities\DocComment as Comments;
 use App\Helpers\Helpers;
 use Validator;
@@ -74,7 +75,7 @@ class SpCreateController
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
 
         }
-        if($request['penomoran_otomatis']=='no'){
+        if($request['penomoran_otomatis']=='no' && Config::get_config('auto-numb')=='off'){
           $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
         }
         $check_new_lampiran = false;
@@ -156,9 +157,6 @@ class SpCreateController
         if(isset($hs_qty) && count($hs_qty)>0){
           $request->merge(['hs_qty'=>$hs_qty]);
         }
-        if($request['penomoran_otomatis']=='yes'){
-          $request->merge(['doc_no'=>false]);
-        }
         if ($validator->fails ()){
           return redirect()->back()->withInput($request->input())->withErrors($validator);
         }
@@ -216,8 +214,8 @@ class SpCreateController
       $doc->doc_signing = $request->statusButton;
       $doc->doc_parent_id = Documents::get_id_parent_sp($request->parent_kontrak);
       $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
-      $doc->penomoran_otomatis = $request->penomoran_otomatis;
-      if($request['penomoran_otomatis']=='no'){
+      $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
+      if($request['penomoran_otomatis']=='no' && Config::get_config('auto-numb')=='off'){
         $doc->doc_no = $request->doc_no;
       }
       $doc->save();

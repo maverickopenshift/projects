@@ -15,6 +15,7 @@ use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocPo;
 use Modules\Documents\Entities\DocActivity;
+use Modules\Config\Entities\Config;
 use Modules\Documents\Entities\DocComment as Comments;
 
 use App\Helpers\Helpers;
@@ -76,7 +77,7 @@ class MouCreateController extends Controller
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
         
-        if($request['penomoran_otomatis']=='no'){
+        if($request['penomoran_otomatis']=='no' && Config::get_config('auto-numb')=='off'){
           $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
         }
         
@@ -140,9 +141,6 @@ class MouCreateController extends Controller
           $request->merge(['hs_qty'=>$hs_qty]);
         }
         
-        if($request['penomoran_otomatis']=='yes'){
-          $request->merge(['doc_no'=>false]);
-        }
 
         if ($validator->fails ()){
           // dd($validator->getMessageBag()->toArray());
@@ -188,8 +186,8 @@ class MouCreateController extends Controller
       $doc->doc_type = $request->type;
       $doc->doc_signing = $request->statusButton;
       
-      $doc->penomoran_otomatis = $request->penomoran_otomatis;
-      if($request['penomoran_otomatis']=='no'){
+      $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
+      if($request['penomoran_otomatis']=='no'  && Config::get_config('auto-numb')=='off'){
         $doc->doc_no = $request->doc_no;
       }
       $doc->save();

@@ -18,6 +18,7 @@ class ConfigController extends Controller
     public function index()
     {
         $data['page_title'] = 'Config';
+        $data['data'] = Config::all();
         return view('config::index')->with($data);
     }
 
@@ -106,4 +107,14 @@ class ConfigController extends Controller
           $data = Config::where('id','=',$request->id)->delete();
           return response()->json($data);
     }
+    public function editstore(Request $request)
+   {
+        $form = $request->form;
+        foreach($form as $key => $v){
+          $data = Config::where('object_key','=',$key)->first();
+          $data->object_value = $v;
+          $data->save();
+        }
+        return response()->json(['status'=>true]);
+   }
 }

@@ -1,8 +1,9 @@
+@if($auto_numb=='off')
 <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
   <div class="form-group">
     <label class="col-sm-2 control-label">Penomoran Otomatis</label>
     <div class="col-sm-10">
-      <input type="hidden" class="form-control" id="penomoran_otomatis" name="penomoran_otomatis" value="{{old('penomoran_otomatis',Helper::prop_exists($doc,'penomoran_otomatis'))=='no'?'no':'yes'}}">
+      <input type="hidden" class="form-control" id="penomoran_otomatis" name="penomoran_otomatis" value="{{old('penomoran_otomatis',Helper::prop_exists($doc,'penomoran_otomatis'))=='yes'?'yes':'no'}}">
         <input type="checkbox" class="checkbox_penomoran_otomatis" name="checkbox_penomoran_otomatis">
     </div>
   </div>
@@ -48,3 +49,4 @@ $(function() {
 });
 </script>
 @endpush
+@endif

@@ -13,6 +13,7 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocTemplate;
+use Modules\Config\Entities\Config;
 use Modules\Documents\Entities\DocComment as Comments;
 
 use App\Helpers\Helpers;
@@ -45,7 +46,7 @@ class AmandemenSpEditController extends Controller
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
       
-      if($request['penomoran_otomatis']=='no'){
+      if($request['penomoran_otomatis']=='no' && Config::get_config('auto-numb')=='off'){
         $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
       }
       $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
@@ -142,7 +143,8 @@ class AmandemenSpEditController extends Controller
         $doc->user_id  = $request->user_id;
       }
       
-      if($request['penomoran_otomatis']=='no'){
+      $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
+      if($request['penomoran_otomatis']=='no'  && Config::get_config('auto-numb')=='off'){
         $doc->doc_no = $request->doc_no;
       }
       else{

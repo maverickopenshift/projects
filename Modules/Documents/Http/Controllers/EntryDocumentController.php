@@ -85,9 +85,10 @@ class EntryDocumentController extends Controller
       }else{
         $ppn = "0";
       }
+      
       // dd($ppn->ppn);
       $data['ppn'] = $ppn;
-
+      $data['auto_numb']=Config::get_config('auto-numb');
 
       // dd($data);
       return view('documents::form')->with($data);

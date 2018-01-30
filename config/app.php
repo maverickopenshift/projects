@@ -12,7 +12,7 @@ return [
     | any other location as required by the application or its packages.
     */
 
-    'name' => env('APP_NAME', 'Consys'),
+    'name' => env('APP_NAME', 'MAVERICS'),
 
     'ppn_set' => 10,
 

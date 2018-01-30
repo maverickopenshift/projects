@@ -63,24 +63,24 @@ class RegisterController extends Controller
          $data->actived = 1;
          $data->save ();
          $data->attachRole('vendor');
-
+// dd("hai");
 //EMAIL
-        // $data2 = array(
+
+        // $message = array(
         //   'username'=>$kd_vendor,
         //   'email'=>$request->email,
         //   'nama'=>$request->company_name
         // );
         // $us=$data2['username'];
-
+        $nama_perusahaan = $request->company_name;
         $sendTo = $request->input('email');
-        $subject = 'Do Not Reply';
+        $subject = 'Konfirmasi Pendaftaran Mitra Telkom';
         $mail_message = $kd_vendor;
 
         Log::info('Start');
         Mail::to($sendTo)
-            ->queue(new SendEmail($mail_message, $subject));
+            ->queue(new SendEmail($mail_message, $nama_perusahaan, $sendTo, $subject));
         log::info('End');
-
        }
          return redirect()->back()->withData($data)->with('message', 'Data berhasil disimpan!');
      }

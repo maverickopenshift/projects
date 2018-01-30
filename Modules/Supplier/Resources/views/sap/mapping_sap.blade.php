@@ -60,8 +60,11 @@
         </div>
         </form>
     </div>
+
 <!-- /.box-body -->
 </div>
+@include('supplier::sap.search_mapping')
+
 @endsection
 @push('scripts')
   <script>

@@ -29,8 +29,11 @@
             <label for="doc_jaminan_startdate" class="col-sm-2 control-label">Lampiran</label>
             <div class="col-sm-10 text-me">
               @if(!empty($dt->meta_file))
-                <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_optional'])}}">
+                <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_rks'])}}">
                   <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
+                </a>
+                <a class="btn btn-primary btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_rks'])}}">
+                  <i class="glyphicon glyphicon-download-alt"></i>  Download
                 </a>
                 @else
                 -
@@ -70,8 +73,11 @@
             <label for="doc_jaminan_startdate" class="col-sm-2 control-label">Lampiran</label>
             <div class="col-sm-10 text-me">
               @if(!empty($dt->meta_file))
-                <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_optional'])}}">
+                <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_ketetapan_pemenang'])}}">
                   <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
+                </a>
+                <a class="btn btn-primary btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_ketetapan_pemenang'])}}">
+                  <i class="glyphicon glyphicon-download-alt"></i>  Download
                 </a>
                 @else
                 -
@@ -111,8 +117,11 @@
             <label for="doc_jaminan_startdate" class="col-sm-2 control-label">Lampiran</label>
             <div class="col-sm-10 text-me">
               @if(!empty($dt->meta_file))
-                <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_optional'])}}">
+                <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_kesanggupan_mitra'])}}">
                   <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
+                </a>
+                <a class="btn btn-primary btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_kesanggupan_mitra'])}}">
+                  <i class="glyphicon glyphicon-download-alt"></i>  Download
                 </a>
                 @else
                 -
@@ -141,7 +150,7 @@
       <div class="form-horizontal ao-jas" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
             <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">
-              Latar Belakang
+              Lain-lain
             </div>
           </div>
             
@@ -174,6 +183,9 @@
               @if(!empty($dt->meta_file))
                 <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_optional'])}}">
                   <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
+                </a>
+                <a class="btn btn-primary btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_optional'])}}">
+                  <i class="glyphicon glyphicon-download-alt"></i>  Download
                 </a>
                 @else
                 -

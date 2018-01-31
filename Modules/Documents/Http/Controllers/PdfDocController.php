@@ -5,41 +5,33 @@ namespace Modules\Documents\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
-use DB;
-use Auth;
+
 use App\Helpers\Pdf;
 
 class PdfDocController extends Controller
 {
   public function index(Request $req){
+    // dd($req->id);
     $type = $req->type;
     $filename = $req->filename;
+    //if($type=='document')
     $file = storage_path('app/document/'.$type.'/' . $filename);
-    $users_id = \Auth::id();
-    date_default_timezone_set('Asia/Jakarta');
-    $created_at = date("Y-m-d H:i:s");
-    $updated_at = date("Y-m-d H:i:s");
-
-    $sql = \DB::table('users')
-          ->join('users_pegawai', 'users_pegawai.users_id', '=', 'users.id')  
-          ->join('pegawai', 'users_pegawai.nik', '=', 'pegawai.n_nik')
-          ->select('pegawai.n_nik', 'pegawai.v_nama_karyawan')
-          ->where('users_pegawai.users_id',$users_id)->get();
-
-    $id = DB::table('log_download')->insertGetId(
-        ['users_id' => $users_id, 'documents_name' => $filename, 'created_at' => $created_at, 'updated_at' => $updated_at]
-    );
-
-    $nik = '';
-    $nama = '';      
-    foreach ($sql as $key => $value) {
-        $nik = $value->n_nik;
-        $nama= $value->v_nama_karyawan;
-    }
-
-    $pdf = new Pdf($file,$nik,$nama);
+    //$file = storage_path("app/document/adendum/doc_lampiran__adendum-kontrak-1_1510160861_yt6kp.pdf");
+    $nama = 'Irfan';
+    $nik = '009923232';
+    $pdf = new Pdf($file,$nama,$nik);
+    //$pdf = new FPDI();
     $pdf->AddPage();
     $pdf->SetFont('arial', '', 12);
+
+
+    /*$txt = "FPDF is a PHP class which allows to generate PDF files with pure PHP, that is to say " .
+            "without using the PDFlib library. F from FPDF stands for Free: you may use it for any " .
+            "kind of usage and modify it to suit your needs.\n\n";
+    for ($i = 0; $i < 25; $i++) {
+        $pdf->MultiCell(0, 5, $txt, 0, 'J');
+    }*/
+
 
     if($pdf->numPages>1) {
         for($i=2;$i<=$pdf->numPages;$i++) {

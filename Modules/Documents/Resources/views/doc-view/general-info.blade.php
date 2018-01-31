@@ -99,7 +99,6 @@
                           <th>Lampiran Ke</th>
                           <th>Nama Lampiran</th>
                           <th>Lihat</th>
-                          <th>Download</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -115,12 +114,8 @@
                             <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
                             <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
                             </a>
-                            @else
-                            -
-                          @endif</td>
-                           <td>@if(!empty($dt->meta_file))
-                            <a class="btn btn-primary btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
-                            <i class="glyphicon glyphicon-download-alt"></i>  Download
+                            <a class="btn btn-primary btn-lihat" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
+                            <i class="glyphicon glyphicon-paperclip"></i>  Test
                             </a>
                             @else
                             -

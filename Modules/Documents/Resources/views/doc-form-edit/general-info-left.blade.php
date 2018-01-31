@@ -1,4 +1,5 @@
 <div class="form-horizontal">
+  @include('documents::form-penomoran-otomatis')
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
     @if(!in_array($doc_type->name,['khs','turnkey','surat_pengikatan','mou']))
       @include('documents::doc-form-edit.no-kontrak')

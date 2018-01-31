@@ -9,6 +9,7 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocActivity;
+use Modules\Config\Entities\Config;
 use Modules\Documents\Entities\DocComment as Comments;
 use App\Helpers\Helpers;
 use Validator;
@@ -37,6 +38,10 @@ class AmandemenKontrakCreateController
 
       $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $check_new_lampiran = false;
+      
+      if($request['penomoran_otomatis']=='no' && Config::get_config('auto-numb')=='off'){
+        $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
+      }
       
       foreach($request->doc_lampiran_old as $k => $v){
         if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
@@ -119,6 +124,12 @@ class AmandemenKontrakCreateController
     $doc->doc_parent_id = $request->parent_kontrak;
     $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
     $doc->doc_signing = $request->statusButton;
+    
+    $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
+    if($request['penomoran_otomatis']=='no'  && Config::get_config('auto-numb')=='off'){
+      $doc->doc_no = $request->doc_no;
+    }
+    
     $doc->save();
 
     if(count($request->f_judul)>0){

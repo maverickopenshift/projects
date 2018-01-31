@@ -114,6 +114,9 @@
                             <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
                             <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
                             </a>
+                            <a class="btn btn-primary btn-lihat" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
+                            <i class="glyphicon glyphicon-paperclip"></i>  Test
+                            </a>
                             @else
                             -
                           @endif</td>

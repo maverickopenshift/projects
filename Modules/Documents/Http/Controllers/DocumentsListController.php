@@ -108,7 +108,8 @@ class DocumentsListController extends Controller
 
           //split judul kontrak (||)
           $myArray = explode('||', $value->doc_title);
-          $value['title'] = $myArray[0].Documents::get_parent_title($value);
+          $doc_no = (!empty($value->doc_no))?' - '.$value->doc_no:'';
+          $value['title'] = $myArray[0].Documents::get_parent_title($value).$doc_no;
           // $value['supplier']['nm_vendor'] = $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
           // $value->doc_title = $value->doc_title.' <i>'.$value->supplier_id.'</i>';
           return $value;

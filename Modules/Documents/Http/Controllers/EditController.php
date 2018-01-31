@@ -13,6 +13,7 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocComment as Comments;
+use Modules\Config\Entities\Config;
 use Modules\Documents\Http\Controllers\SuratPengikatanEditController as SuratPengikatanEdit;
 use Modules\Documents\Http\Controllers\SideLetterEditController as SideLetterEdit;
 use Modules\Documents\Http\Controllers\MouEditController as MouEdit;
@@ -251,6 +252,8 @@ class EditController extends Controller
     }
 
     $dt->doc_po = $dt->doc_po_no;
+    $dt->doc_no = $dt->doc_no;
+    $dt->penomoran_otomatis = $dt->penomoran_otomatis;
     $dt->supplier_text = $dt->supplier->bdn_usaha.'.'.$dt->supplier->nm_vendor;
     $dt->konseptor_text = $dt->users->name.' - '.$dt->users->username;
     $data['page_title'] = 'Edit Dokumen';
@@ -259,6 +262,7 @@ class EditController extends Controller
     
     $data['pegawai'] = \App\User::get_user_pegawai();
     $data['action_type'] = 'edit';
+    $data['auto_numb']=Config::get_config('auto-numb');
     $data['action_url'] = route('doc.storeedit',['type'=>$dt->jenis->type->name,'id'=>$dt->id]);
     $data['data'] = [];
     $data['id'] = $dt->id;

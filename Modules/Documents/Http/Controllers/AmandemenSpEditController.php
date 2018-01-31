@@ -13,6 +13,7 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocTemplate;
+use Modules\Config\Entities\Config;
 use Modules\Documents\Entities\DocComment as Comments;
 
 use App\Helpers\Helpers;
@@ -43,6 +44,10 @@ class AmandemenSpEditController extends Controller
       $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      }
+      
+      if($request['penomoran_otomatis']=='no' && Config::get_config('auto-numb')=='off'){
+        $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
       }
       $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
       foreach($request->doc_lampiran_old as $k => $v){
@@ -137,6 +142,15 @@ class AmandemenSpEditController extends Controller
       if((\Laratrust::hasRole('admin'))){
         $doc->user_id  = $request->user_id;
       }
+      
+      $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
+      if($request['penomoran_otomatis']=='no'  && Config::get_config('auto-numb')=='off'){
+        $doc->doc_no = $request->doc_no;
+      }
+      else{
+        $doc->doc_no = null;
+      }
+      
       $doc->doc_signing = '0';
       $doc->doc_parent = 0;
       $doc->doc_parent_id = $request->parent_sp;

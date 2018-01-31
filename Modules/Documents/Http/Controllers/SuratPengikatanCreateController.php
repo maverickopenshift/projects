@@ -15,6 +15,7 @@ use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocPo;
 use Modules\Documents\Entities\DocActivity;
+use Modules\Config\Entities\Config;
 use Modules\Documents\Entities\DocComment as Comments;
 
 use App\Helpers\Helpers;
@@ -74,7 +75,9 @@ class SuratPengikatanCreateController extends Controller
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
-
+        if($request['penomoran_otomatis']=='no' && Config::get_config('auto-numb')=='off'){
+          $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
+        }
         $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
         $check_new_lampiran = false;
         foreach($request->doc_lampiran_old as $k => $v){
@@ -146,7 +149,6 @@ class SuratPengikatanCreateController extends Controller
         if(isset($hs_qty) && count($hs_qty)>0){
           $request->merge(['hs_qty'=>$hs_qty]);
         }
-
         if ($validator->fails ()){
           return redirect()->back()->withInput($request->input())->withErrors($validator);
         }
@@ -174,7 +176,10 @@ class SuratPengikatanCreateController extends Controller
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       $doc->user_id = (\Laratrust::hasRole('admin'))?$request->user_id:Auth::id();
       $doc->supplier_id = $request->supplier_id;
-
+      $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
+      if($request['penomoran_otomatis']=='no'  && Config::get_config('auto-numb')=='off'){
+        $doc->doc_no = $request->doc_no;
+      }
       if(in_array($type,['turnkey','sp','surat_pengikatan'])){
         $doc->doc_po_no = $request->doc_po;
       }

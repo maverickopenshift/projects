@@ -9,4 +9,22 @@ class Config extends Model
 {
     protected $fillable = [];
     protected $table = 'config';
+    
+    public static function get_config($key){
+      $config = self::where('object_key','=',$key)->first();
+      if($config){
+        return $config->object_value;
+      }
+      return false;
+    }
+    
+    public static function get_penomoran_otomatis($v){
+      if(self::get_config('auto-numb')=='off'){
+        return 'no';
+      }
+      else if(empty($v)){
+        return 'yes';
+      }
+      return $v;
+    }
 }

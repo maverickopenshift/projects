@@ -172,7 +172,7 @@ class EntryDocumentController extends Controller
         $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
         
-        if($request['penomoran_otomatis']=='no'){
+        if(Config::get_config('auto-numb')=='off'){
           $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
         }
         
@@ -282,10 +282,6 @@ class EntryDocumentController extends Controller
           $request->merge(['hs_qty'=>$hs_qty]);
         }
         
-        if($request['penomoran_otomatis']=='yes'){
-          $request->merge(['doc_no'=>false]);
-        }
-        
         if ($validator->fails ()){
           return redirect()->back()
                       ->withInput($request->input())
@@ -333,8 +329,8 @@ class EntryDocumentController extends Controller
       $doc->doc_signing = $request->statusButton;
       
       
-      $doc->penomoran_otomatis = $request->penomoran_otomatis;
-      if($request['penomoran_otomatis']=='no'){
+      $doc->penomoran_otomatis =  Config::get_penomoran_otomatis($request->penomoran_otomatis);
+      if(Config::get_config('auto-numb')=='off'){
         $doc->doc_no = $request->doc_no;
       }
       

@@ -4,6 +4,7 @@ namespace Modules\Config\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Config\D\DocCategory;
 
 class ConfigDatabaseSeeder extends Seeder
 {
@@ -15,7 +16,6 @@ class ConfigDatabaseSeeder extends Seeder
     public function run()
     {
         Model::unguard();
-
-        // $this->call("OthersTableSeeder");
+        $this->call(ConfigTableSeeder::class);
     }
 }

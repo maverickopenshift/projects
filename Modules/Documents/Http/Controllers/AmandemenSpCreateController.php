@@ -37,7 +37,7 @@ class AmandemenSpCreateController
     $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     // $rules['doc_lampiran.*']     =  'required|mimes:pdf';
     $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-    if($request['penomoran_otomatis']=='no' && Config::get_config('auto-numb')=='off'){
+    if(Config::get_config('auto-numb')=='off'){
       $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
     }
     foreach($request->doc_lampiran_old as $k => $v){
@@ -127,7 +127,7 @@ class AmandemenSpCreateController
     $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
     $doc->doc_signing = $request->statusButton;
     $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
-    if($request['penomoran_otomatis']=='no'  && Config::get_config('auto-numb')=='off'){
+    if(Config::get_config('auto-numb')=='off'){
       $doc->doc_no = $request->doc_no;
     }
     $doc->save();

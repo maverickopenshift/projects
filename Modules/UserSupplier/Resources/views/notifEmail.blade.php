@@ -1,5 +1,5 @@
 <div class="col-md-6">
-  <img src="{{asset('images/telkom_indonesia.png')}}">
+  <img src="{{asset('images/telkom_indonesia.png')}}" width="50">
 </div>
 <br><br>
 <div class="col-md-12">

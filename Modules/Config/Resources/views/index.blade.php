@@ -26,7 +26,14 @@
                     <input type="hidden" class="hidden{{$dt->object_key}}" name="form[{{$dt->object_key}}]" value="{{$dt->object_value}}">
                     <input type="checkbox" checkbox-for="hidden{{$dt->object_key}}" class="checkbox-me" name="{{$dt->object_key}}" {{$dt->object_value=='off'?'':'checked'}}>
                   @else
-                    <input type="text" class="form-control" name="form[{{$dt->object_key}}]"  value="{{old($dt->object_key,$dt->object_value)}}">
+                    @if($dt->object_key=='ppn-sp')
+                      <div class="input-group" style="width:100px;">
+                        <input type="text" class="form-control" name="form[{{$dt->object_key}}]"  value="{{old($dt->object_key,$dt->object_value)}}">
+                        <span class="input-group-addon">%</span>
+                      </div>
+                    @else
+                      <input type="text" class="form-control" name="form[{{$dt->object_key}}]"  value="{{old($dt->object_key,$dt->object_value)}}">
+                    @endif
                   @endif
                   @if(!empty($dt->object_desc))
                     {{-- <span class="text-info">

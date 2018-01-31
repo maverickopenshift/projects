@@ -10,7 +10,7 @@ class PDF extends PdfRotate {
     public $nama;
     public $nik;
     
-    function __construct($file,$nik,$nama){
+    function __construct($file,$nama,$nik){
       parent::__construct();
       $this->file = $file;
       $this->nama = $nama;
@@ -20,10 +20,10 @@ class PDF extends PdfRotate {
     public function Header() {
         
         //Put the watermark
-        $this->SetFont('Arial', 'B', 45);
+        $this->Image('http://chart.googleapis.com/chart?cht=p3&chd=t:60,40&chs=250x100&chl=Hello|World', 40, 100, 100, 0, 'PNG');
+        $this->SetFont('Arial', 'B', 50);
         $this->SetTextColor(255, 192, 203);
-        $this->RotatedText(80, 130, $this->nik, 45);
-        $this->RotatedText(50, 180, $this->nama, 45);
+        $this->RotatedText(20, 230, $this->nama.'-'.$this->nik, 45);
         
         if (is_null($this->_tplIdx)) {
 

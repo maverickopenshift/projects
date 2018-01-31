@@ -267,7 +267,7 @@
       <div class="parent-perubahan_latar_belakang">
         <div class="form-horizontal perubahan_latar_belakang" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-            <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Lain-lain <span class="total_perubahan_latar_belakang"></span></div>
+            <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_perubahan_latar_belakang">1</span></div>
             <div class="btn-group" style="position: absolute;right: 5px;top: -10px;border-radius: 0;">
               <button type="button" class="btn btn-success add-latar-belakang" style="border-radius: 0;"><i class="glyphicon glyphicon-plus"></i></button>
             </div>            

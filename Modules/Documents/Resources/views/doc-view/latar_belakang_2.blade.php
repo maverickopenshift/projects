@@ -30,6 +30,9 @@
                 <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>'surat_pengikatan_lampiran_ttd'])}}">
                 <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
                 </a>
+                <a class="btn btn-primary btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>'surat_pengikatan_lampiran_ttd'])}}">
+                <i class="glyphicon glyphicon-download-alt"></i>  Download
+                </a>
             @endforeach
           @else
            -
@@ -94,6 +97,9 @@
             @foreach ($latar_belakang_mou->lampiran_ttd as $key=>$dt)
                 <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>'mou_lampiran_ttd'])}}">
                 <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
+                </a>
+                <a class="btn btn-primary btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>'mou_lampiran_ttd'])}}">
+                <i class="glyphicon glyphicon-download-alt"></i>  Download
                 </a>
             @endforeach
           @else

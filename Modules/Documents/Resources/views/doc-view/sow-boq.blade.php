@@ -46,7 +46,7 @@
               <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">{{$title_hs}}</div>
             </div>
             <div class="form-group">
-              <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
+              <!-- <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label> -->
               <div class="table-responsive col-sm-10">
                 <table class="table table-condensed table-striped">
                     <thead>
@@ -111,6 +111,10 @@
                 -->
                     <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}">
                     <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran </a>
+
+                    <a class="btn btn-primary btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}">
+                    <i class="glyphicon glyphicon-download-alt"></i>  Download
+                    </a>
                 @endif
               </div>
             </div>

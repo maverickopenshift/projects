@@ -53,7 +53,7 @@
         <div class="col-xs-12">
             <div class="text-center">
                 <label>
-                  <a href="{{route('usersupplier.register')}}">Create User ID</a>
+                  <a href="{{route('usersupplier.register')}}">Create User ID</a> | <a href="{{route('usersupplier.forgetpwd')}}">Forget Password</a>
                     <!-- <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : ''}}> Remember Me -->
                 </label>
             </div>
@@ -128,7 +128,7 @@
         loading.hide();
       }
     });
-    
+
   });
   $(document).on('submit', '#form-pgs', function(event) {
     event.preventDefault();

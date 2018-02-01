@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 // use App\supplier;
 
 use App\Mail\SendEmail;
+use App\Mail\ResetPwd;
 use Mail;
 use Validator;
 use Response;
@@ -97,6 +98,54 @@ class RegisterController extends Controller
        }
      }
 
+     public function forgetpwd()
+     {
+         return view('usersupplier::lupaPwd');
+     }
+
+     public function checking(Request $request)
+     {
+
+         $rules = array (
+             'email'                => 'required|email',
+         );
+         $validator = Validator::make($request->all(), $rules);
+         if ($validator->fails ()){
+           return redirect()->back()
+                       ->withInput($request->input())
+                       ->withErrors($validator);
+         }
+         else {
+           $email = $request->email;
+           $user = User::where('email', $email)->first();
+           if(!$user){
+             $login_status = false;
+             $msg = 'Email Tidak Terdaftar!';
+           }else{
+             $id = $user->id;
+             $nama_perusahaan = $user->name;
+             $random_pwd = str_random(8);
+//update_Password
+             $user->password = bcrypt($random_pwd);
+             $user->save();
+//Send Email Password
+             $sendTo = $email;
+             $subject = 'Reset Password';
+             // $mail_message = $kd_vendor;
+
+             Log::info('Start');
+             Mail::to($sendTo)
+                 ->queue(new ResetPwd($random_pwd, $nama_perusahaan, $sendTo, $subject));
+             log::info('End');
+             $login_status = true;
+             $msg = 'Password telah dikirim ke email!';
+           }
+         }
+         return response()->json([
+           'status'=>$login_status,
+           'msg' => $msg
+         ]);
+       }
 
 
 

@@ -273,6 +273,7 @@ class UploadSapController extends Controller
                 $log_activity->komentar = "Upload From Smile";
                 $log_activity->save();
 
+                return Response::json(['status'=>true,'csrf_token'=>csrf_token()]);
               }
             }
           }

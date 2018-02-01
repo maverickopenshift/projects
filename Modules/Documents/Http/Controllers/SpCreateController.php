@@ -75,7 +75,7 @@ class SpCreateController
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
 
         }
-        if($request['penomoran_otomatis']=='no' && Config::get_config('auto-numb')=='off'){
+        if( Config::get_config('auto-numb')=='off'){
           $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
         }
         $check_new_lampiran = false;
@@ -215,7 +215,7 @@ class SpCreateController
       $doc->doc_parent_id = Documents::get_id_parent_sp($request->parent_kontrak);
       $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
       $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
-      if($request['penomoran_otomatis']=='no' && Config::get_config('auto-numb')=='off'){
+      if( Config::get_config('auto-numb')=='off'){
         $doc->doc_no = $request->doc_no;
       }
       $doc->save();

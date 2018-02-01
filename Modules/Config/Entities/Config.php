@@ -18,13 +18,16 @@ class Config extends Model
       return false;
     }
     
-    public static function get_penomoran_otomatis($v){
+    public static function get_penomoran_otomatis($v=null){
+      // if(self::get_config('auto-numb')=='off'){
+      //   return 'no';
+      // }
+      // else if(empty($v)){
+      //   return 'yes';
+      // }
       if(self::get_config('auto-numb')=='off'){
         return 'no';
       }
-      else if(empty($v)){
-        return 'yes';
-      }
-      return $v;
+      return 'yes';
     }
 }

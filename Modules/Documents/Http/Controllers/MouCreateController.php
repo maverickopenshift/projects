@@ -77,7 +77,7 @@ class MouCreateController extends Controller
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
         
-        if($request['penomoran_otomatis']=='no' && Config::get_config('auto-numb')=='off'){
+        if( Config::get_config('auto-numb')=='off'){
           $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
         }
         
@@ -187,7 +187,7 @@ class MouCreateController extends Controller
       $doc->doc_signing = $request->statusButton;
       
       $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
-      if($request['penomoran_otomatis']=='no'  && Config::get_config('auto-numb')=='off'){
+      if( Config::get_config('auto-numb')=='off'){
         $doc->doc_no = $request->doc_no;
       }
       $doc->save();

@@ -105,7 +105,7 @@ class SuratPengikatanEditController extends Controller
         }
       }
       $request->merge(['doc_lampiran' => $new_lamp]);
-      if($request['penomoran_otomatis']=='no' && Config::get_config('auto-numb')=='off'){
+      if(Config::get_config('auto-numb')=='off'){
         $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
       }
     }
@@ -187,7 +187,7 @@ class SuratPengikatanEditController extends Controller
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       $doc->supplier_id = $request->supplier_id;
       $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
-      if($request['penomoran_otomatis']=='no'  && Config::get_config('auto-numb')=='off'){
+      if(Config::get_config('auto-numb')=='off'){
         $doc->doc_no = $request->doc_no;
       }
       else{

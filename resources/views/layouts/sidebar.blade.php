@@ -38,7 +38,7 @@
                           <li class="{{Request::is("documents/create/amandemen_kontrak")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_kontrak'])}}">Kontrak KHS</a></li>
                           <li class="{{Request::is("documents/create/amandemen_kontrak")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_kontrak'])}}">Kontrak Turnkey</a></li>
                         </ul>
-                      </li>                      
+                      </li>
                       <li class="{{Request::is("documents/create/adendum")?'active':''}}" ><a href="{{route('doc.create',['type'=>'adendum'])}}">Addendum</a></li>
                       <li class="{{Request::is("documents/create/side_letter")?'active':''}}" ><a href="{{route('doc.create',['type'=>'side_letter'])}}">Side Letter</a></li>
                       <li class="{{Request::is("documents/create/mou")?'active':''}}" ><a href="{{route('doc.create',['type'=>'mou'])}}">MoU</a></li>
@@ -47,7 +47,7 @@
                 @endpermission
 
                 @permission('lihat-kontrak')
-                  @if(Laratrust::hasRole('approver')==false && Laratrust::hasRole('admin')==false) 
+                  @if(Laratrust::hasRole('approver')==false && Laratrust::hasRole('admin')==false)
                     <li class="{{Request::is("documents/status/draft")?'active':''}}" ><a href="{{route('doc',['status'=>'draft'])}}">Draft </a></li>
                   @endif
                   <li class="{{Request::is("documents/status/proses")?'active':''}}" ><a href="{{route('doc',['status'=>'proses'])}}">Perlu Diproses</a></li>
@@ -89,7 +89,7 @@
                 <span>Manajemen Supplier</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 @permission('lihat-supplier')
-                  <li class="{{Request::is("supplier/create") || Request::is("supplier/*/edit") || Request::is("supplier/status/proses")?'active':''}}" ><a href="{{route('supplier',['status'=>'proses'])}}">Perlu Diproses</a></li>
+                  <li class="{{Request::is("supplier/status/proses")?'active':''}}" ><a href="{{route('supplier',['status'=>'proses'])}}">Perlu Diproses</a></li>
                   <li class="{{Request::is("supplier/create") || Request::is("supplier/*/edit") || Request::is("supplier/status/all")?'active':''}}" ><a href="{{route('supplier',['status'=>'all'])}}">Supplier</a></li>
                   <li class="{{Request::is("supplier/sap")?'active':''}}" ><a href="{{route('suppliersap')}}">Supplier SAP</a></li>
                 @endpermission

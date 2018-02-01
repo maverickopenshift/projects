@@ -27,6 +27,7 @@ class DataSupplierController extends Controller
     {
       $username=auth()->user()->username;
       $sql = supplier::where('kd_vendor','=',$username)->first();
+      // dd($sql);
 
     $notif = "Kelengkapan data belum terisi";
             if($sql){
@@ -55,8 +56,10 @@ class DataSupplierController extends Controller
 
     public function data()
     {
-      $id_session=auth()->user()->id;
-      $sql = supplier::where('id_user','=',$id_session)->get();
+      // $id_session=auth()->user()->id;
+      // $sql = supplier::where('id_user','=',$id_session)->get();
+      $username=auth()->user()->username;
+      $sql = supplier::where('kd_vendor','=',$username)->get();
       return Datatables::of($sql)
           ->addIndexColumn()
           ->filterColumn('created_at', function ($query, $keyword) {

@@ -15,12 +15,13 @@
           </div>
           <div class="btn-group add_smile_group" role="group" aria-label="...">
             @if(\Auth::user()->hasPermission('tambah-supplier'))
-              <form action="{{route('supplier.upload.sap')}}" class="" method="post" enctype="multipart/form-data">
+              <form action="{{route('supplier.upload.smile')}}" id="form-user" class="" method="post" enctype="multipart/form-data">
                 {{ csrf_field() }}
-                <div class="col-sm-10" style="display:none">
-                  <input type="file" name="supplier_sap" class="supplier_sap hide"/>
-                  <button class="btn btn-primary btn-sm upload-supplier_sap" type="button"><i class="fa fa-upload"></i> Upload Supplier from SMILE</button>
-                  <span class="error error-supplier_sap text-danger"></span>
+                <div class="col-sm-12">
+                  <input type="file" name="supplier_smile" class="supplier_smile hide" accept=".csv,.xls,.xlsx"/>
+                  <button class="btn btn-primary btn-sm upload-supplier_smile" type="button"><i class="fa fa-upload"></i> Upload Supplier from SMILE</button>
+                  <a href="{{route('sap.template.download',['filename'=>'smile'])}}" class="btn btn-info  btn-sm" title="Download Sample Template"><i class="glyphicon glyphicon-download-alt"></i> Download sample template</a>
+                  <span class="error error-supplier_smile text-danger"></span>
                 </div>
                 <button class="btn btn-primary btn-sm btn_submit hide" type="submit"></button>
               </form>
@@ -240,18 +241,57 @@ $('#datatables').DataTable({
       });
   });
 
-  $('.upload-supplier_sap').on('click', function(event) {
+  $('.upload-supplier_smile').on('click', function(event) {
     /* Act on the event */
     event.stopPropagation();
     event.preventDefault();
-    $('.error-supplier_sap').html('');
-    var $file = $('.supplier_sap').click();
+    $('.error-supplier_smile').html('');
+    var $file = $('.supplier_smile').click();
   });
-  $('.supplier_sap').on('change', function(event) {
+
+  $('.supplier_smile').on('change', function(event) {
+    // $('.btn_submit').click();
     event.stopPropagation();
     event.preventDefault();
-    $('.btn_submit').click();
+// console.log("hai");
+    var loading = $('.loading2');
+    var form_user =  $('#form-user');
+    loading.show();
+    $.ajax({
+      url: form_user.attr('action'),
+      type: 'post',
+      processData: false,
+      contentType: false,
+      data: new FormData(document.getElementById("form-user")),
+      dataType: 'json',
+    })
+    .done(function(data) {
+      if(data.status){
+        console.log("sukses");
+        bootbox.alert({
+            title:"Pemberitahuan",
+            message: "Data berhasil diupload",
+            callback: function (result) {
+              window.location = '{!!route('supplier',['status'=>'all'])!!}'
+            }
+        });
+      }
+      else{
+        bootbox.alert({
+            title:"Pemberitahuan",
+            message: "Format CSV Tidak Valid!",
+            callback: function (result) {
+              window.location = '{!!route('supplier',['status'=>'all'])!!}'
+            }
+        });
+      }
+      loading.hide();
+    })
+    .always(function(){
+      loading.hide();
+    });
   });
+
   $(document).on('click', '.unlink_btn', function(event) {
     event.preventDefault();
     var content = $('.content-view');

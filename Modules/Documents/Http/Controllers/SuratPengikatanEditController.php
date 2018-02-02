@@ -73,8 +73,8 @@ class SuratPengikatanEditController extends Controller
       $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
-      $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       // $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
@@ -127,20 +127,20 @@ class SuratPengikatanEditController extends Controller
     $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
     if($request->lt_file_ketetapan_pemenang_old==null){
       $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
-    }   
+    }
 
     $rules['lt_judul_kesanggupan_mitra']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
     $rules['lt_tanggal_kesanggupan_mitra']  = 'required|date_format:"Y-m-d"';
     if($request->lt_file_kesanggupan_mitra_old==null){
       $rules['lt_file_kesanggupan_mitra']      = 'required|mimes:pdf';
-    }   
+    }
 
     $rules['lt_judul_rks']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
     $rules['lt_tanggal_rks']  = 'required|date_format:"Y-m-d"';
     if($request->lt_file_rks_old==null){
       $rules['lt_file_rks']      = 'required|mimes:pdf';
-    }   
-    
+    }
+
     $rule_ps_judul = (count($request['ps_judul'])>1)?'required':'sometimes|nullable';
 
     $rule_ps_isi = (count($request['ps_isi'])>1)?'required':'sometimes|nullable';
@@ -334,7 +334,7 @@ if(in_array($status,['0','2'])){
         ])->delete();
       foreach($request->f_latar_belakang_judul as $key => $val){
         if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
-          
+
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = "latar_belakang_optional";

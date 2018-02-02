@@ -65,15 +65,15 @@ class SpEditController extends Controller
         $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
         $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
-        $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-        $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_lampiran_teknis']     =  'sometimes|nullable|mimes:pdf';
         $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
-        
+
         if( Config::get_config('auto-numb')=='off'){
           $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
         }
@@ -136,7 +136,7 @@ class SpEditController extends Controller
       $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
       if($request->lt_file_ketetapan_pemenang_old==null){
         $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
-      }   
+      }
 
       $rules['lt_judul_kesanggupan_mitra']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['lt_tanggal_kesanggupan_mitra']  = 'required|date_format:"Y-m-d"';
@@ -367,7 +367,7 @@ if(in_array($status,['0','2'])){
           ])->delete();
         foreach($request->f_latar_belakang_judul as $key => $val){
           if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
-            
+
             $doc_meta = new DocMeta();
             $doc_meta->documents_id = $doc->id;
             $doc_meta->meta_type = "latar_belakang_optional";

@@ -39,13 +39,13 @@ class AmandemenSpEditController extends Controller
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
-      
+
       if( Config::get_config('auto-numb')=='off'){
         $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
       }
@@ -110,14 +110,14 @@ class AmandemenSpEditController extends Controller
     $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
     if($request->lt_file_ketetapan_pemenang_old==null){
       $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
-    }   
+    }
 
     $rules['lt_judul_kesanggupan_mitra']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
     $rules['lt_tanggal_kesanggupan_mitra']  = 'required|date_format:"Y-m-d"';
     if($request->lt_file_kesanggupan_mitra_old==null){
       $rules['lt_file_kesanggupan_mitra']      = 'required|mimes:pdf';
     }
-    
+
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
     $validator->after(function ($validator) use ($request) {
       if($request->doc_enddate < $request->doc_startdate){
@@ -142,7 +142,7 @@ class AmandemenSpEditController extends Controller
       if((\Laratrust::hasRole('admin'))){
         $doc->user_id  = $request->user_id;
       }
-      
+
       $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
       if( Config::get_config('auto-numb')=='off'){
         $doc->doc_no = $request->doc_no;
@@ -150,7 +150,7 @@ class AmandemenSpEditController extends Controller
       else{
         $doc->doc_no = null;
       }
-      
+
       $doc->doc_signing = '0';
       $doc->doc_parent = 0;
       $doc->doc_parent_id = $request->parent_sp;
@@ -270,7 +270,7 @@ class AmandemenSpEditController extends Controller
         ])->delete();
       foreach($request->f_latar_belakang_judul as $key => $val){
         if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
-          
+
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = "latar_belakang_optional";

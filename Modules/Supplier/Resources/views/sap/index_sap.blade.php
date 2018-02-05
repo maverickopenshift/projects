@@ -10,9 +10,10 @@
               <form action="{{route('supplier.upload.sap')}}" class="" method="post" id="form-user" enctype="multipart/form-data">
                 {{ csrf_field() }}
                 <div class="col-md-12">
-                  <input type="file" name="supplier_sap" class="supplier_sap hide"/>
+                  <input type="file" name="supplier_sap" class="supplier_sap hide" accept=".csv,.xls"/>
                   <button class="btn btn-primary btn-sm upload-supplier_sap" type="button"><i class="fa fa-upload"></i> Upload Supplier from SAP</button>
                   {{-- <span>Format File Tidak Valid</span> --}}
+                  <a href="{{route('sap.template.download',['filename'=>'sap'])}}" class="btn btn-info  btn-sm" title="Download Sample Template"><i class="glyphicon glyphicon-download-alt"></i> Download sample template</a>
                   <span>{!!Helper::error_help($errors,'supplier_sap')!!}</span>
                 </div>
                 <button class="btn btn-primary btn-sm btn_submit hide" type="submit"></button>

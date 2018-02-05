@@ -66,14 +66,14 @@
                 <th style="width:50px;">No.</th>
                 <th>Kode Item</th>
                 <th>Item</th>
-                @if($doc_type->name!='khs')
+                @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
                   <th  style="width:70px;">Qty</th>
                 @endif
                 <th style="width:100px;">Satuan</th>
                 <th>Currency</th>
                 <th>Harga</th>
                 <th>Harga Jasa</th>
-                @if($doc_type->name!='khs')
+                @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
                   <th style="width:100px;">Harga Total</th>
                 @endif
                 <th>Keterangan</th>
@@ -96,7 +96,7 @@
                       {!!Helper::error_help($errors,'hs_item.'.$key)!!}
                     </td>
 
-                    @if($doc_type->name!='khs')
+                    @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs' )
                       <td class="{{ $errors->has('hs_qty.'.$key) ? ' has-error' : '' }}">
                         <input type="text" class="form-control input-rupiah hitung_total" name="hs_qty[]" value="{{$qty[$key]}}" placeholder="Jumlah..">
                         {!!Helper::error_help($errors,'hs_qty.'.$key)!!}
@@ -135,7 +135,7 @@
                       <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga_jasa[]" value="{{$harga_jasa[$key]}}" placeholder="Harga Jasa..">
                       {!!Helper::error_help($errors,'hs_harga_jasa.'.$key)!!}
                     </td>
-                    @if($doc_type->name!='khs')
+                    @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
                       <td class="text-right" style="vertical-align: middle;">0</td>
                     @endif
                     <td class="{{ $errors->has('hs_keterangan.'.$key) ? ' has-error' : '' }}">
@@ -156,7 +156,7 @@
                   <td>1</td>
                   <td><input type="text" class="form-control" name="hs_kode_item[]" placeholder="Kode.."></td>
                   <td><input type="text" class="form-control" name="hs_item[]" placeholder="Nama.."></td>
-                  @if($doc_type->name!='khs')
+                  @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
                     <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_qty[]" placeholder="Jumlah.."></td>
                   @endif
                   <td><input type="text" class="form-control" name="hs_satuan[]" placeholder="Satuan.."></td>
@@ -168,7 +168,7 @@
                   </td>
                   <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_harga[]" placeholder="Harga Barang.."></td>
                   <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_harga_jasa[]"  placeholder="Harga Jasa.."></td>
-                  @if($doc_type->name!='khs')
+                  @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
                     <td class="text-right" style="vertical-align: middle;">0</td>
                   @endif
                   <td><input type="text" class="form-control" name="hs_keterangan[]" placeholder="Keterangan.." /></td>
@@ -204,7 +204,6 @@
 @push('scripts')
 <script>
 $(function() {
-
   $('.upload-daftar_harga').on('click', function(event) {
     event.stopPropagation();
     event.preventDefault();
@@ -235,8 +234,6 @@ $(function() {
       $('.error-daftar_harga').html('Format File tidak valid! hanya CSV & XLS yang valid');
     }
   });
-
-
 });
 
 function handleDaftarHargaFileSelect(file) {

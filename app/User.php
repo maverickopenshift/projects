@@ -77,11 +77,40 @@ class User extends Authenticatable
       $data->where('objiddivisi',self::get_divisi_by_user_id())->groupBy(['objidunit','v_short_unit']);
       return $data;
     }
-    public static function get_all_disivi(){
+    public static function get_all_disivi($key=false){
       $data = \DB::table('rptom')->selectRaw('objiddivisi as id,v_short_divisi as title,count(objidposisi) as total_divisi');
       $data->orderBy('v_short_divisi','ASC');
       $data->whereNotNull('v_short_divisi');
       $data->groupBy(['objiddivisi','v_short_divisi']);
+      if(!empty($key)){
+        $data->where('v_short_divisi', 'like', '%'.$key.'%');
+      }
+      return $data;
+    }
+    public static function get_unit($key=false,$divisi=false){
+      $data = \DB::table('rptom')->selectRaw('objidunit as id,v_short_unit as title,count(objidunit) as total_unit');
+      $data->orderBy('v_short_unit','ASC');
+      $data->whereNotNull('v_short_unit');
+      $data->groupBy(['objidunit','v_short_unit']);
+      if(!empty($divisi)){
+        $data->where('objiddivisi',$divisi);
+      }
+      if(!empty($key)){
+        $data->where('v_short_unit', 'like', '%'.$key.'%');
+      }
+      return $data;
+    } 
+    public static function get_posisi($key=false,$unit=false){
+      $data = \DB::table('rptom')->selectRaw('objidposisi as id,v_short_posisi as title,count(objidposisi) as total_posisi');
+      $data->orderBy('v_short_posisi','ASC');
+      $data->whereNotNull('v_short_posisi');
+      $data->groupBy(['objidposisi','v_short_posisi']);
+      if(!empty($unit)){
+        $data->where('objidunit',$unit);
+      }
+      if(!empty($key)){
+        $data->where('v_short_posisi', 'like', '%'.$key.'%');
+      }
       return $data;
     } 
     public static function get_posisi_by_unit($unit){
@@ -117,8 +146,13 @@ class User extends Authenticatable
     public static function get_user_pegawai(){
       $data = \DB::table('users_pegawai')
                 ->join('pegawai', 'pegawai.n_nik', '=', 'users_pegawai.nik')
-                ->where('users_pegawai.users_id',\Auth::id());
-      return $data->first();
+                ->where('users_pegawai.users_id',\Auth::id())->first();
+      if(!$data){
+        $data = \DB::table('users_pegawai')
+                  ->join('pegawai_nonorganik', 'pegawai_nonorganik.n_nik', '=', 'users_pegawai.nik')
+                  ->where('users_pegawai.users_id',\Auth::id())->first();
+      }
+      return $data;
     }
     public static function get_user_by_role($role){
       $data = \DB::table('role_user')
@@ -130,4 +164,46 @@ class User extends Authenticatable
                 ->where('roles.name',$role);
       return $data;
     }
+    public static function check_usertype($username){
+      if($username=='admin'){
+        return 'admin';
+      }
+      else if(self::is_vendor($username)){
+        return 'vendor';
+      }
+      else if(self::is_organik($username)){
+        return 'organik';
+      }
+      else if(self::is_nonorganik($username)){
+        return 'nonorganik';
+      }
+      else{
+        return 'anonimouse';
+      }
+    }
+    public static function is_vendor($username){
+      $count = \DB::table('supplier')->select('kd_vendor')
+                ->where('kd_vendor',$username)->count();
+      if($count>0){
+        return true;
+      }
+      return false;
+    }
+    public static function is_organik($username){
+      $count = \DB::table('pegawai')->select('n_nik')
+                ->where('n_nik',$username)->count();
+      if($count>0){
+        return true;
+      }
+      return false;
+    }
+    public static function is_nonorganik($username){
+      $count = \DB::table('pegawai_nonorganik')->select('n_nik')
+                ->where('n_nik',$username)->count();
+      if($count>0){
+        return true;
+      }
+      return false;
+    }
+    
 }

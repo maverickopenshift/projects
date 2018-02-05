@@ -206,8 +206,8 @@
               <label for="pkp" class="col-sm-5 control-label"><span class="text-red">*</span> Perusahaan Kena Pajak</label>
               <div class="col-sm-7">
                 <select class="form-control" name="pkp" id="pkp">
-                  <option value="1" {{ old('pkp',Helper::prop_exists($supplier,'pkp'))=='1'?"selected='selected'":"" }}>Ya</option>
-                  <option value="0" {{ old('pkp',Helper::prop_exists($supplier,'pkp'))=='0'?"selected='selected'":"" }}>Tidak</option>
+                  <option value="0" {{ old('pkp',Helper::prop_exists($supplier,'pkp'))=='0'?"selected='selected'":"" }}>Ya</option>
+                  <option value="1" {{ old('pkp',Helper::prop_exists($supplier,'pkp'))=='1'?"selected='selected'":"" }}>Tidak</option>
                 </select>
                 @if ($errors->has('pkp'))
                     <span class="help-block">
@@ -458,7 +458,7 @@ function add_field_x(attr) {
 }
 
 var isi=$("#pkp").val();
-    if(isi == "1"){
+    if(isi == "0"){
       $("#nonpwp").show();
     }else{
       $("#nonpwp").hide();
@@ -466,7 +466,7 @@ var isi=$("#pkp").val();
 
 $("#pkp").change(function () {
        var pkp = this.value;
-       if(pkp == "1"){
+       if(pkp == "0"){
          $("#nonpwp").show();
        }else{
          $("#nonpwp").hide();

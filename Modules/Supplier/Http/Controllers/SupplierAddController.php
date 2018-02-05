@@ -64,17 +64,17 @@ class SupplierAddController extends Controller
         'akte_akhir_notaris'=> 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'siup_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'siup_tg_terbit'     => 'required|date_format:"Y-m-d"',
-        'siup_tg_expired'     => 'required|date_format:"Y-m-d"',
+        'siup_tg_expired'     => 'required|date_format:"Y-m-d"|after:siup_tg_terbit',
         'siup_kualifikasi'     => 'required|in:"1","2","3"',
         'pkp'      => 'required|boolean',
         'npwp_no'     => 'required_if:pkp,"1"|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'npwp_tg'     => 'required_if:pkp,"1"|nullable|date_format:"Y-m-d"',
         'tdp_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'tdp_tg_terbit'     => 'required|date_format:"Y-m-d"',
-        'tdp_tg_expired'     => 'required|date_format:"Y-m-d"',
+        'tdp_tg_expired'     => 'required|date_format:"Y-m-d"|after:tdp_tg_terbit',
         'idp_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'idp_tg_terbit'     => 'required|date_format:"Y-m-d"',
-        'idp_tg_expired'     => 'required|date_format:"Y-m-d"',
+        'idp_tg_expired'     => 'required|date_format:"Y-m-d"|after:idp_tg_terbit',
         'nm_direktur_utama'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'nm_komisaris_utama'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'cp1_nama'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -86,12 +86,17 @@ class SupplierAddController extends Controller
         'legal_dokumen.*.file' => 'required|mimes:pdf',
         // 'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         // 'sertifikat_dokumen.*.file' => 'required|mimes:pdf',
-
-        'iujk_no.*'                    => 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'iujk_tg_terbit.*'             => 'sometimes|nullable|date_format:"Y-m-d"',
-        'iujk_tg_expired.*'            => 'sometimes|nullable|date_format:"Y-m-d"',
-        'nama_sertifikat_dokumen.*'    => 'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i',
     );
+
+    $rule_iujk_no = (count($request['iujk_no'])>1)?'required':'sometimes|nullable';
+    $rule_iujk_tg_terbit = (count($request['iujk_tg_terbit'])>1)?'required':'sometimes|nullable';
+    $rule_iujk_tg_expired = (count($request['iujk_tg_expired'])>1)?'required':'sometimes|nullable';
+    $rule_nama_sertifikat_dokumen = (count($request['nama_sertifikat_dokumen'])>1)?'required':'sometimes|nullable';
+
+    $rules['iujk_no.*']                    = $rule_iujk_no.'|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['iujk_tg_terbit.*']             = $rule_iujk_tg_terbit.'|date_format:"Y-m-d"';
+    $rules['iujk_tg_expired.*']            = $rule_iujk_tg_expired.'|date_format:"Y-m-d"|after:iujk_tg_terbit.*';
+    $rules['nama_sertifikat_dokumen.*']    = $rule_nama_sertifikat_dokumen.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
     $check_new_lampiran = false;
     foreach($request->file_sertifikat_dokumen_old as $k => $v){
       if(isset($request->file_sertifikat_dokumen[$k]) && is_object($request->file_sertifikat_dokumen[$k]) && !empty($v)){//jika ada file baru

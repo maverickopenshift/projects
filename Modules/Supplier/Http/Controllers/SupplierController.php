@@ -28,9 +28,9 @@ class SupplierController extends Controller
       $status = $request->status;
       if($status == "proses"){
         $sql = Supplier::with('user','supplierSap')
-        ->where('vendor_status', '=', '0')->get();
+        ->where('vendor_status', '=', '0')->paginate(50);
       }else{
-        $sql = Supplier::with('user','supplierSap')->get();
+        $sql = Supplier::with('user','supplierSap')->paginate(50);
       }
       // dd($sql);
 

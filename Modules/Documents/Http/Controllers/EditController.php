@@ -13,12 +13,15 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocComment as Comments;
+use Modules\Config\Entities\Config;
 use Modules\Documents\Http\Controllers\SuratPengikatanEditController as SuratPengikatanEdit;
 use Modules\Documents\Http\Controllers\SideLetterEditController as SideLetterEdit;
 use Modules\Documents\Http\Controllers\MouEditController as MouEdit;
 use Modules\Documents\Http\Controllers\AmandemenSpEditController as AmandemenSpEdit;
 use Modules\Documents\Http\Controllers\SpEditController as SpEdit;
 use Modules\Documents\Http\Controllers\AmandemenKontrakEditController as AmademenKontrakEdit;
+use Modules\Documents\Http\Controllers\AmandemenKontrakKhsEditController as AmademenKontrakKhsEdit;
+use Modules\Documents\Http\Controllers\AmandemenKontrakTurnkeyEditController as AmademenKontrakTurnkeyEdit;
 
 
 use App\Helpers\Helpers;
@@ -34,9 +37,11 @@ class EditController extends Controller
   protected $amandemenSpEdit;
   protected $spEdit;
   protected $amademenKontrakEdit;
+  protected $amademenKontrakKhsEdit;
+  protected $amademenKontrakTurnkeyEdit;
   protected $SideLetterEdit;
 
-  public function __construct(Documents $documents,SuratPengikatanEdit $SuratPengikatanEdit,MouEdit $MouEdit,AmandemenSpEdit $amandemenSpEdit,SpEdit $spEdit, AmademenKontrakEdit $amademenKontrakEdit, SideLetterEdit $SideLetterEdit)
+  public function __construct(Documents $documents,SuratPengikatanEdit $SuratPengikatanEdit,MouEdit $MouEdit,AmandemenSpEdit $amandemenSpEdit,SpEdit $spEdit, AmademenKontrakEdit $amademenKontrakEdit, SideLetterEdit $SideLetterEdit, AmademenKontrakKhsEdit $amademenKontrakKhsEdit, AmademenKontrakTurnkeyEdit $amademenKontrakTurnkeyEdit)
   {
       $this->documents = $documents;
       $this->SuratPengikatanEdit = $SuratPengikatanEdit;
@@ -44,6 +49,8 @@ class EditController extends Controller
       $this->amandemenSpEdit = $amandemenSpEdit;
       $this->spEdit = $spEdit;
       $this->amademenKontrakEdit = $amademenKontrakEdit;
+      $this->amademenKontrakKhsEdit = $amademenKontrakKhsEdit;
+      $this->amademenKontrakTurnkeyEdit = $amademenKontrakTurnkeyEdit;
       $this->SideLetterEdit = $SideLetterEdit;
   }
   
@@ -88,12 +95,12 @@ class EditController extends Controller
       $dt->parent_kontrak_text = $this->documents->select('doc_no')->where('id','=',$parent)->first()->doc_no;
     }
 
-    if(in_array($type,['amandemen_kontrak','adendum','side_letter'])){
+    if(in_array($type,['amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum','side_letter'])){
       $dt->parent_kontrak = $dt->doc_parent_id;
       $dt->parent_kontrak_text = $this->documents->select('doc_no')->where('id','=',$dt->doc_parent_id)->first()->doc_no;
     }    
     
-    if(in_array($type,['khs', 'turnkey','surat_pengikatan','sp','amandemen_sp','adendum','side_letter'])){
+    if(in_array($type,['khs', 'turnkey','amandemen_kontrak_khs','amandemen_kontrak_turnkey','surat_pengikatan','sp','amandemen_sp','adendum','side_letter'])){
       if(isset($dt->latar_belakang_kesanggupan_mitra[0])){
         $dt->lt_judul_kesanggupan_mitra     = $dt->latar_belakang_kesanggupan_mitra[0]['meta_name'];
         $dt->lt_tanggal_kesanggupan_mitra   = $dt->latar_belakang_kesanggupan_mitra[0]['meta_desc'];
@@ -251,6 +258,8 @@ class EditController extends Controller
     }
 
     $dt->doc_po = $dt->doc_po_no;
+    $dt->doc_no = $dt->doc_no;
+    $dt->penomoran_otomatis = $dt->penomoran_otomatis;
     $dt->supplier_text = $dt->supplier->bdn_usaha.'.'.$dt->supplier->nm_vendor;
     $dt->konseptor_text = $dt->users->name.' - '.$dt->users->username;
     $data['page_title'] = 'Edit Dokumen';
@@ -259,6 +268,7 @@ class EditController extends Controller
     
     $data['pegawai'] = \App\User::get_user_pegawai();
     $data['action_type'] = 'edit';
+    $data['auto_numb']=Config::get_config('auto-numb');
     $data['action_url'] = route('doc.storeedit',['type'=>$dt->jenis->type->name,'id'=>$dt->id]);
     $data['data'] = [];
     $data['id'] = $dt->id;
@@ -295,6 +305,14 @@ class EditController extends Controller
     }
     if(in_array($type,['amandemen_kontrak','adendum'])){
       return $this->amademenKontrakEdit->store($request);
+    }
+
+    if($type=='amandemen_kontrak_khs'){
+      return $this->amademenKontrakKhsEdit->store($request);
+    }
+
+    if($type=='amandemen_kontrak_turnkey'){
+      return $this->amademenKontrakTurnkeyEdit->store($request);
     }
 
     $doc_value = $request->doc_value;

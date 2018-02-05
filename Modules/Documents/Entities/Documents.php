@@ -8,6 +8,8 @@ use Modules\Documents\Entities\DocType;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Users\Entities\Pegawai;
 
+use Modules\Documents\Entities\Sap;
+
 class Documents extends Model
 {
     protected $fillable = [];
@@ -118,8 +120,9 @@ class Documents extends Model
         return $this->hasMany('Modules\Documents\Entities\DocPic')->with('pegawai');
     }
     public static function check_po($po){
-      $count = \DB::table('dummy_po')->where('no_po','=',$po)->count();
-      if($count>0){
+      //$count = \DB::table('dummy_po')->where('no_po','=',$po)->count();
+      $sap = Sap::get_po($po);
+      if($sap['length']>0){
         return true;
       }
       return false;
@@ -136,36 +139,48 @@ class Documents extends Model
       $peg = Pegawai::select('c_kode_unit')->where('n_nik','=',$doc->doc_pihak1_nama)->first();
       return $peg->c_kode_unit;
     }
-    public static function create_no_kontrak($template_id,$doc_id,$year=null){
+    public static function create_no_kontrak($template_id,$doc_id){
       $loker = self::get_loker($doc_id);
-      $start = '00001';
-      $pattern = 'K.TEL.';
-      $year = (is_null($year))?date('Y'):$year;
-      $doc_template = \DB::table('doc_template')->where('id',$template_id)->first();
-      $no_kontrak=$pattern.$start.'/'.$doc_template->kode.'/'.$loker."/".$year;
-      $count = \DB::table('documents')->where('doc_no', 'like', $pattern.$start.'%')->count();
-        if($count==0){
-          $new_id = $no_kontrak;
+      $doc = \DB::table('documents')->where('id',$doc_id)->first();
+      if($doc){
+        if($doc->penomoran_otomatis=='yes'){
+          $start = '00001';
+          $pattern = ($doc->doc_type=='surat_pengikatan')?'C.TEL':'K.TEL.';
+          $year = date('Y');
+          $doc_template = \DB::table('doc_template')->where('id',$template_id)->first();
+          $no_kontrak=$pattern.$start.'/'.$doc_template->kode.'/'.$loker."/".$year;
+          $count = \DB::table('documents')
+                        ->whereRaw('SUBSTR(doc_no,7,5) = ? ', [$start])
+                        ->whereRaw('RIGHT(doc_no,4) = ? ', [$year])
+                        ->count();
+            if($count==0){
+              $new_id = $no_kontrak;
+            }
+            else{
+              //jika 001 sudah ada
+              $dt = \DB::table('documents')
+                      ->select('doc_no')
+                      ->whereNotNull('doc_no')
+                      ->orderBy('updated_at','DESC')
+                      ->first();
+
+              $last = $dt->doc_no;
+              $lastplg = substr($last, 6,5);
+              $nextplg = intval($lastplg) + 1;
+              $idnya = sprintf('%05s', $nextplg);
+              $new_id=$pattern.$idnya.'/'.$doc_template->kode.'/'.$loker."/".$year;
+            }
+            $count = \DB::table('documents')->where('doc_no',$new_id)->count();
+            if($count>1){
+              $new_id = self::create_no_kontrak($template_id,$doc_id);
+            }
+            return $new_id;
         }
         else{
-          //jika 001 sudah ada
-          $dt = \DB::table('documents')
-                  ->select('doc_no')
-                  ->whereNotNull('doc_no')
-                  ->orderBy('updated_at','DESC')
-                  ->first();
-
-          $last = $dt->doc_no;
-          $lastplg = substr($last, 6,5);
-          $nextplg = intval($lastplg) + 1;
-          $idnya = sprintf('%05s', $nextplg);
-          $new_id=$pattern.$idnya.'/'.$doc_template->kode.'/'.$loker."/".$year;
+          return $doc->doc_no;
         }
-        $count = \DB::table('documents')->where('doc_no',$new_id)->count();
-        if($count>1){
-          $new_id = self::create_no_kontrak($template_id,$year);
-        }
-        return $new_id;
+      }
+      return '';
     }
     public function get_child($type,$doc_id,$count=true){
       $type = DocType::where('name',$type)->first();

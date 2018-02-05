@@ -23,5 +23,8 @@ Route::get('/logout', function () {
     return redirect('/login');
 })->name('logout');
 
+Route::post('/login-ajax', 'Auth\LoginController@loginAjax')->name('login.ajax');
+Route::post('/pgs-change', 'HomeController@pgsChange')->name('home.pgschange');
+
 Route::get('/userprofile', 'Profiluser@index')->name('home.profile');
 Route::post('/userprofile/update', 'Profiluser@update')->name('home.profile.update');

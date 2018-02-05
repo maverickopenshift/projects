@@ -17,22 +17,45 @@ class MappingSapController extends Controller
     public function index(Request $request)
     {
     $id_sup = $request->id;
+    $npwp_search = $request->npwp;
+    $nama_search = $request->nama;
+    $alamat_search = $request->alamat;
+    $kota_search = $request->kota;
+    // dd($nama_search);
     $supplier = Supplier::where('id',$id_sup)->first();
     if(!$supplier){
       abort(500);
     }
     $nama_vendor = $supplier->nm_vendor;
+    // dd($nama_vendor);
     $kota = $supplier->kota;
     $alamat = $supplier->alamat;
 
-    $sap = Sap::where('city',$kota)
-    ->where('name_1', 'like', '%'.$nama_vendor.'%')
-    ->where('street', 'like', '%'.$alamat.'%')->get();
+    $sap = Sap::where('city', 'like', '%'.$kota.'%')
+    ->orWhere('name_1', 'like', '%'.$nama_vendor.'%')
+    ->orWhere('street', 'like', '%'.$alamat.'%');
+
+    if(!empty($nama_search)){
+      $sap->orWhere('name_1', 'like', '%'.$nama_search.'%');
+    }
+    if(!empty($npwp_search)){
+      $sap->orWhere('vat_registration_no', 'like', '%'.$npwp_search.'%');
+    }
+    if(!empty($alamat_search)){
+      $sap->orWhere('street', 'like', '%'.$alamat_search.'%');
+    }
+    if(!empty($kota_search)){
+      $sap->orWhere('city', 'like', '%'.$kota_search.'%');
+    }
+
+    // $sap = $sap->toSql();
+    $sap = $sap->paginate(30);
+    // dd($sap);
     $action_type="mapping";
     // dd($sap->toArray());
     $page_title = 'Supplier SAP';
 
-        return view('supplier::sap.mapping_sap')->with(compact('sap','page_title','action_type','id_sup'));
+        return view('supplier::sap.mapping_sap')->with(compact('sap','page_title','action_type','id_sup','supplier'));
     }
 
     public function simpan(Request $request)

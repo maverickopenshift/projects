@@ -21,7 +21,7 @@
   <div class="register-box">
     <div class="register-box-body" style="border-radius: 10px;">
       <div class="register-logo">
-        <img src="{{asset('images/logo.png')}}" alt="Consys">
+        <img src="{{asset('images/logo_new.png')}}" alt="Consys">
       </div>
       <form id="form-me" action="{{ route('usersupplier.add') }}"  method="post">
         <img src="{{asset('images/loader.gif')}}" alt="Consys" id="loader" style="display:none;">

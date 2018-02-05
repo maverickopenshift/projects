@@ -125,5 +125,8 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
 
         return $response;
     })->name('doc.file.scope');
+    
+    Route::get('/download/pdf/{type}/{filename}', ['middleware' => ['permission:lihat-kontrak'],'uses' => 'PdfDocController@index'])
+    ->name('doc.download');
 
 });

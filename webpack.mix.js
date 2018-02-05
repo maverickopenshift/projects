@@ -36,6 +36,7 @@ let mix = require('laravel-mix');
             'node_modules/font-awesome/css/font-awesome.css',
             'node_modules/ionicons/dist/css/ionicons.css',
             'node_modules/admin-lte/plugins/datepicker/datepicker3.css',
+            'resources/assets/js/bootstrap-switch/css/bootstrap3/bootstrap-switch.css',
             'node_modules/admin-lte/plugins/daterangepicker/daterangepicker.css',
             'node_modules/summernote/dist/summernote.css',
             'node_modules/admin-lte/plugins/iCheck/square/blue.css',
@@ -81,6 +82,7 @@ let mix = require('laravel-mix');
             'node_modules/admin-lte/plugins/select2/select2.full.js',
             'node_modules/admin-lte/plugins/select2/i18n/id.js',
             'resources/assets/js/jquery.autocomplete.min.js',
+            'resources/assets/js/bootstrap-switch/js/bootstrap-switch.js',
             'resources/assets/js/bootbox.min.js',
             'resources/assets/js/bootstrap-tagsinput.js',
             'resources/assets/js/papaparse.js',
@@ -94,8 +96,14 @@ let mix = require('laravel-mix');
             'node_modules/vue-resource/dist/vue-resource.min.js',
         ], 'public/js/vue.js', './')
         .scripts([
-            'resources/assets/js/pdfjs/pdf.worker.js',
-        ], 'public/js/pdf.worker.js', './')
+            'resources/assets/js/po_sap.js',
+        ], 'public/js/po_sap.js', './')
+        .scripts([
+            'resources/assets/js/po_dummy.js',
+        ], 'public/js/po_dummy.js', './')
+        .scripts([
+            'resources/assets/js/pdfjs/pdf.js',
+        ], 'public/js/pdf.js', './')
         .scripts([
             'resources/assets/js/pdfjs/pdf.js',
         ], 'public/js/pdf.js', './')

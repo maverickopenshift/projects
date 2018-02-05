@@ -203,8 +203,8 @@
               <label for="pkp" class="col-sm-5 control-label"><span class="text-red">*</span> Perusahaan Kena Pajak</label>
               <div class="col-sm-7">
                 <select class="form-control" name="pkp" id="pkp">
-                  <option value="1" {{ old('pkp',Helper::prop_exists($data,'pkp'))=='1'?"selected='selected'":"" }}>Ya</option>
-                  <option value="0" {{ old('pkp',Helper::prop_exists($data,'pkp'))=='0'?"selected='selected'":"" }}>Tidak</option>
+                  <option value="0" {{ old('pkp',Helper::prop_exists($data,'pkp'))=='0'?"selected='selected'":"" }}>Ya</option>
+                  <option value="1" {{ old('pkp',Helper::prop_exists($data,'pkp'))=='1'?"selected='selected'":"" }}>Tidak</option>
                 </select>
                 @if ($errors->has('pkp'))
                     <span class="help-block">
@@ -221,7 +221,7 @@
         <div class="col-sm-4"></div>
       </div>
 
-      <div class="row" id="nonpwp" hidden="true">
+      <div class="row" id="nonpwp">
         <div class="col-sm-5">
           <div class="form-horizontal">
             <div class="form-group {{ $errors->has('npwp_no') ? ' has-error' : '' }}">
@@ -441,7 +441,7 @@ function add_field_x(attr) {
     $new_clone.find('input[type="text"]').val('');
     $new_clone.find('.help-block').remove();
     $new_clone.find('.attr-btn').append($clone_btn);
-    $new_clone.prependTo($parent);
+    $new_clone.appendTo($parent);
 
     var row_p = $('.row-'+attr);
     if(row_p.length>1){
@@ -459,7 +459,7 @@ function add_field_x(attr) {
 }
 
 var isi=$("#pkp").val();
-    if(isi == "1"){
+    if(isi == "0"){
       $("#nonpwp").show();
     }else{
       $("#nonpwp").hide();
@@ -467,7 +467,7 @@ var isi=$("#pkp").val();
 
 $("#pkp").change(function () {
        var pkp = this.value;
-       if(pkp == "1"){
+       if(pkp == "0"){
          $("#nonpwp").show();
        }else{
          $("#nonpwp").hide();

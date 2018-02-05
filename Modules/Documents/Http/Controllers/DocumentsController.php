@@ -20,6 +20,8 @@ use App\Helpers\Helpers;
 use Validator;
 use Auth;
 
+use Modules\Documents\Entities\Sap;
+
 class DocumentsController extends Controller
 {
     protected $documents;
@@ -236,8 +238,14 @@ class DocumentsController extends Controller
       if (empty($search)) {
         return Response::json(['status'=>false]);
       }
-      $sql = \DB::table('dummy_po')->where('no_po','=',$search)->get();
-      return Response::json(['status'=>true,'data'=>$sql,'length'=>count($sql)]);
+      if(config('app.env')=='production'){
+        $sap = Sap::get_po($search); 
+        return Response::json($sap);
+      }
+      else{
+        $sql = \DB::table('dummy_po')->where('no_po','=',$search)->get();
+        return Response::json(['status'=>true,'data'=>$sql,'length'=>count($sql)]);
+      }
     }
 
     public function getPic(Request $request){
@@ -422,7 +430,7 @@ class DocumentsController extends Controller
           $data->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
         }
         $data = $data->paginate(30);
-
+        
         if($type!="all"){
           $data->getCollection()->transform(function ($value) use ($type){
             $types=DocType::select('id')->where('name',$type)->first();
@@ -436,7 +444,6 @@ class DocumentsController extends Controller
                           ->get();
 
                           $valu[] = $value['id'];
-                          // // dd(array_splice($parent,0,2,$val));
                           foreach ($parent as $key => $d) {
                             $valu[] = $d->id;
                           }

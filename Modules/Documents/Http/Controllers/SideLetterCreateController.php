@@ -10,6 +10,7 @@ use Modules\Documents\Entities\DocMetaSideLetter;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocActivity;
+use Modules\Config\Entities\Config;
 use Modules\Documents\Entities\DocComment as Comments;
 use App\Helpers\Helpers;
 use Validator;
@@ -37,6 +38,9 @@ class SideLetterCreateController
       $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
       $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
+      if( Config::get_config('auto-numb')=='off'){
+        $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
+      }
       $check_new_lampiran = false;
       foreach($request->doc_lampiran_old as $k => $v){
         if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
@@ -88,7 +92,7 @@ class SideLetterCreateController
         if($request->doc_enddate < $request->doc_startdate){
           $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
         }
-      });
+      }); 
       if ($validator->fails ()){
         return redirect()->back()->withInput($request->input())->withErrors($validator);
       }
@@ -119,6 +123,10 @@ class SideLetterCreateController
     $doc->doc_parent_id = $request->parent_kontrak;
     $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
     $doc->doc_signing = $request->statusButton;
+    $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
+    if( Config::get_config('auto-numb')=='off'){
+      $doc->doc_no = $request->doc_no;
+    }
     $doc->save();
 
     if(count($request->f_judul)>0){

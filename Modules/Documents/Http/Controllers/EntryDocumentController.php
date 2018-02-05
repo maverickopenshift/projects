@@ -22,6 +22,8 @@ use Modules\Documents\Http\Controllers\MouCreateController as MouCreate;
 use Modules\Documents\Http\Controllers\SpCreateController as SpCreate;
 use Modules\Documents\Http\Controllers\AmandemenSpCreateController as AmandemenSpCreate;
 use Modules\Documents\Http\Controllers\AmandemenKontrakCreateController as AmandemenKontrakCreate;
+use Modules\Documents\Http\Controllers\AmandemenKontrakKhsCreateController as AmandemenKontrakKhsCreate;
+use Modules\Documents\Http\Controllers\AmandemenKontrakTurnkeyCreateController as AmandemenKontrakTurnkeyCreate;
 
 use App\Helpers\Helpers;
 use Validator;
@@ -36,15 +38,19 @@ class EntryDocumentController extends Controller
     protected $MouCreate;
     protected $AmandemenSpCreate;
     protected $AmandemenKontrakCreate;
+    protected $AmandemenKontrakKhsCreate;
+    protected $AmandemenKontrakTurnkeyCreate;
     protected $AdendumCreate;
     protected $SideLetterCreate;
 
-    public function __construct(Request $req,MouCreate $MouCreate,SuratPengikatanCreate $SuratPengikatanCreate,SpCreate $spCreate,AmandemenSpCreate $AmandemenSpCreate,AmandemenKontrakCreate $AmandemenKontrakCreate,SideLetterCreate $SideLetterCreate){
+    public function __construct(Request $req,MouCreate $MouCreate,SuratPengikatanCreate $SuratPengikatanCreate,SpCreate $spCreate,AmandemenSpCreate $AmandemenSpCreate,AmandemenKontrakCreate $AmandemenKontrakCreate,SideLetterCreate $SideLetterCreate, AmandemenKontrakKhsCreate $AmandemenKontrakKhsCreate, AmandemenKontrakTurnkeyCreate $AmandemenKontrakTurnkeyCreate){
       $this->SuratPengikatanCreate  = $SuratPengikatanCreate;
       $this->MouCreate              = $MouCreate;
       $this->spCreate               = $spCreate;
       $this->AmandemenSpCreate      = $AmandemenSpCreate;
       $this->AmandemenKontrakCreate = $AmandemenKontrakCreate;
+      $this->AmandemenKontrakKhsCreate = $AmandemenKontrakKhsCreate;
+      $this->AmandemenKontrakTurnkeyCreate = $AmandemenKontrakTurnkeyCreate;
       $this->SideLetterCreate = $SideLetterCreate;
       $doc_id = $req->doc_id;
       $field = Documents::get_fields();
@@ -85,9 +91,10 @@ class EntryDocumentController extends Controller
       }else{
         $ppn = "0";
       }
+      
       // dd($ppn->ppn);
       $data['ppn'] = $ppn;
-
+      $data['auto_numb']=Config::get_config('auto-numb');
 
       // dd($data);
       return view('documents::form')->with($data);
@@ -126,6 +133,13 @@ class EntryDocumentController extends Controller
       }
       if(in_array($type,['amandemen_kontrak','adendum'])){
         return $this->AmandemenKontrakCreate->store($request);
+      }
+      if(in_array($type,['amandemen_kontrak_khs'])){
+        return $this->AmandemenKontrakKhsCreate->store($request);
+      }
+
+      if(in_array($type,['amandemen_kontrak_turnkey'])){
+        return $this->AmandemenKontrakTurnkeyCreate->store($request);
       }
       $doc_value = $request->doc_value;
       $request->merge(['doc_value' => Helpers::input_rupiah($request->doc_value)]);
@@ -170,7 +184,11 @@ class EntryDocumentController extends Controller
         $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
-
+        
+        if(Config::get_config('auto-numb')=='off'){
+          $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
+        }
+        
         if($type!='khs'){
           $rules['doc_value']        =  'required|max:500|min:3|regex:/^[0-9 .]+$/i';
         }
@@ -276,7 +294,7 @@ class EntryDocumentController extends Controller
         if(isset($hs_qty) && count($hs_qty)>0){
           $request->merge(['hs_qty'=>$hs_qty]);
         }
-
+        
         if ($validator->fails ()){
           return redirect()->back()
                       ->withInput($request->input())
@@ -322,6 +340,13 @@ class EntryDocumentController extends Controller
       $doc->doc_sow = $request->doc_sow;
       $doc->doc_type = $request->type;
       $doc->doc_signing = $request->statusButton;
+      
+      
+      $doc->penomoran_otomatis =  Config::get_penomoran_otomatis($request->penomoran_otomatis);
+      if(Config::get_config('auto-numb')=='off'){
+        $doc->doc_no = $request->doc_no;
+      }
+      
       $doc->save();
 
       /// pasal khusus

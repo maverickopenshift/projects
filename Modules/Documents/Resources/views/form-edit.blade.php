@@ -9,7 +9,7 @@
       <div class="loading2"></div>
       @php
         $title_sow = 'SOW,BOQ';
-        if($doc_type->name=='khs'){
+        if($doc_type->name=='khs' || $doc_type->name=='amandemen_kontrak_khs'){
           $title_sow = 'DAFTAR HARGA SATUAN';
         }elseif($doc_type->name=='mou'){
           $title_sow = 'RUANG LINGKUP';
@@ -18,8 +18,8 @@
       <ul class="nav nav-tabs">
         <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO</a></li>
 
-        @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter']))
-          @if(in_array($doc_type->name,['amandemen_kontrak']))
+        @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum','side_letter']))
+          @if(in_array($doc_type->name,['amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey']))
             <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
             <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
             <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
@@ -36,7 +36,7 @@
           @endif
         @endif
 
-        @if(!in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter','mou']) )
+        @if(!in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum','side_letter','mou']) )
         <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
         @endif
 
@@ -72,7 +72,9 @@
             @include('documents::partials.alert-errors')
             @if(in_array($doc_type->name,['turnkey','sp','khs','mou']))
               @include('documents::doc-form-edit.sow-boq')
-            @elseif(in_array($doc_type->name,['amandemen_kontrak','amandemen_sp']))
+            @elseif(in_array($doc_type->name,['amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey']))
+              @include('documents::doc-form-edit.sow-boq')
+            @elseif(in_array($doc_type->name,['amandemen_sp']))
               @include('documents::doc-form-edit.amandemen-kontrak_sow-boq')
             @endif
             <div class="clearfix"></div>
@@ -135,7 +137,7 @@
         </div>
         @include('documents::partials.comments')
       </div>
-  </form>
+  </form>s
 @endsection
 @push('scripts')
 <script>

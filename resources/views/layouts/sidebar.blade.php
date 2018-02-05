@@ -35,8 +35,8 @@
                       <li class="{{Request::is("documents/create/amandemen_kontrak")?'active':''}}" >
                         <a href="#"><span>Amandemen Kontrak</span> <i class="fa fa-angle-left pull-right"></i></a>
                         <ul class="treeview-menu ">
-                          <li class="{{Request::is("documents/create/amandemen_kontrak")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_kontrak'])}}">Kontrak KHS</a></li>
-                          <li class="{{Request::is("documents/create/amandemen_kontrak")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_kontrak'])}}">Kontrak Turnkey</a></li>
+                          <li class="{{Request::is("documents/create/amandemen_kontrak_khs")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_kontrak_khs'])}}">Kontrak KHS</a></li>
+                          <li class="{{Request::is("documents/create/amandemen_kontrak_turnkey")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_kontrak_turnkey'])}}">Kontrak Turnkey</a></li>
                         </ul>
                       </li>
                       <li class="{{Request::is("documents/create/adendum")?'active':''}}" ><a href="{{route('doc.create',['type'=>'adendum'])}}">Addendum</a></li>

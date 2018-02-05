@@ -18,7 +18,7 @@ use Validator;
 use DB;
 use Auth;
 
-class AmandemenKontrakEditController extends Controller
+class AmandemenKontrakKhsEditController extends Controller
 {
   public function __construct()
   {
@@ -33,6 +33,43 @@ class AmandemenKontrakEditController extends Controller
     $status = Documents::where('id',$id)->first()->doc_signing;
     $rules = [];
 
+    $m_hs_harga=[];
+    $m_hs_harga_jasa=[];
+    $m_hs_qty=[];
+
+    if(isset($request['hs_harga']) && count($request['hs_harga'])>0){
+      foreach($request['hs_harga'] as $key => $val){
+        $hs_harga[] = $val;
+        $m_hs_harga[$key] = Helpers::input_rupiah($val);
+      }
+    }
+
+    if(count($m_hs_harga)>0){
+      $request->merge(['hs_harga'=>$m_hs_harga]);
+    }
+
+    if(isset($request['hs_harga_jasa']) && count($request['hs_harga_jasa'])>0){
+      foreach($request['hs_harga_jasa'] as $key => $val){
+        $hs_harga_jasa[] = $val;
+        $m_hs_harga_jasa[$key] = Helpers::input_rupiah($val);
+      }
+    }
+
+    if(count($m_hs_harga_jasa)>0){
+      $request->merge(['hs_harga_jasa'=>$m_hs_harga_jasa]);
+    }
+
+    if(isset($request['hs_qty']) && count($request['hs_qty'])>0){
+      foreach($request['hs_qty'] as $key => $val){
+        $hs_qty[$key] = $val;
+        $m_hs_qty[$key] = Helpers::input_rupiah($val);
+      }
+    }
+
+    if(count($m_hs_qty)>0){
+      $request->merge(['hs_qty'=>$m_hs_qty]);
+    }
+    
     if(in_array($status,['0','2','3','1'])){
       $rules['doc_title']        =  'required|min:2';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
@@ -46,24 +83,22 @@ class AmandemenKontrakEditController extends Controller
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
       $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
+
       foreach($request->doc_lampiran_old as $k => $v){
         if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
           $new_lamp[] = '';
           $new_lamp_up[] = $request->doc_lampiran[$k];
           $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
-        }
-        else if(empty($v)){
+        }else if(empty($v)){
           $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
           if(!isset($request->doc_lampiran[$k])){
             $new_lamp[] = $v;
             $new_lamp_up[] = $v;
-          }
-          else{
+          }else{
             $new_lamp[] = '';
             $new_lamp_up[] = $request->doc_lampiran[$k];
           }
-        }
-        else{
+        }else{
           $new_lamp[] = $v;
           $new_lamp_up[] = $v;
         }
@@ -83,19 +118,16 @@ class AmandemenKontrakEditController extends Controller
         $new_scope_file[] = '';
         $new_scope_file_up[] = $request->scope_file[$k];
         $rules['scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
-      }
-      else if(empty($v)){
+      }else if(empty($v)){
         $rules['scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
         if(!isset($request->scope_file[$k])){
           $new_scope_file[] = $v;
           $new_scope_file_up[] = $v;
-        }
-        else{
+        }else{
           $new_scope_file[] = '';
           $new_scope_file_up[] = $request->scope_file[$k];
         }
-      }
-      else{
+      }else{
         $new_scope_file[] = $v;
         $new_scope_file_up[] = $v;
       }
@@ -133,6 +165,7 @@ class AmandemenKontrakEditController extends Controller
       $doc->doc_enddate = $request->doc_enddate;
       $doc->doc_desc = $request->doc_desc;
       // $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
+      $doc->doc_sow = $request->doc_sow;
       $doc->doc_pihak1 = $request->doc_pihak1;
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
@@ -146,7 +179,7 @@ class AmandemenKontrakEditController extends Controller
       $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
       $doc->save();
     }
-
+    /*
     if(count($request->f_judul)>0){
       DocMeta::where([
         ['documents_id','=',$doc->id],
@@ -177,6 +210,7 @@ class AmandemenKontrakEditController extends Controller
         }
       }
     }
+    */
 
     if(count($new_lamp_up)>0){
       DocMeta::where([
@@ -275,6 +309,43 @@ class AmandemenKontrakEditController extends Controller
             $doc_meta->meta_file = $request['f_latar_belakang_file_old'][$key];
           }
           $doc_meta->save();
+        }
+      }
+    }
+
+    //sow boq
+    if(count($request->hs_harga)>0){
+      DocBoq::where([
+        ['documents_id','=',$doc->id]
+        ])->delete();
+      foreach($request->hs_harga as $key => $val){
+        if(!empty($val)
+            && !empty($request['hs_kode_item'][$key])
+            && !empty($request['hs_item'][$key])
+            && !empty($request['hs_satuan'][$key])
+            && !empty($request['hs_mtu'][$key])
+        ){
+          $doc_boq = new DocBoq();
+          $doc_boq->documents_id = $doc->id;
+          $doc_boq->kode_item = $request['hs_kode_item'][$key];
+          $doc_boq->item = $request['hs_item'][$key];
+          $doc_boq->satuan = $request['hs_satuan'][$key];
+          $doc_boq->mtu = $request['hs_mtu'][$key];
+          $doc_boq->harga = Helpers::input_rupiah($request['hs_harga'][$key]);
+          $doc_boq->harga_jasa = Helpers::input_rupiah($request['hs_harga_jasa'][$key]);
+          $hs_type = 'harga_satuan';
+          if(in_array($type,['turnkey','amandemen_kontrak_turnkey','sp'])){
+            $q_qty = Helpers::input_rupiah($request['hs_qty'][$key]);
+            $q_harga = Helpers::input_rupiah($request['hs_harga'][$key]);
+            $q_harga_jasa = Helpers::input_rupiah($request['hs_harga_jasa'][$key]);
+            $q_total = $q_qty*($q_harga+$q_harga_jasa);
+            $doc_boq->qty = $q_qty;
+            $doc_boq->harga_total = $q_total;
+            $hs_type = 'boq';
+          }
+          $doc_boq->desc = $request['hs_keterangan'][$key];
+          $doc_boq->data = json_encode(array('type'=>$hs_type));
+          $doc_boq->save();
         }
       }
     }

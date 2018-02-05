@@ -1,8 +1,7 @@
-
 <div class="box">
   <div class="box-header with-border">
     <h3 class="box-title">
-      @if($doc_type['title']=="Turnkey" || $doc_type['title']=="SP")
+      @if($doc_type['title']=="Turnkey" || $doc_type['title']=="SP" || $doc_type['title']=="amandemen_kontrak_turnkey")
 
       @elseif($doc_type['title']=="MoU")
         Ruang Lingkup Kerjasama
@@ -14,202 +13,201 @@
 
   <div class="box-body">
     <div class="form-horizontal">
-        @if(in_array($doc_type->name,['turnkey','khs','mou']))
-          <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-            <div class="form-group" style="position:relative;margin-bottom: 34px;">
-              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">SOW</div>
-            </div>
-            <div class="form-group {{ $errors->has('doc_sow') ? ' has-error' : '' }}">
-              <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label>
-              <div class="col-sm-10">
-                <textarea class="form-control" name="doc_sow" cols="4" rows="4">{{Helper::old_prop($doc,'doc_sow')}}</textarea>
-                {!!Helper::error_help($errors,'doc_sow')!!}
-              </div>
-            </div>
-          </div>
-        @endif
-        @if(!in_array($doc_type->name,['mou']))
-          @php
-            $kode_item = Helper::old_prop_each($doc,'hs_kode_item');
-            $item = Helper::old_prop_each($doc,'hs_item');
-            $satuan = Helper::old_prop_each($doc,'hs_satuan');
-            $mtu = Helper::old_prop_each($doc,'hs_mtu');
-            $harga = Helper::old_prop_each($doc,'hs_harga');
-            $harga_jasa = Helper::old_prop_each($doc,'hs_harga_jasa');
-            $qty = Helper::old_prop_each($doc,'hs_qty');
-            $keterangan = Helper::old_prop_each($doc,'hs_keterangan');
-            if($doc_type->name=='khs'){
-              $title_hs = 'Daftar Harga Satuan';
-              $tm_download = 'harga_satuan';
-            }
-            else{
-              $title_hs = 'BoQ';
-              $tm_download = 'boq';
-            }
-          @endphp
-          <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+      @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey','khs','amandemen_kontrak_khs','mou']))
+        <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group" style="position:relative;margin-bottom: 34px;">
-            <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">{{$title_hs}}</div>
+            <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">SOW</div>
           </div>
-        <div class="form-group top20">
-          <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
-          <div class="col-sm-10">
-            <input type="file" name="daftar_harga" class="daftar_harga hide" accept=".csv,.xls"/>
-            <button class="btn btn-primary btn-sm upload-daftar_harga" type="button"><i class="fa fa-upload"></i> Upload {{$title_hs}}</button>
-            <a href="{{route('doc.template.download',['filename'=>$tm_download])}}" class="btn btn-info  btn-sm" title="Download Sample Template"><i class="glyphicon glyphicon-download-alt"></i> Download sample template</a>
-            <span class="error error-daftar_harga text-danger"></span>
+          <div class="form-group {{ $errors->has('doc_sow') ? ' has-error' : '' }}">
+            <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label>
+            <div class="col-sm-10">
+              <textarea class="form-control" name="doc_sow" cols="4" rows="4">{{Helper::old_prop($doc,'doc_sow')}}</textarea>
+              {!!Helper::error_help($errors,'doc_sow')!!}
+            </div>
           </div>
         </div>
-        <div class="table-responsive">
-          <table class="table table-condensed table-striped" id="table-hargasatuan">
-              <thead>
-              <tr>
-                  <th style="width:50px;">No.</th>
-                  <th>Kode Item</th>
-                  <th>Item</th>
-                  @if($doc_type->name!='khs')
-                    <th  style="width:70px;">Qty</th>
-                  @endif
-                  <th style="width:100px;">Satuan</th>
-                  <th>Currency</th>
-                  <th>Harga</th>
-                  <th>Harga Jasa</th>
-                  @if($doc_type->name!='khs')
-                    <th style="width:100px;">Harga Total</th>
-                  @endif
-                  <th>Keterangan {{$doc->doc_lampiran_teknis}}</th>
-                  <th><button type="button" class="btn btn-success btn-xs add-harga_satuan"><i class="glyphicon glyphicon-plus"></i> tambah</button></th>
-              </tr>
-              </thead>
-              @if(isset($kode_item) && count($kode_item)>0)
-                    <tbody>
-                      @foreach ($kode_item as $key => $value)
-                        <tr>
-                          <td>{{$key+1}}</td>
-                          <td class="{{ $errors->has('hs_kode_item.'.$key) ? ' has-error' : '' }}">
-                            <input type="text" class="form-control" name="hs_kode_item[]" value="{{$value}}" placeholder="Kode..">
-                            {!!Helper::error_help($errors,'hs_kode_item.'.$key)!!}
-                          </td>
-                          <td class="{{ $errors->has('hs_item.'.$key) ? ' has-error' : '' }}">
-                            <input type="text" class="form-control" name="hs_item[]" value="{{$item[$key]}}" placeholder="Nama..">
-                            {!!Helper::error_help($errors,'hs_item.'.$key)!!}
-                          </td>
-                          @if($doc_type->name!='khs')
-                            <td class="{{ $errors->has('hs_qty.'.$key) ? ' has-error' : '' }}">
-                              <input type="text" class="form-control input-rupiah hitung_total" name="hs_qty[]" value="{{$qty[$key]}}" placeholder="Jumlah..">
-                              {!!Helper::error_help($errors,'hs_qty.'.$key)!!}
-                            </td>
-                          @endif
-                          <td class="{{ $errors->has('hs_satuan.'.$key) ? ' has-error' : '' }}">
-                            <input type="text" class="form-control" name="hs_satuan[]" value="{{$satuan[$key]}}" placeholder="Satuan..">
-                            {!!Helper::error_help($errors,'hs_satuan.'.$key)!!}
-                          </td>
-                          <td  class="{{ $errors->has('hs_mtu.'.$key) ? ' has-error' : '' }}">
-                            @php
-                              if($mtu[$key]=="RP"){
-                                  $a="selected";
-                                  $b="";
-                              }else if($mtu[$key]=="USD"){
-                                  $a="";
-                                  $b="selected";
-                              }else{
-                                  $a="";
-                                  $b="";
-                              }
-                            @endphp
-                            <select name="hs_mtu[]" class="form-control" style="width: 100%;">
-                                <option value="RP" {{$a}}>RP</option>
-                                <option value="USD" {{$b}}>USD</option>
-                            </select>
-                            {!!Helper::error_help($errors,'hs_mtu.'.$key)!!}
-                          </td>
-                          {{--
-                          <td  class="{{ $errors->has('hs_mtu.'.$key) ? ' has-error' : '' }}">
-                            <input type="text" class="form-control" name="hs_mtu[]" value="{{$mtu[$key]}}" placeholder="Mata Uang..">
-                            {!!Helper::error_help($errors,'hs_mtu.'.$key)!!}
-                          </td>
-                          --}}
-                          <td class="{{ $errors->has('hs_harga.'.$key) ? ' has-error' : '' }}">
-                            <input type="text" class="form-control input-rupiah text-right hitung_total" name="hs_harga[]" value="{{$harga[$key]}}" placeholder="Harga Material..">
-                            {!!Helper::error_help($errors,'hs_harga.'.$key)!!}
-                          </td>
-
-                          <td class="{{ $errors->has('hs_harga_jasa.'.$key) ? ' has-error' : '' }}">
-                            <input type="text" class="form-control input-rupiah text-right hitung_total" name="hs_harga_jasa[]" value="{{$harga_jasa[$key]}}" placeholder="Harga Jasa..">
-                            {!!Helper::error_help($errors,'hs_harga_jasa.'.$key)!!}
-                          </td>
-                          @if($doc_type->name!='khs')
-                            <td class="text-right" style="vertical-align: middle;">0</td>
-                          @endif
-                          <td class="{{ $errors->has('hs_keterangan.'.$key) ? ' has-error' : '' }}">
-                            <input type="text" class="form-control" name="hs_keterangan[]" value="{{$keterangan[$key]}}" placeholder="Keterangan..">
-                            {!!Helper::error_help($errors,'hs_keterangan.'.$key)!!}
-                          </td>
-                          <td class="action">
-                            @if(count($kode_item)>1)
-                              <button type="button" class="btn btn-danger btn-xs delete-hs"><i class="glyphicon glyphicon-remove"></i> hapus</button>
-                            @endif
-                          </td>
-                        </tr>
-                      @endforeach
-                    </tbody>
-              @else
-                <tbody>
-                    <tr>
-                      <td>1</td>
-                      <td><input type="text" class="form-control" name="hs_kode_item[]" placeholder="Kode.."></td>
-                      <td><input type="text" class="form-control" name="hs_item[]" placeholder="Nama.."></td>
-                      @if($doc_type->name!='khs')
-                        <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_qty[]" placeholder="Jumlah.."></td>
-                      @endif
-                      <td><input type="text" class="form-control" name="hs_satuan[]" placeholder="Satuan.."></td>
-                      <td>
-                        <select name="hs_mtu[]" class="form-control selectx2" style="width: 100%;">
-                          <option value="RP">RP</option>
-                          <option value="USD">USD</option>
-                        </select>
-                      </td>
-                      {{--
-                      <td><input type="text" class="form-control" name="hs_mtu[]" placeholder="Mata Uang.."></td>
-                      --}}
-                      <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_harga[]" placeholder="Harga Barang.."></td>
-                      <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_harga_jasa[]"  placeholder="Harga Jasa.."></td>
-                      @if($doc_type->name!='khs')
-                        <td class="text-right" style="vertical-align: middle;">0</td>
-                      @endif
-                      <td><input type="text" class="form-control" name="hs_keterangan[]" placeholder="Keterangan.."></td>
-                      <td class="action"></td>
-                    </tr>
-                </tbody>
-              @endif
-          </table>
+      @endif
+      @if(!in_array($doc_type->name,['mou']))
+        @php
+          $kode_item = Helper::old_prop_each($doc,'hs_kode_item');
+          $item = Helper::old_prop_each($doc,'hs_item');
+          $satuan = Helper::old_prop_each($doc,'hs_satuan');
+          $mtu = Helper::old_prop_each($doc,'hs_mtu');
+          $harga = Helper::old_prop_each($doc,'hs_harga');
+          $harga_jasa = Helper::old_prop_each($doc,'hs_harga_jasa');
+          $qty = Helper::old_prop_each($doc,'hs_qty');
+          $keterangan = Helper::old_prop_each($doc,'hs_keterangan');
+          if($doc_type->name=='khs' || $doc_type->name=='amandemen_kontrak_khs' ){
+            $title_hs = 'Daftar Harga Satuan';
+            $tm_download = 'harga_satuan';
+          }
+          else{
+            $title_hs = 'BoQ';
+            $tm_download = 'boq';
+          }
+        @endphp
+        <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+        <div class="form-group" style="position:relative;margin-bottom: 34px;">
+          <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">{{$title_hs}}</div>
+        </div>
+      <div class="form-group top20">
+        <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
+        <div class="col-sm-10">
+          <input type="file" name="daftar_harga" class="daftar_harga hide" accept=".csv,.xls"/>
+          <button class="btn btn-primary btn-sm upload-daftar_harga" type="button"><i class="fa fa-upload"></i> Upload {{$title_hs}}</button>
+          <a href="{{route('doc.template.download',['filename'=>$tm_download])}}" class="btn btn-info  btn-sm" title="Download Sample Template"><i class="glyphicon glyphicon-download-alt"></i> Download sample template</a>
+          <span class="error error-daftar_harga text-danger"></span>
         </div>
       </div>
+      <div class="table-responsive">
+        <table class="table table-condensed table-striped" id="table-hargasatuan">
+            <thead>
+            <tr>
+                <th style="width:50px;">No.</th>
+                <th>Kode Item</th>
+                <th>Item</th>
+                @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
+                  <th  style="width:70px;">Qty</th>
+                @endif
+                <th style="width:100px;">Satuan</th>
+                <th>Currency</th>
+                <th>Harga</th>
+                <th>Harga Jasa</th>
+                @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
+                  <th style="width:100px;">Harga Total</th>
+                @endif
+                <th>Keterangan {{$doc->doc_lampiran_teknis}}</th>
+                <th><button type="button" class="btn btn-success btn-xs add-harga_satuan"><i class="glyphicon glyphicon-plus"></i> tambah</button></th>
+            </tr>
+            </thead>
+            @if(isset($kode_item) && count($kode_item)>0)
+                  <tbody>
+                    @foreach ($kode_item as $key => $value)
+                      <tr>
+                        <td>{{$key+1}}</td>
+                        <td class="{{ $errors->has('hs_kode_item.'.$key) ? ' has-error' : '' }}">
+                          <input type="text" class="form-control" name="hs_kode_item[]" value="{{$value}}" placeholder="Kode..">
+                          {!!Helper::error_help($errors,'hs_kode_item.'.$key)!!}
+                        </td>
+                        <td class="{{ $errors->has('hs_item.'.$key) ? ' has-error' : '' }}">
+                          <input type="text" class="form-control" name="hs_item[]" value="{{$item[$key]}}" placeholder="Nama..">
+                          {!!Helper::error_help($errors,'hs_item.'.$key)!!}
+                        </td>
+                        @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
+                          <td class="{{ $errors->has('hs_qty.'.$key) ? ' has-error' : '' }}">
+                            <input type="text" class="form-control input-rupiah hitung_total" name="hs_qty[]" value="{{$qty[$key]}}" placeholder="Jumlah..">
+                            {!!Helper::error_help($errors,'hs_qty.'.$key)!!}
+                          </td>
+                        @endif
+                        <td class="{{ $errors->has('hs_satuan.'.$key) ? ' has-error' : '' }}">
+                          <input type="text" class="form-control" name="hs_satuan[]" value="{{$satuan[$key]}}" placeholder="Satuan..">
+                          {!!Helper::error_help($errors,'hs_satuan.'.$key)!!}
+                        </td>
+                        <td  class="{{ $errors->has('hs_mtu.'.$key) ? ' has-error' : '' }}">
+                          @php
+                            if($mtu[$key]=="RP"){
+                                $a="selected";
+                                $b="";
+                            }else if($mtu[$key]=="USD"){
+                                $a="";
+                                $b="selected";
+                            }else{
+                                $a="";
+                                $b="";
+                            }
+                          @endphp
+                          <select name="hs_mtu[]" class="form-control" style="width: 100%;">
+                              <option value="RP" {{$a}}>RP</option>
+                              <option value="USD" {{$b}}>USD</option>
+                          </select>
+                          {!!Helper::error_help($errors,'hs_mtu.'.$key)!!}
+                        </td>
+                        {{--
+                        <td  class="{{ $errors->has('hs_mtu.'.$key) ? ' has-error' : '' }}">
+                          <input type="text" class="form-control" name="hs_mtu[]" value="{{$mtu[$key]}}" placeholder="Mata Uang..">
+                          {!!Helper::error_help($errors,'hs_mtu.'.$key)!!}
+                        </td>
+                        --}}
+                        <td class="{{ $errors->has('hs_harga.'.$key) ? ' has-error' : '' }}">
+                          <input type="text" class="form-control input-rupiah text-right hitung_total" name="hs_harga[]" value="{{$harga[$key]}}" placeholder="Harga Material..">
+                          {!!Helper::error_help($errors,'hs_harga.'.$key)!!}
+                        </td>
 
-        @if($doc_type['title']=="SP")
-
-            <div class="form-group {{ $errors->has('doc_lampiran_teknis') ? ' has-error' : '' }}">
-              <label for="doc_lampiran_teknis" class="col-sm-2 control-label">Lampiran Teknis</label>
-              <div class="col-sm-6">
-                <div class="input-group">
-                  <input type="file" class="hide" name="doc_lampiran_teknis" multiple="multiple">
-                  <input class="form-control" type="text" disabled>
-                  <div class="input-group-btn">
-                    <button class="btn btn-default click-upload" type="button">Browse</button>
-                      <input type="hidden" name="doc_lampiran_teknis_old" value="{{$doc->doc_lampiran_teknis}}">
-                    @if(isset($doc->doc_lampiran_teknis))
-                      <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}">
-                      <i class="glyphicon glyphicon-paperclip"></i>  Lihat
-                      </a>
+                        <td class="{{ $errors->has('hs_harga_jasa.'.$key) ? ' has-error' : '' }}">
+                          <input type="text" class="form-control input-rupiah text-right hitung_total" name="hs_harga_jasa[]" value="{{$harga_jasa[$key]}}" placeholder="Harga Jasa..">
+                          {!!Helper::error_help($errors,'hs_harga_jasa.'.$key)!!}
+                        </td>
+                        @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
+                          <td class="text-right" style="vertical-align: middle;">0</td>
+                        @endif
+                        <td class="{{ $errors->has('hs_keterangan.'.$key) ? ' has-error' : '' }}">
+                          <input type="text" class="form-control" name="hs_keterangan[]" value="{{$keterangan[$key]}}" placeholder="Keterangan..">
+                          {!!Helper::error_help($errors,'hs_keterangan.'.$key)!!}
+                        </td>
+                        <td class="action">
+                          @if(count($kode_item)>1)
+                            <button type="button" class="btn btn-danger btn-xs delete-hs"><i class="glyphicon glyphicon-remove"></i> hapus</button>
+                          @endif
+                        </td>
+                      </tr>
+                    @endforeach
+                  </tbody>
+            @else
+              <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td><input type="text" class="form-control" name="hs_kode_item[]" placeholder="Kode.."></td>
+                    <td><input type="text" class="form-control" name="hs_item[]" placeholder="Nama.."></td>
+                    @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
+                      <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_qty[]" placeholder="Jumlah.."></td>
                     @endif
-                  </div>
-                </div>
-              </div>
-              {!!Helper::error_help($errors,'doc_lampiran_teknis')!!}
+                    <td><input type="text" class="form-control" name="hs_satuan[]" placeholder="Satuan.."></td>
+                    <td>
+                      <select name="hs_mtu[]" class="form-control selectx2" style="width: 100%;">
+                        <option value="RP">RP</option>
+                        <option value="USD">USD</option>
+                      </select>
+                    </td>
+                    {{--
+                    <td><input type="text" class="form-control" name="hs_mtu[]" placeholder="Mata Uang.."></td>
+                    --}}
+                    <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_harga[]" placeholder="Harga Barang.."></td>
+                    <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_harga_jasa[]"  placeholder="Harga Jasa.."></td>
+                    @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
+                      <td class="text-right" style="vertical-align: middle;">0</td>
+                    @endif
+                    <td><input type="text" class="form-control" name="hs_keterangan[]" placeholder="Keterangan.."></td>
+                    <td class="action"></td>
+                  </tr>
+              </tbody>
+            @endif
+        </table>
+      </div>
+    </div>
+
+    @if($doc_type['title']=="SP")
+      <div class="form-group {{ $errors->has('doc_lampiran_teknis') ? ' has-error' : '' }}">
+        <label for="doc_lampiran_teknis" class="col-sm-2 control-label">Lampiran Teknis</label>
+        <div class="col-sm-6">
+          <div class="input-group">
+            <input type="file" class="hide" name="doc_lampiran_teknis" multiple="multiple">
+            <input class="form-control" type="text" disabled>
+            <div class="input-group-btn">
+              <button class="btn btn-default click-upload" type="button">Browse</button>
+                <input type="hidden" name="doc_lampiran_teknis_old" value="{{$doc->doc_lampiran_teknis}}">
+              @if(isset($doc->doc_lampiran_teknis))
+                <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}">
+                <i class="glyphicon glyphicon-paperclip"></i>  Lihat
+                </a>
+              @endif
             </div>
-        @endif
-        @endif
-        @include('documents::partials.button-edit')
+          </div>
+        </div>
+        {!!Helper::error_help($errors,'doc_lampiran_teknis')!!}
+      </div>
+    @endif
+    @endif
+    @include('documents::partials.button-edit')
     </div>
   </div>
 </div>

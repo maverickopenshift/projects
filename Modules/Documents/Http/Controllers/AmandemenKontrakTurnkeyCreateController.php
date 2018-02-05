@@ -15,7 +15,7 @@ use Validator;
 use DB;
 use Auth;
 
-class AmandemenKontrakCreateController
+class AmandemenKontrakTurnkeyCreateController
 {
   public function __construct()
   {
@@ -25,6 +25,43 @@ class AmandemenKontrakCreateController
   {
     $type = $request->type;
     $rules = [];
+    
+    $m_hs_harga=[];
+    $m_hs_harga_jasa=[];
+    $m_hs_qty=[];
+
+    if(isset($request['hs_harga']) && count($request['hs_harga'])>0){
+      foreach($request['hs_harga'] as $key => $val){
+        $hs_harga[] = $val;
+        $m_hs_harga[$key] = Helpers::input_rupiah($val);
+      }
+    }
+
+    if(count($m_hs_harga)>0){
+      $request->merge(['hs_harga'=>$m_hs_harga]);
+    }
+
+    if(isset($request['hs_harga_jasa']) && count($request['hs_harga_jasa'])>0){
+      foreach($request['hs_harga_jasa'] as $key => $val){
+        $hs_harga_jasa[] = $val;
+        $m_hs_harga_jasa[$key] = Helpers::input_rupiah($val);
+      }
+    }
+
+    if(count($m_hs_harga_jasa)>0){
+      $request->merge(['hs_harga_jasa'=>$m_hs_harga_jasa]);
+    }
+
+    if(isset($request['hs_qty']) && count($request['hs_qty'])>0){
+      foreach($request['hs_qty'] as $key => $val){
+        $hs_qty[$key] = $val;
+        $m_hs_qty[$key] = Helpers::input_rupiah($val);
+      }
+    }
+
+    if(count($m_hs_qty)>0){
+      $request->merge(['hs_qty'=>$m_hs_qty]);
+    }
 
     if($request->statusButton == '0'){
       $rules['doc_title']        =  'required|min:2';
@@ -36,6 +73,8 @@ class AmandemenKontrakCreateController
       $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
       $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['doc_lampiran.*']       =  'required|mimes:pdf';
+      /*
       $check_new_lampiran = false;
       
       foreach($request->doc_lampiran_old as $k => $v){
@@ -62,14 +101,15 @@ class AmandemenKontrakCreateController
       }
 
       $request->merge(['doc_lampiran' => $new_lamp]);
+      */
 
       $rule_scope_pasal = (count($request['scope_pasal'])>1)?'required':'sometimes|nullable';
       $rule_scope_judul = (count($request['scope_judul'])>1)?'required':'sometimes|nullable';
       $rule_scope_isi = (count($request['scope_isi'])>1)?'required':'sometimes|nullable';
-      $rules['scope_file.*']  =  'sometimes|nullable|mimes:pdf';
+      $rules['scope_file.*']   =  'sometimes|nullable|mimes:pdf';
       $rules['scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['scope_isi.*']    =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
@@ -94,7 +134,7 @@ class AmandemenKontrakCreateController
       }
     }else{
       if(\Laratrust::hasRole('admin')){
-        $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+        $rules['user_id'] = 'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
@@ -115,12 +155,14 @@ class AmandemenKontrakCreateController
     $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
     $doc->user_id = (\Laratrust::hasRole('admin'))?$request->user_id:Auth::id();
     $doc->doc_type = $request->type;
+    $doc->doc_sow = $request->doc_sow;
     $doc->doc_parent = 0;
     $doc->doc_parent_id = $request->parent_kontrak;
     $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
     $doc->doc_signing = $request->statusButton;
     $doc->save();
-
+    
+    /*
     if(count($request->f_judul)>0){
       foreach($request->f_judul as $key => $val){
         if(!empty($val)){
@@ -146,6 +188,7 @@ class AmandemenKontrakCreateController
         }
       }
     }
+    */
 
     if(count($request->doc_lampiran)>0){
       foreach($request->doc_lampiran as $key => $val){
@@ -219,6 +262,43 @@ class AmandemenKontrakCreateController
             $doc_meta->meta_file = $fileName;
           }
           $doc_meta->save();
+        }
+      }
+    }
+
+    // sow boq
+    if(count($request->hs_harga)>0){
+      foreach($request->hs_harga as $key => $val){
+        if(!empty($val)
+            && !empty($request['hs_kode_item'][$key])
+            && !empty($request['hs_item'][$key])
+            && !empty($request['hs_satuan'][$key])
+            && !empty($request['hs_mtu'][$key])
+        ){
+          $doc_boq = new DocBoq();
+          $doc_boq->documents_id = $doc->id;
+          $doc_boq->kode_item = $request['hs_kode_item'][$key];
+          $doc_boq->item = $request['hs_item'][$key];
+          $doc_boq->satuan = $request['hs_satuan'][$key];
+          $doc_boq->mtu = $request['hs_mtu'][$key];
+          $doc_boq->harga = Helpers::input_rupiah($request['hs_harga'][$key]);
+          $doc_boq->harga_jasa = Helpers::input_rupiah($request['hs_harga_jasa'][$key]);
+          $hs_type = 'harga_satuan';
+
+          if(in_array($type,['turnkey','amandemen_kontrak_turnkey','sp'])){
+            $q_qty = Helpers::input_rupiah($request['hs_qty'][$key]);
+            $q_harga = Helpers::input_rupiah($request['hs_harga'][$key]);
+            $q_harga_jasa = Helpers::input_rupiah($request['hs_harga_jasa'][$key]);
+
+            $q_total = $q_qty*($q_harga+$q_harga_jasa);
+            $doc_boq->qty = $q_qty;
+            $doc_boq->harga_total = $q_total;
+            $hs_type = 'boq';
+          }
+
+          $doc_boq->desc = $request['hs_keterangan'][$key];
+          $doc_boq->data = json_encode(array('type'=>$hs_type));
+          $doc_boq->save();
         }
       }
     }

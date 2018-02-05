@@ -430,7 +430,7 @@ class DocumentsController extends Controller
           $data->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
         }
         $data = $data->paginate(30);
-
+        
         if($type!="all"){
           $data->getCollection()->transform(function ($value) use ($type){
             $types=DocType::select('id')->where('name',$type)->first();
@@ -444,7 +444,6 @@ class DocumentsController extends Controller
                           ->get();
 
                           $valu[] = $value['id'];
-                          // // dd(array_splice($parent,0,2,$val));
                           foreach ($parent as $key => $d) {
                             $valu[] = $d->id;
                           }

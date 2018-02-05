@@ -22,6 +22,8 @@ use Modules\Documents\Http\Controllers\MouCreateController as MouCreate;
 use Modules\Documents\Http\Controllers\SpCreateController as SpCreate;
 use Modules\Documents\Http\Controllers\AmandemenSpCreateController as AmandemenSpCreate;
 use Modules\Documents\Http\Controllers\AmandemenKontrakCreateController as AmandemenKontrakCreate;
+use Modules\Documents\Http\Controllers\AmandemenKontrakKhsCreateController as AmandemenKontrakKhsCreate;
+use Modules\Documents\Http\Controllers\AmandemenKontrakTurnkeyCreateController as AmandemenKontrakTurnkeyCreate;
 
 use App\Helpers\Helpers;
 use Validator;
@@ -36,15 +38,19 @@ class EntryDocumentController extends Controller
     protected $MouCreate;
     protected $AmandemenSpCreate;
     protected $AmandemenKontrakCreate;
+    protected $AmandemenKontrakKhsCreate;
+    protected $AmandemenKontrakTurnkeyCreate;
     protected $AdendumCreate;
     protected $SideLetterCreate;
 
-    public function __construct(Request $req,MouCreate $MouCreate,SuratPengikatanCreate $SuratPengikatanCreate,SpCreate $spCreate,AmandemenSpCreate $AmandemenSpCreate,AmandemenKontrakCreate $AmandemenKontrakCreate,SideLetterCreate $SideLetterCreate){
+    public function __construct(Request $req,MouCreate $MouCreate,SuratPengikatanCreate $SuratPengikatanCreate,SpCreate $spCreate,AmandemenSpCreate $AmandemenSpCreate,AmandemenKontrakCreate $AmandemenKontrakCreate,SideLetterCreate $SideLetterCreate, AmandemenKontrakKhsCreate $AmandemenKontrakKhsCreate, AmandemenKontrakTurnkeyCreate $AmandemenKontrakTurnkeyCreate){
       $this->SuratPengikatanCreate  = $SuratPengikatanCreate;
       $this->MouCreate              = $MouCreate;
       $this->spCreate               = $spCreate;
       $this->AmandemenSpCreate      = $AmandemenSpCreate;
       $this->AmandemenKontrakCreate = $AmandemenKontrakCreate;
+      $this->AmandemenKontrakKhsCreate = $AmandemenKontrakKhsCreate;
+      $this->AmandemenKontrakTurnkeyCreate = $AmandemenKontrakTurnkeyCreate;
       $this->SideLetterCreate = $SideLetterCreate;
       $doc_id = $req->doc_id;
       $field = Documents::get_fields();
@@ -127,6 +133,13 @@ class EntryDocumentController extends Controller
       }
       if(in_array($type,['amandemen_kontrak','adendum'])){
         return $this->AmandemenKontrakCreate->store($request);
+      }
+      if(in_array($type,['amandemen_kontrak_khs'])){
+        return $this->AmandemenKontrakKhsCreate->store($request);
+      }
+
+      if(in_array($type,['amandemen_kontrak_turnkey'])){
+        return $this->AmandemenKontrakTurnkeyCreate->store($request);
       }
       $doc_value = $request->doc_value;
       $request->merge(['doc_value' => Helpers::input_rupiah($request->doc_value)]);

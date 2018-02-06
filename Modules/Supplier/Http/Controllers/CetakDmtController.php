@@ -50,7 +50,7 @@ class CetakDmtController extends Controller
         $data = Supplier::where('id',$id)->first();
         $data->no_rekanan_telkom = $kode;
         $data->tg_rekanan_expired = $endDate;
-        // $data->save();
+        $data->save();
         $pdf = PDF::loadView('supplier::partials.dmt', ['pimpinan' => $pimpinan, 'nama_perusahaan' => $nama_perusahaan,
                             'alamat' => $alamat, 'kode' => $kode, 'kota' => $kota, 'date' => $date,
                             'klasifikasi_text' => $klasifikasi_text, 'klasifikasi_kode' => $klasifikasi_kode]);

@@ -16,6 +16,7 @@
       @endphp
       @if(count($ps_judul)>1)
         @foreach ($ps_judul as $key => $value)
+          <div class="parent-pasal">
             <div class="form-horizontal pasal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
                 <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
                   <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Pasal Khusus #<span class="total_pasal">{{$key+1}}</span></div>
@@ -71,8 +72,10 @@
                   </div>
                 </div>
             </div>
+          </div>
         @endforeach
       @else
+      <div class="parent-pasal">
       <div class="form-horizontal pasal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
             <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Pasal Khusus #<span class="total_pasal">1</span></div>
@@ -113,6 +116,7 @@
             </div>
           </div>
       </div>
+    </div>
       @endif
       @include('documents::partials.buttons')
     </div>
@@ -162,7 +166,7 @@ $(function() {
     mdf_new_row.eq(2).find('textarea').val('');   //keterangan
     mdf_new_row.eq(2).find('.error').remove();
 
-    $this.parent().prepend(new_row);
+    $('.parent-pasal').append(new_row);
     new_row.find('.jdl_lain').remove();
     $('.date').datepicker(datepicker_ops);
     var row = $('.pasal');

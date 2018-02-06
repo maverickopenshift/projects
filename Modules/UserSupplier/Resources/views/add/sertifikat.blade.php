@@ -16,8 +16,8 @@
 
 @if(count($iujk_no)>0)
   @foreach ($iujk_no as $key => $value)
-    <div class="sertifikat">
-      <div class="form-horizontal">
+    <div class="parent-sertifikat">
+      <div class="form-horizontal sertifikat">
         <div class="row">
           <div class="form-group button-delete" style="position:relative;margin-top: 25px;margin-bottom: 60px;margin-right:12px;">
             @if(count($iujk_no)>1)
@@ -120,8 +120,8 @@
     </div>
   @endforeach
 @else
-  <div class="sertifikat">
-    <div class="form-horizontal">
+  <div class="parent-sertifikat">
+    <div class="form-horizontal sertifikat">
       <div class="row">
         <div class="form-group button-delete" style="position:relative;margin-top: 25px;margin-bottom: 60px;margin-right:12px;">
         </div>
@@ -221,8 +221,8 @@ $(function() {
     event.preventDefault();
     var btn_del = '<button type="button" class="btn btn-danger delete-sertifikat" style="position: absolute;right: 5px;top: -10px;border-radius: 0;"><i class="glyphicon glyphicon-trash"></i></button>';
     /* Act on the event */
-    var $this = $('.sertifikat:last');
-    var new_row = $this.clone();
+    var $this = $('.sertifikat');
+    var new_row = $this.eq(0).clone();
     new_row.find('.has-error').removeClass('has-error');
     var mdf_new_row = new_row.find('.form-group');
 
@@ -243,8 +243,7 @@ $(function() {
     mdf_new_row.eq(5).find('input').val('');   //file_sertifikat
     mdf_new_row.eq(5).find('.help-block').remove(); //file_sertifikat
 
-
-    $this.append(new_row);
+    $('.parent-sertifikat').append(new_row);
     $('.date').datepicker(datepicker_ops);
     var row = $('.sertifikat');
     $.each(row,function(index, el) {
@@ -261,8 +260,10 @@ $(function() {
   });
 
   $(document).on('click', '.delete-sertifikat', function(event) {
-    $(this).parent().parent().parent().parent().remove();
+    $(this).parent().parent().parent().remove();
     var $this = $('.sertifikat');
+    console.log($this.length);
+
     $.each($this,function(index, el) {
       var mdf_new_row = $(this).find('.form-group');
       mdf_new_row.eq(1).find('.total_sertifikat').text(index+1);

@@ -50,7 +50,7 @@
   Telah tercatat dalam Daftar Mitra PT Telekomunikasi Indonesia, Tbk.<br>
   Daftar Mitra ini berlaku 2 (dua) tahun sejak tanggal diterbitkan, atau sejak tanggal selesainya pekerjaan terakhir di Telkom.<br><br>
 
-  Bandung, {{$date}}<br>
+  Jakarta, {{$date}}<br>
   <!-- <br>
   <br>
   <br>

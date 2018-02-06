@@ -47,9 +47,12 @@ class SupplierEditController extends Controller
         ['object_key','=','klasifikasi_usaha']
       ])->get();
       foreach($dt_klasifikasi as $dt_klasifikasi){
-        $klasifikasi[] = $dt_klasifikasi->object_value;
+        $d = json_decode($dt_klasifikasi->object_value);
+        $klasifikasi_kode[] = $d->kode;
+        $klasifikasi_text[] = $d->text;
       }
-      $supplier->klasifikasi_usaha = $klasifikasi;
+      $supplier->klasifikasi_text = $klasifikasi_text;
+      $supplier->klasifikasi_kode = $klasifikasi_kode;
 
 
       $dt_anak_perus = SupplierMetadata::select('object_value')->where([
@@ -113,7 +116,7 @@ class SupplierEditController extends Controller
         'nm_vendor'         => 'required|max:500|min:3',
         'nm_vendor_uq'      => 'max:500|min:3',
         'prinsipal_st'      => 'required|boolean',
-        'klasifikasi_usaha.*' => 'required',
+        // 'klasifikasi_usaha.*' => 'required',
         'pengalaman_kerja'  => 'required|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
         'alamat'            => 'required|max:1000|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
         'kota'              => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -258,6 +261,11 @@ class SupplierEditController extends Controller
     $request->merge(['asset' => $asset]);
 
     $validator = Validator::make($request->all(), $rules,CustomErrors::supplier());
+    $validator->after(function ($validator) use ($request) {
+        if (!isset($request['klasifikasi_kode'][0])) {
+            $validator->errors()->add('klasifikasi_err', 'Klasifikasi Usaha harus dipilih!');
+        }
+    });
     //dd($request->input());
     if ($validator->fails ()){
       return redirect()->back()
@@ -396,15 +404,14 @@ class SupplierEditController extends Controller
         ['object_key','=','klasifikasi_usaha']
         ])->delete();
 
-      foreach($request->klasifikasi_usaha as $k){
+      foreach($request->klasifikasi_kode as $key=>$v){
         $mt_data = new SupplierMetadata();
         $mt_data->id_object    = $data->id;
         $mt_data->object_type  = 'vendor';
         $mt_data->object_key   = 'klasifikasi_usaha';
-        $mt_data->object_value = $k;
+        $mt_data->object_value = json_encode(['kode'=>$request['klasifikasi_kode'][$key], 'text'=>$request['klasifikasi_text'][$key]]);
         $mt_data->save();
-      };
-      $data->klasifikasi_usaha = $request->klasifikasi_usaha;
+      }
 
       SupplierMetadata::where([
         ['id_object','=',$data->id],

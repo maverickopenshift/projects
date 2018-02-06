@@ -123,6 +123,14 @@
                           <button class="btn btn-danger btn-xs unlink_btn" data-id="{{$sqls->id}}">Unlink To SAP</button> <br>
                         @endif
                       @endif
+                      @if (\Auth::user()->hasPermission('cetak-dmt'))
+                        @if ($sqls->no_rekanan_telkom =="" || $sqls->no_rekanan_telkom==null)
+                          <a href="{{route('supplier.cetak.dmt',['id'=>$sqls->id])}}" target="_blank" class="btn btn-primary btn-xs">Cetak DMT</a> <br>
+                        @else
+                          <a href="{{route('supplier.cetak.ulang.dmt',['id'=>$sqls->id])}}" target="_blank" class="btn btn-primary btn-xs">Cetak Ulang DMT</a> <br>
+                        @endif
+
+                      @endif
                     @endif
                     </div>
                   </td>
@@ -152,6 +160,10 @@ $('#datatables').DataTable({
   autoWidth : true,
   scrollX   : true,
   pageLength: 10,
+  // fixedColumns:   {
+  //       leftColumns: 2,
+  //       rightColumns:1
+  // },
 });
   $(document).on('click', '.cari-filter', function(event) {
       var filter = $(".select-filter").val();

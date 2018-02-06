@@ -51,4 +51,34 @@ class Supplier extends Model
 
         return $nextplgnya;
     }
+
+    public static function gen_dmtnomer(){
+  // dd("yo");
+  $thn=date("Y");
+  $loker = "COP-E0042000";
+  $kode = "LG.530";
+  $pattern = "TEL.";
+  $nomer = "0001";
+  $cekid=$pattern.$nomer.'/'.$kode.'/'.$loker.'/'.$thn;
+  $count = DB::table('supplier')->where('no_rekanan_telkom',$cekid)->count();
+    if($count==0){
+      $nextplgnya=$cekid;
+    }
+    else{
+      //jika 001 sudah ada
+     $dt = \DB::table('supplier')
+             ->select('no_rekanan_telkom')
+             ->orderBy('updated_at','DESC')
+             ->first();
+
+      $last = $dt->no_rekanan_telkom;
+      $lastplg = substr($last, 4,4);
+      $nextplg = intval($lastplg) + 1;
+      $idnya = sprintf('%04s', $nextplg);
+      $nextplgnya=$pattern.$idnya.'/'.$kode.'/'.$loker.'/'.$thn;
+    }
+
+    return $nextplgnya;
+}
+
 }

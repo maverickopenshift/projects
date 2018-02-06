@@ -71,9 +71,12 @@ class CetakDmtController extends Controller
       $metadata_direktur = SupplierMetadata::where('id_object', $id)->where('object_key', 'nm_direktur_utama')->first();
       $metadata_klasifikasi = SupplierMetadata::where('id_object', $id)->where('object_key', 'klasifikasi_usaha')->get();
       foreach($metadata_klasifikasi as $metadata_klasifikasi){
-        $klasifikasi[] = $metadata_klasifikasi->object_value;
+        $d = json_decode($metadata_klasifikasi->object_value);
+        $klasifikasi_kode[] = $d->kode;
+        $klasifikasi_text[] = $d->text;
       }
-      $klasifikasi_usaha = $klasifikasi;
+      $klasifikasi_kode = $klasifikasi_kode;
+      $klasifikasi_text = $klasifikasi_text;
       $pimpinan = strtoupper($metadata_direktur->object_value);
       $nama = ucwords($sup->nm_vendor);
       $bdn_usaha = strtoupper($sup->bdn_usaha);
@@ -87,7 +90,8 @@ class CetakDmtController extends Controller
       // dd($kode_sup);
       // $endDate = date('Y-m-d', strtotime('+2 years'));
         $pdf = PDF::loadView('supplier::partials.dmt', ['pimpinan' => $pimpinan, 'nama_perusahaan' => $nama_perusahaan,
-                            'alamat' => $alamat, 'kode' => $kode, 'kota' => $kota, 'date' => $date]);
+                            'alamat' => $alamat, 'kode' => $kode, 'kota' => $kota, 'date' => $date,
+                            'klasifikasi_text' => $klasifikasi_text, 'klasifikasi_kode' => $klasifikasi_kode]);
         return $pdf->stream('dmt-'.$kode_sup.'.pdf');
     }
 

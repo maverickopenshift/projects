@@ -44,8 +44,19 @@
         <td> : </td>
         <td> {{$kota or '-'}} </td>
       </tr>
+      <tr>
+        <td>Klasifikasi Perusahaan</td>
+        <td> : </td>
+        <td>Kode Klasifikasi - Nama Klasifikasi</td>
+      </tr>
+      @foreach($klasifikasi_kode as $key => $val)
+      <tr>
+        <td></td>
+        <td></td>
+        <td> {{$klasifikasi_kode[$key] or '-'}} - {{$klasifikasi_text[$key] or '-'}} </td>
+      </tr>
+      @endforeach
     </table><br><br>
-
 
   Telah tercatat dalam Daftar Mitra PT Telekomunikasi Indonesia, Tbk.<br>
   Daftar Mitra ini berlaku 2 (dua) tahun sejak tanggal diterbitkan, atau sejak tanggal selesainya pekerjaan terakhir di Telkom.<br><br>
@@ -59,7 +70,7 @@
     AVP SUPPLY ANALYSIS</p>
   </p>
 
-  <p  style="margin-top: 25%; margin-bottom: -20%;">Disclaimer: Tanpa ditanda-tangani dokumen ini sah di lingkungan PT. Telekomunikasi Indonesia, tbk.</p>
+  <p  style="margin-top: 25%; margin-bottom: -10%;">Disclaimer: Tanpa ditanda-tangani dokumen ini sah di lingkungan PT. Telekomunikasi Indonesia, tbk.</p>
 
 </body>
 </html>

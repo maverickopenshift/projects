@@ -123,15 +123,12 @@ class AmandemenKontrakCreateController
     $doc->doc_parent_id = $request->parent_kontrak;
     $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
     $doc->doc_signing = $request->statusButton;
-<<<<<<< HEAD
 
     $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
     if(Config::get_config('auto-numb')=='off'){
       $doc->doc_no = $request->doc_no;
     }
 
-=======
->>>>>>> 1dc6f0be1a4bc792a3bdce2e3dd35b92cd36c51c
     $doc->save();
 
     if(count($request->f_judul)>0){

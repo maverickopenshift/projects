@@ -143,7 +143,6 @@ class AmandemenKontrakEditController extends Controller
       if((\Laratrust::hasRole('admin'))){
         $doc->user_id  = $request->user_id;
       }
-<<<<<<< HEAD
 
       $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
       if( Config::get_config('auto-numb')=='off'){
@@ -152,9 +151,6 @@ class AmandemenKontrakEditController extends Controller
       else{
         $doc->doc_no = null;
       }
-
-=======
->>>>>>> 1dc6f0be1a4bc792a3bdce2e3dd35b92cd36c51c
       $doc->doc_signing = '0';
       $doc->doc_parent = 0;
       $doc->doc_parent_id = $request->parent_kontrak;

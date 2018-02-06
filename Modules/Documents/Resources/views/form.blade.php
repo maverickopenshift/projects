@@ -18,8 +18,8 @@
       <ul class="nav nav-tabs">
         <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a>
         <input type="hidden" id="statusButton" name="statusButton"></li>
-        @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter']))
-          @if(in_array($doc_type->name,['amandemen_kontrak']))
+        @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum','side_letter']))
+          @if(in_array($doc_type->name,['amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey']))
             <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
             <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
             <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
@@ -36,15 +36,15 @@
           @endif
         @endif
 
-        @if(!in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','adendum','side_letter','mou']))
+        @if(!in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum','side_letter','mou']))
         <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
         @endif
 
-        @if(in_array($doc_type->name,['khs','amandemen_kontrak_khs','turnkey','amandemen_kontrak_turnkey','surat_pengikatan','mou']))
+        @if(in_array($doc_type->name,['khs','turnkey','surat_pengikatan','mou']))
           <li><a href="#tab_4" data-toggle="tab">PASAL KHUSUS</a></li>
         @endif
 
-        @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey','sp']))
+        @if(in_array($doc_type->name,['turnkey','sp']))
           <li><a href="#tab_5" data-toggle="tab">JAMINAN DAN ASURANSI</a></li>
         @endif
       </ul>
@@ -52,7 +52,7 @@
         <div class="tab-content">
           <div class="tab-pane active" id="tab_1">
             @include('documents::partials.alert-errors')
-            @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey','sp','khs','amandemen_kontrak_khs','surat_pengikatan','mou']))
+            @if(in_array($doc_type->name,['turnkey','sp','khs','surat_pengikatan','mou']))
               @include('documents::doc-form.general-info')
             @else
               @include('documents::doc-form.amademen')
@@ -66,9 +66,11 @@
           </div>
           <div class="tab-pane" id="tab_2">
             @include('documents::partials.alert-errors')
-            @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey','sp','khs','amandemen_kontrak_khs','mou']))
+            @if(in_array($doc_type->name,['turnkey','sp','khs','mou']))
               @include('documents::doc-form.sow-boq')
-            @elseif(in_array($doc_type->name,['amandemen_kontrak','amandemen_sp']))
+            @elseif(in_array($doc_type->name,['amandemen_kontrak','amandemen_kontrak_turnkey','amandemen_kontrak_khs']))
+              @include('documents::doc-form.sow-boq')
+            @elseif(in_array($doc_type->name,['amandemen_sp']))  
               @include('documents::doc-form.amandemen_kontrak-sow-boq')
             @endif
             <div class="clearfix"></div>
@@ -97,7 +99,7 @@
               </div>
             </div>
           </div>
-          @if(in_array($doc_type->name,['khs','amandemen_kontrak_khs','turnkey','amandemen_kontrak_turnkey','surat_pengikatan','mou']))
+          @if(in_array($doc_type->name,['khs','turnkey','surat_pengikatan','mou']))
           <div class="tab-pane" id="tab_4">
             @include('documents::partials.alert-errors')
             @include('documents::doc-form.pasal-penting')
@@ -112,7 +114,7 @@
           @endif
           <div class="tab-pane" id="tab_5">
             @include('documents::partials.alert-errors')
-            @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey','sp']))
+            @if(in_array($doc_type->name,['turnkey','sp']))
               @include('documents::doc-form.jaminan-asuransi')
             @elseif(in_array($doc_type->name,['side_letter']))
               @include('documents::doc-form.side_letter-scope-perubahan')

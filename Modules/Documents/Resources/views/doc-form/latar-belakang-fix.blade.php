@@ -78,7 +78,7 @@
     </div>     
     @endif
 
-    @if(in_array($doc_type->name,['surat_pengikatan', 'khs', 'turnkey', 'sp', 'amandemen_sp', 'amandemen_kontrak', 'adendum', 'side_letter']))
+    @if(in_array($doc_type->name,['surat_pengikatan', 'khs', 'turnkey', 'sp', 'amandemen_sp', 'amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum', 'side_letter']))
     <!-- Surat Ketetapan Pemenang-->
     <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
       <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">

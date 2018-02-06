@@ -32,6 +32,7 @@
 @push('scripts')
   <script>
   $(function() {
+
     var selectKontrak = $(".select-kontrak").select2({
       placeholder : "Pilih Kontrak....",
       ajax: {
@@ -53,6 +54,7 @@
               // scrolling can be used
 
               var results = [];
+
 
               $.each(data.data, function (i, v) {
                   var o = {};
@@ -107,7 +109,9 @@
           set_content_reset();
         }
     });
+
     var kontrak_set = $(".select-kontrak");
+
     if(kontrak_set.data('id')!==""){
       var text_kontrak = $(".select-kontrak-text").val();
       var newOption_ = new Option(text_kontrak, kontrak_set.data('id'), false, true);
@@ -151,7 +155,7 @@
     table.html('');
     var h_title = '{!!strtoupper($doc_type->title)!!}';
     var s_type = JSON.parse(data.type);
-    //console.log(JSON.stringify(s_type));
+    //sconsole.log(JSON.stringify(s_type));
     // console.log(JSON.stringify(s_type.length));
     $('#nama_supplier').val(data.nama_supplier);
     var t_table = '<table class="table">\

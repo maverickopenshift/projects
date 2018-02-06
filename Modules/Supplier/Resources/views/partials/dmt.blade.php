@@ -53,7 +53,7 @@
       <tr>
         <td></td>
         <td></td>
-        <td> {{$klasifikasi_kode[$key] or '-'}} - {{$klasifikasi_text[$key] or '-'}} </td>
+        <td><li> {{$klasifikasi_kode[$key] or '-'}} - {{$klasifikasi_text[$key] or '-'}} </li></td>
       </tr>
       @endforeach
     </table><br><br>

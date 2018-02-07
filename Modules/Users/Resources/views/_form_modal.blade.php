@@ -279,6 +279,8 @@
                 reset_select2('pgs_unit_or')
                 if(data_other.is_pgs){
                   var data_pgs = data_other.pgs;
+                  var data_pgs2 = data_other.pgs_2;
+                  modal.find('.modal-body select#roles').val(data_pgs2.role_id)
                   modal.find('.modal-body select#user_pgs').val('yes');
                   modal.find('.modal-body select#user_pgs').change();
                   set_select2(modal.find('.modal-body select#pgs_divisi_or'),{id:data_pgs.objiddivisi,text:data_pgs.v_short_divisi});

@@ -52,54 +52,91 @@
       <div class="login-logo">
           <img src="images/logo_new.png" alt="Consys">
       </div>
+    <form action="#" id="form-pgs" data-action="{{route('home.pgschange')}}" method="post">
+      {{ csrf_field() }}
+      <div class="alert alert-danger alert-dismissible alert-login" style="display:none;">
+      </div>
+      <div class="form-group" style="border: 1px solid #ddd;padding: 5px;margin-bottom: 15px;">
+        <label style="width:100%">
+          <table style="width:100%">
+            <tr valign="top">
+              <td width="50">Nama</td>
+              <td width="10">:</td>
+              <td>{{$user->name}}</td>
+            </tr>  
+            <tr valign="top">
+              <td>Username</td>
+              <td>:</td>
+              <td>{{$user->username}}</td>
+            </tr>  
+            <tr valign="top">
+              <td>Email</td>
+              <td>:</td>
+              <td>{{$user->email}}</td>
+            </tr>
+          </table>
+        </label>
+      </div>
+      <div class="form-group text-center" style="margin-bottom:0">
+        <label>PILIH USER PGS</label>
+      </div>
+      @foreach ($user_pgs as $pgs)
+        <div class="radio radio-me" style="border: 1px solid #ddd;padding: 5px;margin-bottom: 15px;margin-top:0">
+          <label style="width:100%">
+            <input type="radio" name="pgs" value="{{$pgs->id}}" {{($pgs->pgs_status=='active')?'checked':''}} autocomplete="off"> 
+            <table style="width:100%">
+              <tr valign="top">
+                <td width="50">Divisi</td>
+                <td width="10">:</td>
+                <td>{{$pgs->v_short_divisi}}</td>
+              </tr>  
+              <tr valign="top">
+                <td>Unit</td>
+                <td>:</td>
+                <td>{{$pgs->v_short_unit}}</td>
+              </tr>  
+              <tr valign="top">
+                <td>Jabatan</td>
+                <td>:</td>
+                <td>{{$pgs->v_short_posisi}}</td>
+              </tr>  
+              <tr>
+                <td>Role</td>
+                <td>:</td>
+                <td>{{$pgs->role->display_name}}</td>
+              </tr>
+            </table>
+          </label>
+        </div>
+      @endforeach
 
-    <form action="#" id="form-login" data-action="{{route('login.ajax')}}" method="post">
-      {{ csrf_field() }}
-      <div class="alert alert-danger alert-dismissible alert-login" style="display:none;">
-      </div>
-      <div class="form-group">
-        <label>User ID</label>
-        <input type="text" class="form-control" name="login" required autofocus>
-      </div>
-      <div class="form-group">
-        <label>Password</label>
-        <input type="password" name="password" class="form-control" required>
-      </div>
-      <div class="row">
-        <!-- /.col -->
-        <div class="col-xs-12">
-            <div class="text-center">
-                <label>
-                  <a href="{{route('usersupplier.register')}}">Create User ID</a> | <a href="{{route('usersupplier.forgetpwd')}}">Forget Password</a>
-                    <!-- <input type="checkbox" name="remember" {{ old('remember') ? 'checked' : ''}}> Remember Me -->
-                </label>
-            </div>
-        </div>
-        <div class="col-xs-12">
-          <button type="submit" class="btn btn-danger btn-block btn-flat">LOGIN</button>
-        </div>
-        <!-- /.col -->
-      </div>
-    </form>
-    <form action="#" id="form-pgs" data-action="{{route('home.pgschange')}}" method="post" style=display:none;>
-      {{ csrf_field() }}
-      <div class="alert alert-danger alert-dismissible alert-login" style="display:none;">
-      </div>
-      <div class="form-group">
-        <select class="form-control roles" name="roles" required>
-          <option value="">Pilih Roles</option>
-        </select>
-      </div>
-      <div class="radio">
+      {{-- <div class="radio radio-me" style="border: 1px solid #ddd;padding: 5px;margin-bottom: 15px;">
         <label style="width:100%">
-          <input type="radio" name="pgs" id="pgs" class="pgs"> Check me out
+          <input type="radio" name="pgs" value="{{$role[1]['id']}}"> 
+          <table style="width:100%">
+            <tr valign="top">
+              <td width="50">Divisi</td>
+              <td width="10">:</td>
+              <td>{{$pgs_2->v_short_divisi}}</td>
+            </tr>  
+            <tr valign="top">
+              <td>Unit</td>
+              <td>:</td>
+              <td>{{$pgs_2->v_short_unit}}</td>
+            </tr>  
+            <tr valign="top">
+              <td>Jabatan</td>
+              <td>:</td>
+              <td>{{$pgs_2->v_short_posisi}}</td>
+            </tr>  
+            <tr>
+              <td>Role</td>
+              <td>:</td>
+              <td>{{$role[1]['title']}}</td>
+            </tr>
+          </table>
         </label>
-      </div>
-      <div class="radio">
-        <label style="width:100%">
-          <input type="radio" name="pgs" id="pgs" class="pgs"> Check me out
-        </label>
-      </div>
+      </div> --}}
       <div class="form-group">
         <button type="submit" class="btn btn-danger btn-block btn-flat">SUBMIT</button>
       </div>
@@ -112,52 +149,6 @@
 
 <script src="{{ mix('js/login.js') }}"></script>
 <script>
-  $(function () {
-    $('input').iCheck({
-      checkboxClass: 'icheckbox_square-blue',
-      radioClass: 'iradio_square-blue',
-      increaseArea: '20%' // optional
-    });
-  });
-  $(document).on('submit', '#form-login', function(event) {
-    event.preventDefault();
-    /* Act on the event */
-    var formMe = $(this);
-    var formPgs = $('#form-pgs');
-    var loginBox = $('.login-box-body');
-    var loading =loginBox.find('.loading-login');
-    loading.show();
-    var alert = loginBox.find('.alert-login');
-    alert.hide().html('');
-    var pgsRoles = formPgs.find('select.roles');
-    pgsRoles.find('option[value!=""]').remove();
-    $.ajax({
-      url: formMe.data('action'),
-      type: 'post',
-      dataType: 'json',
-      data: formMe.serialize()
-    })
-    .done(function(_response) {
-      if(_response.status){
-        if(_response.pgs){
-          window.location = '{!!route('pgs')!!}';
-          loading.hide();
-          formMe.hide();
-          // pgsRoles.append('<option value="'+_response.pgs_list[0].id+'">'+_response.pgs_list[0].title+'</option>');
-          // pgsRoles.append('<option value="'+_response.pgs_list[1].id+'">'+_response.pgs_list[1].title+'</option>');
-          // formPgs.show();
-        }
-        else{
-          window.location = '{!!route('home')!!}';
-        }
-      }
-      else{
-        alert.show().html(_response.msg);
-        loading.hide();
-      }
-    });
-
-  });
   $(document).on('submit', '#form-pgs', function(event) {
     event.preventDefault();
     /* Act on the event */

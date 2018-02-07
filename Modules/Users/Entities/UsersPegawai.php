@@ -18,10 +18,17 @@ class UsersPegawai extends Model
       }
       return false;
     }
-    public static function get_by_userid($id){
-      $data = self::selectRaw('users_pegawai.id as ids,pegawai.*')
-                ->join('pegawai', 'pegawai.n_nik', '=', 'users_pegawai.nik')
-                ->where('users_pegawai.users_id',$id)->first();
+    public static function get_by_userid($id,$type='organik'){
+      $data = self::selectRaw('users_pegawai.id as ids,pegawai.*');
+      if($type=='nonorganik'){
+        $data->join('pegawai_nonorganik as pegawai', 'pegawai.n_nik', '=', 'users_pegawai.nik');
+      }
+      else{
+        $data->join('pegawai as pegawai', 'pegawai.n_nik', '=', 'users_pegawai.nik');
+      }
+                
+      $data = $data->where('users_pegawai.users_id',$id)->first();
+      
       return $data;
     }
 }

@@ -29,7 +29,7 @@
                   <i class="glyphicon glyphicon-paperclip"></i>  Lihat
                   </a>
                 @endif
-                @if(count($lampiran)>1)
+                @if(count($lampiran)>0)
                   <button type="button" class="btn btn-danger delete-lampiran"><i class="glyphicon glyphicon-trash"></i></button>
                 @endif
               </div>
@@ -47,14 +47,12 @@
           <div class="error error-lampiran_nama error-doc_lampiran_nama-0"></div>
         </div>
         <div class="col-sm-6">
-          <div class="">
-            <div class="input-group bottom10">
-              <input type="file" class="hide" name="doc_lampiran[]">
-              <input class="form-control" type="text" disabled>
-              <div class="input-group-btn">
-                <button class="btn btn-default click-upload" type="button">Browse</button>
-                <input type="hidden" name="doc_lampiran_old[]">
-              </div>
+          <div class="input-group bottom10">
+            <input type="file" class="hide" name="doc_lampiran[]">
+            <input class="form-control" type="text" disabled>
+            <div class="input-group-btn">
+              <button class="btn btn-default click-upload" type="button">Browse</button>
+              <input type="hidden" name="doc_lampiran_old[]">
             </div>
           </div>
           <div class="error error-lampiran error-doc_lampiran-0"></div>
@@ -107,7 +105,8 @@ $(function() {
   });
 
   $(document).on('click', '.delete-lampiran', function(event) {
-    $(this).parent().parent().parent().parent().parent().remove();
+    // $(this).parent().parent().parent().parent().parent().remove();
+    $(this).parent().parent().parent().parent().remove();
     var $this = $('.input-lampiran');
     $.each($this,function(index, el) {
       if($(this).hasClass("has-error")){

@@ -91,7 +91,7 @@ class EntryDocumentController extends Controller
       }else{
         $ppn = "0";
       }
-      
+
       // dd($ppn->ppn);
       $data['ppn'] = $ppn;
       $data['auto_numb']=Config::get_config('auto-numb');
@@ -114,7 +114,7 @@ class EntryDocumentController extends Controller
      * @return Response
      */
     public function store(Request $request)
-    { 
+    {
       $type = $request->type;
       if($type=='surat_pengikatan'){
         return $this->SuratPengikatanCreate->store($request);
@@ -177,17 +177,17 @@ class EntryDocumentController extends Controller
         $rules['doc_template_id']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
         $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
-        $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-        $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-        $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
-        
+
         if(Config::get_config('auto-numb')=='off'){
           $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
         }
-        
+
         if($type!='khs'){
           $rules['doc_value']        =  'required|max:500|min:3|regex:/^[0-9 .]+$/i';
         }
@@ -292,7 +292,7 @@ class EntryDocumentController extends Controller
         if(isset($hs_qty) && count($hs_qty)>0){
           $request->merge(['hs_qty'=>$hs_qty]);
         }
-        
+
         if ($validator->fails ()){
           return redirect()->back()
                       ->withInput($request->input())
@@ -338,13 +338,13 @@ class EntryDocumentController extends Controller
       $doc->doc_sow = $request->doc_sow;
       $doc->doc_type = $request->type;
       $doc->doc_signing = $request->statusButton;
-      
-      
+
+
       $doc->penomoran_otomatis =  Config::get_penomoran_otomatis($request->penomoran_otomatis);
       if(Config::get_config('auto-numb')=='off'){
         $doc->doc_no = $request->doc_no;
       }
-      
+
       $doc->save();
 
       /// pasal khusus
@@ -362,7 +362,7 @@ class EntryDocumentController extends Controller
           }
         }
       }
-      
+
       // PO
       if(in_array($type,['turnkey','sp'])){
         if(count($request->doc_po_no)>0){
@@ -440,7 +440,7 @@ class EntryDocumentController extends Controller
           $pic->save();
         }
       }
-      
+
       // latar belakang wajib
       if(isset($request->lt_judul_ketetapan_pemenang)){
         $doc_meta = new DocMeta();

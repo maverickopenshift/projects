@@ -42,7 +42,7 @@
 
           <div class="form-group {{ $errors->has('company_name') ? ' has-error' : '' }}">
             <label>Nama Perusahaan</label>
-            <input type="text" class="form-control" name="company_name" id="company_name" >
+            <input type="text" class="form-control" name="company_name" id="company_name" value="{{old('company_name')}}">
             @if ($errors->has('company_name'))
                 <span class="help-block">
                     <strong>{{ $errors->first('company_name') }}</strong>
@@ -52,7 +52,7 @@
 
           <div class="form-group {{ $errors->has('initial_company_name') ? ' has-error' : '' }}">
             <label>Inisial Perusahaan</label>
-            <input type="text" class="form-control" name="initial_company_name" id="initial_company_name"  placeholder="Isi 3 digit inisial Perusahaan">
+            <input type="text" class="form-control" name="initial_company_name" id="initial_company_name" value="{{old('initial_company_name')}}"  placeholder="Isi 3 digit inisial Perusahaan">
             @if ($errors->has('initial_company_name'))
                 <span class="help-block">
                     <strong>{{ $errors->first('initial_company_name') }}</strong>
@@ -62,7 +62,7 @@
 
           <div class="form-group {{ $errors->has('password') ? ' has-error' : '' }}">
             <label>Password</label>
-            <input type="password" class="form-control" name="password" id="password" >
+            <input type="password" class="form-control" name="password" id="password" value="{{old('password')}}">
             @if ($errors->has('password'))
                 <span class="help-block">
                     <strong>{{ $errors->first('password') }}</strong>
@@ -72,7 +72,7 @@
 
           <div class="form-group {{ $errors->has('phone') ? ' has-error' : '' }}">
             <label>No Telepon</label>
-            <input type="text" class="form-control" name="phone" id="phone" >
+            <input type="text" class="form-control" name="phone" id="phone" value="{{old('phone')}}">
             @if ($errors->has('phone'))
                 <span class="help-block">
                     <strong>{{ $errors->first('phone') }}</strong>
@@ -82,7 +82,7 @@
 
           <div class="form-group {{ $errors->has('email') ? ' has-error' : '' }}">
             <label>E-Mail Address</label>
-            <input type="text" class="form-control" name="email" id="email" >
+            <input type="text" class="form-control" name="email" id="email" value="{{old('email')}}">
             @if ($errors->has('email'))
                 <span class="help-block">
                     <strong>{{ $errors->first('email') }}</strong>

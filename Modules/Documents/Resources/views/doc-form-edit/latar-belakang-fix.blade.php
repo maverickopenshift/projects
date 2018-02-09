@@ -26,7 +26,13 @@
       $f_latar_belakang_isi = Helper::old_prop_each($doc,'f_latar_belakang_isi');
       $f_latar_belakang_file = Helper::old_prop_each($doc,'f_latar_belakang_file');
       $f_latar_belakang_file_oldss = Helper::old_prop_each($doc,'f_latar_belakang_file');
-    @endphp    
+
+      if($doc_type->name == "khs" || $doc_type->name == "turnkey" || $doc_type->name == "surat_pengikatan"){
+        $judul = "Judul";
+      }else{
+        $judul = "Perubahan";
+      }
+    @endphp
 
     @if(in_array($doc_type->name,['surat_pengikatan']))
     <!-- RKS -->
@@ -81,7 +87,7 @@
           <div class="error error-lt_file_rks"></div>
         </div>
       </div>
-    </div>     
+    </div>
     @endif
 
     @if(in_array($doc_type->name,['surat_pengikatan', 'khs', 'turnkey', 'sp', 'amandemen_sp', 'amandemen_kontrak', 'amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum', 'side_letter']))
@@ -138,7 +144,7 @@
         </div>
       </div>
     </div>
-    <!-- Surat Kesanggupan Mitra --> 
+    <!-- Surat Kesanggupan Mitra -->
     <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
       <div class="form-group" style="position:relative;margin-bottom: 34px;">
         <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Kesanggupan Mitra <span class="total_lt"></span><small class="text-danger"><i> (Wajib di isi) </i></small></div>
@@ -198,17 +204,17 @@
         <div class="parent-perubahan-latar_belakang">
           <div class="form-horizontal perubahan" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_perubahan">{{ $key+1 }}</span></div>
+              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Lain-lain</div>
               <div class="btn-group" style="position: absolute;right: 5px;top: -10px;border-radius: 0;">
                 <button type="button" class="btn btn-success add-latar-belakang" style="border-radius: 0;"><i class="glyphicon glyphicon-plus"></i></button>
                 @if(count($f_latar_belakang_judul)>1)
                 <button type="button" class="btn btn-danger delete-latar-belakang" style="border-radius: 0;"><i class="glyphicon glyphicon-trash"></i></button>
                 @endif
-              </div>            
+              </div>
             </div>
 
             <div class="form-group">
-              <label for="f_judul" class="col-sm-2 control-label">Perubahan</label>
+              <label for="f_judul" class="col-sm-2 control-label">{{$judul}}</label>
               <div class="col-sm-6">
                 @php
                   $a="";
@@ -258,7 +264,7 @@
               <div class="col-sm-6">
                 <textarea class="form-control f_latar_belakang_isi" name="f_latar_belakang_isi[]" cols="4" rows="4" placeholder="Isi..">{{$f_latar_belakang_isi[$key]}}</textarea>
               </div>
-            </div>         
+            </div>
 
             <div class="form-group">
               <label for="lt_file" class="col-sm-2 control-label"> File</label>
@@ -286,14 +292,14 @@
       <div class="parent-perubahan-latar_belakang">
         <div class="form-horizontal perubahan-latar_belakang" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-            <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_perubahan-latar_belakang">1</span></div>
+            <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Lain-lain</div>
             <div class="btn-group" style="position: absolute;right: 5px;top: -10px;border-radius: 0;">
               <button type="button" class="btn btn-success add-latar-belakang" style="border-radius: 0;"><i class="glyphicon glyphicon-plus"></i></button>
-            </div>            
+            </div>
           </div>
 
           <div class="form-group">
-            <label for="f_judul" class="col-sm-2 control-label">Perubahan</label>
+            <label for="f_judul" class="col-sm-2 control-label">{{$judul}}</label>
             <div class="col-sm-6">
               <select class="form-control f_latar_belakang_judul" name="f_latar_belakang_judul[]" style="width: 100%;">
                 <option value=""></option>
@@ -322,7 +328,7 @@
             <div class="col-sm-6">
               <textarea class="form-control f_latar_belakang_isi" name="f_latar_belakang_isi[]" cols="4" rows="4" placeholder="Isi.."></textarea>
             </div>
-          </div>         
+          </div>
 
           <div class="form-group">
             <label for="lt_file" class="col-sm-2 control-label"> File</label>
@@ -340,7 +346,7 @@
         </div>
       </div>
     @endif
-    
+
     @include('documents::partials.buttons')
   </div>
 </div>
@@ -356,19 +362,19 @@
     $(".f_latar_belakang_judul").select2({
       placeholder:"Silahkan Pilih"
     });
-    
+
     $(document).on('click', '.add-latar-belakang', function(event) {
       event.preventDefault();
 
       $('.parent-perubahan-latar_belakang').find(".f_latar_belakang_judul").each(function(index){
         if($(this).data('select2')) {
           $(this).select2('destroy');
-        } 
+        }
       });
 
       var btn_add = '<button type="button" class="btn btn-success add-latar-belakang" style="border-radius: 0;"><i class="glyphicon glyphicon-plus"></i></button>';
       var btn_del = '<button type="button" class="btn btn-danger delete-latar-belakang" style="border-radius: 0;"><i class="glyphicon glyphicon-trash"></i></button>';
-      
+
       var $this = $('.perubahan-latar_belakang');
       var new_row = $this.eq(0).clone();
 
@@ -389,22 +395,22 @@
       mdf_new_row.eq(4).find('.f_latar_belakang_file').val('');
       mdf_new_row.eq(4).find('.error').html('');
 
-      $('.parent-perubahan-latar_belakang').prepend(new_row);      
-     
+      $('.parent-perubahan-latar_belakang').prepend(new_row);
+
       var row = $('.perubahan-latar_belakang');
       $.each(row,function(index, el) {
         var mdf_new_row = $(this).find('.form-group');
         var mdf_new_row_button = $(this).find('.btn-group');
         mdf_new_row.eq(0).find('.total_perubahan-latar_belakang').text(index+1);
 
-        mdf_new_row_button.html('');        
+        mdf_new_row_button.html('');
         if(row.length==1){
           mdf_new_row_button.eq(0).append(btn_add)
         }else{
           mdf_new_row_button.eq(0).append(btn_add)
           mdf_new_row_button.eq(0).append(btn_del)
         }
-      });      
+      });
 
       $(".f_latar_belakang_judul").select2({
         placeholder:"Silahkan Pilih"
@@ -424,7 +430,7 @@
         var mdf_new_row_button = $(this).find('.btn-group');
         mdf_new_row.eq(0).find('.total_perubahan').text(index+1);
 
-        mdf_new_row_button.html('');        
+        mdf_new_row_button.html('');
         if(row.length==1){
           mdf_new_row_button.eq(0).append(btn_add)
         }else{

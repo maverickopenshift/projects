@@ -76,7 +76,8 @@ $(function() {
   });
 
   $(document).on('click', '.delete-lampiran', function(event) {
-    $(this).parent().parent().parent().parent().parent().remove();
+    // $(this).parent().parent().parent().parent().parent().remove();
+    $(this).parent().parent().parent().parent().remove();
     var $this = $('.input-lampiran');
     $.each($this,function(index, el) {
       if($(this).hasClass("has-error")){

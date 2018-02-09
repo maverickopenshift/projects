@@ -32,13 +32,17 @@ class AmandemenKontrakCreateController
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
       $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $check_new_lampiran = false;
-      
+
+      if(Config::get_config('auto-numb')=='off'){
+        $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
+      }
+
       foreach($request->doc_lampiran_old as $k => $v){
         if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
           $new_lamp[] = '';
@@ -71,7 +75,7 @@ class AmandemenKontrakCreateController
       $rules['scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      
+
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
@@ -120,6 +124,12 @@ class AmandemenKontrakCreateController
     $doc->doc_parent_id = $request->parent_kontrak;
     $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
     $doc->doc_signing = $request->statusButton;
+
+    $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
+    if(Config::get_config('auto-numb')=='off'){
+      $doc->doc_no = $request->doc_no;
+    }
+
     $doc->save();
 
     if(count($request->f_judul)>0){
@@ -206,7 +216,7 @@ class AmandemenKontrakCreateController
     if(count($request->f_latar_belakang_judul)>0){
       foreach($request->f_latar_belakang_judul as $key => $val){
         if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
-          
+
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = "latar_belakang_optional";

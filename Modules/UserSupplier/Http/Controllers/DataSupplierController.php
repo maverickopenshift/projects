@@ -27,6 +27,7 @@ class DataSupplierController extends Controller
     {
       $username=auth()->user()->username;
       $sql = supplier::where('kd_vendor','=',$username)->first();
+      // dd($sql);
 
     $notif = "Kelengkapan data belum terisi";
             if($sql){
@@ -55,8 +56,10 @@ class DataSupplierController extends Controller
 
     public function data()
     {
-      $id_session=auth()->user()->id;
-      $sql = supplier::where('id_user','=',$id_session)->get();
+      // $id_session=auth()->user()->id;
+      // $sql = supplier::where('id_user','=',$id_session)->get();
+      $username=auth()->user()->username;
+      $sql = supplier::where('kd_vendor','=',$username)->get();
       return Datatables::of($sql)
           ->addIndexColumn()
           ->filterColumn('created_at', function ($query, $keyword) {
@@ -111,9 +114,12 @@ class DataSupplierController extends Controller
                   ['object_key','=','klasifikasi_usaha']
                 ])->get();
                 foreach($dt_klasifikasi as $dt_klasifikasi){
-                  $klasifikasi[] = $dt_klasifikasi->object_value;
+                  $d = json_decode($dt_klasifikasi->object_value);
+                  $klasifikasi_kode[] = $d->kode;
+                  $klasifikasi_text[] = $d->text;
                 }
-                $sql->klasifikasi_usaha = $klasifikasi;
+                $sql->klasifikasi_text = $klasifikasi_text;
+                $sql->klasifikasi_kode = $klasifikasi_kode;
 
                 $dt_anak_perus = SupplierMetadata::select('object_value')->where([
                   ['id_object','=',$id],
@@ -189,7 +195,7 @@ class DataSupplierController extends Controller
            'nm_vendor'                  => 'required|max:500|min:3',
            'nm_vendor_uq'               => 'max:3|min:3',
            'prinsipal_st'               => 'required|boolean',
-           'klasifikasi_usaha.*'        => 'required',
+           // 'klasifikasi_usaha.*'        => 'required',
            'pengalaman_kerja'           => 'required|min:3|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
            'alamat'                     => 'required|max:1000|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
            'kota'                       => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -275,6 +281,11 @@ class DataSupplierController extends Controller
        $request->merge(['asset' => $asset]);
 
        $validator = Validator::make($request->all(), $rules,CustomErrors::supplier());
+       $validator->after(function ($validator) use ($request) {
+           if (!isset($request['klasifikasi_kode'][0])) {
+               $validator->errors()->add('klasifikasi_err', 'Klasifikasi Usaha harus dipilih!');
+           }
+       });
        if ($validator->fails ()){
          return redirect()->back()
                      ->withInput($request->input())
@@ -403,14 +414,14 @@ class DataSupplierController extends Controller
           $mt_data->object_value = $request->nm_komisaris_utama;
           $mt_data->save();
 
-          foreach($request->klasifikasi_usaha as $k){
+          foreach($request->klasifikasi_kode as $key=>$v){
             $mt_data = new SupplierMetadata();
             $mt_data->id_object    = $data->id;
             $mt_data->object_type  = 'vendor';
             $mt_data->object_key   = 'klasifikasi_usaha';
-            $mt_data->object_value = $k;
+            $mt_data->object_value = json_encode(['kode'=>$request['klasifikasi_kode'][$key], 'text'=>$request['klasifikasi_text'][$key]]);
             $mt_data->save();
-          };
+          }
 
           foreach($request->anak_perusahaan as $a){
             $mt_data = new SupplierMetadata();
@@ -459,7 +470,7 @@ class DataSupplierController extends Controller
             'nm_vendor'                  => 'required|max:500|min:3',
             'nm_vendor_uq'               => 'max:3|min:3',
             'prinsipal_st'               => 'required|boolean',
-            'klasifikasi_usaha.*'        => 'required',
+            // 'klasifikasi_usaha.*'        => 'required',
             'pengalaman_kerja'  => 'required|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
             'alamat'            => 'required|max:1000|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
             'kota'              => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -594,6 +605,11 @@ class DataSupplierController extends Controller
         $request->merge(['asset' => $asset]);
 
         $validator = Validator::make($request->all(), $rules,CustomErrors::supplier());
+        $validator->after(function ($validator) use ($request) {
+            if (!isset($request['klasifikasi_kode'][0])) {
+                $validator->errors()->add('klasifikasi_err', 'Klasifikasi Usaha harus dipilih!');
+            }
+        });
         //dd($request->input());
         if ($validator->fails ()){
           return redirect()->back()
@@ -729,15 +745,14 @@ class DataSupplierController extends Controller
             ['object_key','=','klasifikasi_usaha']
             ])->delete();
 
-          foreach($request->klasifikasi_usaha as $k){
-            $mt_data = new SupplierMetadata();
-            $mt_data->id_object    = $data->id;
-            $mt_data->object_type  = 'vendor';
-            $mt_data->object_key   = 'klasifikasi_usaha';
-            $mt_data->object_value = $k;
-            $mt_data->save();
-          };
-          $data->klasifikasi_usaha = $request->klasifikasi_usaha;
+            foreach($request->klasifikasi_kode as $key=>$v){
+              $mt_data = new SupplierMetadata();
+              $mt_data->id_object    = $data->id;
+              $mt_data->object_type  = 'vendor';
+              $mt_data->object_key   = 'klasifikasi_usaha';
+              $mt_data->object_value = json_encode(['kode'=>$request['klasifikasi_kode'][$key], 'text'=>$request['klasifikasi_text'][$key]]);
+              $mt_data->save();
+            }
 
           SupplierMetadata::where([
             ['id_object','=',$data->id],

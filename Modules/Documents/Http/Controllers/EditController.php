@@ -53,7 +53,7 @@ class EditController extends Controller
       $this->amademenKontrakTurnkeyEdit = $amademenKontrakTurnkeyEdit;
       $this->SideLetterEdit = $SideLetterEdit;
   }
-  
+
   public function index(Request $request)
   {
     $id = $request->id;
@@ -98,9 +98,9 @@ class EditController extends Controller
     if(in_array($type,['amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum','side_letter'])){
       $dt->parent_kontrak = $dt->doc_parent_id;
       $dt->parent_kontrak_text = $this->documents->select('doc_no')->where('id','=',$dt->doc_parent_id)->first()->doc_no;
-    }    
-    
-    if(in_array($type,['khs', 'turnkey','amandemen_kontrak_khs','amandemen_kontrak_turnkey','surat_pengikatan','sp','amandemen_sp','adendum','side_letter'])){
+    }
+
+    if(in_array($type,['khs', 'turnkey','surat_pengikatan','sp','amandemen_sp','adendum','side_letter'])){
       if(isset($dt->latar_belakang_kesanggupan_mitra[0])){
         $dt->lt_judul_kesanggupan_mitra     = $dt->latar_belakang_kesanggupan_mitra[0]['meta_name'];
         $dt->lt_tanggal_kesanggupan_mitra   = $dt->latar_belakang_kesanggupan_mitra[0]['meta_desc'];
@@ -111,9 +111,9 @@ class EditController extends Controller
         $dt->lt_tanggal_ketetapan_pemenang  = $dt->latar_belakang_ketetapan_pemenang[0]['meta_desc'];
         $dt->lt_file_ketetapan_pemenang     = $dt->latar_belakang_ketetapan_pemenang[0]['meta_file'];
         $dt->lt_file_ketetapan_pemenang_old = $dt->latar_belakang_ketetapan_pemenang[0]['meta_file'];
-      }      
+      }
     }
-  
+
     if(in_array($type,['surat_pengikatan'])){
       if(isset($dt->latar_belakang_rks[0])){
         $dt->lt_judul_rks    = $dt->latar_belakang_rks[0]['meta_name'];
@@ -121,14 +121,14 @@ class EditController extends Controller
         $dt->lt_file_rks     = $dt->latar_belakang_rks[0]['meta_file'];
         $dt->lt_file_rks_old = $dt->latar_belakang_rks[0]['meta_file'];
       }
-    }    
+    }
 
     if(count($dt->latar_belakang_optional)>0){
       foreach($dt->latar_belakang_optional as $key => $val){
         $lt_optional['f_latar_belakang_judul'][$key]    = $val->meta_name;
         $lt_optional['f_latar_belakang_tanggal'][$key]  = $val->meta_title;
-        $lt_optional['f_latar_belakang_isi'][$key]      = $val->meta_desc;  
-        $lt_optional['f_latar_belakang_file'][$key]      = $val->meta_file;                  
+        $lt_optional['f_latar_belakang_isi'][$key]      = $val->meta_desc;
+        $lt_optional['f_latar_belakang_file'][$key]      = $val->meta_file;
       }
 
       $dt->f_latar_belakang_judul = $lt_optional['f_latar_belakang_judul'];
@@ -265,7 +265,7 @@ class EditController extends Controller
     $data['page_title'] = 'Edit Dokumen';
     $data['doc_type'] = $dt->jenis->type;
     $data['doc'] = $dt;
-    
+
     $data['pegawai'] = \App\User::get_user_pegawai();
     $data['action_type'] = 'edit';
     $data['auto_numb']=Config::get_config('auto-numb');
@@ -350,9 +350,9 @@ class EditController extends Controller
       $rules['doc_template_id']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
-      $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-      $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
       $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
@@ -441,13 +441,13 @@ class EditController extends Controller
     $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
     if($request->lt_file_ketetapan_pemenang_old==null){
       $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
-    }    
+    }
 
     $rules['lt_judul_kesanggupan_mitra']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
     $rules['lt_tanggal_kesanggupan_mitra']  = 'required|date_format:"Y-m-d"';
     if($request->lt_file_kesanggupan_mitra_old==null){
       $rules['lt_file_kesanggupan_mitra']     = 'required|mimes:pdf';
-    }   
+    }
 
     $rule_ps_judul = (count($request['ps_judul'])>1)?'required':'sometimes|nullable';
     $rule_ps_isi = (count($request['ps_isi'])>1)?'required':'sometimes|nullable';
@@ -490,7 +490,7 @@ class EditController extends Controller
     if ($validator->fails ()){
       return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
-    
+
     if(in_array($status,['0','2'])){
       $doc = Documents::where('id',$id)->first();
       $doc->doc_title = $request->doc_title;
@@ -624,7 +624,7 @@ class EditController extends Controller
         ])->delete();
       foreach($request->f_latar_belakang_judul as $key => $val){
         if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
-          
+
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = "latar_belakang_optional";
@@ -665,7 +665,7 @@ class EditController extends Controller
             $asr->doc_jaminan_startdate = $request['doc_jaminan_startdate'][$key];
             $asr->doc_jaminan_enddate = $request['doc_jaminan_enddate'][$key];
             $asr->doc_jaminan_desc = $request['doc_jaminan_desc'][$key];
-            
+
             if(is_object($new_jfile_up[$key])){
               $fileName   = Helpers::set_filename('doc_',strtolower($val));
               $file = $new_jfile_up[$key];

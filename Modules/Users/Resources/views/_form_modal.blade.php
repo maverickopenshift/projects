@@ -39,13 +39,13 @@
                     <div class="form-group">
                         <div class="error-global"></div>
                         <label>Username</label>
-                        <input type="text" id="username" name="username" value="" class="form-control" placeholder="Enter ..." required autocomplete="off" disabled="disabled">
+                        <input type="text" id="username" name="username" value="" class="form-control" placeholder="Enter ..." required autocomplete="off" readonly="readonly">
                         <div class="error-username"></div>
                     </div>
                     <div class="form-group">
                         <div class="error-global"></div>
                         <label>Email</label>
-                        <input type="email" id="email" name="email" value="" class="form-control" placeholder="Enter ..." required autocomplete="off" disabled="disabled">
+                        <input type="email" id="email" name="email" value="" class="form-control" placeholder="Enter ..." required autocomplete="off" readonly="readonly">
                         <div class="error-email"></div>
                     </div>
                     <div class="form-group">
@@ -62,7 +62,7 @@
                       </select>
                       <div class="error-user_type"></div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group hide">
                       <label>Pilih Approver</label>
                       <select class="form-control select-user-approver" style="width: 100%;" name="or_user_approver" id="or_user_approver" data-action="or_approver">
                           <option value="">Pilih Approver</option>
@@ -246,23 +246,26 @@
             modal.find('.modal-title').text(title+' User')
             modal.find('.content-password').html('');
             $(this).val('');
+            reset_error();
             $('#select2-pic_search-container').html('');
-            selectUser("#or_user_atasan")
             selectUser("#or_user_approver")
             selectMe__('#pgs_divisi_or','divisi')
-            selectMe__('#pgs_unit_or','unit','#pgs_divisi')
-            selectMe__('#pgs_jabatan_or','posisi','#pgs_unit')
+            selectMe__('#pgs_unit_or','unit','#pgs_divisi_or')
+            selectMe__('#pgs_jabatan_or','posisi','#pgs_unit_or')
             selectUser("#user_search")
             if(title=='Edit'){
                 var data = button.data('data');
                 var data_other = button.data('other');
+                var data_other_pegawai = data_other.pegawai;
+                var data_other_atasan = data_other.atasan;
+                var data_other_approver = data_other.approver;
                 var role = data.roles;
                 // data = JSON.parse(data);
-                console.log(data_other.v_nama_karyawan+' - '+data_other.n_nik);
                 var user_search = modal.find('.modal-body #user_search');
-                var newOption = new Option(data_other.v_nama_karyawan+' - '+data_other.n_nik, data_other.id, false, true);
+                user_search.find('option').remove();
+                var newOption = new Option(data_other_pegawai.v_nama_karyawan+' - '+data_other_pegawai.n_nik, data_other_pegawai.id, false, true);
                 user_search.append(newOption);
-                user_search.val(data_other.id).change();
+                user_search.val(data_other_pegawai.id).change();
                 
                 modal.find('.modal-body input#id').val(data.id)
                 modal.find('.modal-body input#name').val(data.name)
@@ -271,15 +274,47 @@
                 modal.find('.modal-body input#phone').val(data.phone)
                 modal.find('.modal-body select#roles').val(role[0].id)
                 modal.find('.modal-body select#user_type').val(data.user_type)
-                modal.find('.modal-body input#divisi').val(data_other.v_short_divisi)
-                modal.find('.modal-body input#loker').val(data_other.v_short_unit)
-                modal.find('.modal-body input#jabatan').val(data_other.v_short_posisi)
+                reset_select2('pgs_divisi_or')
+                reset_select2('pgs_jabatan_or')
+                reset_select2('pgs_unit_or')
+                if(data_other.is_pgs){
+                  var data_pgs = data_other.pgs;
+                  var data_pgs2 = data_other.pgs_2;
+                  modal.find('.modal-body select#roles').val(data_pgs2.role_id)
+                  modal.find('.modal-body select#user_pgs').val('yes');
+                  modal.find('.modal-body select#user_pgs').change();
+                  set_select2(modal.find('.modal-body select#pgs_divisi_or'),{id:data_pgs.objiddivisi,text:data_pgs.v_short_divisi});
+                  set_select2(modal.find('.modal-body select#pgs_jabatan_or'),{id:data_pgs.objidposisi,text:data_pgs.v_short_posisi});
+                  set_select2(modal.find('.modal-body select#pgs_unit_or'),{id:data_pgs.objidunit,text:data_pgs.v_short_unit});
+                  modal.find('.modal-body select#pgs_roles_or').val(data_pgs.role_id)
+                  
+                }
+                else{
+                  modal.find('.modal-body select#user_pgs').val('no');
+                  modal.find('.modal-body select#user_pgs').change();
+                }
+                modal.find('.modal-body select#user_type').val(data.user_type)
+                modal.find('.modal-body input#divisi').val(data_other_pegawai.v_short_divisi)
+                modal.find('.modal-body input#loker').val(data_other_pegawai.v_short_unit)
+                modal.find('.modal-body input#jabatan').val(data_other_pegawai.v_short_posisi)
+                selectUser("#or_user_atasan",data_other_pegawai.objiddivisi,data_other_pegawai.v_band_posisi)
                 // modal.find('.content-add').html('')
-                modal.find('.table-atasan').hide().find('table>tbody').html('')
-                modal.find('.table-approver').hide().find('table>tbody').html('')
+                if(data_other_atasan.length>0){
+                  set_content('or_user_atasan','atasan',data_other_atasan,'or_atasan');
+                }
+                else{
+                  modal.find('.table-atasan').hide().find('table>tbody').html('')
+                }
+                // if(data_other_approver.length>0){
+                //   set_content('or_user_approver','approver',data_other_atasan,'or_approver');
+                // }
+                // else{
+                //   modal.find('.table-approver').hide().find('table>tbody').html('')
+                // }
                 modal.find('form').attr('action','{!! route('users.update') !!}')
             }
             else{
+                selectUser("#or_user_atasan")
                 modal.find('.modal-body input#id').val('')
                 modal.find('.modal-body input#name').val('')
                 modal.find('.modal-body input#username').val('')
@@ -299,6 +334,7 @@
                 reset_select2('pgs_jabatan_or')
                 reset_select2('pgs_unit_or')
                 reset_select2('user_search')
+                modal.find('.modal-body select#pgs_roles_or').val('')
                 modal.find('form').attr('action','{!! route('users.add') !!}')
             }
         })
@@ -421,6 +457,7 @@
                             attError.pgs_roles.html('<span class="text-danger">'+_response.errors.pgs_roles+'</span>');
                             attError.pgs_roles.parent().addClass('has-error')
                         }
+                        modal.scrollTop(0);
                     }
                     else{
                         $('#form-modal').modal('hide')
@@ -522,19 +559,24 @@
                 success: function( _response ){
                     // Handle your response..
                     console.log(_response)
-                    alertBS('Data successfully deleted','success')
-                    var table = $('#datatables').dataTable();
-                    table.fnStandingRedraw();
+                    if(_response.status){
+                      alertBS(_response.msg,'success')
+                      var table = $('#datatables').dataTable();
+                      table.fnStandingRedraw();
+                    }
+                    else{
+                      alertBS(_response.msg,'danger')
+                    }
                     btnDelete.button('reset')
-                    btnDelete.attr('data-is','');
+                    btnDelete.attr('data-id','');
                     modalDelete.modal('hide')
                 },
                 error: function( _response ){
                     // Handle error
-                    btnSave.button('reset')
+                    btnDelete.button('reset')
                     alertBS('Something wrong, please try again','danger')
                     modalDelete.modal('hide')
-                    btnDelete.attr('data-is','');
+                    btnDelete.attr('data-id','');
                 }
             });
         })
@@ -552,14 +594,14 @@
           formModal.find('#password').after('<span class="text-info info-default">Default password {!!config('app.password_default')!!}')
           formModal.find('#password_confirmation').val('{!!config('app.password_default')!!}');
           formModal.find('#email').val(data.n_nik+'@telkom.co.id');
-          formModal.find('.table-atasan').find('table>tbody').html('');
-          formModal.find('.table-atasan').hide();
+          formModal.find('.table-or_atasan').find('table>tbody').html('');
+          formModal.find('.table-or_atasan').hide();
           formModal.find('.content-atasan').show();
           // formModal.find('.table-approver').find('table>tbody').html('');
           // formModal.find('.table-approver').hide();
           formModal.find('.content-approver').show();
-          selectUser("#user_atasan",data.objiddivisi,data.v_band_posisi)
-          selectUser("#user_approver")
+          selectUser("#or_user_atasan",data.objiddivisi,data.v_band_posisi)
+          selectUser("#or_user_approver")
         });
         $(document).on('select2:select', '#user_atasan', function(event) {
           event.preventDefault();
@@ -611,7 +653,7 @@
         });
     });
     function selectUser(attr,divisi,v_band_posisi) {
-      $(attr).select2({
+      $(attr).select2().select2({
           placeholder : "Pilih PIC....",
           dropdownParent: $(attr).parent(),
           ajax: {
@@ -623,14 +665,15 @@
                       q: params.term, // search term
                       page: params.page
                   };
-                  if(divisi!==undefined && v_band_posisi!==undefined){
-                    var datas =  {
-                        q: params.term, // search term
-                        page: params.page,
-                        type:divisi,
-                        posisi:v_band_posisi
-                    };
-                  }
+                  console.log(divisi+v_band_posisi);
+                  // if(divisi!==undefined && v_band_posisi!==undefined){
+                  //   var datas =  {
+                  //       q: params.term, // search term
+                  //       page: params.page,
+                  //       type:divisi,
+                  //       posisi:v_band_posisi
+                  //   };
+                  // }
                   return datas;
 
               },
@@ -681,7 +724,7 @@
         if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
             return;
         }
-        if(data.v_nama_karyawan === undefined || data.n_nik === undefined){
+        if(data.v_nama_karyawan === undefined || data.v_nama_karyawan === "" || data.n_nik === undefined || data.n_nik === ""){
           return data.text;
         }
         return data.v_nama_karyawan +' - '+  data.n_nik ;
@@ -763,5 +806,42 @@
         var data = e.params.data;
         reset_select2('pgs_jabatan_or');
     });
+    function set_content(attr,type,data,attr_table){
+        $(this).val('');
+        $('#select2-'+attr+'-container').html('');
+        var $this = $('.table-'+attr_table);
+        $this.show();
+        $this.find('table>tbody>tr').remove();
+        $.each(data,function(index, el) {
+          var row = $this.find('table>tbody>tr');
+          if(type=='approver'){
+            var new_row = $(templateApprover(this)).clone();
+          }
+          else {
+            var new_row = $(templateAtasan(this)).clone();
+          }
+          var mdf_new_row = new_row.find('td');
+          mdf_new_row.eq(0).html(row.length+1);
+          mdf_new_row.eq(1).find('input').val(this.nik);
+          mdf_new_row.eq(2).text(this.name);
+          mdf_new_row.eq(3).text(this.email);
+          mdf_new_row.eq(4).text(this.jabatan);
+          $this.find('table>tbody').append(new_row);
+        });
+    }
+    function set_select2(attr_obj,data) {
+      attr_obj.find('option').remove();
+      var newOption = new Option(data.text, data.id, false, true);
+      attr_obj.append(newOption);
+      attr_obj.val(data.id).change();
+      var id_name = attr_obj.attr('id');
+      // console.log(id_name);
+      // $('#select2-'+id_name+'-container').html(data.text);
+      
+    }
+    function reset_error(){
+      $('[class*=error-]').find('span').remove();
+      $('.form-group.has-error').removeClass('has-error');
+    }
 </script>
 @endpush

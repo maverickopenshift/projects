@@ -40,14 +40,14 @@ class SideLetterEditController extends Controller
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      
+
       if( Config::get_config('auto-numb')=='off'){
         $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no'.$id;
       }
-      
+
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
@@ -161,7 +161,7 @@ class SideLetterEditController extends Controller
       if((\Laratrust::hasRole('admin'))){
         $doc->user_id  = $request->user_id;
       }
-      
+
       $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
       if( Config::get_config('auto-numb')=='off'){
         $doc->doc_no = $request->doc_no;
@@ -169,7 +169,7 @@ class SideLetterEditController extends Controller
       else{
         $doc->doc_no = null;
       }
-      
+
       $doc->doc_signing = '0';
       $doc->doc_parent = 0;
       $doc->doc_parent_id = $request->parent_kontrak;

@@ -122,6 +122,7 @@ class KlasifikasiUsahaController extends Controller
         if(!empty($search)){
           $data->where(function($q) use ($search) {
               $q->orWhere('text', 'like', '%'.$search.'%');
+              $q->orWhere('kode', 'like', '%'.$search.'%');
           });
         }
         $data = $data->paginate(30);

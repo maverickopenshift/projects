@@ -67,9 +67,9 @@ class SpCreateController
         $rules['doc_desc']         =  'sometimes|nullable|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
         $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
-        $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-        $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-        $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_lampiran_teknis']     =  'sometimes|nullable|mimes:pdf';
         $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
 
@@ -188,7 +188,7 @@ class SpCreateController
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       $doc->user_id = (\Laratrust::hasRole('admin'))?$request->user_id:Auth::id();
-      
+
 
       if(isset($request->doc_lampiran_teknis)){
         $fileName   = Helpers::set_filename('doc_lampiran_teknis_',strtolower($request->doc_title));
@@ -334,7 +334,7 @@ class SpCreateController
       if(count($request->f_latar_belakang_judul)>0){
         foreach($request->f_latar_belakang_judul as $key => $val){
           if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
-            
+
             $doc_meta = new DocMeta();
             $doc_meta->documents_id = $doc->id;
             $doc_meta->meta_type = "latar_belakang_optional";

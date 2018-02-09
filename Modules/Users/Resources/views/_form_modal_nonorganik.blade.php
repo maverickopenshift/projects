@@ -36,28 +36,28 @@
                     </div>
                     <div class="form-group">
                       <label>User Type</label>
-                      <select class="form-control" style="width: 100%;" name="user_type" id="user_type">
+                      <select class="form-control user_type_non" style="width: 100%;" name="user_type" id="user_type">
                         <option value="ubis">Ubis</option>
                         <option value="witel">Witel</option>
                         <option value="subsidiary">Subsidiary</option>
                       </select>
                       <div class="error-user_type"></div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group subsidiary_oke">
                         <label>Pilih Divisi</label>
                         <select class="form-control" style="width: 100%;" name="select_divisi" id="select_divisi">
                             <option value="">Pilih Divisi</option>
                         </select>
                         <div class="error-select_divisi"></div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group subsidiary_oke">
                         <label>Pilih Loker</label>
                         <select class="form-control" style="width: 100%;" name="select_unit" id="select_unit">
                             <option value="">Pilih Loker</option>
                         </select>
                         <div class="error-select_unit"></div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group subsidiary_oke">
                         <label>Pilih Jabatan</label>
                         <select class="form-control" style="width: 100%;" name="select_posisi" id="select_posisi">
                             <option value="">Pilih Jabatan</option>
@@ -76,7 +76,7 @@
                         <input type="password" id="password_confirmation" name="password_confirmation" value="" class="form-control" placeholder="Enter ..."  autocomplete="off">
                         <div class="error-password_confirmation"></div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group hide">
                       <label>Pilih Approver</label>
                       <select class="form-control select-user-approver" style="width: 100%;" name="non_user_approver" id="non_user_approver" data-action="non_approver">
                           <option value="">Pilih Approver</option>
@@ -132,7 +132,7 @@
                       </select>
                       <div class="error-roles"></div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group hide">
                       <label>User PGS</label>
                       <select class="form-control user_pgs" style="width: 100%;" name="user_pgs" id="user_pgs">
                         <option value="no">No</option>
@@ -212,12 +212,10 @@
             $('#select2-pic_search-container').html('');
             if(title=='Edit'){
                 var data = button.data('data');
+                var data_other = button.data('other');
                 var role = data.roles;
-                if(role.length>0){
-                  $.each(role, function( index, p ) {
-                    $('#roles'+p.id).iCheck('check');
-                  });
-                }
+                var data_other_atasan = data_other.atasan;
+                var data_other_pegawai = data_other.pegawai;
                 // data = JSON.parse(data);
                 // console.log(data);
                 modal.find('.modal-body input#id').val(data.id)
@@ -225,10 +223,29 @@
                 modal.find('.modal-body input#username').val(data.username)
                 modal.find('.modal-body input#email').val(data.email)
                 modal.find('.modal-body input#phone').val(data.phone)
-
+                modal.find('.modal-body select#roles').val(role[0].id)
+                modal.find('.modal-body select#user_type').val(data.user_type)
+                modal.find('.modal-body input#password_confirmation').parent().hide()
+                modal.find('.modal-body input#password').parent().hide()
+                reset_select2('select_divisi')
+                reset_select2('select_posisi')
+                reset_select2('select_unit')
+                if(data.user_type !== 'subsidiary'){
+                  set_select2(modal.find('.modal-body select#select_divisi'),{id:data_other_pegawai.objiddivisi,text:data_other_pegawai.v_short_divisi});
+                  set_select2(modal.find('.modal-body select#select_posisi'),{id:data_other_pegawai.objidposisi,text:data_other_pegawai.v_short_posisi});
+                  set_select2(modal.find('.modal-body select#select_unit'),{id:data_other_pegawai.objidunit,text:data_other_pegawai.v_short_unit});
+                }
+                else{
+                  $('.subsidiary_oke').hide();
+                }
+                if(data_other_atasan.length>0){
+                  set_content('non_user_atasan','atasan',data_other_atasan,'non_atasan');
+                }
+                else{
+                  modal.find('.table-non_atasan').hide().find('table>tbody').html('')
+                }
                 modal.find('.content-atasan').html('')
-                modal.find('.table-atasan').hide().find('table>tbody').html('')
-                modal.find('form').attr('action','{!! route('users.update') !!}')
+                modal.find('form').attr('action','{!! route('users.update-nonorganik') !!}')
             }
             else{
                 modal.find('.modal-body input#id').val('')
@@ -240,8 +257,11 @@
                 modal.find('.modal-body select#user_pgs').val('no')
                 modal.find('.modal-body select#pgs_roles').val('')
                 modal.find('.modal-body select#user_type').val('ubis')
+                modal.find('.modal-body input#password_confirmation').parent().show()
+                modal.find('.modal-body input#password').parent().show()
                 modal.find('.content-atasan').hide();
-                modal.find('.table-atasan').hide().find('table>tbody').html('')
+                modal.find('.table-non_atasan').hide().find('table>tbody').html('')
+                $('.subsidiary_oke').show();
                 reset_select2('select_divisi')
                 reset_select2('select_posisi')
                 reset_select2('select_unit')
@@ -397,6 +417,7 @@
                             attError.pgs_roles.html('<span class="text-danger">'+_response.errors.pgs_roles+'</span>');
                             attError.pgs_roles.parent().addClass('has-error')
                         }
+                        modal.scrollTop(0);
                     }
                     else{
                         $('#form-modal-nonorganik').modal('hide')
@@ -419,7 +440,7 @@
     });
     function selectMe__(attr,type,parent) {
       
-      $(attr).select2({
+      $(attr).select2().select2({
           dropdownParent: $(attr).parent(),
           ajax: {
               url: '{!! route('users.get-select') !!}',
@@ -487,6 +508,9 @@
         if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
             return ;
         }
+        if(data.title === undefined || data.title === ""){
+          return data.text;
+        }
         return data.title;
     }
     $(document).on('select2:select', '#select_divisi', function(e) {
@@ -499,6 +523,16 @@
         e.preventDefault();
         var data = e.params.data;
         reset_select2('select_posisi');
+    });
+    $(document).on('change', '.user_type_non', function(event) {
+      /* Act on the event */
+      console.log('oke');
+      if($(this).val()=='subsidiary'){
+        $('.subsidiary_oke').hide();
+      }
+      else{
+        $('.subsidiary_oke').show();
+      }
     });
     $(document).on('select2:select', '#pgs_divisi', function(e) {
         e.preventDefault();

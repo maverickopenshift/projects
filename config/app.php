@@ -18,7 +18,7 @@ return [
 
     // 'password_default' => str_random(8),
     'password_default' => 'telkom2017!',
-    
+
     'sap' => [
         'ashost' => '10.0.128.9',
         'sysnr'  => '00',
@@ -198,6 +198,7 @@ return [
         Yajra\Datatables\HtmlServiceProvider::class,
         Yajra\Datatables\ButtonsServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class,
 
     ],
 
@@ -251,6 +252,7 @@ return [
         'Module' => Nwidart\Modules\Facades\Module::class,
         'Helper' => App\Helpers\Helpers::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'PDF' => Barryvdh\DomPDF\Facade::class,
 
     ],
 

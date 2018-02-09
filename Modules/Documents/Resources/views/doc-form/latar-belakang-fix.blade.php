@@ -26,7 +26,15 @@
       $f_latar_belakang_isi = Helper::old_prop_each($doc,'f_latar_belakang_isi');
     @endphp
 
-    
+
+      if($doc_type->name == "khs" || $doc_type->name == "turnkey" || $doc_type->name == "surat_pengikatan"){
+        $judul = "Judul";
+      }else{
+        $judul = "Perubahan";
+      }
+    @endphp
+
+
     @if(in_array($doc_type->name,['surat_pengikatan']))
     <!-- RKS -->
     <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
@@ -43,6 +51,7 @@
         <div class="error error-lt_judul_rks"></div>
       </div>
       </div>
+
       
       <div class="form-group formerror formerror-lt_tanggal_rks">
         <label class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal</label>
@@ -75,7 +84,7 @@
           <div class="error error-lt_file_rks"></div>
         </div>
       </div>
-    </div>     
+    </div>
     @endif
 
     @if(in_array($doc_type->name,['surat_pengikatan', 'khs', 'turnkey', 'sp', 'amandemen_sp', 'amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum', 'side_letter']))
@@ -127,7 +136,7 @@
         </div>
       </div>
     </div>
-    <!-- Surat Kesanggupan Mitra --> 
+    <!-- Surat Kesanggupan Mitra -->
     <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
       <div class="form-group" style="position:relative;margin-bottom: 34px;">
         <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Kesanggupan Mitra <span class="total_lt"></span><small class="text-danger"><i> (Wajib di isi) </i></small></div>
@@ -176,6 +185,7 @@
       </div>
     </div>
     @endif
+<<<<<<< HEAD
     
     <div class="parent-perubahan_latar_belakang">
       <div class="form-horizontal perubahan_latar_belakang" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
@@ -250,19 +260,19 @@
     $(".f_latar_belakang_judul").select2({
       placeholder:"Silahkan Pilih"
     });
-    
+
     $(document).on('click', '.add-latar-belakang', function(event) {
       event.preventDefault();
 
       $('.parent-perubahan_latar_belakang').find(".f_latar_belakang_judul").each(function(index){
         if($(this).data('select2')) {
           $(this).select2('destroy');
-        } 
+        }
       });
 
       var btn_add = '<button type="button" class="btn btn-success add-latar-belakang" style="border-radius: 0;"><i class="glyphicon glyphicon-plus"></i></button>';
       var btn_del = '<button type="button" class="btn btn-danger delete-latar-belakang" style="border-radius: 0;"><i class="glyphicon glyphicon-trash"></i></button>';
-      
+
       var $this = $('.perubahan_latar_belakang');
       var new_row = $this.eq(0).clone();
 
@@ -283,22 +293,22 @@
       mdf_new_row.eq(4).find('.f_latar_belakang_file').val('');
       mdf_new_row.eq(4).find('.error').html('');
 
-      $('.parent-perubahan_latar_belakang').prepend(new_row);      
-     
+      $('.parent-perubahan_latar_belakang').prepend(new_row);
+
       var row = $('.perubahan_latar_belakang');
       $.each(row,function(index, el) {
         var mdf_new_row = $(this).find('.form-group');
         var mdf_new_row_button = $(this).find('.btn-group');
         mdf_new_row.eq(0).find('.total_perubahan_latar_belakang').text(index+1);
 
-        mdf_new_row_button.html('');        
+        mdf_new_row_button.html('');
         if(row.length==1){
           mdf_new_row_button.eq(0).append(btn_add)
         }else{
           mdf_new_row_button.eq(0).append(btn_add)
           mdf_new_row_button.eq(0).append(btn_del)
         }
-      });      
+      });
 
       $(".f_latar_belakang_judul").select2({
         placeholder:"Silahkan Pilih"
@@ -318,7 +328,7 @@
         var mdf_new_row_button = $(this).find('.btn-group');
         mdf_new_row.eq(0).find('.total_perubahan_latar_belakang').text(index+1);
 
-        mdf_new_row_button.html('');        
+        mdf_new_row_button.html('');
         if(row.length==1){
           mdf_new_row_button.eq(0).append(btn_add)
         }else{

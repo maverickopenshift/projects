@@ -19,7 +19,7 @@ class PdfDocController extends Controller
     //$file = storage_path("app/document/adendum/doc_lampiran__adendum-kontrak-1_1510160861_yt6kp.pdf");
     $nama = 'Irfan';
     $nik = '009923232';
-    $pdf = new Pdf($file,$nama,$nik);
+    $pdf = new Pdf($file,$req->nama,$req->nik);
     //$pdf = new FPDI();
     $pdf->AddPage();
     $pdf->SetFont('arial', '', 12);
@@ -35,7 +35,6 @@ class PdfDocController extends Controller
 
     if($pdf->numPages>1) {
         for($i=2;$i<=$pdf->numPages;$i++) {
-            //$pdf->endPage();
             $pdf->_tplIdx = $pdf->importPage($i);
             $pdf->AddPage();
         }

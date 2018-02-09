@@ -24,7 +24,8 @@
                     <button type="button" class="btn btn-danger delete-pasal" style="position: absolute;right: 5px;top: -10px;border-radius: 0;"><i class="glyphicon glyphicon-trash"></i></button>
                   @endif
                 </div>
-                <div class="form-group  {{ $errors->has('ps_judul.'.$key) ? ' has-error' : '' }}">
+
+                <div class="form-group formerror formerror-ps_judul-{{$key}}">
                   <label for="ps_judul" class="col-sm-2 control-label">Judul</label>
                   <div class="col-sm-6">
                     <select class="form-control pasal_judul" name="ps_judul[]" onchange="freeText()">
@@ -49,25 +50,29 @@
                       <option value="Lainnya" {!!Helper::prop_selected($ps_judul[$key],"Lainnya")!!}>Lainnya..</option>
                     </select>
                   </div>
-                  <div class="clearfix"></div>
-                  <div class="col-sm-6 col-sm-offset-2 {{ $errors->has('ps_judul_new.'.$key) ? ' has-error' : '' }}" id="tambahan">
-                    @if(count($ps_judul)>1 && $ps_judul[$key] == "Lainnya")
+                  <div class="col-sm-10 col-sm-offset-2">
+                    <div class="error error-ps_judul error-ps_judul-{{$key}}"></div>
+                  </div>
+                </div>
+
+                <div class="form-group formerror formerror-ps_judul_new-{{$key}}">
+                  <label for="ps_isi" class="col-sm-2 control-label"></label>
+                  <div class="col-sm-6" id="tambahan">
+                     @if(count($ps_judul)>1 && $ps_judul[$key] == "Lainnya")
                       <input type="text" class="form-control jdl_lain" value="{{$ps_judul_new[$key]}}" placeholder="Masukkan Judul Pasal" name="ps_judul_new[]" autocomplete="off">
                     @endif
                     @if(count($ps_judul)>1 && $ps_judul[$key] != "Lainnya")
                       <input type="text" class="form-control jdl_lain" value="{{$ps_judul_new[$key]}}"  style="Display:none" name="ps_judul_new[]" autocomplete="off">
-                    @endif
-                    {!!Helper::error_help($errors,'ps_judul_new.'.$key)!!}
+                    @endif                    
                   </div>
-                  <div class="col-sm-10 col-sm-offset-2">
-                    {!!Helper::error_help($errors,'ps_judul.'.$key)!!}
-                  </div>
+                  <div class="error error-ps_judul_new error-ps_judul_new-{{$key}}"></div>
                 </div>
-                <div class="form-group {{ $errors->has('ps_isi.'.$key) ? ' has-error' : '' }}">
+
+                <div class="form-group formerror formerror-ps_isi-{{$key}}">
                   <label for="ps_isi" class="col-sm-2 control-label">Keterangan</label>
                   <div class="col-sm-10">
                     <textarea class="form-control" rows="5" name="ps_isi[]" class="editor" id="editor1">{{$ps_isi[$key]}}</textarea>
-                    {!!Helper::error_help($errors,'ps_isi.'.$key)!!}
+                    <div class="error error-ps_isi error-ps_isi-{{$key}}"></div>
                   </div>
                 </div>
             </div>
@@ -77,7 +82,8 @@
           <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
             <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Pasal Khusus #<span class="total_pasal">1</span></div>
           </div>
-          <div class="form-group">
+
+          <div class="form-group formerror formerror-ps_judul-0">
             <label for="ps_judul" class="col-sm-2 control-label">Judul</label>
             <div class="col-sm-6">
               <select class="form-control pasal_judul" name="ps_judul[]" onchange="freeText()">
@@ -102,16 +108,25 @@
                 <option value="Lainnya">Lainnya..</option>
               </select>
             </div>
-            <div class="clearfix"></div>
-            <div class="col-sm-6 col-sm-offset-2" id="tambahan">
-            </div>
+            <div class="col-sm-10 col-sm-offset-2">
+              <div class="error error-ps_judul error-ps_judul-0"></div>
+            </div>          
           </div>
-          <div class="form-group">
+
+          <div class="form-group formerror formerror-ps_judul_new-0">
+            <label for="ps_isi" class="col-sm-2 control-label"></label>
+            <div class="col-sm-6" id="tambahan"></div>
+            <div class="error error-ps_judul_new error-ps_judul_new-0"></div>
+          </div>
+
+          <div class="form-group formerror formerror-ps_isi-0">
             <label for="ps_isi" class="col-sm-2 control-label">Isi</label>
             <div class="col-sm-10">
               <textarea class="form-control" rows="5" name="ps_isi[]" class="editor" id="editor1"></textarea>
+              <div class="error error-ps_isi error-ps_isi-0"></div>
             </div>
           </div>
+
       </div>
       @endif
       @include('documents::partials.button-edit')
@@ -153,14 +168,12 @@ $(function() {
     mdf_new_row.eq(0).find('.total_pasal').text($this+1);//title and button
 
     mdf_new_row.eq(1).find('select').val('');      //jenisjaminan
-    mdf_new_row.eq(1).find('.error').remove();    //jenisjaminan
+    mdf_new_row.eq(1).find('.error').html('');    //jenisjaminan
 
-    // mdf_new_row.eq(2).find('input').val('');   //keterangan
-    // mdf_new_row.eq(2).find('input').remove();
-    // mdf_new_row.eq(2).find('.error').remove();
+    mdf_new_row.eq(2).find('.error').html('');
 
-    mdf_new_row.eq(2).find('textarea').val('');   //keterangan
-    mdf_new_row.eq(2).find('.error').remove();
+    mdf_new_row.eq(3).find('textarea').val('');   //keterangan
+    mdf_new_row.eq(3).find('.error').html('');
 
     $this.parent().prepend(new_row);
     new_row.find('.jdl_lain').remove();
@@ -170,10 +183,32 @@ $(function() {
       var mdf = $(this).find('.delete-pasal');
       var mdf_new_row = $(this).find('.form-group');
       mdf_new_row.eq(0).find('.total_pasal').text(index+1);
+      
+      if(mdf_new_row.eq(1).hasClass("has-error")){
+        mdf_new_row.eq(1).removeClass().addClass("form-group has-error formerror formerror-ps_judul-"+ index);
+      }else{
+        mdf_new_row.eq(1).removeClass().addClass("form-group formerror formerror-ps_judul-"+ index);
+      }
+
+      if(mdf_new_row.eq(2).hasClass("has-error")){
+        mdf_new_row.eq(2).removeClass().addClass("form-group has-error formerror formerror-ps_judul_new-"+ index);
+      }else{
+        mdf_new_row.eq(2).removeClass().addClass("form-group formerror formerror-ps_judul_new-"+ index);
+      }
+
+      if(mdf_new_row.eq(3).hasClass("has-error")){
+        mdf_new_row.eq(3).removeClass().addClass("form-group has-error formerror formerror-ps_isi-"+ index);
+      }else{
+        mdf_new_row.eq(3).removeClass().addClass("form-group formerror formerror-ps_isi-"+ index);
+      }
+      
+      mdf_new_row.eq(1).find('.error-ps_judul').removeClass().addClass("error error-ps_judul error-ps_judul-"+ index);
+      mdf_new_row.eq(2).find('.error-ps_judul_new').removeClass().addClass("error error-ps_judul_new error-ps_judul_new-"+ index);
+      mdf_new_row.eq(3).find('.error-ps_isi').removeClass().addClass("error error-ps_isi error-ps_isi-"+ index);
+      
       if(row.length==1){
         mdf.remove();
-      }
-      else{
+      }else{
         mdf_new_row.eq(0).append(btn_del)
       }
     });
@@ -185,6 +220,29 @@ $(function() {
     $.each($this,function(index, el) {
       var mdf_new_row = $(this).find('.form-group');
       mdf_new_row.eq(0).find('.total_pasal').text(index+1);
+      
+      if(mdf_new_row.eq(1).hasClass("has-error")){
+        mdf_new_row.eq(1).removeClass().addClass("form-group has-error formerror formerror-ps_judul-"+ index);
+      }else{
+        mdf_new_row.eq(1).removeClass().addClass("form-group formerror formerror-ps_judul-"+ index);
+      }
+
+      if(mdf_new_row.eq(2).hasClass("has-error")){
+        mdf_new_row.eq(2).removeClass().addClass("form-group has-error formerror formerror-ps_judul_new-"+ index);
+      }else{
+        mdf_new_row.eq(2).removeClass().addClass("form-group formerror formerror-ps_judul_new-"+ index);
+      }
+
+      if(mdf_new_row.eq(3).hasClass("has-error")){
+        mdf_new_row.eq(3).removeClass().addClass("form-group has-error formerror formerror-ps_isi-"+ index);
+      }else{
+        mdf_new_row.eq(3).removeClass().addClass("form-group formerror formerror-ps_isi-"+ index);
+      }
+      
+      mdf_new_row.eq(1).find('.error-ps_judul').removeClass().addClass("error error-ps_judul error-ps_judul-"+ index);
+      mdf_new_row.eq(2).find('.error-ps_judul_new').removeClass().addClass("error error-ps_judul_new error-ps_judul_new-"+ index);
+      mdf_new_row.eq(3).find('.error-ps_isi').removeClass().addClass("error error-ps_isi error-ps_isi-"+ index);
+
       var mdf = $(this).find('.delete-pasal');
       if($this.length==1){
         mdf.remove();

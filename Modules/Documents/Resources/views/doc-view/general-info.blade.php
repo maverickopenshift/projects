@@ -91,7 +91,7 @@
           </div>
           <div class="form-group">
             <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran</label>
-            <div class="col-sm-5">
+            <div class="col-sm-8">
               <div class="parent-pictable">
                   <table class="table table-condensed table-striped">
                       <thead>
@@ -107,19 +107,18 @@
                           <tr>
                             <td>{{($key+1)}}</td>
                             <td>{{($dt->meta_name)?$dt->meta_name:' - '}}</td>
-                            <td>@if(!empty($dt->meta_file))
-                            <!--
-                            <a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
-                            -->
-                            <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
-                            <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
-                            </a>
-                            <a class="btn btn-primary btn-lihat" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
-                            <i class="glyphicon glyphicon-paperclip"></i>  Test
-                            </a>
-                            @else
-                            -
-                          @endif</td>
+                            <td>
+                              @if(!empty($dt->meta_file))
+                                <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
+                                <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
+                                </a>
+                                <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}?nik={{$pegawai->n_nik}}&nama={{$pegawai->v_nama_karyawan}}">
+                                <i class="glyphicon glyphicon-download-alt"></i>  Download
+                                </a>
+                              @else
+                              -
+                              @endif
+                            </td>
                           </tr>
                         @endforeach
                         @else
@@ -187,75 +186,73 @@
         </div>
         @endif
 
-        @if($doc_type->name=="surat_pengikatan" and $doc_type->name=="mou")
-        <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-          <div class="form-group">
-            <label for="prinsipal_st" class="col-sm-2 control-label">Unit Penanggungjawab PIC</label>
-            <div class="col-sm-10">
-              <div class="parent-pictable">
-                  <table class="table table-condensed table-striped">
-                      <thead>
-                        <tr>
-                          <th width="40">No.</th>
-                          <th  width="200">Nama</th>
-                          <th  width="250">Jabatan</th>
-                          <th  width="150">Email</th>
-                          <th  width="150">No.Telp</th>
-                          <th>Posisi</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @foreach ($doc->pic as $key=>$dt)
+        @if($doc_type->name=="mou" or $doc_type->name=="khs" or $doc_type->name=="turnkey" or $doc_type->name=="sp")
+          <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+            <div class="form-group">
+              <label for="prinsipal_st" class="col-sm-2 control-label">Unit Penanggungjawab PIC</label>
+              <div class="col-sm-10">
+                <div class="parent-pictable">
+                    <table class="table table-condensed table-striped">
+                        <thead>
                           <tr>
-                            <td>{{($key+1)}}</td>
-                            <td>{{($dt->nama)}}</td>
-                            <td>{{($dt->jabatan)}}</td>
-                            <td>{{($dt->email)}}</td>
-                            <td>{{($dt->telp)}}</td>
-                            <td>{{($dt->posisi)}}</td>
+                            <th width="40">No.</th>
+                            <th  width="200">Nama</th>
+                            <th  width="250">Jabatan</th>
+                            <th  width="150">Email</th>
+                            <th  width="150">No.Telp</th>
+                            <th>Posisi</th>
                           </tr>
-                        @endforeach
-                      </tbody>
-                  </table>
-                </div>
+                        </thead>
+                        <tbody>
+                          @foreach ($doc->pic as $key=>$dt)
+                            <tr>
+                              <td>{{($key+1)}}</td>
+                              <td>{{($dt->nama)}}</td>
+                              <td>{{($dt->jabatan)}}</td>
+                              <td>{{($dt->email)}}</td>
+                              <td>{{($dt->telp)}}</td>
+                              <td>{{($dt->posisi)}}</td>
+                            </tr>
+                          @endforeach
+                        </tbody>
+                    </table>
+                  </div>
+              </div>
             </div>
           </div>
-        </div>
         @endif
 
-
-
-          @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
+        @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
           <input type="hidden" id="view_po_val" name="po_no" value="{{$doc->doc_po_no}}">
           <div class="form-horizontal parent-potables" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;display:none;">
-              <table class="table" id="parentPO">
+            <table class="table" id="parentPO">
+              <tbody>
+              </tbody>
+            </table>
+            <table class="table table-condensed table-striped" id="potables">
+                <thead>
+                <tr>
+                    <th>No.</th>
+                    <th>Kode Item</th>
+                    <th>Item</th>
+                    <th>Qty</th>
+                    <th>Satuan</th>
+                    <th>Currency</th>
+                    <th>Harga Total</th>
+                    <th>Delivery Date</th>
+                    <th>No PR</th>
+                    <th>Keterangan</th>
+                </tr>
+                </thead>
                 <tbody>
-                </tbody>
-              </table>
-              <table class="table table-condensed table-striped" id="potables">
-                  <thead>
-                  <tr>
-                      <th>No.</th>
-                      <th>Kode Item</th>
-                      <th>Item</th>
-                      <th>Qty</th>
-                      <th>Satuan</th>
-                      <th>Currency</th>
-                      <th>Harga Total</th>
-                      <th>Delivery Date</th>
-                      <th>No PR</th>
-                      <th>Keterangan</th>
+                  <tr class="loading-tr">
+                    <td colspan="10" class="text-center"><img src="{{asset('/images/loader.gif')}}" title="please wait..."/></td>
                   </tr>
-                  </thead>
-                  <tbody>
-                    <tr class="loading-tr">
-                      <td colspan="10" class="text-center"><img src="{{asset('/images/loader.gif')}}" title="please wait..."/></td>
-                    </tr>
-                  </tbody>
-              </table>
-            </div>
-          @endif
-          @include('documents::partials.buttons-view')
+                </tbody>
+            </table>
+          </div>
+        @endif
+        @include('documents::partials.buttons-view')
       </div>
     </div>
 <!-- /.box-body -->

@@ -6,9 +6,15 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
     Route::get('/child', ['middleware' => ['permission:lihat-kontrak'],'uses' => 'DocumentsController@index'])->name('doc.child');
     Route::get('/create/{type}', ['middleware' => ['permission:tambah-kontrak'],'uses' => 'EntryDocumentController@index'])->name('doc.create');
     Route::post('/store/{type}',['middleware' => ['permission:tambah-kontrak'],'uses' => 'EntryDocumentController@store'])->name('doc.store');
+    // test edit ajax
+    Route::post('/store_ajax/{type}',['middleware' => ['permission:tambah-kontrak'],'uses' => 'EntryDocumentController@store_ajax'])->name('doc.store_ajax');
+    // test edit ajax
     Route::get('/view/{type}/{id}/', ['middleware' => ['permission:lihat-kontrak'],'uses' => 'DocumentsController@view'])->name('doc.view');
     Route::get('/edit/{type}/{id}/', ['middleware' => ['permission:ubah-kontrak'],'uses' => 'EditController@index'])->name('doc.edit');
     Route::post('/storeedit/{type}/{id}/', ['middleware' => ['permission:ubah-kontrak'],'uses' => 'EditController@store'])->name('doc.storeedit');
+    // test edit ajax
+    Route::post('/storeedit_ajax/{type}/{id}/', ['middleware' => ['permission:ubah-kontrak'],'uses' => 'EditController@store_ajax'])->name('doc.storeedit_ajax');
+    // test edit ajax
     Route::post('/approve', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@approve'])->name('doc.approve');
     Route::post('/reject', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@reject'])->name('doc.reject');
 

@@ -1,53 +1,50 @@
 @extends('layouts.app')
-
 @section('content')
+    <form action="{{$action_url}}" id="form-kontrak" method="post" enctype="multipart/form-data">
+      {{ csrf_field() }}
+      <div class="nav-tabs-custom">
+        <div class="loading2"></div>
+        @php
+          $title_sow = 'SOW,BOQ';
+          if($doc_type->name=='khs' || $doc_type->name=='amandemen_kontrak_khs'){
+            $title_sow = 'DAFTAR HARGA SATUAN';
+          }elseif($doc_type->name=='mou'){
+            $title_sow = 'RUANG LINGKUP';
+          }
+        @endphp
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO</a></li>
 
-
-    <form action="{{$action_url}}" class="form-kontrak" method="post" enctype="multipart/form-data">
-    {{ csrf_field() }}
-    <div class="nav-tabs-custom">
-      <div class="loading2"></div>
-      @php
-        $title_sow = 'SOW,BOQ';
-        if($doc_type->name=='khs' || $doc_type->name=='amandemen_kontrak_khs'){
-          $title_sow = 'DAFTAR HARGA SATUAN';
-        }elseif($doc_type->name=='mou'){
-          $title_sow = 'RUANG LINGKUP';
-        }
-      @endphp
-      <ul class="nav nav-tabs">
-        <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO</a></li>
-
-        @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum','side_letter']))
-          @if(in_array($doc_type->name,['amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey']))
-            <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
-            <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
-            <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
-          @elseif(in_array($doc_type->name,['amandemen_sp']))
-            <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
-            <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
+          @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum','side_letter']))
+            @if(in_array($doc_type->name,['amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey']))
+              <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
+              <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
+              <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
+            @elseif(in_array($doc_type->name,['amandemen_sp']))
+              <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
+              <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
+            @else
+              <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
+              <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
+            @endif
           @else
-            <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
-            <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
+            @if(!in_array($doc_type->name,['surat_pengikatan']))
+              <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
+            @endif
           @endif
-        @else
-          @if(!in_array($doc_type->name,['surat_pengikatan']))
-            <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
+
+          @if(!in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum','side_letter','mou']) )
+          <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
           @endif
-        @endif
 
-        @if(!in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum','side_letter','mou']) )
-        <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
-        @endif
+          @if(in_array($doc_type->name,['khs','turnkey','surat_pengikatan','mou']))
+            <li><a href="#tab_4" data-toggle="tab">PASAL KHUSUS</a></li>
+          @endif
 
-        @if(in_array($doc_type->name,['khs','turnkey','surat_pengikatan','mou']))
-          <li><a href="#tab_4" data-toggle="tab">PASAL KHUSUS</a></li>
-        @endif
-
-        @if(in_array($doc_type->name,['turnkey','sp']))
-          <li><a href="#tab_5" data-toggle="tab">JAMINAN DAN ASURANSI</a></li>
-        @endif
-      </ul>
+          @if(in_array($doc_type->name,['turnkey','sp']))
+            <li><a href="#tab_5" data-toggle="tab">JAMINAN DAN ASURANSI</a></li>
+          @endif
+        </ul>
 
         <div class="tab-content">
           <div class="tab-pane active" id="tab_1">
@@ -70,9 +67,7 @@
           </div>
           <div class="tab-pane" id="tab_2">
             @include('documents::partials.alert-errors')
-            @if(in_array($doc_type->name,['turnkey','sp','khs','mou']))
-              @include('documents::doc-form-edit.sow-boq')
-            @elseif(in_array($doc_type->name,['amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey']))
+            @if(in_array($doc_type->name,['turnkey','sp','khs','mou','amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey']))
               @include('documents::doc-form-edit.sow-boq')
             @elseif(in_array($doc_type->name,['amandemen_sp']))
               @include('documents::doc-form-edit.amandemen-kontrak_sow-boq')
@@ -137,7 +132,7 @@
         </div>
         @include('documents::partials.comments')
       </div>
-  </form>s
+    </form>
 @endsection
 @push('scripts')
 <script>
@@ -148,7 +143,7 @@ $(function () {
   $('.btnPrevious').click(function(){
    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
   });
-
+  /*
   $(document).on('click', '.btn-submit', function(event) {
     event.preventDefault();
     var content = $('.content-view');
@@ -183,6 +178,123 @@ $(function () {
       }
     });
   });
+  */
+
+  $(document).on('click', '.btn-submit', function(event) {
+    event.preventDefault();
+    var content = $('.content-view');
+    var loading = content.find('.loading2');
+
+    var formMe = $('#form-kontrak');
+    $(".formerror").removeClass("has-error");
+    $(".error").html('');
+    $(".alert-error").hide();
+
+    bootbox.confirm({
+      title:"Konfirmasi",
+      message: "Apakah anda yakin untuk submit?",
+      buttons: {
+          confirm: {
+              label: 'Yakin',
+              className: 'btn-success'
+          },
+          cancel: {
+              label: 'Tidak',
+              className: 'btn-danger'
+          }
+      },
+      callback: function (result) {
+        if(result){
+          bootbox.prompt({
+            title: "Masukan Komentar",
+            inputType: 'textarea',
+            callback: function (komen) {
+              if(komen){
+                loading.show();
+                $('.komentar').val(komen);
+                //$('.btn_submit').click();
+
+                $.ajax({
+                  url: formMe.attr('action'),
+                  type: 'post',
+                  processData: false,
+                  contentType: false,
+                  data: new FormData(document.getElementById("form-kontrak")),
+                  dataType: 'json',
+                  success: function(response){
+                    if(response.errors){
+                      $.each(response.errors, function(index, value){
+                          if (value.length !== 0){
+                            index = index.replace(".", "-");
+                            $(".formerror-"+ index).removeClass("has-error");
+                            $(".error-"+ index).html('');             
+
+                            $(".formerror-"+ index).addClass("has-error");
+                            $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');                
+                          }
+                      });
+
+                      alert("Data yang Anda masukan belum valid, silahkan periksa kembali!");
+                    }else{
+                      if(response.status=="tracking"){
+                        window.location.href = "{{route('doc',['status'=>'tracking'])}}";
+                      }else if(response.status=="draft"){
+                        window.location.href = "{{route('doc',['status'=>'draft'])}}";
+                      }
+                    }
+                  }
+                });
+                //// end ajax
+              }
+            }
+          });
+        }
+      }
+    });
+  });
+  /*
+  $(document).on('click', '.btn-submit', function(event) {
+    event.preventDefault();
+
+    var formMe = $('#form-kontrak');
+    $(".formerror").removeClass("has-error");
+    $(".error").html('');
+    $(".alert-error").hide();
+    
+    $.ajax({
+      url: formMe.attr('action'),
+      type: 'post',
+      processData: false,
+      contentType: false,
+      data: new FormData(document.getElementById("form-kontrak")),
+      dataType: 'json',
+      success: function(response){
+        if(response.errors){
+          $.each(response.errors, function(index, value){
+              if (value.length !== 0){
+                index = index.replace(".", "-");
+                $(".formerror-"+ index).removeClass("has-error");
+                $(".error-"+ index).html('');             
+
+                $(".formerror-"+ index).addClass("has-error");
+                $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');                
+              }
+          });
+
+          alert("Data yang Anda masukan belum valid, silahkan periksa kembali!");
+        }else{
+          if(response.status=="tracking"){
+            window.location.href = "{{route('doc',['status'=>'tracking'])}}";
+          }else if(response.status=="draft"){
+            window.location.href = "{{route('doc',['status'=>'draft'])}}";
+          }
+        }
+      }
+    });
+  });
+  */
+  
+  
 });
 </script>
 @endpush

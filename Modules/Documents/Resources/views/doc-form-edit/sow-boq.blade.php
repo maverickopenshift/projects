@@ -18,11 +18,11 @@
           <div class="form-group" style="position:relative;margin-bottom: 34px;">
             <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">SOW</div>
           </div>
-          <div class="form-group {{ $errors->has('doc_sow') ? ' has-error' : '' }}">
+          <div class="form-group  formerror formerror-doc_sow">
             <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label>
             <div class="col-sm-10">
               <textarea class="form-control" name="doc_sow" cols="4" rows="4">{{Helper::old_prop($doc,'doc_sow')}}</textarea>
-              {!!Helper::error_help($errors,'doc_sow')!!}
+              <div class="error error-doc_sow"></div>
             </div>
           </div>
         </div>
@@ -85,25 +85,25 @@
                     @foreach ($kode_item as $key => $value)
                       <tr>
                         <td>{{$key+1}}</td>
-                        <td class="{{ $errors->has('hs_kode_item.'.$key) ? ' has-error' : '' }}">
+                        <td class="formerror formerror-hs_kode_item-0">
                           <input type="text" class="form-control" name="hs_kode_item[]" value="{{$value}}" placeholder="Kode..">
-                          {!!Helper::error_help($errors,'hs_kode_item.'.$key)!!}
+                          <div class="error error-hs_kode_item error-hs_kode_item-0"></div>
                         </td>
-                        <td class="{{ $errors->has('hs_item.'.$key) ? ' has-error' : '' }}">
+                        <td class="formerror formerror-hs_item-0">
                           <input type="text" class="form-control" name="hs_item[]" value="{{$item[$key]}}" placeholder="Nama..">
-                          {!!Helper::error_help($errors,'hs_item.'.$key)!!}
+                          <div class="error error-hs_item error-hs_item-0"></div>
                         </td>
                         @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
-                          <td class="{{ $errors->has('hs_qty.'.$key) ? ' has-error' : '' }}">
+                          <td class="formerror formerror-hs_qty-0">
                             <input type="text" class="form-control input-rupiah hitung_total" name="hs_qty[]" value="{{$qty[$key]}}" placeholder="Jumlah..">
-                            {!!Helper::error_help($errors,'hs_qty.'.$key)!!}
+                            <div class="error error-hs_qty error-hs_qty-0"></div>
                           </td>
                         @endif
-                        <td class="{{ $errors->has('hs_satuan.'.$key) ? ' has-error' : '' }}">
+                        <td class="formerror formerror-hs_satuan-0">
                           <input type="text" class="form-control" name="hs_satuan[]" value="{{$satuan[$key]}}" placeholder="Satuan..">
-                          {!!Helper::error_help($errors,'hs_satuan.'.$key)!!}
+                          <div class="error error-hs_satuan error-hs_satuan-0"></div>
                         </td>
-                        <td  class="{{ $errors->has('hs_mtu.'.$key) ? ' has-error' : '' }}">
+                        <td class="formerror formerror-hs_mtu-0">
                           @php
                             if($mtu[$key]=="RP"){
                                 $a="selected";
@@ -120,29 +120,23 @@
                               <option value="RP" {{$a}}>RP</option>
                               <option value="USD" {{$b}}>USD</option>
                           </select>
-                          {!!Helper::error_help($errors,'hs_mtu.'.$key)!!}
+                          <div class="error error-hs_mtu error-hs_mtu-0"></div>
                         </td>
-                        {{--
-                        <td  class="{{ $errors->has('hs_mtu.'.$key) ? ' has-error' : '' }}">
-                          <input type="text" class="form-control" name="hs_mtu[]" value="{{$mtu[$key]}}" placeholder="Mata Uang..">
-                          {!!Helper::error_help($errors,'hs_mtu.'.$key)!!}
-                        </td>
-                        --}}
-                        <td class="{{ $errors->has('hs_harga.'.$key) ? ' has-error' : '' }}">
+                        <td class="formerror formerror-hs_harga-0">
                           <input type="text" class="form-control input-rupiah text-right hitung_total" name="hs_harga[]" value="{{$harga[$key]}}" placeholder="Harga Material..">
-                          {!!Helper::error_help($errors,'hs_harga.'.$key)!!}
+                          <div class="error error-hs_harga error-hs_harga-0"></div>
                         </td>
 
-                        <td class="{{ $errors->has('hs_harga_jasa.'.$key) ? ' has-error' : '' }}">
+                        <td class="formerror formerror-hs_harga_jasa-0">
                           <input type="text" class="form-control input-rupiah text-right hitung_total" name="hs_harga_jasa[]" value="{{$harga_jasa[$key]}}" placeholder="Harga Jasa..">
-                          {!!Helper::error_help($errors,'hs_harga_jasa.'.$key)!!}
+                          <div class="error error-hs_harga_jasa error-hs_harga_jasa-0"></div>
                         </td>
                         @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
                           <td class="text-right" style="vertical-align: middle;">0</td>
                         @endif
-                        <td class="{{ $errors->has('hs_keterangan.'.$key) ? ' has-error' : '' }}">
+                        <td class="formerror formerror-hs_keterangan-0">
                           <input type="text" class="form-control" name="hs_keterangan[]" value="{{$keterangan[$key]}}" placeholder="Keterangan..">
-                          {!!Helper::error_help($errors,'hs_keterangan.'.$key)!!}
+                          <div class="error error-hs_keterangan error-hs_keterangan-0"></div>
                         </td>
                         <td class="action">
                           @if(count($kode_item)>1)
@@ -156,28 +150,47 @@
               <tbody>
                   <tr>
                     <td>1</td>
-                    <td><input type="text" class="form-control" name="hs_kode_item[]" placeholder="Kode.."></td>
-                    <td><input type="text" class="form-control" name="hs_item[]" placeholder="Nama.."></td>
-                    @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
-                      <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_qty[]" placeholder="Jumlah.."></td>
-                    @endif
-                    <td><input type="text" class="form-control" name="hs_satuan[]" placeholder="Satuan.."></td>
-                    <td>
-                      <select name="hs_mtu[]" class="form-control selectx2" style="width: 100%;">
-                        <option value="RP">RP</option>
-                        <option value="USD">USD</option>
-                      </select>
-                    </td>
-                    {{--
-                    <td><input type="text" class="form-control" name="hs_mtu[]" placeholder="Mata Uang.."></td>
-                    --}}
-                    <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_harga[]" placeholder="Harga Barang.."></td>
-                    <td><input type="text" class="form-control input-rupiah hitung_total" name="hs_harga_jasa[]"  placeholder="Harga Jasa.."></td>
-                    @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
-                      <td class="text-right" style="vertical-align: middle;">0</td>
-                    @endif
-                    <td><input type="text" class="form-control" name="hs_keterangan[]" placeholder="Keterangan.."></td>
-                    <td class="action"></td>
+                    <td class="formerror formerror-hs_kode_item-0">
+                <input type="text" class="form-control" name="hs_kode_item[]" placeholder="Kode..">
+                <div class="error error-hs_kode_item error-hs_kode_item-0"></div>
+              </td>
+              <td class="formerror formerror-hs_item-0">
+                <input type="text" class="form-control" name="hs_item[]" placeholder="Nama..">
+                <div class="error error-hs_item error-hs_item-0"></div>
+              </td>
+              @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
+                <td class="formerror formerror-hs_qty-0">
+                  <input type="text" class="form-control input-rupiah hitung_total" name="hs_qty[]" placeholder="Jumlah..">
+                  <div class="error error-hs_qty error-hs_qty-0"></div>
+                </td>
+              @endif
+              <td class="formerror formerror-hs_satuan-0">
+                <input type="text" class="form-control" name="hs_satuan[]" placeholder="Satuan..">
+                <div class="error error-hs_satuan error-hs_satuan-0"></div>
+              </td>
+              <td class="formerror formerror-hs_mtu-0">
+                <select name="hs_mtu[]" class="form-control" style="width: 100%;">
+                  <option value="RP">RP</option>
+                  <option value="USD">USD</option>
+                </select>
+                <div class="error error-hs_mtu error-hs_mtu-0"></div>
+              </td>
+              <td class="formerror formerror-hs_harga-0">
+                <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga[]" placeholder="Harga Barang..">
+                <div class="error error-hs_harga error-hs_harga-0"></div>
+              </td>
+              <td class="formerror formerror-hs_harga_jasa-0">
+                <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga_jasa[]"  placeholder="Harga Jasa..">
+                <div class="error error-hs_harga_jasa error-hs_harga_jasa-0"></div>
+              </td>
+              @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
+                <td class="text-right" style="vertical-align: middle;">0</td>
+              @endif
+              <td class="formerror formerror-hs_keterangan-0">
+                <input type="text" class="form-control" name="hs_keterangan[]" placeholder="Keterangan.." />
+                <div class="error error-hs_keterangan error-hs_keterangan-0"></div>
+              </td>
+              <td class="action"></td>
                   </tr>
               </tbody>
             @endif
@@ -186,7 +199,7 @@
     </div>
 
     @if($doc_type['title']=="SP")
-      <div class="form-group {{ $errors->has('doc_lampiran_teknis') ? ' has-error' : '' }}">
+      <div class="form-group formerror formerror-doc_lampiran_teknis">
         <label for="doc_lampiran_teknis" class="col-sm-2 control-label">Lampiran Teknis</label>
         <div class="col-sm-6">
           <div class="input-group">
@@ -203,7 +216,7 @@
             </div>
           </div>
         </div>
-        {!!Helper::error_help($errors,'doc_lampiran_teknis')!!}
+        <div class="error error-doc_lampiran_teknis"></div>
       </div>
     @endif
     @endif
@@ -297,6 +310,120 @@ function handleDaftarHargaFileSelect(file) {
         var mdf = $(this).find('.action');
         var mdf_new_row = $(this).find('td');
         mdf_new_row.eq(0).html(index+1);
+        @php
+          if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs'){
+        @endphp
+          if(mdf_new_row.eq(1).hasClass("has-error")){
+          mdf_new_row.eq(1).removeClass().addClass("has-error formerror formerror-hs_kode_item-"+ index);
+          }else{
+            mdf_new_row.eq(1).removeClass().addClass("formerror formerror-hs_kode_item-"+ index);
+          }
+
+          if(mdf_new_row.eq(2).hasClass("has-error")){
+            mdf_new_row.eq(2).removeClass().addClass("has-error formerror formerror-hs_item-"+ index);
+          }else{
+            mdf_new_row.eq(2).removeClass().addClass("formerror formerror-hs_item-"+ index);
+          }
+          
+          if(mdf_new_row.eq(3).hasClass("has-error")){
+            mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-hs_qty-"+ index);
+          }else{
+            mdf_new_row.eq(3).removeClass().addClass("formerror formerror-hs_qty-"+ index);
+          }
+          
+          if(mdf_new_row.eq(4).hasClass("has-error")){
+            mdf_new_row.eq(4).removeClass().addClass("has-error formerror formerror-hs_satuan-"+ index);
+          }else{
+            mdf_new_row.eq(4).removeClass().addClass("formerror formerror-hs_satuan-"+ index);
+          }
+
+          if(mdf_new_row.eq(5).hasClass("has-error")){
+            mdf_new_row.eq(5).removeClass().addClass("has-error formerror formerror-hs_mtu-"+ index);
+          }else{
+            mdf_new_row.eq(5).removeClass().addClass("formerror formerror-hs_mtu-"+ index);
+          }
+
+          if(mdf_new_row.eq(6).hasClass("has-error")){
+            mdf_new_row.eq(6).removeClass().addClass("has-error formerror formerror-hs_harga-"+ index);
+          }else{
+            mdf_new_row.eq(6).removeClass().addClass("formerror formerror-hs_harga-"+ index);
+          }
+
+          if(mdf_new_row.eq(7).hasClass("has-error")){
+            mdf_new_row.eq(7).removeClass().addClass("has-error formerror formerror-hs_harga_jasa-"+ index);
+          }else{
+            mdf_new_row.eq(7).removeClass().addClass("formerror formerror-hs_harga_jasa-"+ index);
+          }
+
+          if(mdf_new_row.eq(9).hasClass("has-error")){
+            mdf_new_row.eq(9).removeClass().addClass("has-error formerror formerror-hs_keterangan-"+ index);
+          }else{
+            mdf_new_row.eq(9).removeClass().addClass("formerror formerror-hs_keterangan-"+ index);
+          }
+
+          mdf_new_row.eq(1).find('.error-hs_kode_item').removeClass().addClass("error error-hs_kode_item error-hs_kode_item-"+ index);
+          mdf_new_row.eq(2).find('.error-hs_item').removeClass().addClass("error error-hs_item error-hs_item-"+ index);
+          mdf_new_row.eq(3).find('.error-hs_qty').removeClass().addClass("error error-hs_qty error-hs_qty-"+ index);
+          mdf_new_row.eq(4).find('.error-hs_satuan').removeClass().addClass("error error-hs_satuan error-hs_satuan-"+ index);
+          mdf_new_row.eq(5).find('.error-hs_mtu').removeClass().addClass("error error-hs_mtu error-hs_mtu-"+ index);
+          mdf_new_row.eq(6).find('.error-hs_harga').removeClass().addClass("error error-hs_harga error-hs_harga-"+ index);
+          mdf_new_row.eq(7).find('.error-hs_harga_jasa').removeClass().addClass("error error-hs_harga_jasa error-hs_harga_jasa-"+ index);
+          mdf_new_row.eq(9).find('.error-hs_keterangan').removeClass().addClass("error error-pic_posisi error-hs_keterangan-"+ index);
+        @php
+        }else{
+        @endphp
+          if(mdf_new_row.eq(1).hasClass("has-error")){
+          mdf_new_row.eq(1).removeClass().addClass("has-error formerror formerror-hs_kode_item-"+ index);
+          }else{
+            mdf_new_row.eq(1).removeClass().addClass("formerror formerror-hs_kode_item-"+ index);
+          }
+
+          if(mdf_new_row.eq(2).hasClass("has-error")){
+            mdf_new_row.eq(2).removeClass().addClass("has-error formerror formerror-hs_item-"+ index);
+          }else{
+            mdf_new_row.eq(2).removeClass().addClass("formerror formerror-hs_item-"+ index);
+          }
+          
+          if(mdf_new_row.eq(3).hasClass("has-error")){
+            mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-hs_satuan-"+ index);
+          }else{
+            mdf_new_row.eq(3).removeClass().addClass("formerror formerror-hs_satuan-"+ index);
+          }
+
+          if(mdf_new_row.eq(4).hasClass("has-error")){
+            mdf_new_row.eq(4).removeClass().addClass("has-error formerror formerror-hs_mtu-"+ index);
+          }else{
+            mdf_new_row.eq(4).removeClass().addClass("formerror formerror-hs_mtu-"+ index);
+          }
+
+          if(mdf_new_row.eq(5).hasClass("has-error")){
+            mdf_new_row.eq(5).removeClass().addClass("has-error formerror formerror-hs_harga-"+ index);
+          }else{
+            mdf_new_row.eq(5).removeClass().addClass("formerror formerror-hs_harga-"+ index);
+          }
+
+          if(mdf_new_row.eq(6).hasClass("has-error")){
+            mdf_new_row.eq(6).removeClass().addClass("has-error formerror formerror-hs_harga_jasa-"+ index);
+          }else{
+            mdf_new_row.eq(6).removeClass().addClass("formerror formerror-hs_harga_jasa-"+ index);
+          }
+
+          if(mdf_new_row.eq(7).hasClass("has-error")){
+            mdf_new_row.eq(7).removeClass().addClass("has-error formerror formerror-hs_keterangan-"+ index);
+          }else{
+            mdf_new_row.eq(7).removeClass().addClass("formerror formerror-hs_keterangan-"+ index);
+          }
+
+          mdf_new_row.eq(1).find('.error-hs_kode_item').removeClass().addClass("error error-hs_kode_item error-hs_kode_item-"+ index);
+          mdf_new_row.eq(2).find('.error-hs_item').removeClass().addClass("error error-hs_item error-hs_item-"+ index);
+          mdf_new_row.eq(3).find('.error-hs_satuan').removeClass().addClass("error error-hs_satuan error-hs_satuan-"+ index);
+          mdf_new_row.eq(4).find('.error-hs_mtu').removeClass().addClass("error error-hs_mtu error-hs_mtu-"+ index);
+          mdf_new_row.eq(5).find('.error-hs_harga').removeClass().addClass("error error-hs_harga error-hs_harga-"+ index);
+          mdf_new_row.eq(6).find('.error-hs_harga_jasa').removeClass().addClass("error error-hs_harga_jasa error-hs_harga_jasa-"+ index);
+          mdf_new_row.eq(7).find('.error-hs_keterangan').removeClass().addClass("error error-pic_posisi error-hs_keterangan-"+ index);
+        @php
+        }
+        @endphp    
 
         if(row.length==1){
           mdf.html('');
@@ -322,29 +449,51 @@ function templateHS(data,index) {
 
   @php
     if($doc_type->name!='khs'){
-      echo "qty = '<td><input type=\"text\" class=\"form-control input-rupiah hitung_total\" name=\"hs_qty[]\" value=\"'+data.QTY+'\" /></td>';";
+      echo "qty = '<td>\
+          <input type=\"text\" class=\"form-control input-rupiah hitung_total\" name=\"hs_qty[]\" value=\"'+data.QTY+'\" />\
+          <div class=\"error error-hs_qty\"></div>\
+          </td>';";
       echo "harga_total = (data.HARGA+data.HARGA_JASA)*data.QTY;";
       echo "harga_total = '<td style=\"vertical-align: middle;\" class=\"text-right\">'+formatRupiah(harga_total.toString())+'</td>';";
     }
   @endphp
+
   return '<tr>\
     <td>'+(index+1)+'</td>\
-    <td><input type="text" class="form-control" name="hs_kode_item[]" value="'+data.KODE_ITEM+'" /></td>\
-    <td><input type="text" class="form-control" name="hs_item[]" value="'+data.ITEM+'" /></td>\
-    '+qty+'\
-    <td><input type="text" class="form-control" name="hs_satuan[]" value="'+data.SATUAN+'" /></td>\
+    <td>\
+      <input type="text" class="form-control" name="hs_kode_item[]" value="'+data.KODE_ITEM+'" />\
+      <div class="error error-hs_kode_item"></div>\
+    </td>\
+    <td>\
+      <input type="text" class="form-control" name="hs_item[]" value="'+data.ITEM+'" />\
+      <div class="error error-hs_item"></div>\
+    </td>\
+      '+qty+'\
+    <td>\
+      <input type="text" class="form-control" name="hs_satuan[]" value="'+data.SATUAN+'" />\
+      <div class="error error-hs_satuan"></div>\
+    </td>\
     <td>\
       <select name="hs_mtu[]" class="form-control" style="width: 100%;">\
         <option value="RP" '+ a +'>RP</option>\
         <option value="USD" '+ b +'>USD</option>\
       </select>\
+      <div class="error error-hs_mtu"></div>\
     </td>\
-    <td><input type="text" class="form-control input-rupiah text-right hitung_total" name="hs_harga[]" value="'+formatRupiah(data.HARGA.toString())+'" /></td>\
-    <td><input type="text" class="form-control input-rupiah text-right hitung_total" name="hs_harga_jasa[]" value="'+formatRupiah(data.HARGA_JASA.toString())+'" /></td>\
-    '+harga_total+'\
-    <td><input type="text" class="form-control" name="hs_keterangan[]" value="'+data.KETERANGAN+'" /></td>\
+    <td>\
+      <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga[]" value="'+formatRupiah(data.HARGA)+'" />\
+      <div class="error error-hs_harga"></div>\
+    </td>\
+    <td>\
+      <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga_jasa[]" value="'+formatRupiah(data.HARGA_JASA)+'" />\
+      <div class="error error-hs_harga_jasa"></div>\
+    </td>\
+      '+harga_total+'\
+    <td>\
+      <input type="text" class="form-control" name="hs_keterangan[]" value="'+data.KETERANGAN+'" />\
+    </td>\
     <td class="action"></td>\
-   </tr>';
+  </tr>';
 }
 
 $(document).on('click', '.add-harga_satuan', function(event) {
@@ -357,37 +506,150 @@ $(document).on('click', '.add-harga_satuan', function(event) {
   var mdf_new_row = new_row.find('td');
   mdf_new_row.eq(0).html(row.length+1);
   mdf_new_row.eq(1).find('input').val('');
-  mdf_new_row.eq(1).find('.error').remove();
+  mdf_new_row.eq(1).find('.error').html('');
   mdf_new_row.eq(2).find('input').val('');
-  mdf_new_row.eq(2).find('.error').remove();
+  mdf_new_row.eq(2).find('.error').html('');
   mdf_new_row.eq(3).find('input').val('');
-  mdf_new_row.eq(3).find('.error').remove();
+  mdf_new_row.eq(3).find('.error').html('');
   mdf_new_row.eq(4).find('select').val(mdf_new_row.eq(4).find('select option:first').val());
-  mdf_new_row.eq(4).find('.error').remove();
+  mdf_new_row.eq(4).find('.error').html('');
   mdf_new_row.eq(5).find('input').val('');
-  mdf_new_row.eq(5).find('.error').remove();
+  mdf_new_row.eq(5).find('.error').html('');
   mdf_new_row.eq(6).find('input').val('');
-  mdf_new_row.eq(6).find('.error').remove();
-  mdf_new_row.eq(7).find('input').val('');
-  mdf_new_row.eq(7).find('.error').remove();
+  mdf_new_row.eq(6).find('.error').html('');
 
-    @php
-      if($doc_type->name!='khs'){
-        echo "
-          mdf_new_row.eq(8).html('0');
-          mdf_new_row.eq(9).find('input').val('');
-          mdf_new_row.eq(9).find('.error').remove();
-        ";
-      }
-    @endphp
+  @php
+    if($doc_type->name!='khs'){
+      echo "
+        mdf_new_row.eq(7).find('input').val('');
+        mdf_new_row.eq(7).find('.error').html('');
+        mdf_new_row.eq(8).html('0');
+        mdf_new_row.eq(9).find('input').val('');
+        mdf_new_row.eq(9).find('.error').html('');
+      ";
+    }
+  @endphp
 
   $this.find('tbody').append(new_row);
   var row = $this.find('tbody>tr');
-
   $.each(row,function(index, el) {
     var mdf = $(this).find('.action');
     var mdf_new_row = $(this).find('td');
     mdf_new_row.eq(0).html(index+1);
+    @php
+      if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs'){
+    @endphp
+      if(mdf_new_row.eq(1).hasClass("has-error")){
+      mdf_new_row.eq(1).removeClass().addClass("has-error formerror formerror-hs_kode_item-"+ index);
+      }else{
+        mdf_new_row.eq(1).removeClass().addClass("formerror formerror-hs_kode_item-"+ index);
+      }
+
+      if(mdf_new_row.eq(2).hasClass("has-error")){
+        mdf_new_row.eq(2).removeClass().addClass("has-error formerror formerror-hs_item-"+ index);
+      }else{
+        mdf_new_row.eq(2).removeClass().addClass("formerror formerror-hs_item-"+ index);
+      }
+      
+      if(mdf_new_row.eq(3).hasClass("has-error")){
+        mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-hs_qty-"+ index);
+      }else{
+        mdf_new_row.eq(3).removeClass().addClass("formerror formerror-hs_qty-"+ index);
+      }
+      
+      if(mdf_new_row.eq(4).hasClass("has-error")){
+        mdf_new_row.eq(4).removeClass().addClass("has-error formerror formerror-hs_satuan-"+ index);
+      }else{
+        mdf_new_row.eq(4).removeClass().addClass("formerror formerror-hs_satuan-"+ index);
+      }
+
+      if(mdf_new_row.eq(5).hasClass("has-error")){
+        mdf_new_row.eq(5).removeClass().addClass("has-error formerror formerror-hs_mtu-"+ index);
+      }else{
+        mdf_new_row.eq(5).removeClass().addClass("formerror formerror-hs_mtu-"+ index);
+      }
+
+      if(mdf_new_row.eq(6).hasClass("has-error")){
+        mdf_new_row.eq(6).removeClass().addClass("has-error formerror formerror-hs_harga-"+ index);
+      }else{
+        mdf_new_row.eq(6).removeClass().addClass("formerror formerror-hs_harga-"+ index);
+      }
+
+      if(mdf_new_row.eq(7).hasClass("has-error")){
+        mdf_new_row.eq(7).removeClass().addClass("has-error formerror formerror-hs_harga_jasa-"+ index);
+      }else{
+        mdf_new_row.eq(7).removeClass().addClass("formerror formerror-hs_harga_jasa-"+ index);
+      }
+
+      if(mdf_new_row.eq(9).hasClass("has-error")){
+        mdf_new_row.eq(9).removeClass().addClass("has-error formerror formerror-hs_keterangan-"+ index);
+      }else{
+        mdf_new_row.eq(9).removeClass().addClass("formerror formerror-hs_keterangan-"+ index);
+      }
+
+      mdf_new_row.eq(1).find('.error-hs_kode_item').removeClass().addClass("error error-hs_kode_item error-hs_kode_item-"+ index);
+      mdf_new_row.eq(2).find('.error-hs_item').removeClass().addClass("error error-hs_item error-hs_item-"+ index);
+      mdf_new_row.eq(3).find('.error-hs_qty').removeClass().addClass("error error-hs_qty error-hs_qty-"+ index);
+      mdf_new_row.eq(4).find('.error-hs_satuan').removeClass().addClass("error error-hs_satuan error-hs_satuan-"+ index);
+      mdf_new_row.eq(5).find('.error-hs_mtu').removeClass().addClass("error error-hs_mtu error-hs_mtu-"+ index);
+      mdf_new_row.eq(6).find('.error-hs_harga').removeClass().addClass("error error-hs_harga error-hs_harga-"+ index);
+      mdf_new_row.eq(7).find('.error-hs_harga_jasa').removeClass().addClass("error error-hs_harga_jasa error-hs_harga_jasa-"+ index);
+      mdf_new_row.eq(9).find('.error-hs_keterangan').removeClass().addClass("error error-pic_posisi error-hs_keterangan-"+ index);
+    @php
+    }else{
+    @endphp
+      if(mdf_new_row.eq(1).hasClass("has-error")){
+      mdf_new_row.eq(1).removeClass().addClass("has-error formerror formerror-hs_kode_item-"+ index);
+      }else{
+        mdf_new_row.eq(1).removeClass().addClass("formerror formerror-hs_kode_item-"+ index);
+      }
+
+      if(mdf_new_row.eq(2).hasClass("has-error")){
+        mdf_new_row.eq(2).removeClass().addClass("has-error formerror formerror-hs_item-"+ index);
+      }else{
+        mdf_new_row.eq(2).removeClass().addClass("formerror formerror-hs_item-"+ index);
+      }
+      
+      if(mdf_new_row.eq(3).hasClass("has-error")){
+        mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-hs_satuan-"+ index);
+      }else{
+        mdf_new_row.eq(3).removeClass().addClass("formerror formerror-hs_satuan-"+ index);
+      }
+
+      if(mdf_new_row.eq(4).hasClass("has-error")){
+        mdf_new_row.eq(4).removeClass().addClass("has-error formerror formerror-hs_mtu-"+ index);
+      }else{
+        mdf_new_row.eq(4).removeClass().addClass("formerror formerror-hs_mtu-"+ index);
+      }
+
+      if(mdf_new_row.eq(5).hasClass("has-error")){
+        mdf_new_row.eq(5).removeClass().addClass("has-error formerror formerror-hs_harga-"+ index);
+      }else{
+        mdf_new_row.eq(5).removeClass().addClass("formerror formerror-hs_harga-"+ index);
+      }
+
+      if(mdf_new_row.eq(6).hasClass("has-error")){
+        mdf_new_row.eq(6).removeClass().addClass("has-error formerror formerror-hs_harga_jasa-"+ index);
+      }else{
+        mdf_new_row.eq(6).removeClass().addClass("formerror formerror-hs_harga_jasa-"+ index);
+      }
+
+      if(mdf_new_row.eq(7).hasClass("has-error")){
+        mdf_new_row.eq(7).removeClass().addClass("has-error formerror formerror-hs_keterangan-"+ index);
+      }else{
+        mdf_new_row.eq(7).removeClass().addClass("formerror formerror-hs_keterangan-"+ index);
+      }
+
+      mdf_new_row.eq(1).find('.error-hs_kode_item').removeClass().addClass("error error-hs_kode_item error-hs_kode_item-"+ index);
+      mdf_new_row.eq(2).find('.error-hs_item').removeClass().addClass("error error-hs_item error-hs_item-"+ index);
+      mdf_new_row.eq(3).find('.error-hs_satuan').removeClass().addClass("error error-hs_satuan error-hs_satuan-"+ index);
+      mdf_new_row.eq(4).find('.error-hs_mtu').removeClass().addClass("error error-hs_mtu error-hs_mtu-"+ index);
+      mdf_new_row.eq(5).find('.error-hs_harga').removeClass().addClass("error error-hs_harga error-hs_harga-"+ index);
+      mdf_new_row.eq(6).find('.error-hs_harga_jasa').removeClass().addClass("error error-hs_harga_jasa error-hs_harga_jasa-"+ index);
+      mdf_new_row.eq(7).find('.error-hs_keterangan').removeClass().addClass("error error-pic_posisi error-hs_keterangan-"+ index);
+    @php
+    }
+    @endphp    
 
     if(row.length==1){
       mdf.html('');
@@ -399,18 +661,135 @@ $(document).on('click', '.add-harga_satuan', function(event) {
 
 $(document).on('click', '.delete-hs', function(event) {
   $(this).parent().parent().remove();
+  var btn_del = '<button type="button" class="btn btn-danger btn-xs delete-hs"><i class="glyphicon glyphicon-remove"></i> hapus</button>';
   var $this = $('#table-hargasatuan');
   var row = $this.find('tbody>tr');
 
+  var row = $this.find('tbody>tr');
   $.each(row,function(index, el) {
+    var mdf = $(this).find('.action');
     var mdf_new_row = $(this).find('td');
     mdf_new_row.eq(0).html(index+1);
-    var mdf = $(this).find('.action');
+    @php
+      if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs'){
+    @endphp
+      if(mdf_new_row.eq(1).hasClass("has-error")){
+      mdf_new_row.eq(1).removeClass().addClass("has-error formerror formerror-hs_kode_item-"+ index);
+      }else{
+        mdf_new_row.eq(1).removeClass().addClass("formerror formerror-hs_kode_item-"+ index);
+      }
+
+      if(mdf_new_row.eq(2).hasClass("has-error")){
+        mdf_new_row.eq(2).removeClass().addClass("has-error formerror formerror-hs_item-"+ index);
+      }else{
+        mdf_new_row.eq(2).removeClass().addClass("formerror formerror-hs_item-"+ index);
+      }
+      
+      if(mdf_new_row.eq(3).hasClass("has-error")){
+        mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-hs_qty-"+ index);
+      }else{
+        mdf_new_row.eq(3).removeClass().addClass("formerror formerror-hs_qty-"+ index);
+      }
+      
+      if(mdf_new_row.eq(4).hasClass("has-error")){
+        mdf_new_row.eq(4).removeClass().addClass("has-error formerror formerror-hs_satuan-"+ index);
+      }else{
+        mdf_new_row.eq(4).removeClass().addClass("formerror formerror-hs_satuan-"+ index);
+      }
+
+      if(mdf_new_row.eq(5).hasClass("has-error")){
+        mdf_new_row.eq(5).removeClass().addClass("has-error formerror formerror-hs_mtu-"+ index);
+      }else{
+        mdf_new_row.eq(5).removeClass().addClass("formerror formerror-hs_mtu-"+ index);
+      }
+
+      if(mdf_new_row.eq(6).hasClass("has-error")){
+        mdf_new_row.eq(6).removeClass().addClass("has-error formerror formerror-hs_harga-"+ index);
+      }else{
+        mdf_new_row.eq(6).removeClass().addClass("formerror formerror-hs_harga-"+ index);
+      }
+
+      if(mdf_new_row.eq(7).hasClass("has-error")){
+        mdf_new_row.eq(7).removeClass().addClass("has-error formerror formerror-hs_harga_jasa-"+ index);
+      }else{
+        mdf_new_row.eq(7).removeClass().addClass("formerror formerror-hs_harga_jasa-"+ index);
+      }
+
+      if(mdf_new_row.eq(9).hasClass("has-error")){
+        mdf_new_row.eq(9).removeClass().addClass("has-error formerror formerror-hs_keterangan-"+ index);
+      }else{
+        mdf_new_row.eq(9).removeClass().addClass("formerror formerror-hs_keterangan-"+ index);
+      }
+
+      mdf_new_row.eq(1).find('.error-hs_kode_item').removeClass().addClass("error error-hs_kode_item error-hs_kode_item-"+ index);
+      mdf_new_row.eq(2).find('.error-hs_item').removeClass().addClass("error error-hs_item error-hs_item-"+ index);
+      mdf_new_row.eq(3).find('.error-hs_qty').removeClass().addClass("error error-hs_qty error-hs_qty-"+ index);
+      mdf_new_row.eq(4).find('.error-hs_satuan').removeClass().addClass("error error-hs_satuan error-hs_satuan-"+ index);
+      mdf_new_row.eq(5).find('.error-hs_mtu').removeClass().addClass("error error-hs_mtu error-hs_mtu-"+ index);
+      mdf_new_row.eq(6).find('.error-hs_harga').removeClass().addClass("error error-hs_harga error-hs_harga-"+ index);
+      mdf_new_row.eq(7).find('.error-hs_harga_jasa').removeClass().addClass("error error-hs_harga_jasa error-hs_harga_jasa-"+ index);
+      mdf_new_row.eq(9).find('.error-hs_keterangan').removeClass().addClass("error error-pic_posisi error-hs_keterangan-"+ index);
+    @php
+    }else{
+    @endphp
+      if(mdf_new_row.eq(1).hasClass("has-error")){
+      mdf_new_row.eq(1).removeClass().addClass("has-error formerror formerror-hs_kode_item-"+ index);
+      }else{
+        mdf_new_row.eq(1).removeClass().addClass("formerror formerror-hs_kode_item-"+ index);
+      }
+
+      if(mdf_new_row.eq(2).hasClass("has-error")){
+        mdf_new_row.eq(2).removeClass().addClass("has-error formerror formerror-hs_item-"+ index);
+      }else{
+        mdf_new_row.eq(2).removeClass().addClass("formerror formerror-hs_item-"+ index);
+      }
+      
+      if(mdf_new_row.eq(3).hasClass("has-error")){
+        mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-hs_satuan-"+ index);
+      }else{
+        mdf_new_row.eq(3).removeClass().addClass("formerror formerror-hs_satuan-"+ index);
+      }
+
+      if(mdf_new_row.eq(4).hasClass("has-error")){
+        mdf_new_row.eq(4).removeClass().addClass("has-error formerror formerror-hs_mtu-"+ index);
+      }else{
+        mdf_new_row.eq(4).removeClass().addClass("formerror formerror-hs_mtu-"+ index);
+      }
+
+      if(mdf_new_row.eq(5).hasClass("has-error")){
+        mdf_new_row.eq(5).removeClass().addClass("has-error formerror formerror-hs_harga-"+ index);
+      }else{
+        mdf_new_row.eq(5).removeClass().addClass("formerror formerror-hs_harga-"+ index);
+      }
+
+      if(mdf_new_row.eq(6).hasClass("has-error")){
+        mdf_new_row.eq(6).removeClass().addClass("has-error formerror formerror-hs_harga_jasa-"+ index);
+      }else{
+        mdf_new_row.eq(6).removeClass().addClass("formerror formerror-hs_harga_jasa-"+ index);
+      }
+
+      if(mdf_new_row.eq(7).hasClass("has-error")){
+        mdf_new_row.eq(7).removeClass().addClass("has-error formerror formerror-hs_keterangan-"+ index);
+      }else{
+        mdf_new_row.eq(7).removeClass().addClass("formerror formerror-hs_keterangan-"+ index);
+      }
+
+      mdf_new_row.eq(1).find('.error-hs_kode_item').removeClass().addClass("error error-hs_kode_item error-hs_kode_item-"+ index);
+      mdf_new_row.eq(2).find('.error-hs_item').removeClass().addClass("error error-hs_item error-hs_item-"+ index);
+      mdf_new_row.eq(3).find('.error-hs_satuan').removeClass().addClass("error error-hs_satuan error-hs_satuan-"+ index);
+      mdf_new_row.eq(4).find('.error-hs_mtu').removeClass().addClass("error error-hs_mtu error-hs_mtu-"+ index);
+      mdf_new_row.eq(5).find('.error-hs_harga').removeClass().addClass("error error-hs_harga error-hs_harga-"+ index);
+      mdf_new_row.eq(6).find('.error-hs_harga_jasa').removeClass().addClass("error error-hs_harga_jasa error-hs_harga_jasa-"+ index);
+      mdf_new_row.eq(7).find('.error-hs_keterangan').removeClass().addClass("error error-pic_posisi error-hs_keterangan-"+ index);
+    @php
+    }
+    @endphp    
 
     if(row.length==1){
       mdf.html('');
+    }else{
+      mdf.html(btn_del);
     }
-
   });
 });
 

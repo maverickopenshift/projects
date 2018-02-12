@@ -69,7 +69,7 @@
         @include('documents::doc-view.general-info-right')
         <div class="form-group">
           <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran 1</label>
-          <div class="col-sm-5">
+          <div class="col-sm-8">
             <div class="parent-pictable">
                 <table class="table table-condensed table-striped">
                     <thead>
@@ -85,16 +85,18 @@
                         <tr>
                           <td>{{($key+1)}}</td>
                           <td>{{($dt->meta_name)?$dt->meta_name:' - '}}</td>
-                          <td>@if(!empty($dt->meta_file))
-                          <!--
-                          <a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
-                          -->
-                            <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
-                            <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
-                            </a>
-                          @else
-                          -
-                        @endif</td>
+                          <td>
+                            @if(!empty($dt->meta_file))
+                              <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
+                              <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
+                              </a>
+                              <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}?nik={{$pegawai->n_nik}}&nama={{$pegawai->v_nama_karyawan}}">
+                                  <i class="glyphicon glyphicon-download-alt"></i>  Download
+                              </a>
+                            @else
+                            -
+                            @endif
+                          </td>
                         </tr>
                       @endforeach
                       @else

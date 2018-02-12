@@ -11,9 +11,6 @@ $(function() {
   // $('.formatTanggal').datepicker({
   //       dateFormat: 'Y-m-d'
   //   });
-
-
-
 });
 </script>
 @endpush

@@ -29,6 +29,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
     Route::post('/update', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@update'])->name('supplier.update');
     Route::get('/get-select', 'SupplierController@getSelect')->name('supplier.get-select');
     Route::get('/cari-supplier', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@filtersupplier'])->name('supplier.filter');
+    Route::post('/smile-upload', ['middleware' => ['permission:tambah-supplier'],'uses' => 'UploadSapController@uploadsmile'])->name('supplier.upload.smile');
 
     Route::get('/sap', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierSapController@index'])->name('suppliersap');
     Route::get('/sap-data', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierSapController@data'])->name('supplier.sap.data');
@@ -39,6 +40,8 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
     Route::post('/mapping-hapus', ['middleware' => ['permission:ubah-supplier'],'uses' => 'MappingSapController@hapus'])->name('supplier.hapus.mapping');
 
     Route::get('/comments', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierCommentController@comments'])->name('sup.comments');
+    Route::get('/dmt-{id}', ['middleware' => ['permission:cetak-dmt'],'uses' => 'CetakDmtController@pdf'])->name('supplier.cetak.dmt');
+    Route::get('/reprint-dmt-{id}', ['middleware' => ['permission:cetak-dmt'],'uses' => 'CetakDmtController@pdfUlang'])->name('supplier.cetak.ulang.dmt');
 
     Route::get('/legal-dokumen/{filename}', function ($filename){
         $path = storage_path('app/supplier/legal_dokumen/' . $filename);

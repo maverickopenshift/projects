@@ -1,4 +1,4 @@
-<div class="form-group {{ $errors->has('pic_nama_err') ? ' has-error' : '' }}">
+<div class="form-group formerror formerror-pic_nama_err">
   <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> PIC</label>
   <div class="col-sm-3">
     <select class="form-control select-user-pic" style="width: 100%;" name="pic_search" id="pic_search">
@@ -9,7 +9,7 @@
     <button type="button" class="btn btn-success add-pic"><i class="glyphicon glyphicon-plus"></i> Tambah PIC</button>
   </div>
   <div class="col-sm-10 col-sm-offset-2">
-    {!!Helper::error_help($errors,'pic_nama_err')!!}
+    <div class="error error-pic_nama_err"></div>
   </div>
 </div>
 @php
@@ -37,25 +37,25 @@
       @foreach ($pic_nama as $key => $value)
         <tr>
             <td>{{$key+1}}</td>
-            <td class="{{ $errors->has('pic_nama.'.$key) ? ' has-error' : '' }}">
+            <td class="formerror formerror-pic_nama-{{$key}}">
               <input type="text" class="form-control" name="pic_nama[]" autocomplete="off" value="{{$pic_nama[$key]}}">
-              {!!Helper::error_help($errors,'pic_nama.'.$key)!!}
+              <div class="error error-pic_nama error-pic_nama-{{$key}}"></div>
             </td>
-            <td class="{{ $errors->has('pic_jabatan.'.$key) ? ' has-error' : '' }}">
+            <td class="formerror formerror-pic_jabatan-{{$key}}">
               <input type="text" class="form-control" name="pic_jabatan[]" autocomplete="off" value="{{$pic_jabatan[$key]}}">
-              {!!Helper::error_help($errors,'pic_jabatan.'.$key)!!}
+              <div class="error error-pic_jabatan error-pic_jabatan-{{$key}}"></div>
             </td>
-            <td class="{{ $errors->has('pic_email.'.$key) ? ' has-error' : '' }}">
+            <td class="formerror formerror-pic_email-{{$key}}">
               <input type="text" class="form-control" name="pic_email[]" autocomplete="off" value="{{$pic_email[$key]}}">
-              {!!Helper::error_help($errors,'pic_email.'.$key)!!}
+              <div class="error error-pic_email error-pic_email-{{$key}}"></div>
             </td>
-            <td class="{{ $errors->has('pic_telp.'.$key) ? ' has-error' : '' }}">
+            <td class="formerror formerror-pic_telp-{{$key}}">
               <input type="text" class="form-control" name="pic_telp[]" autocomplete="off" value="{{$pic_telp[$key]}}">
-              {!!Helper::error_help($errors,'pic_telp.'.$key)!!}
+              <div class="error error-pic_telp error-pic_telp-{{$key}}"></div>
             </td>
-            <td class="{{ $errors->has('pic_posisi.'.$key) ? ' has-error' : '' }}">
+            <td class="formerror formerror-pic_posisi-{{$key}}">
               {!!Helper::select_posisi($pic_posisi[$key])!!}
-              {!!Helper::error_help($errors,'pic_posisi.'.$key)!!}
+              <div class="error error-pic_posisi error-pic_posisi-{{$key}}"></div>
             </td>
             <td class="action">
                 <input type="hidden"  name="pic_id[]" autocomplete="off" value="{{$pic_id[$key]}}">
@@ -66,11 +66,26 @@
     @else
       <tr>
           <td>1</td>
-          <td><input type="text" class="form-control" name="pic_nama[]" autocomplete="off"></td>
-          <td><input type="text" class="form-control" name="pic_jabatan[]" autocomplete="off"></td>
-          <td><input type="text" class="form-control" name="pic_email[]" autocomplete="off"></td>
-          <td><input type="text" class="form-control" name="pic_telp[]" autocomplete="off"></td>
-          <td>{!!Helper::select_posisi()!!}</td>
+          <td class="formerror formerror-pic_nama-0">
+            <input type="text" class="form-control" name="pic_nama[]" autocomplete="off">
+            <div class="error error-pic_nama error-pic_nama-0"></div>
+          </td>
+          <td class="formerror formerror-pic_jabatan-0">
+            <input type="text" class="form-control" name="pic_jabatan[]" autocomplete="off">
+            <div class="error error-pic_jabatan error-pic_jabatan-0"></div>
+          </td>
+          <td class="formerror formerror-pic_email-0">
+            <input type="text" class="form-control" name="pic_email[]" autocomplete="off">
+            <div class="error error-pic_email error-pic_email-0"></div>
+          </td>
+          <td class="formerror formerror-pic_telp-0">
+            <input type="text" class="form-control" name="pic_telp[]" autocomplete="off">
+            <div class="error error-pic_telp error-pic_telp-0"></div>
+          </td>
+          <td class="formerror formerror-pic_posisi-0">
+            {!!Helper::select_posisi()!!}
+            <div class="error error-pic_posisi error-pic_posisi-0"></div>
+          </td>
           <td class="action"><input type="hidden" name="pic_id[]"><button type="button" class="btn btn-danger btn-xs delete-pic"><i class="glyphicon glyphicon-remove"></i> hapus</button></td>
       </tr>
     @endif
@@ -85,35 +100,76 @@ $(function() {
     /* Act on the event */
     var $this = $('.table-pic');
     $this.show();
+
     var row = $this.find('tbody>tr');
     var new_row = $(PICtheme()).clone();
     var mdf_new_row = new_row.find('td');
+
     mdf_new_row.eq(0).html(row.length+1);
     mdf_new_row.eq(1).find('input').val('');
-    mdf_new_row.eq(1).find('.error').remove();
+    mdf_new_row.eq(1).find('.error').html('');
     mdf_new_row.eq(2).find('input').val('');
-    mdf_new_row.eq(2).find('.error').remove();
+    mdf_new_row.eq(2).find('.error').html('');
     mdf_new_row.eq(3).find('input').val('');
-    mdf_new_row.eq(3).find('.error').remove();
+    mdf_new_row.eq(3).find('.error').html('');
     mdf_new_row.eq(4).find('input').val('');
-    mdf_new_row.eq(4).find('.error').remove();
-    mdf_new_row.eq(5).find('select').val('');
+    mdf_new_row.eq(4).find('.error').html('');
+    mdf_new_row.eq(5).find('select').val('');    
+    mdf_new_row.eq(5).find('.error').html('');
     mdf_new_row.eq(6).find('input').val('');
-    mdf_new_row.eq(5).find('.error').remove();
     $this.find('tbody').append(new_row);
+
     var row = $this.find('tbody>tr');
     $.each(row,function(index, el) {
       var mdf = $(this).find('.action');
       var mdf_new_row = $(this).find('td');
       mdf_new_row.eq(0).html(index+1);
-      // if(row.length==1){
-      //   mdf.html('');
-      // }
-      // else{
-      //   mdf.html(btn_del);
-      // }
+      
+      if(mdf_new_row.eq(1).hasClass("has-error")){
+        mdf_new_row.eq(1).removeClass().addClass("has-error formerror formerror-pic_nama-"+ index);
+      }else{
+        mdf_new_row.eq(1).removeClass().addClass("formerror formerror-pic_nama-"+ index);
+      }
+
+      if(mdf_new_row.eq(2).hasClass("has-error")){
+        mdf_new_row.eq(2).removeClass().addClass("has-error formerror formerror-pic_jabatan-"+ index);
+      }else{
+        mdf_new_row.eq(2).removeClass().addClass("formerror formerror-pic_jabatan-"+ index);
+      }
+
+      if(mdf_new_row.eq(3).hasClass("has-error")){
+        mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-pic_email-"+ index);
+      }else{
+        mdf_new_row.eq(3).removeClass().addClass("formerror formerror-pic_email-"+ index);
+      }
+
+      if(mdf_new_row.eq(4).hasClass("has-error")){
+        mdf_new_row.eq(4).removeClass().addClass("has-error formerror formerror-pic_telp-"+ index);
+      }else{
+        mdf_new_row.eq(4).removeClass().addClass("formerror formerror-pic_telp-"+ index);
+      }
+
+      if(mdf_new_row.eq(5).hasClass("has-error")){
+        mdf_new_row.eq(5).removeClass().addClass("has-error formerror formerror-pic_posisi-"+ index);
+      }else{
+        mdf_new_row.eq(5).removeClass().addClass("formerror formerror-pic_posisi-"+ index);
+      }
+
+      mdf_new_row.eq(1).find('.error-pic_nama').removeClass().addClass("error error-pic_nama error-pic_nama-"+ index);
+      mdf_new_row.eq(2).find('.error-pic_jabatan').removeClass().addClass("error error-pic_jabatan error-pic_jabatan-"+ index);
+      mdf_new_row.eq(3).find('.error-pic_email').removeClass().addClass("error error-pic_email error-pic_email-"+ index);
+      mdf_new_row.eq(4).find('.error-pic_telp').removeClass().addClass("error error-pic_telp error-pic_telp-"+ index);
+      mdf_new_row.eq(5).find('.error-pic_posisi').removeClass().addClass("error error-pic_posisi error-pic_posisi-"+ index);
+
+      if(row.length==1){
+         mdf.html('');
+      }else{
+        mdf.html(btn_del);
+      }
+
     });
   });
+
   $(".select-user-pic").select2({
       placeholder : "Pilih PIC....",
       ajax: {
@@ -174,6 +230,7 @@ $(function() {
   });
   $(document).on('select2:select', '.select-user-pic', function(e) {
     e.preventDefault();
+    var btn_del = '<button type="button" class="btn btn-danger btn-xs delete-pic"><i class="glyphicon glyphicon-remove"></i> hapus</button>';
     var data = e.params.data;
     console.log(data);
     $(this).val('');
@@ -191,10 +248,61 @@ $(function() {
     mdf_new_row.eq(5).find('select').val('');
     mdf_new_row.eq(6).find('input').val(data.id);
     $this.find('tbody').append(new_row);
+
+    var row = $this.find('tbody>tr');
+    $.each(row,function(index, el) {    
+      var mdf = $(this).find('.action');
+      var mdf_new_row = $(this).find('td');
+      mdf_new_row.eq(0).html(index+1);
+
+      if(mdf_new_row.eq(1).hasClass("has-error")){
+        mdf_new_row.eq(1).removeClass().addClass("has-error formerror formerror-pic_nama-"+ index);
+      }else{
+        mdf_new_row.eq(1).removeClass().addClass("formerror formerror-pic_nama-"+ index);
+      }
+
+      if(mdf_new_row.eq(2).hasClass("has-error")){
+        mdf_new_row.eq(2).removeClass().addClass("has-error formerror formerror-pic_jabatan-"+ index);
+      }else{
+        mdf_new_row.eq(2).removeClass().addClass("formerror formerror-pic_jabatan-"+ index);
+      }
+
+      if(mdf_new_row.eq(3).hasClass("has-error")){
+        mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-pic_email-"+ index);
+      }else{
+        mdf_new_row.eq(3).removeClass().addClass("formerror formerror-pic_email-"+ index);
+      }
+
+      if(mdf_new_row.eq(4).hasClass("has-error")){
+        mdf_new_row.eq(4).removeClass().addClass("has-error formerror formerror-pic_telp-"+ index);
+      }else{
+        mdf_new_row.eq(4).removeClass().addClass("formerror formerror-pic_telp-"+ index);
+      }
+
+      if(mdf_new_row.eq(5).hasClass("has-error")){
+        mdf_new_row.eq(5).removeClass().addClass("has-error formerror formerror-pic_posisi-"+ index);
+      }else{
+        mdf_new_row.eq(5).removeClass().addClass("formerror formerror-pic_posisi-"+ index);
+      }
+
+      mdf_new_row.eq(1).find('.error-pic_nama').removeClass().addClass("error error-pic_nama error-pic_nama-"+ index);
+      mdf_new_row.eq(2).find('.error-pic_jabatan').removeClass().addClass("error error-pic_jabatan error-pic_jabatan-"+ index);
+      mdf_new_row.eq(3).find('.error-pic_email').removeClass().addClass("error error-pic_email error-pic_email-"+ index);
+      mdf_new_row.eq(4).find('.error-pic_telp').removeClass().addClass("error error-pic_telp error-pic_telp-"+ index);
+      mdf_new_row.eq(5).find('.error-pic_posisi').removeClass().addClass("error error-pic_posisi error-pic_posisi-"+ index);
+
+      if(row.length==1){
+         mdf.html('');
+      }else{
+        mdf.html(btn_del);
+      }
+    });
   });
 });
+
 $(document).on('click', '.delete-pic', function(event) {
   var tbl_t = $(this).parent().parent();
+  var btn_del = '<button type="button" class="btn btn-danger btn-xs delete-pic"><i class="glyphicon glyphicon-remove"></i> hapus</button>';
   $(this).parent().parent().remove();
   var $this = $('.table-pic');
   var row = $this.find('tbody>tr');
@@ -202,23 +310,81 @@ $(document).on('click', '.delete-pic', function(event) {
     //mdf.html('');
     $this.hide();
   }
+
+  var row = $this.find('tbody>tr');
   $.each(row,function(index, el) {
+    var mdf = $(this).find('.action');
     var mdf_new_row = $(this).find('td');
     mdf_new_row.eq(0).html(index+1);
-    var mdf = $(this).find('.action');
-    console.log(row.length);
-    
+
+    if(mdf_new_row.eq(1).hasClass("has-error")){
+      mdf_new_row.eq(1).removeClass().addClass("has-error formerror formerror-pic_nama-"+ index);
+    }else{
+      mdf_new_row.eq(1).removeClass().addClass("formerror formerror-pic_nama-"+ index);
+    }
+
+    if(mdf_new_row.eq(2).hasClass("has-error")){
+      mdf_new_row.eq(2).removeClass().addClass("has-error formerror formerror-pic_jabatan-"+ index);
+    }else{
+      mdf_new_row.eq(2).removeClass().addClass("formerror formerror-pic_jabatan-"+ index);
+    }
+
+    if(mdf_new_row.eq(3).hasClass("has-error")){
+      mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-pic_email-"+ index);
+    }else{
+      mdf_new_row.eq(3).removeClass().addClass("formerror formerror-pic_email-"+ index);
+    }
+
+    if(mdf_new_row.eq(4).hasClass("has-error")){
+      mdf_new_row.eq(4).removeClass().addClass("has-error formerror formerror-pic_telp-"+ index);
+    }else{
+      mdf_new_row.eq(4).removeClass().addClass("formerror formerror-pic_telp-"+ index);
+    }
+
+    if(mdf_new_row.eq(5).hasClass("has-error")){
+      mdf_new_row.eq(5).removeClass().addClass("has-error formerror formerror-pic_posisi-"+ index);
+    }else{
+      mdf_new_row.eq(5).removeClass().addClass("formerror formerror-pic_posisi-"+ index);
+    }
+
+    mdf_new_row.eq(1).find('.error-pic_nama').removeClass().addClass("error error-pic_nama error-pic_nama-"+ index);
+    mdf_new_row.eq(2).find('.error-pic_jabatan').removeClass().addClass("error error-pic_jabatan error-pic_jabatan-"+ index);
+    mdf_new_row.eq(3).find('.error-pic_email').removeClass().addClass("error error-pic_email error-pic_email-"+ index);
+    mdf_new_row.eq(4).find('.error-pic_telp').removeClass().addClass("error error-pic_telp error-pic_telp-"+ index);
+    mdf_new_row.eq(5).find('.error-pic_posisi').removeClass().addClass("error error-pic_posisi error-pic_posisi-"+ index);
+
+    if(row.length==1){
+       mdf.html('');
+    }else{
+      mdf.html(btn_del);
+    }
   });
 });
+
 function PICtheme(){
   @php echo 'var select_posisi = \''.trim(preg_replace('/\s+/', ' ',Helper::select_posisi())).'\';'; @endphp
   return '<tr>\
           <td>1</td>\
-          <td><input type="text" class="form-control" name="pic_nama[]" autocomplete="off"></td>\
-          <td><input type="text" class="form-control" name="pic_jabatan[]" autocomplete="off"></td>\
-          <td><input type="text" class="form-control" name="pic_email[]" autocomplete="off"></td>\
-          <td><input type="text" class="form-control" name="pic_telp[]" autocomplete="off"></td>\
-          <td>'+select_posisi+'</td>\
+          <td>\
+            <input type="text" class="form-control" name="pic_nama[]" autocomplete="off">\
+            <div class="error error-pic_nama"></div>\
+          </td>\
+          <td>\
+            <input type="text" class="form-control" name="pic_jabatan[]" autocomplete="off">\
+            <div class="error error-pic_jabatan"></div>\
+          </td>\
+          <td>\
+            <input type="text" class="form-control" name="pic_email[]" autocomplete="off">\
+            <div class="error error-pic_email"></div>\
+          </td>\
+          <td>\
+            <input type="text" class="form-control" name="pic_telp[]" autocomplete="off">\
+            <div class="error error-pic_telp"></div>\
+          </td>\
+          <td>\
+            '+select_posisi+'\
+            <div class="error error-pic_posisi"></div>\
+          </td>\
           <td class="action"><input type="hidden" name="pic_id[]"><button type="button" class="btn btn-danger btn-xs delete-pic"><i class="glyphicon glyphicon-remove"></i> hapus</button></td>\
       </tr>';
 }

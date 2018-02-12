@@ -18,22 +18,21 @@ class PDF extends PdfRotate {
     }
     
     public function Header() {
-        
+            
         //Put the watermark
-        $this->Image('http://chart.googleapis.com/chart?cht=p3&chd=t:60,40&chs=250x100&chl=Hello|World', 40, 100, 100, 0, 'PNG');
+        //$this->Image('http://chart.googleapis.com/chart?cht=p3&chd=t:60,40&chs=250x100&chl=Hello|World', 40, 100, 100, 0, 'PNG');
         $this->SetFont('Arial', 'B', 50);
-        $this->SetTextColor(255, 192, 203);
-        $this->RotatedText(20, 230, $this->nama.'-'.$this->nik, 45);
+        //$this->SetTextColor(255, 192, 203);
+        $this->SetTextColor(135, 206, 250);
+        //$this->RotatedText(40, 230, $this->namathis->n.'-'.$ik, 45);
+        $this->RotatedText(40, 230, 'NIK : '. $this->nik, 45);
+        //$this->RotatedText(100, 210, $this->nik, 45);
         
         if (is_null($this->_tplIdx)) {
-
-            // THIS IS WHERE YOU GET THE NUMBER OF PAGES
             $this->numPages = $this->setSourceFile($this->file);
             $this->_tplIdx = $this->importPage(1);
         }
         $this->useTemplate($this->_tplIdx, 0, 0, 200);
-        
-        
     }
 
     public function RotatedText($x, $y, $txt, $angle) {

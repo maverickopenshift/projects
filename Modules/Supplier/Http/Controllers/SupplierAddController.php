@@ -30,7 +30,7 @@ class SupplierAddController extends Controller
   public function store(Request $request)
   {
     // dd($request->komentar);
-    //dd($request->all());
+    // dd($request->all());
     $asset = $request->asset;
     $request->merge(['asset' => Helpers::input_rupiah($request->asset)]);
     $rules = array (
@@ -39,7 +39,7 @@ class SupplierAddController extends Controller
         'nm_vendor'         => 'required|max:500|min:3',
         'nm_vendor_uq'      => 'max:3|min:3',
         'prinsipal_st'      => 'required|boolean',
-        'klasifikasi_usaha.*' => 'required',
+        // 'klasifikasi_usaha.*' => 'required',
         'pengalaman_kerja'  => 'required|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
         'alamat'            => 'required|max:1000|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
         'kota'              => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -124,6 +124,11 @@ class SupplierAddController extends Controller
     $request->merge(['asset' => $asset]);
 
     $validator = Validator::make($request->all(), $rules,CustomErrors::supplier());
+    $validator->after(function ($validator) use ($request) {
+        if (!isset($request['klasifikasi_kode'][0])) {
+            $validator->errors()->add('klasifikasi_err', 'Klasifikasi Usaha harus dipilih!');
+        }
+    });
     if ($validator->fails ()){
       return redirect()->back()
                   ->withInput($request->input())
@@ -215,7 +220,15 @@ class SupplierAddController extends Controller
           $mt_data->save();
       }
       // dd("msuk");
-
+          foreach($request->klasifikasi_kode as $key=>$v){
+            $mt_data = new SupplierMetadata();
+            $mt_data->id_object    = $data->id;
+            $mt_data->object_type  = 'vendor';
+            $mt_data->object_key   = 'klasifikasi_usaha';
+            $mt_data->object_value = json_encode(['kode'=>$request['klasifikasi_kode'][$key], 'text'=>$request['klasifikasi_text'][$key]]);
+            $mt_data->save();
+          }
+      // dd("yoo");
       $mt_data = new SupplierMetadata();
       $mt_data->id_object    = $data->id;
       $mt_data->object_type  = 'vendor';
@@ -244,14 +257,9 @@ class SupplierAddController extends Controller
       $mt_data->object_value = $request->nm_komisaris_utama;
       $mt_data->save();
 
-      foreach($request->klasifikasi_usaha as $k){
-        $mt_data = new SupplierMetadata();
-        $mt_data->id_object    = $data->id;
-        $mt_data->object_type  = 'vendor';
-        $mt_data->object_key   = 'klasifikasi_usaha';
-        $mt_data->object_value = $k;
-        $mt_data->save();
-      };
+
+
+
       foreach($request->anak_perusahaan as $a){
         $mt_data = new SupplierMetadata();
         $mt_data->id_object    = $data->id;
@@ -280,7 +288,7 @@ class SupplierAddController extends Controller
       $log_activity->date = new \DateTime();
       $log_activity->komentar = $request->komentar;
       $log_activity->save();
-
+// dd("yoo");
       return redirect()->route('supplier', ['status' => 'all'])->with('message', 'Data supplier berhasil ditambahkan!');
     }
   }

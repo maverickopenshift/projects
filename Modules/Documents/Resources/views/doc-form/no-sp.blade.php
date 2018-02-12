@@ -1,45 +1,35 @@
-<div class="form-group  {{ $errors->has('parent_kontrak') ? ' has-error' : '' }}">
+<div class="form-group formerror formerror-parent_kontrak">
   <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> No Kontrak Induk</label>
   <div class="col-sm-10">
     <input type="hidden" class="select-kontrak-sp-text" name="parent_kontrak_text" value="{{Helper::old_prop($doc,'parent_kontrak_text')}}">
     <select class="form-control select-kontrak-sp" style="width: 100%;" name="parent_kontrak" data-id="{{Helper::old_prop($doc,'parent_kontrak')}}">
     </select>
-    @if ($errors->has('parent_kontrak'))
-        <span class="help-block">
-            <strong>{{ $errors->first('parent_kontrak') }}</strong>
-        </span>
-    @endif
+    <div class="error error-parent_kontrak"></div>
     <div class="result-kontrak top20"></div>
   </div>
 </div>
-<div class="form-group  {{ $errors->has('parent_sp') ? ' has-error' : '' }}">
+
+<div class="form-group formerror formerror-parent_sp">
   <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> No SP Induk</label>
   <div class="col-sm-10">
     <input type="hidden" class="select-sp-text" name="parent_sp_text" value="{{Helper::old_prop($doc,'parent_sp_text')}}">
     <select class="form-control select-sp" style="width: 100%;" name="parent_sp" data-id="{{Helper::old_prop($doc,'parent_sp')}}">
     </select>
-    @if ($errors->has('parent_sp'))
-        <span class="help-block">
-            <strong>{{ $errors->first('parent_sp') }}</strong>
-        </span>
-    @endif
+    <div class="error error-parent_sp"></div>
     <div class="result-sp top15"></div>
   </div>
 </div>
+
 <div class="judul-man" style="display:none;">
   <div class="form-group">
     <label for="nm_vendor" class="col-sm-2 control-label">No Kontrak {{$doc_type['title']}}</label>
     <div class="col-sm-10"> - </div>
   </div>
-  <div class="form-group {{ $errors->has('doc_title') ? ' has-error' : '' }}">
+  <div class="form-group formerror formerror-doc_title">
     <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Judul {{$doc_type['title']}}</label>
     <div class="col-sm-10">
       <input type="text" class="form-control text-me" name="doc_title"  value="{{old('doc_title',Helper::prop_exists($doc,'doc_title'))}}"  placeholder="Masukan Judul {{$doc_type['title']}}" autocomplete="off">
-      @if ($errors->has('doc_title'))
-          <span class="help-block">
-              <strong>{{ $errors->first('doc_title') }}</strong>
-          </span>
-      @endif
+      <div class="error error-doc_title"></div>
     </div>
   </div>
 </div>

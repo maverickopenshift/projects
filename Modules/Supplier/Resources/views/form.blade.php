@@ -102,6 +102,8 @@ $(function () {
   var type = '{!!$action_type!!}';
   if(type=="lihat"){
     $('.form-control, .check-me').attr('disabled',true);
+    $('.delete-atasan').hide();
+
 
     $(document).on('click', '.btn-approve', function(event) {
       event.preventDefault();

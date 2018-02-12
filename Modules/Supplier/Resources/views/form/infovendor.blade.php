@@ -60,41 +60,8 @@
               @endif
             </div>
           </div>
-          <div class="form-group {{ $errors->has('klasifikasi_usaha.*') ? ' has-error' : '' }}">
-            <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Klasifikasi Usaha</label>
-            <div class="col-sm-10">
-              @if(count(old('klasifikasi_usaha',Helper::prop_exists($supplier,'klasifikasi_usaha','array')))>0)
-                @foreach (old('klasifikasi_usaha',Helper::prop_exists($supplier,'klasifikasi_usaha','array')) as $key => $value)
-                  <div class="input-group bottom15 ">
-                    <input type="text" class="form-control klasifikasi_usaha" name="klasifikasi_usaha[]" value="{{$value}}" autocomplete="off">
-                    <div class="input-group-btn">
-                      <button type="button" class="btn btn-default add-klasifikasi_usaha"><i class="glyphicon glyphicon-plus"></i></button>
-                      @if(count(old('klasifikasi_usaha',Helper::prop_exists($supplier,'klasifikasi_usaha','array')))>1)
-                        <button type="button" class="btn btn-default delete-klasifikasi_usaha"><i class="glyphicon glyphicon-trash"></i></button>
-                      @endif
-                    </div>
-                  </div>
-                  @if ($errors->has('klasifikasi_usaha.'.$key))
-                      <span class="help-block">
-                          <strong>{{ $errors->first('klasifikasi_usaha.'.$key) }}</strong>
-                      </span>
-                  @endif
-                @endforeach
-              @else
-                <div class="input-group bottom15">
-                  <input type="text" class="form-control klasifikasi_usaha" name="klasifikasi_usaha[]" autocomplete="off">
-                  <div class="input-group-btn">
-                    <button type="button" class="btn btn-default add-klasifikasi_usaha"><i class="glyphicon glyphicon-plus"></i></button>
-                  </div>
-                </div>
-                @if ($errors->has('klasifikasi_usaha'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('klasifikasi_usaha') }}</strong>
-                    </span>
-                @endif
-              @endif
-            </div>
-          </div>
+          @include('supplier::form.klasifikasi')
+
           <div class="form-group {{ $errors->has('pengalaman_kerja') ? ' has-error' : '' }}">
             <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Pengalaman Kerja</label>
             <div class="col-sm-10">

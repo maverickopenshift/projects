@@ -10,10 +10,12 @@
 
     @if (is_array($lampiran) && count($lampiran)>0)
       @foreach ($lampiran as $key => $value)
-        <div class="form-group input-lampiran {{ $errors->has('doc_lampiran.'.$key) ? ' has-error' : '' }} {{ $errors->has('doc_lampiran_nama.'.$key) ? ' has-error' : '' }}">
+        <div class="form-group input-lampiran  formerror formerror-doc_lampiran-{{$key}}">
           <div class="col-sm-6">
-            <input type="text" class="form-control" name="doc_lampiran_nama[]" placeholder="Nama Lampiran" autocomplete="off" value="{{$lampiran_nama[$key]}}">
-            {!!Helper::error_help($errors,'doc_lampiran_nama.'.$key)!!}
+            <div class="">
+              <input type="text" class="form-control" name="doc_lampiran_nama[]" placeholder="Nama Lampiran" autocomplete="off" value="{{$lampiran_nama[$key]}}">
+            </div>
+            <div class="error error-lampiran_nama error-doc_lampiran_nama-{{$key}}"></div>
           </div>
           <div class="col-sm-6">
             <div class="input-group bottom10">
@@ -23,71 +25,37 @@
                 <button class="btn btn-default click-upload" type="button">Browse</button>
                   <input type="hidden" name="doc_lampiran_old[]" value="{{$lampiran_old[$key]}}">
                 @if(isset($lampiran_old[$key]))
-                  <!--
-                  <a target="_blank" class="btn btn-primary btn-lihat" href="{{route('doc.file.lampiran',['filename'=>$lampiran_old[$key],'type'=>$doc_type->name])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat</a>
-
-                  -->
-
-                  <!--
-                  <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#myModal">
-                  <i class="glyphicon glyphicon-paperclip"></i>  Lihat
-                  </a>
-
-
-                  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                          <h4 class="modal-title" id="myModalLabel">Modal title</h4>
-                        </div>
-                        <div class="modal-body">
-                          <div style="text-align: center;">
-                            <iframe src="{{route('doc.file.lampiran',['filename'=>$lampiran_old[$key],'type'=>$doc_type->name])}}"
-                            style="width:500px; height:500px;" frameborder="0"></iframe>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                          <button type="button" class="btn btn-primary">Save changes</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  -->
-
                   <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file.lampiran',['filename'=>$lampiran_old[$key],'type'=>$doc_type->name])}}">
                   <i class="glyphicon glyphicon-paperclip"></i>  Lihat
                   </a>
-
-
                 @endif
-                @if(count($lampiran)>1)
+                @if(count($lampiran)>0)
                   <button type="button" class="btn btn-danger delete-lampiran"><i class="glyphicon glyphicon-trash"></i></button>
                 @endif
-
               </div>
             </div>
-            {!!Helper::error_help($errors,'doc_lampiran.'.$key)!!}
+            <div class="error error-lampiran error-doc_lampiran-{{$key}}"></div>
           </div>
         </div>
       @endforeach
     @else
-      <div class="form-group input-lampiran">
-        <div class="col-sm-6">
-            <input type="text" class="form-control" name="doc_lampiran_nama[]" placeholder="Nama Lampiran" autocomplete="off">
-        </div>
+      <div class="form-group input-lampiran formerror formerror-doc_lampiran-0">
         <div class="col-sm-6">
           <div class="">
-            <div class="input-group bottom10">
-              <input type="file" class="hide" name="doc_lampiran[]">
-              <input class="form-control" type="text" disabled>
-              <div class="input-group-btn">
-                <button class="btn btn-default click-upload" type="button">Browse</button>
-                <input type="hidden" name="doc_lampiran_old[]">
-              </div>
+            <input type="text" class="form-control" name="doc_lampiran_nama[]" placeholder="Nama Lampiran" autocomplete="off">
+          </div>
+          <div class="error error-lampiran_nama error-doc_lampiran_nama-0"></div>
+        </div>
+        <div class="col-sm-6">
+          <div class="input-group bottom10">
+            <input type="file" class="hide" name="doc_lampiran[]">
+            <input class="form-control" type="text" disabled>
+            <div class="input-group-btn">
+              <button class="btn btn-default click-upload" type="button">Browse</button>
+              <input type="hidden" name="doc_lampiran_old[]">
             </div>
           </div>
+          <div class="error error-lampiran error-doc_lampiran-0"></div>
         </div>
       </div>
     @endif
@@ -107,28 +75,49 @@ $(function() {
     /* Act on the event */
     var $this = $('.input-lampiran');
     var new_row = $this.eq(0).clone();
+
     new_row.removeClass('has-error');
     new_row.find('input').val('');
-    new_row.find('.error').remove();
+    new_row.find('.error').html('');
     new_row.find('.btn-lihat').remove();
     new_row.find('.delete-lampiran').remove();
     $this.parent().append(new_row);
+
     var row = $('.input-lampiran');
     $.each(row,function(index, el) {
+      if($(this).hasClass("has-error")){
+        $(this).removeClass().addClass("form-group input-lampiran has-error formerror formerror-doc_lampiran-"+ index);
+      }else{
+        $(this).removeClass().addClass("form-group input-lampiran formerror formerror-doc_lampiran-"+ index);
+      }
+      
+      $(this).find('.error-lampiran').removeClass().addClass("error error-lampiran error-doc_lampiran-"+ index);
+      $(this).find('.error-lampiran_nama').removeClass().addClass("error error-lampiran_nama error-doc_lampiran_nama-"+ index);
+
       if(row.length==1){
         $(this).find('.delete-lampiran').remove();
-      }
-      else{
+      }else{
         $(this).find('.delete-lampiran').remove();
         $(this).find('.add-lampiran').remove();
         $(this).find('.input-group-btn').append(btn_del);
       }
     });
   });
+
   $(document).on('click', '.delete-lampiran', function(event) {
-    $(this).parent().parent().parent().parent().parent().remove();
+    // $(this).parent().parent().parent().parent().parent().remove();
+    $(this).parent().parent().parent().parent().remove();
     var $this = $('.input-lampiran');
     $.each($this,function(index, el) {
+      if($(this).hasClass("has-error")){
+        $(this).removeClass().addClass("form-group input-lampiran has-error formerror formerror-doc_lampiran-"+ index);
+      }else{
+        $(this).removeClass().addClass("form-group input-lampiran formerror formerror-doc_lampiran-"+ index);
+      }
+
+      $(this).find('.error-lampiran').removeClass().addClass("error error-lampiran error-doc_lampiran-"+ index);
+      $(this).find('.error-lampiran_nama').removeClass().addClass("error error-lampiran_nama error-doc_lampiran_nama-"+ index);
+      
       if($this.length==1){
         $(this).find('.delete-lampiran').remove();
       }

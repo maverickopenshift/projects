@@ -24,9 +24,7 @@
       $f_latar_belakang_judul = Helper::old_prop_each($doc,'f_latar_belakang_judul');
       $f_latar_belakang_tanggal = Helper::old_prop_each($doc,'f_latar_belakang_tanggal');
       $f_latar_belakang_isi = Helper::old_prop_each($doc,'f_latar_belakang_isi');
-    @endphp
-
-
+    
       if($doc_type->name == "khs" || $doc_type->name == "turnkey" || $doc_type->name == "surat_pengikatan"){
         $judul = "Judul";
       }else{
@@ -185,7 +183,6 @@
       </div>
     </div>
     @endif
-<<<<<<< HEAD
     
     <div class="parent-perubahan_latar_belakang">
       <div class="form-horizontal perubahan_latar_belakang" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">

@@ -179,7 +179,80 @@ $(function () {
     });
   });
   */
-  
+
+  $(document).on('click', '.btn-submit', function(event) {
+    event.preventDefault();
+    var content = $('.content-view');
+    var loading = content.find('.loading2');
+
+    var formMe = $('#form-kontrak');
+    $(".formerror").removeClass("has-error");
+    $(".error").html('');
+    $(".alert-error").hide();
+
+    bootbox.confirm({
+      title:"Konfirmasi",
+      message: "Apakah anda yakin untuk submit?",
+      buttons: {
+          confirm: {
+              label: 'Yakin',
+              className: 'btn-success'
+          },
+          cancel: {
+              label: 'Tidak',
+              className: 'btn-danger'
+          }
+      },
+      callback: function (result) {
+        if(result){
+          bootbox.prompt({
+            title: "Masukan Komentar",
+            inputType: 'textarea',
+            callback: function (komen) {
+              if(komen){
+                loading.show();
+                $('.komentar').val(komen);
+                //$('.btn_submit').click();
+
+                $.ajax({
+                  url: formMe.attr('action'),
+                  type: 'post',
+                  processData: false,
+                  contentType: false,
+                  data: new FormData(document.getElementById("form-kontrak")),
+                  dataType: 'json',
+                  success: function(response){
+                    if(response.errors){
+                      $.each(response.errors, function(index, value){
+                          if (value.length !== 0){
+                            index = index.replace(".", "-");
+                            $(".formerror-"+ index).removeClass("has-error");
+                            $(".error-"+ index).html('');             
+
+                            $(".formerror-"+ index).addClass("has-error");
+                            $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');                
+                          }
+                      });
+
+                      alert("Data yang Anda masukan belum valid, silahkan periksa kembali!");
+                    }else{
+                      if(response.status=="tracking"){
+                        window.location.href = "{{route('doc',['status'=>'tracking'])}}";
+                      }else if(response.status=="draft"){
+                        window.location.href = "{{route('doc',['status'=>'draft'])}}";
+                      }
+                    }
+                  }
+                });
+                //// end ajax
+              }
+            }
+          });
+        }
+      }
+    });
+  });
+  /*
   $(document).on('click', '.btn-submit', function(event) {
     event.preventDefault();
 
@@ -219,6 +292,7 @@ $(function () {
       }
     });
   });
+  */
   
   
 });

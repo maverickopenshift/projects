@@ -136,12 +136,15 @@
             @endpermission
 
             @permission('lihat-config')
-            <li class="treeview {{Request::is('config') ?'active':''}}">
+            <li class="treeview {{Request::is('config/*') ?'active':''}}">
               <a href="#"><img src="{{asset('/images/icon-user.png')}}" title="Config" />
                 <span>Manajemen Config</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 @permission('lihat-config')
                   <li class="{{Request::is('config') ?'active':''}}"><a href="{{route('config')}}">Config</a></li>
+                @endpermission
+                @permission('set-dmt')
+                  <li class="{{Request::is('config/set-dmt') ?'active':''}}"><a href="{{route('set.dmt')}}">Setting DMT</a></li>
                 @endpermission
               </ul>
             </li>

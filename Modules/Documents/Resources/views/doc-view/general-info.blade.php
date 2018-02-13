@@ -62,13 +62,13 @@
 
           <div class="form-group">
             <label class="col-sm-2 control-label">Konseptor</label>
-            <div class="col-sm-10 text-me">{{$pegawai_konseptor->n_nik}} - {{$pegawai_konseptor->v_nama_karyawan}}</div>
+            <div class="col-sm-10 text-me">{{$pegawai->v_nama_karyawan.'/'.$pegawai->n_nik.' - '.$pegawai->v_short_posisi.' '.$pegawai->v_short_unit.'/'.$pegawai->v_short_divisi}}</div>
           </div>
-          <div class="form-group">
+          <!-- <div class="form-group">
             <label class="col-sm-2 control-label">Divisi</label>
             <div class="col-sm-10 text-me">{{$pegawai_konseptor->v_short_divisi}}</div>
           </div>
-          @include('documents::doc-view.general-info-right')
+          @include('documents::doc-view.general-info-right') -->
           <div class="form-group">
             <label class="col-sm-2 control-label">Approver</label>
             <div class="col-sm-10 text-me">{{Helper::get_approver_by_id($doc->user_id)}}</div>

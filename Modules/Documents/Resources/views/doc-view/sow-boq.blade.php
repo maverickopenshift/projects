@@ -58,7 +58,7 @@
                             <th  style="width:70px;">Qty</th>
                           @endif
                           <th style="width:100px;">Satuan</th>
-                          <th style="width:70px;">Currency</th>
+                          <th style="width:80px;">Currency</th>
                           <th>Harga</th>
                           <th>Harga Jasa</th>
                           @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')

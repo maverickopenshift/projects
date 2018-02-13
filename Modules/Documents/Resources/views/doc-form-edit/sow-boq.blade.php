@@ -70,7 +70,7 @@
                   <th  style="width:70px;">Qty</th>
                 @endif
                 <th style="width:100px;">Satuan</th>
-                <th>Currency</th>
+                <th style="width:80px;">Currency</th>
                 <th>Harga</th>
                 <th>Harga Jasa</th>
                 @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
@@ -105,7 +105,7 @@
                         </td>
                         <td  class="{{ $errors->has('hs_mtu.'.$key) ? ' has-error' : '' }}">
                           @php
-                            if($mtu[$key]=="RP"){
+                            if($mtu[$key]=="IDR"){
                                 $a="selected";
                                 $b="";
                             }else if($mtu[$key]=="USD"){
@@ -117,7 +117,7 @@
                             }
                           @endphp
                           <select name="hs_mtu[]" class="form-control" style="width: 100%;">
-                              <option value="RP" {{$a}}>RP</option>
+                              <option value="IDR" {{$a}}>IDR</option>
                               <option value="USD" {{$b}}>USD</option>
                           </select>
                           {!!Helper::error_help($errors,'hs_mtu.'.$key)!!}
@@ -164,7 +164,7 @@
                     <td><input type="text" class="form-control" name="hs_satuan[]" placeholder="Satuan.."></td>
                     <td>
                       <select name="hs_mtu[]" class="form-control selectx2" style="width: 100%;">
-                        <option value="RP">RP</option>
+                        <option value="IDR">IDR</option>
                         <option value="USD">USD</option>
                       </select>
                     </td>
@@ -335,7 +335,7 @@ function templateHS(data,index) {
     <td><input type="text" class="form-control" name="hs_satuan[]" value="'+data.SATUAN+'" /></td>\
     <td>\
       <select name="hs_mtu[]" class="form-control" style="width: 100%;">\
-        <option value="RP" '+ a +'>RP</option>\
+        <option value="IDR" '+ a +'>IDR</option>\
         <option value="USD" '+ b +'>USD</option>\
       </select>\
     </td>\

@@ -140,15 +140,16 @@ public static function get_approver_by_id($id)
 {
   $cat = \DB::table('users_atasan')
           ->join('users_pegawai', 'users_pegawai.id', '=', 'users_atasan.users_pegawai_id')
-          ->select('pegawai.v_short_posisi')
+          ->select('pegawai.v_short_posisi','pegawai.v_nama_karyawan','pegawai.n_nik')
           ->join('pegawai', 'pegawai.n_nik', '=', 'users_atasan.nik')
           ->where('users_pegawai.users_id',$id);
   $cat = $cat->get();
   $data = [];
   foreach ($cat as $dt) {
-    $data[] = $dt->v_short_posisi;
+    // $data[] = $dt->v_short_posisi;
+    $data[] = $dt->v_nama_karyawan.'/'.$dt->n_nik.' - '.$dt->v_short_posisi;
   }
-  return implode(',',$data);
+  return implode(", \n",$data);
 }
 
 public static function get_pihak1_by_id($id)
@@ -175,9 +176,10 @@ public static function get_approver($pegawai)
   }
   $data = [];
   foreach ($cat as $dt) {
-    $data[] = $dt->v_short_posisi;
+    $data[] = $dt->v_nama_karyawan.'/'.$dt->n_nik.' - '.$dt->v_short_posisi;
   }
-  return implode(',',$data);
+
+  return implode(",\n",$data);
 }
 public static function select_atasan($pegawai,$val=null)
 {
@@ -427,7 +429,7 @@ public static function select_atasan($pegawai,$val=null)
     }
     public static function select_month($val){
       $select ='<select class="form-control" name="m">';
-        for ($i=1; $i <=12; $i++) { 
+        for ($i=1; $i <=12; $i++) {
           $v = ($i<10)?'0'.$i:$i;
           $selected = ($v==$val)?'selected="selected"':'';
           $select .= '<option value="'.$v.'" '.$selected.'>'.self::month_name($i).'</option>';
@@ -438,7 +440,7 @@ public static function select_atasan($pegawai,$val=null)
     public static function select_year($val){
       $year_s = 2001;
       $select ='<select class="form-control" name="y">';
-        for ($i=$year_s; $i <=date('Y'); $i++) { 
+        for ($i=$year_s; $i <=date('Y'); $i++) {
           $selected = ($i==$val)?'selected="selected"':'';
           $select .= '<option value="'.$i.'" '.$selected.'>'.$i.'</option>';
         }

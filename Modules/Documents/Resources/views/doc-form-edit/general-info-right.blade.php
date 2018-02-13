@@ -2,6 +2,13 @@
   @include('documents::doc-form.general-info-right-admin')
 @endrole
 <div class="form-group">
+  <label class="col-sm-2 control-label">Konseptor </label>
+  <div class="col-sm-6">
+    <textarea class="form-control" name="konseptor" disabled="disabled">{{$pegawai->v_nama_karyawan.'/'.$pegawai->n_nik.' - '.$pegawai->v_short_posisi.' '.$pegawai->v_short_unit.'/'.$pegawai->v_short_divisi}}
+    </textarea>
+  </div>
+</div>
+<!-- <div class="form-group">
   <label class="col-sm-2 control-label">Divisi</label>
   <div class="col-sm-6">
     <input type="text" class="form-control" name="divisi"  disabled="disabled" autocomplete="off" value="{{$pegawai->v_short_divisi}}">
@@ -18,11 +25,11 @@
   <div class="col-sm-6">
     <input type="text" class="form-control" name="jabatan"  disabled="disabled" autocomplete="off" value="{{$pegawai->v_short_posisi}}">
   </div>
-</div>
+</div> -->
 <div class="form-group">
   <label class="col-sm-2 control-label">Approver</label>
   <div class="col-sm-6">
-    <textarea class="form-control" name="approver" disabled="disabled">{{Helper::get_approver($pegawai)}}</textarea>
+    <textarea class="form-control" name="approver" disabled="disabled" rows="4">{{Helper::get_approver($pegawai)}}</textarea>
   </div>
 </div>
 <div class="form-group {{ $errors->has('doc_pihak1') ? ' has-error' : '' }}">

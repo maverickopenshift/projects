@@ -26,7 +26,7 @@ class PDF extends PdfRotate {
         //$this->SetTextColor(255, 192, 203);
         $this->SetTextColor(135, 206, 250);
         //$this->RotatedText(40, 230, $this->namathis->n.'-'.$ik, 45);
-        if($jenis==1){
+        if($this->jenis==0){
             $this->RotatedText(40, 230, 'NIK : '. $this->nik, 45);
         }else{
             $this->RotatedText(40, 230, $this->nama, 45);

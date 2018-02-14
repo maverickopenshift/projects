@@ -7,6 +7,7 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 
 use App\Helpers\Pdf;
+use User;
 
 class PdfDocController extends Controller
 {
@@ -20,12 +21,16 @@ class PdfDocController extends Controller
     $nama = 'Irfan';
     $nik = '009923232';
 
+    /*
     $jenis=check_usertype($Auth::user()->username);
     if($jenis=="subsidiary" && $jenis=="nonorganik"){
         $jenis_fix=1;
     }else{
         $jenis_fix=0;
     }
+    */
+
+    $jenis_fix=0;
 
     $pdf = new Pdf($file,$req->nama,$req->nik,$jenis_fix);
     //$pdf = new FPDI();

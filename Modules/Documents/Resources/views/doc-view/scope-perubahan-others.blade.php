@@ -28,13 +28,11 @@
                         <td>{{($dt->meta_desc)}} </td>
                         <td>
                             @if(!empty($dt->meta_file))
-                              <!--
-                              <a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_scope_perubahan'])}}">
-                                <i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran
-                              </a>
-                              -->
                               <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_scope_perubahan'])}}">
-                              <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran </a>
+                              <i class="glyphicon glyphicon-paperclip"></i>  Lihat </a>
+                              <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_scope_perubahan'])}}?nik={{$pegawai->n_nik}}&nama={{$pegawai->v_nama_karyawan}}">
+                              <i class="glyphicon glyphicon-download-alt"></i>  Download
+                              </a>
                             @else
                               -
                             @endif

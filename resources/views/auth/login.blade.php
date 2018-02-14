@@ -7,6 +7,23 @@
   <meta name="csrf-token" content="{{ csrf_token() }}">
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="apple-touch-icon" sizes="57x57" href="{{ asset('images/favicon/apple-icon-57x57.png')}}?v=2">
+  <link rel="apple-touch-icon" sizes="60x60" href="{{ asset('images/favicon/apple-icon-60x60.png')}}?v=2">
+  <link rel="apple-touch-icon" sizes="72x72" href="{{ asset('images/favicon/apple-icon-72x72.png')}}?v=2">
+  <link rel="apple-touch-icon" sizes="76x76" href="{{ asset('images/favicon/apple-icon-76x76.png')}}?v=2">
+  <link rel="apple-touch-icon" sizes="114x114" href="{{ asset('images/favicon/apple-icon-114x114.png')}}?v=2">
+  <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('images/favicon/apple-icon-120x120.png')}}?v=2">
+  <link rel="apple-touch-icon" sizes="144x144" href="{{ asset('images/favicon/apple-icon-144x144.png')}}?v=2">
+  <link rel="apple-touch-icon" sizes="152x152" href="{{ asset('images/favicon/apple-icon-152x152.png')}}?v=2">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/favicon/apple-icon-180x180.png')}}?v=2">
+  <link rel="icon" type="image/png" sizes="192x192"  href="{{ asset('images/favicon/android-icon-192x192.png')}}?v=2">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon/favicon-32x32.png')}}?v=2">
+  <link rel="icon" type="image/png" sizes="96x96" href="{{ asset('images/favicon/favicon-96x96.png')}}?v=2">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/favicon/favicon-16x16.png')}}?v=2">
+  <link rel="manifest" href="{{ asset('images/favicon/manifest.json')}}?v=2">
+  <meta name="msapplication-TileColor" content="#ffffff">
+  <meta name="msapplication-TileImage" content="{{ asset('images/favicon/ms-icon-144x144.png')}}?v=2">
+  <meta name="theme-color" content="#ffffff">
   <!-- Bootstrap 3.3.6 -->
   <link href="{{ mix("css/login.css") }}" rel="stylesheet" type="text/css" />
 
@@ -73,6 +90,16 @@
           <option value="">Pilih Roles</option>
         </select>
       </div>
+      <div class="radio">
+        <label style="width:100%">
+          <input type="radio" name="pgs" id="pgs" class="pgs"> Check me out
+        </label>
+      </div>
+      <div class="radio">
+        <label style="width:100%">
+          <input type="radio" name="pgs" id="pgs" class="pgs"> Check me out
+        </label>
+      </div>
       <div class="form-group">
         <button type="submit" class="btn btn-danger btn-block btn-flat">SUBMIT</button>
       </div>
@@ -113,11 +140,12 @@
     .done(function(_response) {
       if(_response.status){
         if(_response.pgs){
+          window.location = '{!!route('pgs')!!}';
           loading.hide();
           formMe.hide();
-          pgsRoles.append('<option value="'+_response.pgs_list[0].id+'">'+_response.pgs_list[0].title+'</option>');
-          pgsRoles.append('<option value="'+_response.pgs_list[1].id+'">'+_response.pgs_list[1].title+'</option>');
-          formPgs.show();
+          // pgsRoles.append('<option value="'+_response.pgs_list[0].id+'">'+_response.pgs_list[0].title+'</option>');
+          // pgsRoles.append('<option value="'+_response.pgs_list[1].id+'">'+_response.pgs_list[1].title+'</option>');
+          // formPgs.show();
         }
         else{
           window.location = '{!!route('home')!!}';

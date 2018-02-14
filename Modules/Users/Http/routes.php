@@ -6,6 +6,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'users', 'namespace' =
     Route::get('/', ['middleware' => ['permission:lihat-user'],'uses' => 'UsersController@index'])->name('users');
     Route::post('/data', ['middleware' => ['permission:lihat-user'],'uses' => 'UsersController@data'])->name('users.data');
     Route::post('/update', ['middleware' => ['permission:ubah-user'],'uses' => 'UsersController@update'])->name('users.update');
+    Route::post('/update-nonorganik', ['middleware' => ['permission:ubah-user'],'uses' => 'UsersController@updateNonorganik'])->name('users.update-nonorganik');
     Route::get('/reset-user',  ['middleware' => ['permission:ubah-user'],'uses' => 'UsersController@reset'])->name('users.reset');
     Route::post('/add', ['middleware' => ['permission:tambah-user'],'uses' => 'UsersController@add'])->name('users.add');
     Route::get('/form/{type}', ['middleware' => ['permission:tambah-user'],'uses' => 'UsersController@form'])->name('users.form');

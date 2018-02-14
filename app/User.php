@@ -205,5 +205,15 @@ class User extends Authenticatable
       }
       return false;
     }
+    public static function is_subsidiary($username){
+      $count = \DB::table('users')->select('username')
+                ->where('username',$username)
+                ->where('user_type','subsidiary')
+                ->count();
+      if($count>0){
+        return true;
+      }
+      return false;
+    }
     
 }

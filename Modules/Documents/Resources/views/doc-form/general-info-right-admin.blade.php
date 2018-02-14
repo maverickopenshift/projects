@@ -1,4 +1,4 @@
-<div class="form-group  {{ $errors->has('user_id') ? ' has-error' : '' }}">
+<div class="form-group formerror  formerror-user_id">
   <label class="col-sm-2 control-label">Konseptor </label>
   <div class="col-sm-6">
     <input type="hidden" class="select-user-konseptor-text" name="konseptor_text" value="{{old('konseptor_text',Helper::prop_exists($doc,'konseptor_text'))}}">
@@ -6,7 +6,7 @@
     </select>
   </div>
   <div class="col-sm-10 col-sm-offset-2">
-    {!!Helper::error_help($errors,'user_id')!!}
+    <div class="error error-doc_enddate"></div>
   </div>
 </div>
 @push('scripts')

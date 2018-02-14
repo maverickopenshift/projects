@@ -1,45 +1,41 @@
 <div class="form-horizontal">
   @include('documents::form-penomoran-otomatis')
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+    
     @if(!in_array($doc_type->name,['khs','turnkey','surat_pengikatan','mou']))
       @include('documents::doc-form-edit.no-kontrak')
     @else
-    <div class="form-group  {{ $errors->has('doc_title') ? ' has-error' : '' }}">
-      <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Judul {{$doc_type['title']}}</label>
-      <div class="col-sm-10">
-        <input type="text" class="form-control" name="doc_title"  value="{{old('doc_title',Helper::prop_exists($doc,'doc_title'))}}"  placeholder="Masukan Judul Kontrak" autocomplete="off">
-        @if ($errors->has('doc_title'))
-            <span class="help-block">
-                <strong>{{ $errors->first('doc_title') }}</strong>
-            </span>
-        @endif
+      <div class="form-group formerror formerror-doc_title">
+        <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Judul {{$doc_type['title']}}</label>
+        <div class="col-sm-10">
+          <input type="text" class="form-control" name="doc_title"  value="{{old('doc_title',Helper::prop_exists($doc,'doc_title'))}}"  placeholder="Masukan Judul Kontrak" autocomplete="off">
+          <div class="error error-doc_title"></div>
+        </div>
       </div>
-    </div>
     @endif
-    <div class="form-group {{ $errors->has('doc_desc') ? ' has-error' : '' }}">
+
+    <div class="form-group formerror formerror-doc_desc">
       <label for="deskripsi_kontrak" class="col-sm-2 control-label">Deskripsi {{$doc_type['title']}}</label>
       <div class="col-sm-10">
         <textarea class="form-control" rows="4" name="doc_desc" placeholder="Masukan Deskripsi Kontrak">{{old('doc_desc',Helper::prop_exists($doc,'doc_desc'))}}</textarea>
-        @if ($errors->has('doc_desc'))
-            <span class="help-block">
-                <strong>{{ $errors->first('doc_desc') }}</strong>
-            </span>
-        @endif
+        <div class="error error-doc_desc"></div>
       </div>
     </div>
+
     @if(in_array($doc_type->name,['khs','turnkey']))
-      <div class="form-group {{ $errors->has('doc_template_id') ? ' has-error' : '' }}">
+      <div class="form-group formerror formerror-doc_template_id">
         <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Jenis {{$doc_type['title']}}</label>
         <div class="col-sm-6">
           {!!Helper::select_jenis($doc_type->name,old('doc_template_id',Helper::prop_exists($doc,'doc_template_id')),'doc_template_id')!!}
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-          {!!Helper::error_help($errors,'doc_template_id')!!}
+          <div class="error error-doc_template_id"></div>
         </div>
       </div>
     @endif
+
     @if($doc_type->name=="sp" || $doc_type->name=="khs" || $doc_type->name=="turnkey" || $doc_type->name=="surat_pengikatan" || $doc_type->name=="mou")
-      <div class="form-group {{ $errors->has('doc_startdate') ? ' has-error' : '' }}">
+      <div class="form-group formerror formerror-doc_startdate">
         <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Mulai {{$doc_type['title']}}</label>
         <div class="col-sm-6">
           <div class="input-group date" data-provide="datepicker">
@@ -50,10 +46,11 @@
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-          {!!Helper::error_help($errors,'doc_startdate')!!}
+          <div class="error error-doc_startdate"></div>
         </div>
       </div>
-      <div class="form-group {{ $errors->has('doc_enddate') ? ' has-error' : '' }}">
+
+      <div class="form-group formerror formerror-doc_enddate">
         <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Akhir {{$doc_type['title']}}</label>
         <div class="col-sm-6">
           <div class="input-group date" data-provide="datepicker">
@@ -64,11 +61,11 @@
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-          {!!Helper::error_help($errors,'doc_enddate')!!}
+          <div class="error error-doc_enddate"></div>
         </div>
       </div>
     @else
-      <div class="form-group {{ $errors->has('doc_date') ? ' has-error' : '' }}">
+      <div class="form-group formerror formerror-doc_date">
         <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal {{$doc_type['title']}}</label>
         <div class="col-sm-6">
           <div class="input-group date" data-provide="datepicker">
@@ -79,35 +76,22 @@
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-          {!!Helper::error_help($errors,'doc_date')!!}
+          <div class="error error-doc_date"></div>
         </div>
       </div>
     @endif
+
   </div>
+
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
     @include('documents::doc-form-edit.general-info-right')
     @include('documents::doc-form-edit.lampiran-1')
   </div>
-    {{-- <div class="form-group {{ $errors->has('doc_lampiran') ? ' has-error' : '' }}">
-      <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Lampiran 1 <br/><small style="font-weight:normal" class="text-info"><i>(Lembar Tanda Tangan)</i></small></label>
-      <div class="col-sm-6">
-        <div class="input-group">
-          <input type="file" class="hide" name="doc_lampiran[]">
-          <input class="form-control" type="text" name="name_lampiran[]" val="lampiran" disabled>
-          <div class="input-group-btn">
-            <button class="btn btn-default click-upload" type="button">Browse</button>
-          </div>
-        </div>
-      </div>
-      <div class="col-sm-2"><button type="button" class="btn btn-default add-doc_lampiran"><i class="glyphicon glyphicon-plus"></i></button></div>
-      <div class="col-sm-10 col-sm-offset-2">
-        {!!Helper::error_help($errors,'doc_lampiran')!!}
-      </div>
-    </div> --}}
+
   @if($doc_type->name!="mou" && $doc_type->name!="surat_pengikatan")
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
     @if($doc_type->name!="sp")
-      <div class="form-group {{ $errors->has('doc_proc_process') ? ' has-error' : '' }}">
+      <div class="form-group formerror formerror-doc_proc_process">
         <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Cara Pengadaan</label>
         <div class="col-sm-6">
           <select class="form-control" name="doc_proc_process">
@@ -117,11 +101,11 @@
           </select>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-          {!!Helper::error_help($errors,'doc_proc_process')!!}
+          <div class="error error-doc_proc_process"></div>
         </div>
       </div>
     @endif
-      <div class="form-group {{ $errors->has('doc_proc_process') ? ' has-error' : '' }}">
+      <div class="form-group formerror formerror-doc_mtu">
         <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Mata Uang</label>
         <div class="col-sm-2">
           <select class="form-control mata-uang" name="doc_mtu">
@@ -130,11 +114,11 @@
           </select>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-          {!!Helper::error_help($errors,'doc_mtu')!!}
+          <div class="error error-doc_mtu"></div>
         </div>
       </div>
     @if($doc_type->name!="sp" && $doc_type->name!="khs")
-      <div class="form-group {{ $errors->has('doc_value') ? ' has-error' : '' }}">
+      <div class="form-group formerror formerror-doc_value">
         <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Nilai Kontrak</label>
         <div class="col-sm-3">
           <div class="input-group">
@@ -144,10 +128,11 @@
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-          {!!Helper::error_help($errors,'doc_value')!!}
+          <div class="error error-doc_value"></div>
         </div>
       </div>
     @endif
+
     @if($doc_type->name=="sp")
       <div class="form-group">
         <label for="ttd_pihak2" class="col-sm-2 control-label"><span class="text-red">*</span>Nilai SP</label>
@@ -165,29 +150,29 @@
           <tbody>
               <tr>
                 <td>
-                  <div class="input-group {{ $errors->has('doc_nilai_material') ? ' has-error' : '' }}">
+                  <div class="input-group formerror formerror-doc_nilai_material">
                     <span class="input-group-addon mtu-set"></span>
                     <input type="text" class="form-control input-rupiah hitung_sp" name="doc_nilai_material" value="{{Helper::old_prop($doc,'doc_nilai_material')}}" autocomplete="off">
                   </div>
-                    {!!Helper::error_help($errors,'doc_nilai_material')!!}
+                  <div class="error error-doc_nilai_material"></div>
                 </td>
                 <td>
-                  <div class="input-group {{ $errors->has('doc_nilai_jasa') ? ' has-error' : '' }}">
+                  <div class="input-group formerror formerror-doc_nilai_jasa">
                     <span class="input-group-addon mtu-set"></span>
                     <input type="text" class="form-control input-rupiah hitung_sp" name="doc_nilai_jasa" value="{{Helper::old_prop($doc,'doc_nilai_jasa')}}"  autocomplete="off">
                   </div>
-                    {!!Helper::error_help($errors,'doc_nilai_jasa')!!}
+                  <div class="error error-doc_nilai_jasa"></div>
                 </td>
                 <td class="text-right" style="vertical-align: middle;"><span class="doc_nilai_total">{{Helper::old_prop($doc,'doc_nilai_total')}}</span>
                   <input type="hidden" class="form-control" name="doc_nilai_total" value="{{Helper::old_prop($doc,'doc_nilai_total')}}" autocomplete="off">
                 </td>
                 <td class="text-right" style="vertical-align: middle;">
-                  <div class="input-group {{ $errors->has('ppn') ? ' has-error' : '' }}">
+                  <div class="input-group formerror formerror-ppn">
                     <input type="hidden" class="form-control" name="ppn" value="{{Helper::old_prop($doc,'doc_nilai_ppn')}}" autocomplete="off">
                     <input type="text" class="form-control ppn_sp" name="ppn" value="{{Helper::old_prop($doc,'doc_nilai_ppn')}}" autocomplete="off" disabled>
                     <span class="input-group-addon">%</span>
                   </div>
-                    {!!Helper::error_help($errors,'ppn')!!}
+                  <div class="error error-ppn"></div>
                 </td>
                 <td class="text-right" style="vertical-align: middle;"><span class="doc_nilai_total_ppn">{{Helper::old_prop($doc,'doc_nilai_total_ppn')}}</span>
                   <input type="hidden" class="form-control" name="doc_nilai_total_ppn" value="{{Helper::old_prop($doc,'doc_nilai_total_ppn')}}" autocomplete="off">
@@ -210,7 +195,7 @@
 
     @if($doc_type->name=="turnkey" || $doc_type->name=="sp")
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-    <div class="form-group {{ $errors->has('doc_po') ? ' has-error' : '' }}">
+    <div class="form-group formerror formerror-doc_po">
       <label for="prinsipal_st" class="col-sm-2 control-label"> PO</label>
       <div class="col-sm-3">
         <div class="input-group">
@@ -222,7 +207,7 @@
       </div>
       <span class="error error-po text-danger"></span>
       <div class="col-sm-10 col-sm-offset-2">
-        {!!Helper::error_help($errors,'doc_po')!!}
+        <div class="error error-doc_po"></div>
       </div>
     </div>
     <div class="parent-potables" style="display:none;">
@@ -254,5 +239,4 @@
     </div>
   </div>
     @endif
-    {{-- @include('documents::partials.buttons') --}}
 </div>

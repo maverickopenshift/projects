@@ -16,7 +16,7 @@
         @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey','khs','amandemen_kontrak_khs','mou']))
           <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             <div class="form-group" style="position:relative;margin-bottom: 34px;">
-              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">SOW</div>
+              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">SoW</div>
             </div>
             <div class="form-group ">
               <label class="col-sm-2 control-label">Lingkup Pekerjaan</label>
@@ -108,6 +108,10 @@
                 @if(!empty($doc->doc_lampiran_teknis))
                     <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}">
                     <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran </a>
+
+                    <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}?nik={{$pegawai->n_nik}}&nama={{$pegawai->v_nama_karyawan}}">
+                    <i class="glyphicon glyphicon-download-alt"></i>  Download
+                    </a>
                 @endif
               </div>
             </div>

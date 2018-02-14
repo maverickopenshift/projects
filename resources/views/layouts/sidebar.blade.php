@@ -19,7 +19,7 @@
             @endpermission
             @permission('lihat-template-pasal-pasal|lihat-kontrak|tambah-kontrak')
             <li class="treeview {{Request::is("documents/*") || Request::is("documents")?'active':''}}">
-              <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management Kontrak" />
+              <a href="#"><img src="{{asset('/images/menu_document.png')}}" title="Management Kontrak" />
                 <span>Manajemen Dokumen</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 @permission('tambah-kontrak')
@@ -42,6 +42,8 @@
                       <li class="{{Request::is("documents/create/adendum")?'active':''}}" ><a href="{{route('doc.create',['type'=>'adendum'])}}">Addendum</a></li>
                       <li class="{{Request::is("documents/create/side_letter")?'active':''}}" ><a href="{{route('doc.create',['type'=>'side_letter'])}}">Side Letter</a></li>
                       <li class="{{Request::is("documents/create/mou")?'active':''}}" ><a href="{{route('doc.create',['type'=>'mou'])}}">MoU</a></li>
+
+
                     </ul>
                   </li>
                 @endpermission
@@ -56,6 +58,12 @@
                   <li class="{{Request::is("documents/status/tracking")?'active':''}}" ><a href="{{route('doc',['status'=>'tracking'])}}">Tracking Proses</a></li>
                   <li class="{{Request::is("documents/status/selesai")?'active':''}}" ><a href="{{route('doc',['status'=>'selesai'])}}">Selesai</a></li>
                 @endpermission
+                @permission('tutup-kontrak')
+                  <li class="{{Request::is("documents/status/tutup") || Request::is("documents/closing/*")?'active':''}}" ><a href="{{route('doc',['status'=>'tutup'])}}">Proses Closing</a></li>
+                  <li class="{{Request::is("documents/status/close") ?'active':''}}" ><a href="{{route('doc',['status'=>'close'])}}"> Close</a></li>
+                @endpermission
+
+
                 @permission('lihat-template-pasal-pasal')
                   <li class="{{Request::is("documents/doc-template") || Request::is("documents/doc-template/create") || Request::is("documents/doc-template/*/edit")?'active':''}}" ><a href="{{route('doc.template')}}">Template Kontrak</a></li>
                 @endpermission
@@ -65,7 +73,7 @@
 
             @permission('lihat-user|lihat-role|lihat-permission')
             <li class="treeview {{Request::is("users/*") || Request::is("users")?'active':''}}">
-              <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management User" />
+              <a href="#"><img src="{{asset('/images/menu_user.png')}}" title="Management User" />
                 <span>Manajemen User</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 @permission('lihat-user')
@@ -85,7 +93,7 @@
 
             @permission('lihat-supplier|lihat-klasifikasi-usaha|lihat-badan-usaha')
             <li class="treeview {{Request::is("supplier/*") || Request::is("supplier")?'active':''}}">
-              <a href="#"><img src="{{asset('/images/icon-users.png')}}" title="Management Supplier" />
+              <a href="#"><img src="{{asset('/images/menu_supplier.png')}}" title="Management Supplier" />
                 <span>Manajemen Supplier</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 @permission('lihat-supplier')
@@ -107,7 +115,7 @@
 
             @role('vendor')
             <li class="treeview {{Request::is("usersupplier/*") || Request::is("supplierUser")?'active':''}}">
-              <a href="#"><img src="{{asset('/images/icon-user.png')}}" title="Management Supplier" />
+              <a href="#"><img src="{{asset('/images/menu_user.png')}}" title="Management Supplier" />
                 <span>User Profile</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 <li class="{{Request::is("usersupplier/profileVendor")?'active':''}}" ><a href="{{route('profile')}}">Ubah Password</a></li>
@@ -119,7 +127,7 @@
 
             @permission('lihat-catalog')
             <li class="treeview {{Request::is('catalog/*') ?'active':''}}">
-              <a href="#"><img src="{{asset('/images/icon-user.png')}}" title="Catalog" />
+              <a href="#"><img src="{{asset('/images/menu_katalog.png')}}" title="Catalog" />
                 <span>Manajemen Katalog</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 @permission('catalog-category')
@@ -136,8 +144,8 @@
             @endpermission
 
             @permission('lihat-config')
-            <li class="treeview {{Request::is('config/*') ?'active':''}}">
-              <a href="#"><img src="{{asset('/images/icon-user.png')}}" title="Config" />
+            <li class="treeview {{Request::is('config') ?'active':''}}">
+              <a href="#"><img src="{{asset('/images/menu_config.png')}}" title="Config" />
                 <span>Manajemen Config</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 @permission('lihat-config')

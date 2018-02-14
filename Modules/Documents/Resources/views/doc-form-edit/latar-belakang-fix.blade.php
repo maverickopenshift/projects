@@ -41,17 +41,17 @@
         <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">RKS <span class="total_lt"></span><small class="text-danger"><i> (Wajib di isi) </i></small></div>
       </div>
 
-      <div class="form-group {{ $errors->has('lt_judul_rks') ? ' has-error' : '' }}">
+      <div class="form-group formerror formerror-lt_judul_rks">
         <label for="lt_name" class="col-sm-2 control-label"><span class="text-red">*</span> Judul</label>
         <div class="col-sm-4">
           <input type="text" class="form-control" name="lt_judul_rks" autocomplete="off" value="RKS" readonly>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-          {!!Helper::error_help($errors,'lt_judul_rks')!!}
+          <div class="error error-lt_judul_rks"></div>
         </div>
       </div>
-
-      <div class="form-group {{ $errors->has('lt_tanggal_rks') ? ' has-error' : '' }}">
+      
+      <div class="form-group formerror formerror-lt_tanggal_rks">
         <label class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal</label>
         <div class="col-sm-4">
           <div class="input-group date" data-provide="datepicker">
@@ -62,11 +62,11 @@
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-          {!!Helper::error_help($errors,'lt_tanggal_rks')!!}
+          <div class="error error-lt_tanggal_rks"></div>
         </div>
       </div>
 
-      <div class="form-group {{ $errors->has('lt_file_rks') ? ' has-error' : '' }}">
+      <div class="form-group formerror formerror-lt_file_rks">
         <label class="col-sm-2 control-label"><span class="text-red">*</span> File</label>
         <div class="col-sm-4">
           <div class="input-group">
@@ -84,7 +84,7 @@
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-          {!!Helper::error_help($errors,'lt_file_rks')!!}
+          <div class="error error-lt_file_rks"></div>
         </div>
       </div>
     </div>
@@ -97,17 +97,17 @@
         <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Ketetapan Pemenang <span class="total_lt"></span><small class="text-danger"><i> (Wajib di isi) </i></small></div>
       </div>
 
-      <div class="form-group {{ $errors->has('lt_judul_ketetapan_pemenang') ? ' has-error' : '' }}">
+      <div class="form-group formerror-lt_judul_ketetapan_pemenang">
         <label class="col-sm-2 control-label"><span class="text-red">*</span> Judul</label>
         <div class="col-sm-4">
           <input type="text" class="form-control" name="lt_judul_ketetapan_pemenang" autocomplete="off" value="Ketetapan Pemenang" readonly>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-          {!!Helper::error_help($errors,'lt_judul_ketetapan_pemenang')!!}
+          <div class="error error-lt_judul_ketetapan_pemenang"></div>
         </div>
       </div>
 
-      <div class="form-group {{ $errors->has('lt_tanggal_ketetapan_pemenang') ? ' has-error' : '' }}">
+      <div class="form-group formerror-lt_tanggal_ketetapan_pemenang">
         <label class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal</label>
         <div class="col-sm-4">
           <div class="input-group date" data-provide="datepicker">
@@ -118,11 +118,11 @@
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-          {!!Helper::error_help($errors,'lt_tanggal_ketetapan_pemenang')!!}
+          <div class="error error-lt_tanggal_ketetapan_pemenang"></div>
         </div>
       </div>
 
-      <div class="form-group {{ $errors->has('lt_file_ketetapan_pemenang') ? ' has-error' : '' }}">
+      <div class="form-group formerror formerror-lt_file_ketetapan_pemenang">
         <label class="col-sm-2 control-label"><span class="text-red">*</span> File</label>
         <div class="col-sm-4">
           <div class="input-group">
@@ -140,7 +140,7 @@
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-          {!!Helper::error_help($errors,'lt_file_ketetapan_pemenang')!!}
+          <div class="error error-lt_file_ketetapan_pemenang"></div>
         </div>
       </div>
     </div>
@@ -150,17 +150,17 @@
         <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Kesanggupan Mitra <span class="total_lt"></span><small class="text-danger"><i> (Wajib di isi) </i></small></div>
       </div>
 
-      <div class="form-group {{ $errors->has('lt_judul_kesanggupan_mitra') ? ' has-error' : '' }}">
+      <div class="form-group formerror formerror-lt_judul_kesanggupan_mitra">
         <label class="col-sm-2 control-label"><span class="text-red">*</span> Judul</label>
         <div class="col-sm-4">
           <input type="text" class="form-control" name="lt_judul_kesanggupan_mitra" autocomplete="off" value="Kesanggupan Mitra" readonly>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-          {!!Helper::error_help($errors,'lt_judul_kesanggupan_mitra')!!}
+          <div class="error error-lt_judul_kesanggupan_mitra"></div>
         </div>
       </div>
 
-      <div class="form-group {{ $errors->has('lt_tanggal_kesanggupan_mitra') ? ' has-error' : '' }}">
+      <div class="form-group formerror formerror-lt_tanggal_kesanggupan_mitra">
         <label class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal</label>
         <div class="col-sm-4">
           <div class="input-group date" data-provide="datepicker">
@@ -171,11 +171,11 @@
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-          {!!Helper::error_help($errors,'lt_tanggal_kesanggupan_mitra')!!}
+          <div class="error error-lt_tanggal_kesanggupan_mitra"></div>
         </div>
       </div>
 
-      <div class="form-group {{ $errors->has('lt_file_kesanggupan_mitra') ? ' has-error' : '' }}">
+      <div class="form-group formerror formerror-lt_file_kesanggupan_mitra">
         <label for="lt_file" class="col-sm-2 control-label"><span class="text-red">*</span> File </label>
         <div class="col-sm-4">
           <div class="input-group">
@@ -193,7 +193,7 @@
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-          {!!Helper::error_help($errors,'lt_file_kesanggupan_mitra')!!}
+          <div class="error error-lt_file_kesanggupan_mitra"></div>
         </div>
       </div>
     </div>
@@ -384,16 +384,16 @@
       mdf_new_row.eq(0).find('.total_perubahan-latar_belakang').text(1);
 
       mdf_new_row.eq(1).find('.f_latar_belakang_judul').val('');
-      mdf_new_row.eq(1).find('.error').remove();
+      mdf_new_row.eq(1).find('.error').html('');
 
-      mdf_new_row.eq(2).find('.f_latar_belakang_tanggal').val('');
-      mdf_new_row.eq(2).find('.error').remove();
+      mdf_new_row.eq(2).find('.f_latar_belakang_tanggal').val('');    
+      mdf_new_row.eq(2).find('.error').html('');
 
       mdf_new_row.eq(3).find('.f_latar_belakang_isi').val('');
-      mdf_new_row.eq(3).find('.error').remove();
+      mdf_new_row.eq(3).find('.error').html('');
 
       mdf_new_row.eq(4).find('.f_latar_belakang_file').val('');
-      mdf_new_row.eq(4).find('.error').remove();
+      mdf_new_row.eq(4).find('.error').html('');
 
       $('.parent-perubahan-latar_belakang').prepend(new_row);
 

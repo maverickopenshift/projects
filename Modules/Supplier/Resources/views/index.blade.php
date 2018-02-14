@@ -265,7 +265,7 @@ $('#datatables').DataTable({
     // $('.btn_submit').click();
     event.stopPropagation();
     event.preventDefault();
-// console.log("hai");
+
     var loading = $('.loading2');
     var form_user =  $('#form-user');
     loading.show();

@@ -6,9 +6,17 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
     Route::get('/child', ['middleware' => ['permission:lihat-kontrak'],'uses' => 'DocumentsController@index'])->name('doc.child');
     Route::get('/create/{type}', ['middleware' => ['permission:tambah-kontrak'],'uses' => 'EntryDocumentController@index'])->name('doc.create');
     Route::post('/store/{type}',['middleware' => ['permission:tambah-kontrak'],'uses' => 'EntryDocumentController@store'])->name('doc.store');
+    // test edit ajax
+    Route::post('/store_ajax/{type}',['middleware' => ['permission:tambah-kontrak'],'uses' => 'EntryDocumentController@store_ajax'])->name('doc.store_ajax');
+    Route::post('/doc/upload/sow_boq', ['middleware' => ['permission:tambah-kontrak'],'uses' => 'DocumentsController@upload_boq'])->name('doc.upload_sow_boq');
+    Route::post('/doc/upload/sow_boq_hargasatuan', ['middleware' => ['permission:tambah-kontrak'],'uses' => 'DocumentsController@upload_boq_harga_satuan'])->name('doc.upload_sow_boq_harga_satuan');
+    // test edit ajax
     Route::get('/view/{type}/{id}/', ['middleware' => ['permission:lihat-kontrak'],'uses' => 'DocumentsController@view'])->name('doc.view');
     Route::get('/edit/{type}/{id}/', ['middleware' => ['permission:ubah-kontrak'],'uses' => 'EditController@index'])->name('doc.edit');
     Route::post('/storeedit/{type}/{id}/', ['middleware' => ['permission:ubah-kontrak'],'uses' => 'EditController@store'])->name('doc.storeedit');
+    // test edit ajax
+    Route::post('/storeedit_ajax/{type}/{id}/', ['middleware' => ['permission:ubah-kontrak'],'uses' => 'EditController@store_ajax'])->name('doc.storeedit_ajax');
+    // test edit ajax
     Route::post('/approve', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@approve'])->name('doc.approve');
     Route::post('/reject', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@reject'])->name('doc.reject');
     Route::post('/hapus', ['middleware' => ['permission:hapus-kontrak'],'uses' => 'DocumentsController@hapus'])->name('doc.hapus');
@@ -23,6 +31,13 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
     Route::get('/get-posisi', 'DocumentsController@getPosisi')->name('doc.get-posisi');
     Route::get('/get-unit', 'DocumentsController@getUnit')->name('doc.get-unit');
 
+    /////////////
+
+    Route::get('/closing/{type}/{id}/', ['middleware' => ['permission:tutup-kontrak'],'uses' => 'DocumentsClosingController@index'])->name('doc.closing');
+    Route::post('/closing/store/{id}',['middleware' => ['permission:tutup-kontrak'],'uses' => 'DocumentsClosingController@create'])->name('doc.closing.store');
+
+    ////////
+    
     Route::get('/log-activity', ['middleware' => ['permission:lihat-kontrak|ubah-kontrak|'],'uses' => 'DocLogController@logActivity'])->name('doc.activity');
 
     Route::get('/comments', ['middleware' => ['permission:lihat-kontrak|ubah-kontrak|'],'uses' => 'DocCommentController@comments'])->name('doc.comments');

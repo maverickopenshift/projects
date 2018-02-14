@@ -12,6 +12,7 @@ use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
+use Modules\Config\Entities\Config;
 use Modules\Documents\Entities\DocComment as Comments;
 use App\Helpers\Helpers;
 use Validator;
@@ -40,7 +41,7 @@ class AmandemenKontrakEditController extends Controller
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak2_nama']  =  'required|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
       if( Config::get_config('auto-numb')=='off'){
         $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
@@ -395,6 +396,11 @@ class AmandemenKontrakEditController extends Controller
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
+
+      if( Config::get_config('auto-numb')=='off'){
+        $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
+      }
+      
       $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
       foreach($request->doc_lampiran_old as $k => $v){
         if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru

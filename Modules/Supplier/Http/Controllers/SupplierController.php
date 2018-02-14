@@ -32,12 +32,7 @@ class SupplierController extends Controller
       }else{
         $sql = Supplier::with('user','supplierSap')->paginate(50);
       }
-      // dd($sql);
-
-
-// dd($sql->status);
-      // dd($sql->id_sap);
-      // $data['data'] = $sql;
+      
       $kode_sap = "99999";
       $page_title = 'Supplier';
       $sts = $status;

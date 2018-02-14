@@ -16,7 +16,7 @@
       @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey','khs','amandemen_kontrak_khs','mou']))
         <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group" style="position:relative;margin-bottom: 34px;">
-            <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">SOW</div>
+            <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">SoW</div>
           </div>
           <div class="form-group  formerror formerror-doc_sow">
             <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label>
@@ -38,12 +38,15 @@
           $harga_jasa = Helper::old_prop_each($doc,'hs_harga_jasa');
           $qty = Helper::old_prop_each($doc,'hs_qty');
           $keterangan = Helper::old_prop_each($doc,'hs_keterangan');
+
           if($doc_type->name=='khs' || $doc_type->name=='amandemen_kontrak_khs'){
             $title_hs = 'Daftar Harga Satuan';
             $tm_download = 'harga_satuan';
+            $formroute=route('doc.upload_sow_boq_harga_satuan');
           }else{
             $title_hs = 'BoQ';
             $tm_download = 'boq';
+            $formroute=route('doc.upload_sow_boq');
           }
         @endphp
         <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
@@ -53,10 +56,12 @@
         <div class="form-group top20">
           <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
           <div class="col-sm-10">
-            <input type="file" name="daftar_harga" class="daftar_harga hide" accept=".csv,.xls">
-            <button class="btn btn-primary btn-sm upload-daftar_harga" type="button"><i class="fa fa-upload"></i> Upload {{$title_hs}}</button>
-            <a href="{{route('doc.template.download',['filename'=>$tm_download])}}" class="btn btn-info  btn-sm" title="Download Sample Template"><i class="glyphicon glyphicon-download-alt"></i> Download sample template</a>
-            <span class="error error-daftar_harga text-danger"></span>
+              <input type="file" name="daftar_harga" class="daftar_harga hide" accept=".csv,.xls,.xlsx">
+              <button class="btn btn-primary btn-sm upload-daftar_harga" type="button"><i class="fa fa-upload"></i> Upload {{$title_hs}}</button>
+              <a href="{{route('doc.template.download',['filename'=>$tm_download])}}" class="btn btn-info  btn-sm" title="Download Sample Template">
+                <i class="glyphicon glyphicon-download-alt"></i> Download sample template
+              </a>
+              <span class="error error-daftar_harga text-danger"></span>
           </div>
         </div>
       <div class="table-responsive">
@@ -165,7 +170,7 @@ $(function() {
   $('.daftar_harga').on('change', function(event) {
     event.stopPropagation();
     event.preventDefault();
-    var validfile = [".csv", ".xls"];
+    var validfile = [".csv", ".xls", ".xlsx"];
     var namefile = $('.daftar_harga').val().split('\\').pop();
     var valid = 0;
 
@@ -181,7 +186,7 @@ $(function() {
     if(valid==1){
       handleDaftarHargaFileSelect(this.files[0]);
     }else{
-      $('.error-daftar_harga').html('Format File tidak valid! hanya CSV & XLS yang valid');
+      $('.error-daftar_harga').html('Format File tidak valid! hanya CSV, XLS & XLXS yang valid');
     }
   });
 });
@@ -206,6 +211,7 @@ function handleDaftarHargaFileSelect(file) {
 
       if(fields.length!==fields_length_set || JSON.stringify(fields_dec)!==JSON.stringify(fields)){
         console.log(fields.length);
+        console.log(JSON.stringify(fields));
         $('.error-daftar_harga').html('Format CSV tidak valid!');
         return false;
       }

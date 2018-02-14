@@ -17,6 +17,7 @@ use Modules\Documents\Entities\DocComment as Comments;
 use Modules\Documents\Http\Controllers\DocumentsListController as DocList;
 use Modules\Documents\Entities\DocChildLatest;
 use App\Helpers\Helpers;
+use Excel;
 use Validator;
 use Auth;
 
@@ -39,7 +40,7 @@ class DocumentsController extends Controller
     public function index(Request $request)
     {
       $status = $request->status;
-      $status_arr = ['proses','selesai','draft','tracking'];
+      $status_arr = ['proses','selesai','draft','tracking','tutup','close'];
       if(!in_array($status,$status_arr)){
         abort(404);
       }
@@ -48,9 +49,16 @@ class DocumentsController extends Controller
           $status_no = $key;
         }
       }
-      if($status!=='selesai'){
+      if($status=="tutup"){
+        $status_no = '1';
+      }else if($status=="close"){
+        $status_no='4';
+      }
+
+      if($status!=='selesai' && $status!=='tutup' && $status!=='close'){
         return $this->docList->list($request,$status_no);
       }
+
       if ($request->ajax()) {
           $limit = 25;
           $search = $request->q;
@@ -58,42 +66,29 @@ class DocumentsController extends Controller
           $posisi = $request->posisi;
           $divisi = $request->divisi;
           $jenis = $request->jenis;
+
           if(!empty($request->limit)){
             $limit = $request->limit;
           }
 
           if(in_array($request->child,[1,2,3])){
-            $documents = $this->documents
-                ->oldest('documents.created_at')
-            ;
-              $documents->leftJoin('documents as child','child.doc_parent_id','=','documents.id');
-              $documents->leftJoin('documents as child2','child2.doc_parent_id','=','child.id');
-              $documents->where('documents.doc_parent',0);
-              $documents->where('documents.doc_parent_id',$request->parent_id);
-              $documents->whereRaw('(child.`doc_signing`='.$status_no.' OR child2.`doc_signing`='.$status_no.' OR documents.`doc_signing`='.$status_no.')');
-              $documents->selectRaw('DISTINCT (documents.id) , documents.*');
-              // if(!empty($request->q)){
-              //   $documents->where(function($q) use ($search) {
-              //       $q->orWhere('documents.doc_no', 'like', '%'.$search.'%');
-              //       $q->orWhere('documents.doc_title', 'like', '%'.$search.'%');
-              //           $q->orWhere('child.doc_no', 'like', '%'.$search.'%');
-              //           $q->orWhere('child.doc_title', 'like', '%'.$search.'%');
-              //               $q->orWhere('child2.doc_no', 'like', '%'.$search.'%');
-              //               $q->orWhere('child2.doc_title', 'like', '%'.$search.'%');
-              //   });
-              // }
+            $documents = $this->documents->oldest('documents.created_at');
+
+            $documents->leftJoin('documents as child','child.doc_parent_id','=','documents.id');
+            $documents->leftJoin('documents as child2','child2.doc_parent_id','=','child.id');
+            $documents->where('documents.doc_parent',0);
+            $documents->where('documents.doc_parent_id',$request->parent_id);
+            $documents->whereRaw('(child.`doc_signing`='.$status_no.' OR child2.`doc_signing`='.$status_no.' OR documents.`doc_signing`='.$status_no.')');
+            $documents->selectRaw('DISTINCT (documents.id) , documents.*');
           }
           else{
-            $documents = $this->documents
-                ->latest('documents.updated_at')
-            ;
+            $documents = $this->documents->latest('documents.updated_at');
+
             $documents->leftJoin('documents as child','child.doc_parent_id','=','documents.id');
             $documents->leftJoin('documents as child2','child2.doc_parent_id','=','child.id');
             $documents->leftJoin('documents as child3','child3.doc_parent_id','=','child2.id');
-//            $documents->select('documents.*');
-              $documents->selectRaw('DISTINCT (documents.id) , documents.*');
+            $documents->selectRaw('DISTINCT (documents.id) , documents.*');
             $documents->where('documents.doc_parent',1);
-//            $documents->where('documents.doc_signing',$status_no);
             $documents->whereRaw('(child.`doc_signing`='.$status_no.' OR child2.`doc_signing`='.$status_no.' OR child3.`doc_signing`='.$status_no.' OR documents.`doc_signing`='.$status_no.')');
             if(!empty($request->q)){
               $documents->where(function($q) use ($search) {
@@ -105,12 +100,6 @@ class DocumentsController extends Controller
                           $q->orWhere('child2.doc_title', 'like', '%'.$search.'%');
                               $q->orWhere('child3.doc_no', 'like', '%'.$search.'%');
                               $q->orWhere('child3.doc_title', 'like', '%'.$search.'%');
-                  // $q->whereHas(
-                  //       'child', function ($q) use ($search) {
-                  //                 $q->orWhere('doc_no', 'like', '%'.$search.'%');
-                  //                 $q->orWhere('doc_title', 'like', '%'.$search.'%');
-                  //       }
-                  //   );
               });
             }
             if(!empty($jenis)){
@@ -122,11 +111,13 @@ class DocumentsController extends Controller
               });
             }
           }
+
           if(!empty($divisi) && \Auth::user()->hasRole('admin')){
             $documents->join('users_pegawai as up','up.users_id','=','documents.user_id');
             $documents->join('pegawai as g','g.n_nik','=','up.nik');
             $documents->where('g.objiddivisi',$divisi);
           }
+
           if(!empty($unit) && !empty($divisi)){
             if(!empty($posisi)){
               $documents->where('g.objidposisi',$posisi);
@@ -134,9 +125,6 @@ class DocumentsController extends Controller
             $documents->where('g.objidunit',$unit);
           }
 
-//          echo $search;
-//          echo $status_no;
-//          echo($documents->toSql());exit;
           if(!\Auth::user()->hasRole('admin')){
             $documents->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
             $documents->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
@@ -145,41 +133,55 @@ class DocumentsController extends Controller
           else{
 
           }
+
           $documents = $documents->with(['jenis','supplier','pic']);
           $documents = $documents->paginate($limit);
-          $documents->getCollection()->transform(function ($value)use ($status_no) {
-            // $sp = $this->documents->get_child('sp',$value['id']);
-            // $aman_sp = $this->documents->get_child('amandemen_sp',$value['id']);
-            // $aman_kon = $this->documents->get_child('amandemen_kontrak',$value['id']);
-            // $adendum = $this->documents->get_child('adendum',$value['id']);
-            // $side_letter = $this->documents->get_child('side_letter',$value['id']);
-            // if($sp>0 || $aman_sp>0 || $aman_kon>0 || $adendum>0 || $side_letter>0){
-            //   $value['doc_no'] = $value['doc_no'].'<br/>'
-            //   .Helpers::create_button('SP',$sp)
-            //   .Helpers::create_button('Amandemen SP',$aman_sp,'info')
-            //   .Helpers::create_button('Amandemen Kontrak',$aman_kon,'danger')
-            //   .Helpers::create_button('Adendum',$adendum,'warning')
-            //   .Helpers::create_button('Side Letter',$side_letter,'info');
-            // }
+          $documents->getCollection()->transform(function ($value)use ($status_no,$status) {
+            
             $value['total_child']=$this->documents->total_child($value['id'],$status_no);
+
             $edit = '';
             if($value['doc_signing']==0 && \Laratrust::can('approve-kontrak')){
               $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-eye"></i> LIHAT</a>';
-            }
-            else{
+            }else{
               $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-eye"></i> LIHAT</a>';
             }
+
             if(!\Laratrust::hasRole('approver') && !\Laratrust::hasRole('monitor') ){
               $edit = '<a class="btn btn-xs btn-info" href="'.route('doc.edit',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-edit"></i> EDIT</a>';
             }
-            $value['link'] = $view.$edit;
+
+            if($status=='tutup' && \Laratrust::can('tutup-kontrak')){
+                $tutup = '<a class="btn btn-xs btn-danger" href="'.route('doc.closing',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-close"></i> CLOSING</a>';
+            }
+
+            
+
+            if($status == 'tutup'){
+              if($value['doc_parent_id']==null){
+                $value['link'] = $view.$edit.$tutup;
+              }else{
+                if($value['doc_parent_id']!=null && $value['doc_type']=="sp"){
+                  $value['link'] = $view.$edit.$tutup;
+                }else{
+                  $value['link'] = $view.$edit;
+                }                
+              }
+            }else{
+              $value['link'] = $view.$edit;
+            }
+
+            if($value['doc_signing']==4){
+              $value['link'] = $view;
+            }
+
+            
+
             $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason']);
             $value['sup_name']= $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
             $doc_no = (!empty($value->doc_no))?' - '.$value->doc_no:'';
             $myArray = explode('||', $value->doc_title);
             $value['title'] = $myArray[0].$doc_no;
-            // $value['supplier']['nm_vendor'] = $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
-            // $value->doc_title = $value->doc_title.' <i>'.$value->supplier_id.'</i>';
             return $value;
           });
 
@@ -189,6 +191,7 @@ class DocumentsController extends Controller
       $data['doc_status'] = $status;
       return view('documents::list-selesai')->with($data);
     }
+
     public function view(Request $request)
     {
       $id = $request->id;
@@ -230,6 +233,7 @@ class DocumentsController extends Controller
 
       return view('documents::view')->with($data);
     }
+
     public function getPo(Request $request){
       
       $search = trim($request->po);
@@ -331,6 +335,7 @@ class DocumentsController extends Controller
       }
       abort(500);
     }
+
     public function hapus(Request $request)
     {
       if ($request->ajax()) {
@@ -353,6 +358,7 @@ class DocumentsController extends Controller
         return Response::json(['status'=>false]);
       }
     }
+
     public function reject(Request $request)
     {
       if ($request->ajax()) {
@@ -400,6 +406,7 @@ class DocumentsController extends Controller
       }
       abort(500);
     }
+
     public function getSelectKontrak(Request $request){
         $search = trim($request->q);
         $type = trim($request->type);//sp,amandemen,adendum dll
@@ -614,6 +621,7 @@ class DocumentsController extends Controller
     //     });
     //     return \Response::json($data);
     // }
+
     public function getSelectSp(Request $request){
         $id_kon = trim($request->id);
         $search = trim($request->q);
@@ -692,6 +700,7 @@ class DocumentsController extends Controller
         });
         return \Response::json($data);
     }
+
     public function getPosisi(Request $request){
         $unit = trim($request->unit);
 
@@ -701,6 +710,7 @@ class DocumentsController extends Controller
         $data = \App\User::get_posisi_by_unit($unit)->get();
         return \Response::json($data);
     }
+
     public function getUnit(Request $request){
         $divisi = trim($request->divisi);
 
@@ -710,4 +720,95 @@ class DocumentsController extends Controller
         $data = \App\User::get_unit_by_disivi2($divisi)->get();
         return \Response::json($data);
     }
+
+    public function upload_boq_harga_satuan(Request $request){
+      if ($request->ajax()){
+
+        $data = Excel::load($request->file('daftar_harga')->getRealPath(), function ($reader) {
+        })->get();
+
+        $header = ['KODE_ITEM','ITEM','SATUAN','MTU','HARGA','HARGA_JASA','KETERANGAN'];
+        $colomn = $data->first()->keys()->toArray();
+        dd($colomn);
+
+        if(!empty($data) && count($colomn) == 7){
+          foreach ($data as $key => $value) {
+
+            $insert[] = ['kode_item' => $value->KODE_ITEM,
+                         'item' => $value->ITEM,
+                         'satuan' => $value->SATUAN,
+                         'mtu' => $value->MTU,
+                         'harga' => $value->HARGA,
+                         'harga_jasa' => $value->HARGA_JASA,
+                         'keterangan' => $value->KETERANGAN,
+                       ];          
+          }
+
+          return Response::json (array(
+            'hasil' => $data
+          ));
+        }else{
+          return Response::json (array(
+            'error' => $data
+          ));          
+        }
+      }
+
+        /*
+        $data = Excel::load($request->file('supplier_sap')->getRealPath(), function ($reader) {
+
+        })->get();
+        $header = ['cl','vendor','cty','name_1','city','postalcode','rg','searchterm','street','date','title','created_by','group','language','vat_registration_no'];
+        $colomn = $data->first()->keys()->toArray(); 
+
+
+      if(!empty($data) && count($colomn) == 15){
+          foreach ($data as $key => $value) {
+            $tgl = date_create($value->date);
+            $date = date_format($tgl,"Y/m/d");
+
+            $insert[] = ['users_id' => Auth::id(),
+                         'ci' => $value->cl,
+                         'vendor' => $value->vendor,
+                         'cty' => $value->cty,
+                         'name_1' => $value->name_1,
+                         'city' => $value->city,
+                         'postalcode' => $value->postalcode,
+                         'rg' => $value->rg,
+                         'searchterm' => $value->searchterm,
+                         'street' => $value->street,
+                         'title' => $value->title,
+                         'date' => $date,
+                         'created_by' => $value->created_by,
+                         'group' => $value->group,
+                         'language' => $value->language,
+                         'vat_registration_no' => $value->vat_registration_no,
+                         'upload_date' => new \DateTime(),
+                         'upload_by' => Auth::user()->username,
+                       ];
+          }
+          if(!empty($insert)){
+            DB::table('supplier_sap')->insert($insert);
+            // $request->session()->flash('alert-success', 'Data berhasil disimsssssan');
+            return Response::json(['status'=>true,'csrf_token'=>csrf_token()]);
+          }
+          else{
+            return Response::json(['status'=>false]);
+          }
+      }
+      else{
+        return Response::json(['status'=>false]);
+      }
+    }
+    else{
+      return Response::json(['status'=>false]);
+    }
+    */
+  }
+
+  public function upload_boq(Request $request){
+
+  }
+
+
 }

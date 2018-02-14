@@ -6,7 +6,7 @@
   <div class="nav-tabs-custom">
     <div class="loading2"></div>
     @php
-      $title_sow = 'SOW,BOQ';
+      $title_sow = 'SoW,BoQ';
       if($doc_type->name=='khs' || $doc_type->name=='amandemen_kontrak_khs'){
         $title_sow = 'DAFTAR HARGA SATUAN';
       }elseif($doc_type->name=='mou'){
@@ -148,49 +148,6 @@ $(function () {
   $(document).on('click', '#btn-draft', function(event) {
     $('#statusButton').val('2');
   });
-  /*
-  $(document).on('click', '#btn-submit', function(event) {
-    $('#statusButton').val('0');
-    event.preventDefault();
-
-    var formMe = $('#form-kontrak');
-    $(".formerror").removeClass("has-error");
-    $(".error").html('');
-    
-    $.ajax({
-      url: formMe.attr('action'),
-      type: 'post',
-      processData: false,
-      contentType: false,
-      data: new FormData(document.getElementById("form-kontrak")),
-      dataType: 'json',
-      success: function(response){
-        if(response.errors){
-          $.each(response.errors, function(index, value){
-              if (value.length !== 0){
-                index = index.replace(".", "-");
-                $(".formerror-"+ index).removeClass("has-error");
-                $(".error-"+ index).html('');             
-
-                $(".formerror-"+ index).addClass("has-error");
-                $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
-
-
-              }
-          });
-
-          alert("Data yang Anda masukan belum valid, silahkan periksa kembali!");
-        }else{
-          if(response.status=="tracking"){
-            window.location.href = "{{route('doc',['status'=>'tracking'])}}";
-          }else if(response.status=="draft"){
-            window.location.href = "{{route('doc',['status'=>'draft'])}}";
-          }
-        }
-      }
-    });
-  });
-  */
 
   $(document).on('click', '#btn-submit', function(event) {
     $('#statusButton').val('0');
@@ -243,12 +200,13 @@ $(function () {
 
                               $(".formerror-"+ index).addClass("has-error");
                               $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
-
-
                             }
                         });
 
-                        alert("Data yang Anda masukan belum valid, silahkan periksa kembali!");
+                        bootbox.alert({
+                          title:"Pemberitahuan",
+                          message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
+                        });
                       }else{
                         if(response.status=="tracking"){
                           window.location.href = "{{route('doc',['status'=>'tracking'])}}";
@@ -269,14 +227,10 @@ $(function () {
   });
 
   /*
-  $(document).on('click', '#btn-submit', function(event) {
-    $('#statusButton').val('0');
-    event.preventDefault();
+  $(document).on('submit','#form-me-uploadboq',function (event) {
+    var btnSave = formMe.find('.btn-simpan')
+    btnSave.button('loading')
 
-    var formMe = $('.form-kontrak');
-    $(".formerror").removeClass("has-error");
-    $(".error").html('');
-    
     $.ajax({
       url: formMe.attr('action'),
       type: 'post',
@@ -284,59 +238,36 @@ $(function () {
       dataType: 'json',
       success: function(response){
         if(response.errors){
-          $.each(response.errors, function(index, value){
-              if (value.length !== 0){
-                index = index.replace(".", "-");
-                $(".formerror-"+ index).removeClass("has-error");
-                $(".error-"+ index).html('');             
 
-                $(".formerror-"+ index).addClass("has-error");
-                $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
-              }
-          });
-        }else{
-          
         }
       }
     });
   });
 
-  $(document).on('click', '#btn-submit', function(event) {
-    $('#statusButton').val('0');
+  $('.daftar_harga').on('change', function(event) {
+    event.stopPropagation();
     event.preventDefault();
-    var content = $('.content-view');
-    var loading = content.find('.loading2');
-    bootbox.confirm({
-      title:"Konfirmasi",
-      message: "Apakah anda yakin untuk submit?",
-      buttons: {
-          confirm: {
-              label: 'Yakin',
-              className: 'btn-success'
-          },
-          cancel: {
-              label: 'Tidak',
-              className: 'btn-danger'
-          }
-      },
-      callback: function (result) {
-        if(result){
-        bootbox.prompt({
-        title: "Masukan Komentar",
-        inputType: 'textarea',
-        callback: function (komen) {
-          if(komen){
-            loading.show();
-            $('.komentar').val(komen);
-            $('.btn_submit').click();
-            }
-          }
-        });
+    var validfile = [".csv", ".xls", ".xlsx"];
+    var namefile = $('.daftar_harga').val().split('\\').pop();
+    var valid = 0;
+
+    for (var i = 0; i < validfile.length; i++) {
+      var validfilex=validfile[i];
+
+      if (namefile.substr(namefile.length - validfilex.length, validfilex.length).toLowerCase() == validfilex.toLowerCase()) {
+        valid = 1;
+        break;
       }
-      }
-    });
+    }
+
+    if(valid==1){
+      handleDaftarHargaFileSelect(this.files[0]);
+    }else{
+      $('.error-daftar_harga').html('Format File tidak valid! hanya CSV, XLS & XLXS yang valid');
+    }
   });
   */
+
 });
 </script>
 @endpush

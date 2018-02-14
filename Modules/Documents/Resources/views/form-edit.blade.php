@@ -5,7 +5,7 @@
       <div class="nav-tabs-custom">
         <div class="loading2"></div>
         @php
-          $title_sow = 'SOW,BOQ';
+          $title_sow = 'SoW,BoQ';
           if($doc_type->name=='khs' || $doc_type->name=='amandemen_kontrak_khs'){
             $title_sow = 'DAFTAR HARGA SATUAN';
           }elseif($doc_type->name=='mou'){
@@ -143,43 +143,7 @@ $(function () {
   $('.btnPrevious').click(function(){
    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
   });
-  /*
-  $(document).on('click', '.btn-submit', function(event) {
-    event.preventDefault();
-    var content = $('.content-view');
-    var loading = content.find('.loading2');
-    bootbox.confirm({
-      title:"Konfirmasi",
-      message: "Apakah anda yakin untuk submit?",
-      buttons: {
-          confirm: {
-              label: 'Yakin',
-              className: 'btn-success'
-          },
-          cancel: {
-              label: 'Tidak',
-              className: 'btn-danger'
-          }
-      },
-      callback: function (result) {
-        if(result){
-        bootbox.prompt({
-        title: "Masukan Komentar",
-        inputType: 'textarea',
-        callback: function (komen) {
-          if(komen){
-            loading.show();
-            $('.komentar').val(komen);
-            $('.btn_submit').click();
-            }
-          }
-        });
-      }
-      }
-    });
-  });
-  */
-
+  
   $(document).on('click', '.btn-submit', function(event) {
     event.preventDefault();
     var content = $('.content-view');
@@ -234,7 +198,11 @@ $(function () {
                           }
                       });
 
-                      alert("Data yang Anda masukan belum valid, silahkan periksa kembali!");
+                      bootbox.alert({
+                        title:"Pemberitahuan",
+                        message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
+                      });
+                      
                     }else{
                       if(response.status=="tracking"){
                         window.location.href = "{{route('doc',['status'=>'tracking'])}}";
@@ -251,49 +219,7 @@ $(function () {
         }
       }
     });
-  });
-  /*
-  $(document).on('click', '.btn-submit', function(event) {
-    event.preventDefault();
-
-    var formMe = $('#form-kontrak');
-    $(".formerror").removeClass("has-error");
-    $(".error").html('');
-    $(".alert-error").hide();
-    
-    $.ajax({
-      url: formMe.attr('action'),
-      type: 'post',
-      processData: false,
-      contentType: false,
-      data: new FormData(document.getElementById("form-kontrak")),
-      dataType: 'json',
-      success: function(response){
-        if(response.errors){
-          $.each(response.errors, function(index, value){
-              if (value.length !== 0){
-                index = index.replace(".", "-");
-                $(".formerror-"+ index).removeClass("has-error");
-                $(".error-"+ index).html('');             
-
-                $(".formerror-"+ index).addClass("has-error");
-                $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');                
-              }
-          });
-
-          alert("Data yang Anda masukan belum valid, silahkan periksa kembali!");
-        }else{
-          if(response.status=="tracking"){
-            window.location.href = "{{route('doc',['status'=>'tracking'])}}";
-          }else if(response.status=="draft"){
-            window.location.href = "{{route('doc',['status'=>'draft'])}}";
-          }
-        }
-      }
-    });
-  });
-  */
-  
+  }); 
   
 });
 </script>

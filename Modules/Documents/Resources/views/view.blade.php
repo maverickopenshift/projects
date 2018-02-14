@@ -4,7 +4,7 @@
     <div class="nav-tabs-custom content-view" style="position:relative;">
       <div class="loading2"></div>
       @php
-        $title_sow = 'SOW,BOQ';
+        $title_sow = 'SoW,BoQ';
         if($doc_type->name=='khs' || $doc_type->name=='amandemen_kontrak_khs'){
           $title_sow = 'DAFTAR HARGA SATUAN';
         }elseif($doc_type->name=='mou'){

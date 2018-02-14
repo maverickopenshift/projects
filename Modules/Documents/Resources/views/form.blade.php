@@ -70,7 +70,7 @@
               @include('documents::doc-form.sow-boq')
             @elseif(in_array($doc_type->name,['amandemen_kontrak','amandemen_kontrak_turnkey','amandemen_kontrak_khs']))
               @include('documents::doc-form.sow-boq')
-            @elseif(in_array($doc_type->name,['amandemen_sp']))  
+            @elseif(in_array($doc_type->name,['amandemen_sp']))
               @include('documents::doc-form.amandemen_kontrak-sow-boq')
             @endif
             <div class="clearfix"></div>
@@ -132,6 +132,11 @@
         </div>
         <!-- /.tab-content -->
       </div>
+  </form>
+  <form id="form_me_boq" action="{{route('doc.upload.hs')}}" method="post" enctype="multipart/form-data">
+    {{ csrf_field() }}
+    <input type="file" name="daftar_harga" class="daftar_harga hide" accept=".csv,.xls,.xlsx">
+    <input type="text" name="type" class="hide" value="{{$doc_type->name}}">
   </form>
 @endsection
 @push('scripts')

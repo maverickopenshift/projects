@@ -29,6 +29,7 @@ use App\Helpers\Helpers;
 use Validator;
 use DB;
 use Auth;
+use Excel;
 
 class EntryDocumentController extends Controller
 {
@@ -561,6 +562,36 @@ class EntryDocumentController extends Controller
         return redirect()->route('doc',['status'=>'draft']);
       }
     }
+
+    public function upload(Request $request)
+    {
+      if ($request->ajax()) {
+
+          $data = Excel::load($request->file('daftar_harga')->getRealPath(), function ($reader) {
+
+          })->get();
+          $type = $request->type;
+          if($type != "khs"){
+              $header = ['kode_item','item','qty','satuan','mtu','harga','harga_jasa','keterangan'];
+              $jml_header = '8';
+          }else {
+            $header = ['kode_item','item','satuan','mtu','harga','harga_jasa','keterangan'];
+            $jml_header = '7';
+          }
+          $colomn = $data->first()->keys()->toArray();
+          // dd($jml_header);
+// dd($colomn);
+          if(!empty($data) && count($colomn) == $jml_header && $colomn == $header){
+          return Response::json(['status'=>true,'csrf_token'=>csrf_token(),'data'=>$data]);
+        }
+        else{
+          return Response::json(['status'=>false]);
+        }
+      }
+      else{
+        return Response::json(['status'=>false]);
+      }
+  }
 
     /**
      * Show the specified resource.

@@ -94,7 +94,7 @@
               @include('documents::doc-form-edit.latar-belakang')
             @endif
             --}}
-            
+
             @include('documents::doc-form-edit.latar-belakang-fix')
             <div class="clearfix"></div>
             <div class="row">
@@ -137,7 +137,12 @@
         </div>
         @include('documents::partials.comments')
       </div>
-  </form>s
+  </form>
+  <form id="form_me_boq" action="{{route('doc.upload.hs')}}" method="post" enctype="multipart/form-data">
+    {{ csrf_field() }}
+    <input type="file" name="daftar_harga" class="daftar_harga hide" accept=".csv,.xls,.xlsx">
+    <input type="text" name="type" class="hide" value="{{$doc_type->name}}">
+  </form>
 @endsection
 @push('scripts')
 <script>

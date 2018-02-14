@@ -59,7 +59,7 @@
                 @include('documents::doc-view.general-info')
               @endif
             @else
-              @include('documents::doc-form-edit.amademen')
+              @include('documents::doc-view.amademen')
             @endif
             <div class="clearfix"></div>
             <div class="row">
@@ -154,7 +154,7 @@ $(function () {
    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
   });
 
-  $(document).on('click', '.btn-submit', function(event) {
+  $(document).on('click', '#btn-submit', function(event) {
     event.preventDefault();
     var content = $('.content-view');
     var loading = content.find('.loading2');

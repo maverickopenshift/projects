@@ -34,7 +34,7 @@ class AmandemenSpEditController extends Controller
     $status = Documents::where('id',$id)->first()->doc_signing;
     $rules = [];
 
-    if(in_array($status,['0','2','3','1'])){
+    if(in_array($status,['0','2'])){
       $rules['doc_title']        =  'required|min:2';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
@@ -128,7 +128,7 @@ class AmandemenSpEditController extends Controller
       return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
 
-    if(in_array($status,['0','2','3','1'])){
+    if(in_array($status,['0','2'])){
       $doc = Documents::where('id',$id)->first();;
       $doc->doc_title = $request->doc_title;
       $doc->doc_date = $request->doc_startdate;
@@ -156,6 +156,11 @@ class AmandemenSpEditController extends Controller
       $doc->doc_parent_id = $request->parent_sp;
       $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
       $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
+      $doc->save();
+    }else{
+      //kalo dokumennya di return/ di approve dan di edit datanya (status = 3 & 1)
+      $doc = Documents::where('id',$id)->first();
+      $doc->doc_signing = '0';
       $doc->save();
     }
 
@@ -190,6 +195,7 @@ class AmandemenSpEditController extends Controller
       }
     }
 
+    if(in_array($status,['0','2'])){
     if(count($new_lamp_up)>0){
       DocMeta::where([
         ['documents_id','=',$doc->id],
@@ -214,6 +220,7 @@ class AmandemenSpEditController extends Controller
         }
       }
     }
+  }
 
     // latar belakang wajib
     if(isset($request->lt_judul_ketetapan_pemenang)){

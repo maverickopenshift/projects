@@ -59,9 +59,8 @@ class EditController extends Controller
     $id = $request->id;
     $type = $request->type;
     $doc = $this->documents->where('documents.id','=',$id);
-    $dt = $doc->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','sow_boq','scope_perubahan','users','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter','latar_belakang_optional','latar_belakang_ketetapan_pemenang','latar_belakang_kesanggupan_mitra','latar_belakang_rks')
+    $dt = $doc->with('pemilik_kontrak','jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','sow_boq','scope_perubahan','users','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter','latar_belakang_optional','latar_belakang_ketetapan_pemenang','latar_belakang_kesanggupan_mitra','latar_belakang_rks')
               ->first();
-
     if(!$dt || !$this->documents->check_permission_doc($id,$type)){
       abort(404);
     }
@@ -277,6 +276,11 @@ class EditController extends Controller
                                   ->join('pegawai as b','a.nik','=','b.n_nik')
                                   ->where('a.users_id',$dt->user_id)->first();
     $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
+
+    $objiddivisi=$dt->pemilik_kontrak->meta_name;
+    $objidunit=$dt->pemilik_kontrak->meta_title;
+    $data['divisi'] = \DB::table('rptom')->where('objiddivisi',$objiddivisi)->first();
+    $data['unit_bisnis'] = \DB::table('rptom')->where('objidunit',$objidunit)->first();
     return view('documents::form-edit')->with($data);
   }
   public function store(Request $request)

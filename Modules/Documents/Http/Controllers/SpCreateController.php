@@ -59,7 +59,9 @@ class SpCreateController
       $rules = [];
 
       if($request->statusButton == '0'){
-
+        $rules['komentar']         = 'required|max:250|min:2';
+        $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+        $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         $rules['parent_kontrak']   =  'required|kontrak_exists';
         $rules['doc_title']        =  'required|min:2';
         $rules['doc_desc']         =  'sometimes|nullable|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -219,6 +221,16 @@ class SpCreateController
         $doc->doc_no = $request->doc_no;
       }
       $doc->save();
+
+      //pemilik Kontrak
+      if(count($request->divisi)>0){
+        $doc_meta2 = new DocMeta();
+        $doc_meta2->documents_id = $doc->id;
+        $doc_meta2->meta_type = 'pemilik_kontrak';
+        $doc_meta2->meta_name = $request->divisi;
+        $doc_meta2->meta_title =$request->unit_bisnis;
+        $doc_meta2->save();
+      }
 
 
       if(isset($request->doc_po)){

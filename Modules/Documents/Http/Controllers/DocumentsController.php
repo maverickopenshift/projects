@@ -193,7 +193,7 @@ class DocumentsController extends Controller
     {
       $id = $request->id;
       $doc_type = DocType::where('name','=',$request->type)->first();
-      $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po','sow_boq','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter','latar_belakang_optional','latar_belakang_ketetapan_pemenang','latar_belakang_kesanggupan_mitra','latar_belakang_rks')->first();
+      $dt = $this->documents->where('id','=',$id)->with('pemilik_kontrak','jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po','sow_boq','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter','latar_belakang_optional','latar_belakang_ketetapan_pemenang','latar_belakang_kesanggupan_mitra','latar_belakang_rks')->first();
 
       if(!$doc_type || !$dt){
         abort(404);
@@ -228,18 +228,23 @@ class DocumentsController extends Controller
                                   ->where('a.users_id',$dt->user_id)->first();
       $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
 
+      $objiddivisi=$dt->pemilik_kontrak->meta_name;
+      $objidunit=$dt->pemilik_kontrak->meta_title;
+      $data['divisi'] = \DB::table('rptom')->where('objiddivisi',$objiddivisi)->first();
+      $data['unit_bisnis'] = \DB::table('rptom')->where('objidunit',$objidunit)->first();
+
       // dd($data);
       return view('documents::view')->with($data);
     }
     public function getPo(Request $request){
-      
+
       $search = trim($request->po);
 
       if (empty($search)) {
         return Response::json(['status'=>false]);
       }
       if(config('app.env')=='production'){
-        $sap = Sap::get_po($search); 
+        $sap = Sap::get_po($search);
         return Response::json($sap);
       }
       else{
@@ -430,7 +435,7 @@ class DocumentsController extends Controller
           $data->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
         }
         $data = $data->paginate(30);
-        
+
         if($type!="all"){
           $data->getCollection()->transform(function ($value) use ($type){
             $types=DocType::select('id')->where('name',$type)->first();

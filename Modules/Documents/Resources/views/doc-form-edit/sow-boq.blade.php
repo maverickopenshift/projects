@@ -198,7 +198,7 @@
         </div>
       @endif
       @endif
-      @include('documents::partials.buttons')
+      @include('documents::partials.button-edit')
     </div>
   </div>
 </div>

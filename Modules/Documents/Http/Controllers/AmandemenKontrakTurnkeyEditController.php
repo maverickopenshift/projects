@@ -25,9 +25,8 @@ class AmandemenKontrakTurnkeyEditController extends Controller
       //oke
   }
 
-  public function store($request)
+  public function store(Request $request)
   {
-
     $type = $request->type;
     $id = $request->id;
     $status = Documents::where('id',$id)->first()->doc_signing;
@@ -70,7 +69,7 @@ class AmandemenKontrakTurnkeyEditController extends Controller
       $request->merge(['hs_qty'=>$m_hs_qty]);
     }
 
-    if(in_array($status,['0','2','3','1'])){
+    if(in_array($status,['0','2'])){
       $rules['doc_title']        =  'required|min:2';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
@@ -142,13 +141,13 @@ class AmandemenKontrakTurnkeyEditController extends Controller
     $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
     if($request->lt_file_ketetapan_pemenang_old==null){
       $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
-    }   
+    }
 
     $rules['lt_judul_kesanggupan_mitra']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
     $rules['lt_tanggal_kesanggupan_mitra']  = 'required|date_format:"Y-m-d"';
     if($request->lt_file_kesanggupan_mitra_old==null){
       $rules['lt_file_kesanggupan_mitra']      = 'required|mimes:pdf';
-    } 
+    }
 
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
     $validator->after(function ($validator) use ($request) {
@@ -156,13 +155,13 @@ class AmandemenKontrakTurnkeyEditController extends Controller
         $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
       }
     });
-    
+
     if ($validator->fails ()){
       return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
 
-    if(in_array($status,['0','2','3','1'])){
-      $doc = Documents::where('id',$id)->first(); 
+    if(in_array($status,['0','2'])){
+      $doc = Documents::where('id',$id)->first();
       $doc->doc_title = $request->doc_title;
       $doc->doc_date = $request->doc_startdate;
       $doc->doc_startdate = $request->doc_startdate;
@@ -180,6 +179,12 @@ class AmandemenKontrakTurnkeyEditController extends Controller
       $doc->doc_parent_id = $request->parent_kontrak;
       $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
       $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
+      $doc->save();
+    }else{
+      //kalo dokumennya di return/ di approve dan di edit datanya (status = 3 & 1)
+      $doc = Documents::where('id',$id)->first();
+      $doc->doc_signing = '0';
+      $doc->doc_sow = $request->doc_sow;
       $doc->save();
     }
     /*
@@ -295,7 +300,7 @@ class AmandemenKontrakTurnkeyEditController extends Controller
         ])->delete();
       foreach($request->f_latar_belakang_judul as $key => $val){
         if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
-          
+
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = "latar_belakang_optional";

@@ -10,6 +10,7 @@ use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocActivity;
 use Modules\Documents\Entities\DocComment as Comments;
+use Modules\Config\Entities\Config;
 use App\Helpers\Helpers;
 use Validator;
 use DB;
@@ -27,6 +28,9 @@ class AmandemenKontrakCreateController
     $rules = [];
 
     if($request->statusButton == '0'){
+      $rules['komentar']         = 'required|max:250|min:2';
+      $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['doc_title']        =  'required|min:2';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
@@ -130,6 +134,16 @@ class AmandemenKontrakCreateController
     }
 
     $doc->save();
+
+    //pemilik Kontrak
+    if(count($request->divisi)>0){
+      $doc_meta2 = new DocMeta();
+      $doc_meta2->documents_id = $doc->id;
+      $doc_meta2->meta_type = 'pemilik_kontrak';
+      $doc_meta2->meta_name = $request->divisi;
+      $doc_meta2->meta_title =$request->unit_bisnis;
+      $doc_meta2->save();
+    }
 
     if(count($request->f_judul)>0){
       foreach($request->f_judul as $key => $val){

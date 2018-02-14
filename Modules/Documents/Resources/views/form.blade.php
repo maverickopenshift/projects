@@ -131,6 +131,30 @@
           </div>
         </div>
         <!-- /.tab-content -->
+        <div class="row">
+          <div class="col-md-12">
+            <div class="box box-primary direct-chat direct-chat-primary">
+              <div class="box-header with-border">
+                <i class="fa fa-comments-o"></i>
+                <h3 class="box-title">Comments</h3>
+                <div class="box-tools pull-right">
+                  <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                          </button>
+                </div>
+              </div><!-- /.box-header -->
+              <div class="box-body relative komentar {{ $errors->has('komentar') ? ' has-error' : '' }}">
+                  <div class="loading-ao"></div>
+                  <div id="alertBS"></div>
+                  <textarea class="form-control comment" rows="4" placeholder="Masukan Komentar" name="komentar">{{ old('komentar') }}</textarea>
+                  @if ($errors->has('komentar'))
+                      <span class="help-block col-sm-2">
+                          <strong>{{ $errors->first('komentar') }}</strong>
+                      </span>
+                  @endif
+              </div><!-- /.box-body -->
+            </div><!--/.direct-chat -->
+          </div>
+        </div>
       </div>
   </form>
   <form id="form_me_boq" action="{{route('doc.upload.hs')}}" method="post" enctype="multipart/form-data">
@@ -182,17 +206,18 @@ $(function () {
       },
       callback: function (result) {
         if(result){
-        bootbox.prompt({
-        title: "Masukan Komentar",
-        inputType: 'textarea',
-        callback: function (komen) {
-          if(komen){
-            loading.show();
-            $('.komentar').val(komen);
-            $('.btn_submit').click();
-            }
-          }
-        });
+          $('.btn_submit').click();
+        // bootbox.prompt({
+        // title: "Masukan Komentar",
+        // inputType: 'textarea',
+        // callback: function (komen) {
+        //   if(komen){
+        //     loading.show();
+        //     $('.komentar').val(komen);
+        //     $('.btn_submit').click();
+        //     }
+        //   }
+        // });
       }
       }
     });

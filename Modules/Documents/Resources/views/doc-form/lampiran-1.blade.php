@@ -27,7 +27,7 @@
                   <i class="glyphicon glyphicon-paperclip"></i>  Lihat
                   </a>
                 @endif
-                @if(count($lampiran)>0)
+                @if(count($lampiran)>1)
                   <button type="button" class="btn btn-danger delete-lampiran"><i class="glyphicon glyphicon-trash"></i></button>
                 @endif
 

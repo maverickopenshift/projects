@@ -9,6 +9,7 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocActivity;
+use Modules\Config\Entities\Config;
 use Modules\Documents\Entities\DocComment as Comments;
 use App\Helpers\Helpers;
 use Validator;
@@ -397,7 +398,15 @@ class AmandemenKontrakTurnkeyCreateController
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak2_nama']  =  'required|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+
+      if(\Laratrust::hasRole('admin')){
+        $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      }
+
+      if(Config::get_config('auto-numb')=='off'){
+        $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
+      }
 
       $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $check_new_lampiran = false;
@@ -433,9 +442,7 @@ class AmandemenKontrakTurnkeyCreateController
       $rules['scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['scope_isi.*']    =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       
-      if(\Laratrust::hasRole('admin')){
-        $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-      }
+      
 
       $rules['lt_judul_ketetapan_pemenang']     = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
@@ -452,7 +459,6 @@ class AmandemenKontrakTurnkeyCreateController
         }
       });
       if ($validator->fails ()){
-        //return redirect()->back()->withInput($request->input())->withErrors($validator);
         return Response::json (array(
           'errors' => $validator->getMessageBag()->toArray()
         ));
@@ -464,7 +470,6 @@ class AmandemenKontrakTurnkeyCreateController
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
       if ($validator->fails ()){
-        //return redirect()->back()->withInput($request->input())->withErrors($validator);
         return Response::json (array(
           'errors' => $validator->getMessageBag()->toArray()
         ));
@@ -646,14 +651,6 @@ class AmandemenKontrakTurnkeyCreateController
     // $log_activity->activity = "Submitted";
     // $log_activity->date = new \DateTime();
     // $log_activity->save();
-    /*
-    $request->session()->flash('alert-success', 'Data berhasil disimpan');
-    if($request->statusButton == '0'){
-      return redirect()->route('doc',['status'=>'tracking']);
-    }else{
-      return redirect()->route('doc',['status'=>'draft']);
-    }
-    */
 
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     if($request->statusButton == '0'){

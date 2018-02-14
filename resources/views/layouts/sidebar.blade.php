@@ -42,6 +42,8 @@
                       <li class="{{Request::is("documents/create/adendum")?'active':''}}" ><a href="{{route('doc.create',['type'=>'adendum'])}}">Addendum</a></li>
                       <li class="{{Request::is("documents/create/side_letter")?'active':''}}" ><a href="{{route('doc.create',['type'=>'side_letter'])}}">Side Letter</a></li>
                       <li class="{{Request::is("documents/create/mou")?'active':''}}" ><a href="{{route('doc.create',['type'=>'mou'])}}">MoU</a></li>
+
+
                     </ul>
                   </li>
                 @endpermission
@@ -56,6 +58,12 @@
                   <li class="{{Request::is("documents/status/tracking")?'active':''}}" ><a href="{{route('doc',['status'=>'tracking'])}}">Tracking Proses</a></li>
                   <li class="{{Request::is("documents/status/selesai")?'active':''}}" ><a href="{{route('doc',['status'=>'selesai'])}}">Selesai</a></li>
                 @endpermission
+                @permission('tutup-kontrak')
+                  <li class="{{Request::is("documents/status/tutup") || Request::is("documents/closing/*")?'active':''}}" ><a href="{{route('doc',['status'=>'tutup'])}}">Proses Closing</a></li>
+                  <li class="{{Request::is("documents/status/close") ?'active':''}}" ><a href="{{route('doc',['status'=>'close'])}}"> Close</a></li>
+                @endpermission
+
+
                 @permission('lihat-template-pasal-pasal')
                   <li class="{{Request::is("documents/doc-template") || Request::is("documents/doc-template/create") || Request::is("documents/doc-template/*/edit")?'active':''}}" ><a href="{{route('doc.template')}}">Template Kontrak</a></li>
                 @endpermission

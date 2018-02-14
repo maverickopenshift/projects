@@ -10,11 +10,12 @@ class PDF extends PdfRotate {
     public $nama;
     public $nik;
     
-    function __construct($file,$nama,$nik){
+    function __construct($file,$nama,$nik,$jenis){
       parent::__construct();
       $this->file = $file;
       $this->nama = $nama;
       $this->nik = $nik;
+      $this->jenis = $jenis;
     }
     
     public function Header() {
@@ -25,7 +26,12 @@ class PDF extends PdfRotate {
         //$this->SetTextColor(255, 192, 203);
         $this->SetTextColor(135, 206, 250);
         //$this->RotatedText(40, 230, $this->namathis->n.'-'.$ik, 45);
-        $this->RotatedText(40, 230, 'NIK : '. $this->nik, 45);
+        if($jenis==1){
+            $this->RotatedText(40, 230, 'NIK : '. $this->nik, 45);
+        }else{
+            $this->RotatedText(40, 230, $this->nama, 45);
+        }
+        
         //$this->RotatedText(100, 210, $this->nik, 45);
         
         if (is_null($this->_tplIdx)) {

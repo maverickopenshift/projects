@@ -622,14 +622,14 @@ class EntryDocumentController extends Controller
       if($request->statusButton == '0'){
 
         $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_template_id']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
         $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
         $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-        $rules['doc_pihak2_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_pihak2_nama']  =  'required|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
         
@@ -638,11 +638,11 @@ class EntryDocumentController extends Controller
         }
         
         if($type!='khs'){
-          $rules['doc_value']        =  'required|max:500|min:3|regex:/^[0-9 .]+$/i';
+          $rules['doc_value']     =  'required|max:500|min:3|regex:/^[0-9 .]+$/i';
         }
 
         if(\Laratrust::hasRole('admin')){
-          $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+          $rules['user_id']       =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
         $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
         $check_new_lampiran = false;
@@ -731,7 +731,7 @@ class EntryDocumentController extends Controller
 
             if($request->doc_enddate < $request->doc_startdate){
               $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
-            }
+            }        
         });
 
         $request->merge(['doc_value' => $doc_value]);

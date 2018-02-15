@@ -49,6 +49,7 @@ class DocumentsController extends Controller
           $status_no = $key;
         }
       }
+
       if($status=="tutup"){
         $status_no = '1';
       }else if($status=="close"){
@@ -142,7 +143,7 @@ class DocumentsController extends Controller
 
             $edit = '';
             if($value['doc_signing']==0 && \Laratrust::can('approve-kontrak')){
-              $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-eye"></i> LIHAT</a>';
+              $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-eye"></i> PERLU DI PROSES </a>';
             }else{
               $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-eye"></i> LIHAT</a>';
             }
@@ -153,9 +154,7 @@ class DocumentsController extends Controller
 
             if($status=='tutup' && \Laratrust::can('tutup-kontrak')){
                 $tutup = '<a class="btn btn-xs btn-danger" href="'.route('doc.closing',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-close"></i> CLOSING</a>';
-            }
-
-            
+            }            
 
             if($status == 'tutup'){
               if($value['doc_parent_id']==null){
@@ -173,9 +172,7 @@ class DocumentsController extends Controller
 
             if($value['doc_signing']==4){
               $value['link'] = $view;
-            }
-
-            
+            }            
 
             $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason']);
             $value['sup_name']= $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;

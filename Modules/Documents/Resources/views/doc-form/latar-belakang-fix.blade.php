@@ -202,6 +202,7 @@
               <option value="latar_belakang_mou">No. Mou</option>
               <option value="latar_belakang_bak">BAK</option>
               <option value="latar_belakang_bap">BAP</option>
+              <option value="latar_belakang_lain">Lainnya</option>
             </select>
           </div>
         </div>

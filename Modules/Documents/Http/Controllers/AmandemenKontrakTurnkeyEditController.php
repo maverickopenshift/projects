@@ -575,7 +575,6 @@ class AmandemenKontrakTurnkeyEditController extends Controller
     });
     
     if ($validator->fails ()){
-      //return redirect()->back()->withInput($request->input())->withErrors($validator);
       return Response::json (array(
         'errors' => $validator->getMessageBag()->toArray()
       ));

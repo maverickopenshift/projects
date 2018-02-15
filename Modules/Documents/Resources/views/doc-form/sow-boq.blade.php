@@ -22,7 +22,7 @@
             <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label>
             <div class="col-sm-10">
               <textarea class="form-control" name="doc_sow" cols="4" rows="4">{{Helper::old_prop($doc,'doc_sow')}}</textarea>
-              <div class="error error-doc_title"></div>
+              <div class="error error-doc_sow"></div>
             </div>
           </div>
         </div>

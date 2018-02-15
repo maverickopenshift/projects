@@ -422,38 +422,6 @@ class AmandemenSpEditController extends Controller
       }
       $request->merge(['doc_lampiran' => $new_lamp]);
     }
-    /*
-    $rule_scope_name = (count($request['scope_name'])>1)?'required':'sometimes|nullable';
-    $rule_scope_awal = (count($request['scope_awal'])>1)?'required':'sometimes|nullable';
-    $rule_scope_akhir = (count($request['scope_akhir'])>1)?'required':'sometimes|nullable';
-    $rules['scope_name.*']  =  $rule_scope_name.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['scope_awal.*']  =  $rule_scope_awal.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-    $rules['scope_akhir.*']  =  $rule_scope_akhir.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-
-    foreach($request->scope_file_old as $k => $v){
-      if(isset($request->scope_file[$k]) && is_object($request->scope_file[$k]) && !empty($v)){//jika ada file baru
-        $new_scope_file[] = '';
-        $new_scope_file_up[] = $request->scope_file[$k];
-        $rules['scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
-      }
-      else if(empty($v)){
-        $rules['scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
-        if(!isset($request->scope_file[$k])){
-          $new_scope_file[] = $v;
-          $new_scope_file_up[] = $v;
-        }
-        else{
-          $new_scope_file[] = '';
-          $new_scope_file_up[] = $request->scope_file[$k];
-        }
-      }
-      else{
-        $new_scope_file[] = $v;
-        $new_scope_file_up[] = $v;
-      }
-    }
-    $request->merge(['scope_file' => $new_scope_file]);
-    */
     
     $rules['lt_judul_ketetapan_pemenang']     = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
     $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
@@ -474,7 +442,6 @@ class AmandemenSpEditController extends Controller
       }
     });
     if ($validator->fails ()){
-      //return redirect()->back()->withInput($request->input())->withErrors($validator);
       return Response::json (array(
         'errors' => $validator->getMessageBag()->toArray()
       ));
@@ -487,7 +454,6 @@ class AmandemenSpEditController extends Controller
       $doc->doc_startdate = $request->doc_startdate;
       $doc->doc_enddate = $request->doc_enddate;
       $doc->doc_desc = $request->doc_desc;
-      // $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
       $doc->doc_pihak1 = $request->doc_pihak1;
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;

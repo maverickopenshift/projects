@@ -539,6 +539,14 @@ class SpCreateController
           if($request->doc_enddate < $request->doc_startdate){
             $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
           }
+
+          if(in_array($type,['turnkey','sp'])){
+            foreach($request->doc_jaminan_enddate as $k => $v){
+              if($request->doc_jaminan_enddate[$k] < $request->doc_jaminan_startdate[$k]){
+                $validator->errors()->add('doc_jaminan_enddate.'.$k, 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+              }
+            }
+          }
         });
 
         if(isset($hs_harga) && count($hs_harga)>0){

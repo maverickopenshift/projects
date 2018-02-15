@@ -28,7 +28,7 @@ class SpEditController extends Controller
     }
     public function store($request)
     {
-      // dd($request->input());
+  
       $type = $request->type;
       $id = $request->id;
       $status = Documents::where('id',$id)->first()->doc_signing;
@@ -528,6 +528,7 @@ class SpEditController extends Controller
         if( Config::get_config('auto-numb')=='off'){
           $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
         }
+
         $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
         $check_new_lampiran = false;
         foreach($request->doc_lampiran_old as $k => $v){
@@ -557,7 +558,7 @@ class SpEditController extends Controller
         $rules['doc_nilai_material']   =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
         $rules['doc_nilai_jasa']       =  'required|max:500|min:1|regex:/^[0-9 .]+$/i';
       }
-
+      
       $rules['hs_kode_item.*']   =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_satuan.*']      =  'sometimes|nullable|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
@@ -566,7 +567,6 @@ class SpEditController extends Controller
       $rules['hs_harga_jasa.*']  =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['hs_keterangan.*']  =  'sometimes|nullable|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
-
 
       $rule_doc_jaminan = (count($request['doc_jaminan'])>1)?'required':'sometimes|nullable';
       $rule_doc_asuransi = (count($request['doc_asuransi'])>1)?'required':'sometimes|nullable';
@@ -598,12 +598,16 @@ class SpEditController extends Controller
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
       $validator->after(function ($validator) use ($request) {
-        if (!isset($request['pic_nama'][0])) {
-            $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
-        }
-
         if($request->doc_enddate < $request->doc_startdate){
           $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+        }
+
+        if(in_array($type,['turnkey','sp'])){
+          foreach($request->doc_jaminan_enddate as $k => $v){
+            if($request->doc_jaminan_enddate[$k] < $request->doc_jaminan_startdate[$k]){
+              $validator->errors()->add('doc_jaminan_enddate.'.$k, 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+            }
+          }
         }
       });
 

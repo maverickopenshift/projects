@@ -315,8 +315,6 @@ class SideLetterEditController extends Controller
 
   public function store_ajax($request)
   {
-
-
     $type = $request->type;
     $id = $request->id;
     $status = Documents::where('id',$id)->first()->doc_signing;
@@ -408,7 +406,7 @@ class SideLetterEditController extends Controller
     
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
-    $validator->after(function ($validator) use ($request) {
+    $validator->after(function ($validator) use ($request, $type) {
       if($request->doc_enddate < $request->doc_startdate){
         $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
       }
@@ -450,38 +448,6 @@ class SideLetterEditController extends Controller
       $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
       $doc->save();
     }
-    /*
-    if(count($request->f_judul)>0){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','sow_boq']
-        ])->delete();
-      foreach($request->f_judul as $key => $val){
-        if(!empty($val)){
-
-          if($val=="Harga"){
-            $f_name="harga";
-            $desc=$request->f_harga[$key];
-          }elseif($val=="Jangka Waktu"){
-            $f_name="jangka_waktu";
-            $desc=$request->f_tanggal1[$key] ."|". $request->f_tanggal2[$key];
-          }elseif($val=="Lainnya"){
-            $f_name="lainnya";
-            $desc=$request->f_isi[$key];
-          }
-
-          $doc_meta = new DocMeta();
-          $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'sow_boq';
-          $doc_meta->meta_name = $f_name;
-          $doc_meta->meta_title = $val;
-          $doc_meta->meta_desc = $desc;
-
-          $doc_meta->save();
-        }
-      }
-    }
-    */
 
     // latar belakang wajib
     if(isset($request->lt_judul_ketetapan_pemenang)){

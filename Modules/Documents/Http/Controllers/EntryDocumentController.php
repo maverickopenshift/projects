@@ -264,8 +264,7 @@ class EntryDocumentController extends Controller
           if(isset($request->ps_judul[$k]) && $request->ps_judul[$k]=="Lainnya" && !empty($v)){//jika ada file baru
             $new_pasal[] = $request->ps_judul_new[$k];
             $rules['ps_judul_new.'.$k] = 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-          }
-          else{
+          }else{
             $new_pasal[] = $v;
           }
         }
@@ -724,14 +723,22 @@ class EntryDocumentController extends Controller
         $rules['pic_posisi.*']    =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
 
         $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-        $validator->after(function ($validator) use ($request) {
+        $validator->after(function ($validator) use ($request, $type) {
             if (!isset($request['pic_nama'][0])) {
                 $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
             }
 
             if($request->doc_enddate < $request->doc_startdate){
               $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
-            }        
+            }
+
+            if(in_array($type,['turnkey','sp'])){
+              foreach($request->doc_jaminan_enddate as $k => $v){
+                if($request->doc_jaminan_enddate[$k] < $request->doc_jaminan_startdate[$k]){
+                  $validator->errors()->add('doc_jaminan_enddate.'.$k, 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+                }
+              }
+            }
         });
 
         $request->merge(['doc_value' => $doc_value]);

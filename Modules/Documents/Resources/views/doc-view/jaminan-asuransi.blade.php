@@ -44,16 +44,18 @@
       </div>
       <div class="form-group">
         <label for="doc_jaminan_file" class="col-sm-2 control-label">File</label>
-        @if(!empty($dt->doc_jaminan_file))
-        <!--
-        <a class="btn btn-primary btn-sm" target="_blank" href="{{route('doc.file',['filename'=>$dt->doc_jaminan_file,'type'=>$doc_type['name'].'_asuransi'])}}"><i class="glyphicon glyphicon-paperclip"></i> Lihat Lampiran</a>
-        -->
-        <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->doc_jaminan_file,'type'=>$doc_type['name'].'_asuransi'])}}">
-        <i class="glyphicon glyphicon-paperclip"></i>  Lihat
-        </a>
-        @else
-        -
-      @endif
+        <div class="col-sm-10 text-me">
+          @if(!empty($dt->doc_jaminan_file))
+            <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->doc_jaminan_file,'type'=>$doc_type['name'].'_asuransi'])}}">
+              <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
+            </a>
+            <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->doc_jaminan_file,'type'=>$doc_type['name'].'_asuransi'])}}?nik={{$pegawai->n_nik}}&nama={{$pegawai->v_nama_karyawan}}">
+              <i class="glyphicon glyphicon-download-alt"></i>  Download
+            </a>
+          @else
+            -
+          @endif
+        </div>
       </div>
   </div>
     @endforeach

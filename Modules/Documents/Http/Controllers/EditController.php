@@ -277,6 +277,7 @@ class EditController extends Controller
                                   ->join('pegawai as b','a.nik','=','b.n_nik')
                                   ->where('a.users_id',$dt->user_id)->first();
     $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
+    //dd($data);
     return view('documents::form-edit')->with($data);
   }
   public function store(Request $request)
@@ -951,13 +952,17 @@ class EditController extends Controller
 
     if(in_array($status,['0','2'])){
       $rules['pic_posisi.*']    =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
-      $validator->after(function ($validator) use ($request) {
-          if (!isset($request['pic_nama'][0])) {
-              $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
-          }
-
+      $validator->after(function ($validator) use ($request, $type) {
           if($request->doc_enddate < $request->doc_startdate){
             $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+          }
+
+          if(in_array($type,['turnkey','sp'])){
+            foreach($request->doc_jaminan_enddate as $k => $v){
+              if($request->doc_jaminan_enddate[$k] < $request->doc_jaminan_startdate[$k]){
+                $validator->errors()->add('doc_jaminan_enddate.'.$k, 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+              }
+            }
           }
       });
     }

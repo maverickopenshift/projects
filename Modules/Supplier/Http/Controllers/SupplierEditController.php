@@ -70,7 +70,7 @@ class SupplierEditController extends Controller
       ])
       ->whereIn('object_key',["bank_kota","pengalaman_kerja","nm_direktur_utama","nm_komisaris_utama"])
       ->get();
-      //dd($dt_meta);
+      
       foreach($dt_meta as $dt){
         if($dt->object_key=='bank_kota'){
           $supplier->bank_kota = $dt->object_value;
@@ -99,7 +99,6 @@ class SupplierEditController extends Controller
       }
       $supplier->file_old_ld = $file_old_ld;
 
-      //$data = $sup;
       $page_title = ucfirst($request->status).' Supplier';
       $action_type = $request->status;
       return view('supplier::form')->with(compact('supplier','page_title','action_type','id'));
@@ -273,8 +272,7 @@ class SupplierEditController extends Controller
                   ->withErrors($validator);
     }
     else {
-// dd("hai");
-// dd($request->input());
+
       $id = $request->id;
 
       $data = Supplier::where('id',$id)->first();
@@ -361,7 +359,7 @@ class SupplierEditController extends Controller
                                   'file'=>$fileName]);
           $mt_data->save();
         };
-// dd("yo");
+
       $mt_data = SupplierMetadata::where([
         ['id_object','=',$data->id],
         ['object_type','=','vendor'],
@@ -466,13 +464,11 @@ class SupplierEditController extends Controller
     }
   }
 
-
-
   public function editstatus(Request $request)
   {
     if ($request->ajax()) {
       $user = Supplier::where('id',$request->id)->first();
-    if($user){
+      if($user){
         $user->vendor_status = 1;
         $user->save();
 
@@ -484,36 +480,32 @@ class SupplierEditController extends Controller
         $log_activity->komentar = $request->reason;
         $log_activity->save();
 
-      //$request->session()->flash('alert-success', 'Data berhasil disetujui!');
-      return Response::json(['status'=>true,'csrf_token'=>csrf_token()]);
+        return Response::json(['status'=>true,'csrf_token'=>csrf_token()]);
+      }
+      return Response::json(['status'=>false]);
     }
-    return Response::json(['status'=>false]);
-  }
-  abort(500);
-
+    abort(500);
   }
 
   public function return(Request $request)
   {
     if ($request->ajax()) {
       $user = Supplier::where('id',$request->id)->first();
-    if($user){
-        $user->vendor_status = 2;
-        $user->save();
+      if($user){
+          $user->vendor_status = 2;
+          $user->save();
 
-        $log_activity = new SupplierActivity();
-        $log_activity->users_id = Auth::id();
-        $log_activity->supplier_id = $request->id;
-        $log_activity->activity = "Returned";
-        $log_activity->date = new \DateTime();
-        $log_activity->komentar = $request->reason;
-        $log_activity->save();
-      //$request->session()->flash('alert-success', 'Data berhasil disetujui!');
-      return Response::json(['status'=>true,'csrf_token'=>csrf_token()]);
+          $log_activity = new SupplierActivity();
+          $log_activity->users_id = Auth::id();
+          $log_activity->supplier_id = $request->id;
+          $log_activity->activity = "Returned";
+          $log_activity->date = new \DateTime();
+          $log_activity->komentar = $request->reason;
+          $log_activity->save();
+        return Response::json(['status'=>true,'csrf_token'=>csrf_token()]);
+      }
+      return Response::json(['status'=>false]);
     }
-    return Response::json(['status'=>false]);
-  }
-  abort(500);
-
+    abort(500);
   }
 }

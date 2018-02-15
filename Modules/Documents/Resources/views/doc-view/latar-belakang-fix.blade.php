@@ -144,6 +144,8 @@
           $title="BAK";
         }else if($dt->meta_name=="latar_belakang_bap"){
           $title="BAP";
+        }else if($dt->meta_name=="latar_belakang_lain"){
+          $title="Lainnya";
         }
       @endphp
 

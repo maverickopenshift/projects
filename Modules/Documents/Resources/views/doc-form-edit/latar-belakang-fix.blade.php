@@ -221,6 +221,7 @@
                   $b="";
                   $c="";
                   $d="";
+                  $e="";
 
                   if($f_latar_belakang_judul[$key]=="latar_belakang_surat_pengikatan"){
                     $a="selected";
@@ -237,12 +238,17 @@
                   if($f_latar_belakang_judul[$key]=="latar_belakang_bap"){
                     $d="selected";
                   }
+
+                  if($f_latar_belakang_judul[$key]=="latar_belakang_lain"){
+                    $e="selected";
+                  }
                 @endphp
                 <select class="form-control f_latar_belakang_judul select2" name="f_latar_belakang_judul[]" style="width: 100%;">
                   <option value="latar_belakang_surat_pengikatan" {{$a}}>No. Surat Pengikatan</option>
                   <option value="latar_belakang_mou" {{$b}}>No. Mou</option>
                   <option value="latar_belakang_bak" {{$c}}>BAK</option>
                   <option value="latar_belakang_bap" {{$d}}>BAP</option>
+                  <option value="latar_belakang_bap" {{$e}}>Lainnya</option>
                 </select>
               </div>
             </div>

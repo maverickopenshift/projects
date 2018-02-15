@@ -351,13 +351,12 @@ class SideLetterCreateController
       $rules['lt_file_kesanggupan_mitra']     = 'required|mimes:pdf';
       
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-      $validator->after(function ($validator) use ($request) {
+      $validator->after(function ($validator) use ($request, $type) {
         if($request->doc_enddate < $request->doc_startdate){
           $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
         }
       }); 
       if ($validator->fails ()){
-        //return redirect()->back()->withInput($request->input())->withErrors($validator);
         return Response::json (array(
           'errors' => $validator->getMessageBag()->toArray()
         ));
@@ -369,7 +368,6 @@ class SideLetterCreateController
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
       if ($validator->fails ()){
-      //return redirect()->back()->withInput($request->input())->withErrors($validator);
         return Response::json (array(
           'errors' => $validator->getMessageBag()->toArray()
         ));

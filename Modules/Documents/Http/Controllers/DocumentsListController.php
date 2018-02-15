@@ -72,7 +72,7 @@ class DocumentsListController extends Controller
         $documents = $documents->with(['pegawai','users','jenis','supplier','pic']);
         $documents = $documents->paginate($limit);
         $documents->getCollection()->transform(function ($value)use ($status_no) {
-          // dd($value);
+          
           $n_nik = $value->pegawai->n_nik;
           $v_nama_karyawan = $value->pegawai->v_nama_karyawan;
 
@@ -82,7 +82,7 @@ class DocumentsListController extends Controller
           $value['total_child']=0;
           $edit = '';
           if($value['doc_signing']==0 && \Laratrust::can('approve-kontrak')){
-            $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-eye"></i> LIHAT</a>';
+            $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-eye"></i> PERLU DI PROSES </a>';
           }
           else{
             $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-eye"></i> LIHAT</a>';

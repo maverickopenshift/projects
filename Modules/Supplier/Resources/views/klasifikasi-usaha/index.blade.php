@@ -51,7 +51,6 @@
   var datatablesMe;
   $(function() {
     datatablesMe = $('#datatables').on('xhr.dt', function ( e, settings, json, xhr ) {
-        //console.log(JSON.stringify(xhr));
         if(xhr.responseText=='Unauthorized.'){
           location.reload();
         }
@@ -61,7 +60,14 @@
         autoWidth : false,
         order : [[ 1, 'asc' ]],
         pageLength: 50,
-        ajax: '{!! route('supplier.klasifikasi.data') !!}',
+        //ajax: '{!! route('supplier.klasifikasi.data') !!}',
+        ajax: {
+            "url": "{!! route('supplier.klasifikasi.data') !!}",
+            "type": "POST",
+            'headers': {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+        },
         columns: [
             {data : 'DT_Row_Index',orderable:false,searchable:false},
             { data: 'kode', name: 'kode' },

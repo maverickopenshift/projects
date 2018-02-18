@@ -32,7 +32,7 @@
                         <span class="input-group-addon">%</span>
                       </div>
                     @else
-                      <input type="text" class="form-control" name="form[{{$dt->object_key}}]"  value="{{old($dt->object_key,$dt->object_value)}}">
+                      <input type="text" class="form-control" name="form[{{$dt->object_key}}]"  value="{{old($dt->object_key,$dt->object_value)}}"  style="width:200px;">
                     @endif
                   @endif
                   @if(!empty($dt->object_desc))

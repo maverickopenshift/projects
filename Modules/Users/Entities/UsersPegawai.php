@@ -23,6 +23,9 @@ class UsersPegawai extends Model
       if($type=='nonorganik'){
         $data->join('pegawai_nonorganik as pegawai', 'pegawai.n_nik', '=', 'users_pegawai.nik');
       }
+      else if($type=='subsidiary'){
+        $data->join('pegawai_subsidiary as pegawai', 'pegawai.n_nik', '=', 'users_pegawai.nik');
+      }
       else{
         $data->join('pegawai as pegawai', 'pegawai.n_nik', '=', 'users_pegawai.nik');
       }

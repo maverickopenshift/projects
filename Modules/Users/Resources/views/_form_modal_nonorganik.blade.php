@@ -39,7 +39,7 @@
                       <select class="form-control user_type_non" style="width: 100%;" name="user_type" id="user_type">
                         <option value="ubis">Ubis</option>
                         <option value="witel">Witel</option>
-                        <option value="subsidiary">Subsidiary</option>
+                        {{-- <option value="subsidiary">Subsidiary</option> --}}
                       </select>
                       <div class="error-user_type"></div>
                     </div>
@@ -58,11 +58,13 @@
                         <div class="error-select_unit"></div>
                     </div>
                     <div class="form-group subsidiary_oke">
-                        <label>Pilih Jabatan</label>
-                        <select class="form-control" style="width: 100%;" name="select_posisi" id="select_posisi">
+                        <label>Jabatan</label>
+                        <input type="text" id="jabatan" name="jabatan" value="" class="form-control" placeholder="Enter Jabatan..." autocomplete="off">
+                        {{-- <select class="form-control" style="width: 100%;" name="select_posisi" id="select_posisi">
                             <option value="">Pilih Jabatan</option>
-                        </select>
-                        <div class="error-select_posisi"></div>
+                        </select> --}}
+                        {{-- <div class="error-select_posisi"></div> --}}
+                        <div class="error-jabatan"></div>
                     </div>
                     <div class="form-group">
                         <div class="error-global"></div>
@@ -234,6 +236,7 @@
                   set_select2(modal.find('.modal-body select#select_divisi'),{id:data_other_pegawai.objiddivisi,text:data_other_pegawai.v_short_divisi});
                   set_select2(modal.find('.modal-body select#select_posisi'),{id:data_other_pegawai.objidposisi,text:data_other_pegawai.v_short_posisi});
                   set_select2(modal.find('.modal-body select#select_unit'),{id:data_other_pegawai.objidunit,text:data_other_pegawai.v_short_unit});
+                  modal.find('.modal-body input#jabatan').val(data_other_pegawai.v_short_posisi)
                 }
                 else{
                   $('.subsidiary_oke').hide();
@@ -253,6 +256,7 @@
                 modal.find('.modal-body input#username').val('')
                 modal.find('.modal-body input#email').val('')
                 modal.find('.modal-body input#phone').val('')
+                modal.find('.modal-body input#jabatan').val('')
                 modal.find('.modal-body select#roles').val('')
                 modal.find('.modal-body select#user_pgs').val('no')
                 modal.find('.modal-body select#pgs_roles').val('')
@@ -297,6 +301,7 @@
                     phone    : formMe.find('.error-phone'),
                     email    : formMe.find('.error-email'),
                     password : formMe.find('.error-password'),
+                    jabatan : formMe.find('.error-jabatan'),
                     password_confirmation : formMe.find('.error-password_confirmation'),
                     roles    : formMe.find('.error-roles'),
                     user_type    : formMe.find('.error-user_type'),
@@ -340,6 +345,8 @@
             attError.pgs_unit.parent().removeClass('has-error')
             attError.pgs_jabatan.html('')
             attError.pgs_jabatan.parent().removeClass('has-error')
+            attError.jabatan.html('')
+            attError.jabatan.parent().removeClass('has-error')
             attError.pgs_roles.html('')
             attError.pgs_roles.parent().removeClass('has-error')
             var btnSave = formMe.find('.btn-save')
@@ -392,6 +399,10 @@
                         if(_response.errors.select_posisi){
                             attError.select_posisi.html('<span class="text-danger">'+_response.errors.select_posisi+'</span>');
                             attError.select_posisi.parent().addClass('has-error')
+                        }
+                        if(_response.errors.jabatan){
+                            attError.jabatan.html('<span class="text-danger">'+_response.errors.jabatan+'</span>');
+                            attError.jabatan.parent().addClass('has-error')
                         }
                         if(_response.errors.non_user_approver){
                             attError.non_user_approver.html('<span class="text-danger">'+_response.errors.non_user_approver+'</span>');

@@ -78,6 +78,7 @@
               <ul class="treeview-menu">
                 @permission('lihat-user')
                   <li class="{{Request::is("users")?'active':''}}" ><a href="{{route('users')}}">Users</a></li>
+                  <li class="{{Request::is("users/subsidiary-telkom")?'active':''}}" ><a href="{{route('users.subsidiary-telkom')}}">Subsidiary Telkom</a></li>
                 @endpermission
 
                 @permission('lihat-role')

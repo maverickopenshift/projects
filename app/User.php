@@ -177,6 +177,9 @@ class User extends Authenticatable
       else if(self::is_nonorganik($username)){
         return 'nonorganik';
       }
+      else if(self::is_subsidiary($username)){
+        return 'subsidiary';
+      }
       else{
         return 'anonimouse';
       }

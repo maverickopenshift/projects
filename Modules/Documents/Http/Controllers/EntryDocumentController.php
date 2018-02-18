@@ -283,6 +283,9 @@ class EntryDocumentController extends Controller
             if($request->doc_enddate < $request->doc_startdate){
               $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
             }
+            if(Config::get_config('auto-numb')=='off'){
+              $validator->errors()->add('doc_no', 'Test');
+            }
         });
 
         $request->merge(['doc_value' => $doc_value]);
@@ -634,7 +637,7 @@ class EntryDocumentController extends Controller
         $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
         
         if(Config::get_config('auto-numb')=='off'){
-          $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
+          $rules['doc_no']  =  'required|min:1|max:500|unique:documents,doc_no';
         }
         
         if($type!='khs'){
@@ -731,7 +734,13 @@ class EntryDocumentController extends Controller
 
             if($request->doc_enddate < $request->doc_startdate){
               $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
-            }        
+            }
+            if(Config::get_config('auto-numb')=='off'){
+              $db = Documents::check_no_kontrak($request->doc_no,'telkom');
+              if($db){
+                $validator->errors()->add('doc_no', 'No Kontrak sudah ada!');
+              }
+            }
         });
 
         $request->merge(['doc_value' => $doc_value]);

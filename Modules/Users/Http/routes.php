@@ -13,7 +13,20 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'users', 'namespace' =
     Route::post('/store/{type}', ['middleware' => ['permission:tambah-user'],'uses' => 'UsersController@store'])->name('users.store');
     Route::post('/add-nonorganik', ['middleware' => ['permission:tambah-user'],'uses' => 'UsersController@addNonorganik'])->name('users.addnonorganik');
     Route::delete('/delete', ['middleware' => ['permission:hapus-user'],'uses' => 'UsersController@delete'])->name('users.delete');
+    
+    Route::post('/add-subsidiary', ['middleware' => ['permission:tambah-user'],'uses' => 'SubsidiaryTelkomController@addUser'])->name('users.add-subsidiary');
+      Route::post('/update-subsidiary', ['middleware' => ['permission:ubah-user'],'uses' => 'SubsidiaryTelkomController@updateUser'])->name('users.update-subsidiary');
+    
+    Route::get('/subsidiary-telkom', ['middleware' => ['permission:lihat-user'],'uses' => 'SubsidiaryTelkomController@index'])->name('users.subsidiary-telkom');
+    
+    Route::post('/subsidiary-telkom/data', ['middleware' => ['permission:lihat-user'],'uses' => 'SubsidiaryTelkomController@data'])->name('users.subsidiary-telkom.data');
+    Route::post('/subsidiary-telkom/add', ['middleware' => ['permission:tambah-user'],'uses' => 'SubsidiaryTelkomController@add'])->name('users.subsidiary-telkom.add');
+    Route::post('/subsidiary-telkom/update', ['middleware' => ['permission:ubah-user'],'uses' => 'SubsidiaryTelkomController@update'])->name('users.subsidiary-telkom.update');
+    Route::delete('/subsidiary-telkom/delete', ['middleware' => ['permission:hapus-user'],'uses' => 'SubsidiaryTelkomController@delete'])->name('users.subsidiary-telkom.delete');
+    
     Route::get('/get-select-user-telkom', 'UsersController@getSelectUserTelkom')->name('users.get-select-user-telkom');
+    Route::get('/get-select-user-subsidiary', 'UsersController@getSelectUserSubsidiary')->name('users.get-select-user-subsidiary');
+    Route::get('/get-select-subsidiary', 'SubsidiaryTelkomController@getSelect')->name('users.subsidiary-telkom.get-select');
     Route::get('/get-select-user-telkom-by-nik', 'UsersController@getSelectUserTelkomByNik')->name('users.get-select-user-telkom-by-nik');
     Route::get('/get-select-user-vendor', 'UsersController@getSelectUserVendor')->name('users.get-select-user-vendor');
     Route::get('/get-select-konseptor', 'UsersController@getSelectKonseptor')->name('users.get-select-konseptor');

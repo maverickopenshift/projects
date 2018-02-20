@@ -488,7 +488,7 @@ class AmandemenKontrakTurnkeyEditController extends Controller
       $request->merge(['hs_qty'=>$m_hs_qty]);
     }
 
-    if(in_array($status,['0','2','3','1'])){
+    if(in_array($status,['0','2'])){
       $rules['doc_title']        =  'required|min:2';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
@@ -536,41 +536,43 @@ class AmandemenKontrakTurnkeyEditController extends Controller
     $rules['scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
     $rules['scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
-    foreach($request->scope_file_old as $k => $v){
-      if(isset($request->scope_file[$k]) && is_object($request->scope_file[$k]) && !empty($v)){//jika ada file baru
-        $new_scope_file[] = '';
-        $new_scope_file_up[] = $request->scope_file[$k];
-        $rules['scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
-      }
-      else if(empty($v)){
-        $rules['scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
-        if(!isset($request->scope_file[$k])){
+    if(count($request->scope_file_old)>0){
+      foreach($request->scope_file_old as $k => $v){
+        if(isset($request->scope_file[$k]) && is_object($request->scope_file[$k]) && !empty($v)){//jika ada file baru
+          $new_scope_file[] = '';
+          $new_scope_file_up[] = $request->scope_file[$k];
+          $rules['scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
+        }
+        else if(empty($v)){
+          $rules['scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
+          if(!isset($request->scope_file[$k])){
+            $new_scope_file[] = $v;
+            $new_scope_file_up[] = $v;
+          }
+          else{
+            $new_scope_file[] = '';
+            $new_scope_file_up[] = $request->scope_file[$k];
+          }
+        }
+        else{
           $new_scope_file[] = $v;
           $new_scope_file_up[] = $v;
         }
-        else{
-          $new_scope_file[] = '';
-          $new_scope_file_up[] = $request->scope_file[$k];
-        }
       }
-      else{
-        $new_scope_file[] = $v;
-        $new_scope_file_up[] = $v;
-      }
+      $request->merge(['scope_file' => $new_scope_file]);
     }
-    $request->merge(['scope_file' => $new_scope_file]);
 
     $rules['lt_judul_ketetapan_pemenang']     = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
     $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
     if($request->lt_file_ketetapan_pemenang_old==null){
       $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
-    }   
+    }
 
     $rules['lt_judul_kesanggupan_mitra']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
     $rules['lt_tanggal_kesanggupan_mitra']  = 'required|date_format:"Y-m-d"';
     if($request->lt_file_kesanggupan_mitra_old==null){
       $rules['lt_file_kesanggupan_mitra']      = 'required|mimes:pdf';
-    } 
+    }
 
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
     $validator->after(function ($validator) use ($request) {
@@ -578,7 +580,7 @@ class AmandemenKontrakTurnkeyEditController extends Controller
         $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
       }
     });
-    
+
     if ($validator->fails ()){
       //return redirect()->back()->withInput($request->input())->withErrors($validator);
       return Response::json (array(
@@ -586,8 +588,8 @@ class AmandemenKontrakTurnkeyEditController extends Controller
       ));
     }
 
-    if(in_array($status,['0','2','3','1'])){
-      $doc = Documents::where('id',$id)->first(); 
+    if(in_array($status,['0','2'])){
+      $doc = Documents::where('id',$id)->first();
       $doc->doc_title = $request->doc_title;
       $doc->doc_date = $request->doc_startdate;
       $doc->doc_startdate = $request->doc_startdate;
@@ -606,29 +608,37 @@ class AmandemenKontrakTurnkeyEditController extends Controller
       $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
       $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
       $doc->save();
+    }else{
+      //kalo dokumennya di return/ di approve dan di edit datanya (status = 3 & 1)
+      $doc = Documents::where('id',$id)->first();
+      $doc->doc_signing = '0';
+      $doc->doc_sow = $request->doc_sow;
+      $doc->save();
     }
 
-    if(count($new_lamp_up)>0){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','lampiran_ttd']
-        ])->delete();
-      foreach($new_lamp_up as $key => $val){
-        if(!empty($val)){
-          $doc_meta = new DocMeta();
-          $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'lampiran_ttd';
-          $doc_meta->meta_name = $request['doc_lampiran_nama'][$key];
-          if(is_object($val)){
-            $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
-            $file = $request['doc_lampiran'][$key];
-            $file->storeAs('document/'.$request->type.'_lampiran_ttd', $fileName);
-            $doc_meta->meta_file = $fileName;
+    if(in_array($status,['0','2'])){
+      if(count($new_lamp_up)>0){
+        DocMeta::where([
+          ['documents_id','=',$doc->id],
+          ['meta_type','=','lampiran_ttd']
+          ])->delete();
+        foreach($new_lamp_up as $key => $val){
+          if(!empty($val)){
+            $doc_meta = new DocMeta();
+            $doc_meta->documents_id = $doc->id;
+            $doc_meta->meta_type = 'lampiran_ttd';
+            $doc_meta->meta_name = $request['doc_lampiran_nama'][$key];
+            if(is_object($val)){
+              $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
+              $file = $request['doc_lampiran'][$key];
+              $file->storeAs('document/'.$request->type.'_lampiran_ttd', $fileName);
+              $doc_meta->meta_file = $fileName;
+            }
+            else{
+              $doc_meta->meta_file = $val;
+            }
+            $doc_meta->save();
           }
-          else{
-            $doc_meta->meta_file = $val;
-          }
-          $doc_meta->save();
         }
       }
     }
@@ -688,7 +698,7 @@ class AmandemenKontrakTurnkeyEditController extends Controller
         ])->delete();
       foreach($request->f_latar_belakang_judul as $key => $val){
         if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
-          
+
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = "latar_belakang_optional";

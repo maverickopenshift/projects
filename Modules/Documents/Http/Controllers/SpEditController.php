@@ -480,6 +480,7 @@ class SpEditController extends Controller
 
     public function store_ajax($request)
     {
+      // dd("haoi");
       $type = $request->type;
       $id = $request->id;
       $status = Documents::where('id',$id)->first()->doc_signing;
@@ -524,7 +525,7 @@ class SpEditController extends Controller
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
-        
+
         if( Config::get_config('auto-numb')=='off'){
           $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
         }
@@ -587,7 +588,7 @@ class SpEditController extends Controller
       $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
       if($request->lt_file_ketetapan_pemenang_old==null){
         $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
-      }   
+      }
 
       $rules['lt_judul_kesanggupan_mitra']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['lt_tanggal_kesanggupan_mitra']  = 'required|date_format:"Y-m-d"';
@@ -597,8 +598,8 @@ class SpEditController extends Controller
 
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
-      $validator->after(function ($validator) use ($request) {
-        if (!isset($request['pic_nama'][0])) {
+      $validator->after(function ($validator) use ($request,$status) {
+        if (!isset($request['pic_nama'][0]) && in_array($status,['0','2'])) {
             $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
         }
 
@@ -619,7 +620,7 @@ class SpEditController extends Controller
           'errors' => $validator->getMessageBag()->toArray()
         ));
       }
-
+// dd("hai");
       if(in_array($status,['0','2'])){
         $doc = Documents::where('id',$id)->first();
         $doc->doc_title = $request->doc_title;
@@ -819,7 +820,7 @@ class SpEditController extends Controller
           ])->delete();
         foreach($request->f_latar_belakang_judul as $key => $val){
           if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
-            
+
             $doc_meta = new DocMeta();
             $doc_meta->documents_id = $doc->id;
             $doc_meta->meta_type = "latar_belakang_optional";

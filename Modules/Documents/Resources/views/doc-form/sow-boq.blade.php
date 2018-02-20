@@ -107,7 +107,7 @@
               </td>
               <td class="formerror formerror-hs_mtu-0">
                 <select name="hs_mtu[]" class="form-control" style="width: 100%;">
-                  <option value="RP">RP</option>
+                  <option value="IDR">IDR</option>
                   <option value="USD">USD</option>
                 </select>
                 <div class="error error-hs_mtu error-hs_mtu-0"></div>
@@ -170,15 +170,6 @@ $(function() {
     // $('.btn_submit').click();
     event.stopPropagation();
     event.preventDefault();
-<<<<<<< HEAD
-=======
-    var validfile = [".csv", ".xls", ".xlsx"];
-    var namefile = $('.daftar_harga').val().split('\\').pop();
-    var valid = 0;
-
-    for (var i = 0; i < validfile.length; i++) {
-      var validfilex=validfile[i];
->>>>>>> 3008a169a614dd55659f6b2613c9e1e74e9fccbc
 
     var loading = $('.loading2');
     var form_user =  $('#form_me_boq');
@@ -195,17 +186,9 @@ $(function() {
     if(data.status){
       handleDaftarHargaFileSelect(data);
     }
-<<<<<<< HEAD
     else{
       $('.error-daftar_harga').html('Format File tidak valid!');
         return false;
-=======
-
-    if(valid==1){
-      handleDaftarHargaFileSelect(this.files[0]);
-    }else{
-      $('.error-daftar_harga').html('Format File tidak valid! hanya CSV, XLS & XLXS yang valid');
->>>>>>> 3008a169a614dd55659f6b2613c9e1e74e9fccbc
     }
     loading.hide();
     })
@@ -381,10 +364,10 @@ function templateHS(dt,index) {
   @php
     if($doc_type->name!='khs'){
       echo "qty = '<td>\
-          <input type=\"text\" class=\"form-control input-rupiah hitung_total\" name=\"hs_qty[]\" value=\"'+data.QTY+'\" />\
+          <input type=\"text\" class=\"form-control input-rupiah hitung_total\" name=\"hs_qty[]\" value=\"'+dt.qty+'\" />\
           <div class=\"error error-hs_qty\"></div>\
           </td>';";
-      echo "harga_total = (data.HARGA+data.HARGA_JASA)*data.QTY;";
+      echo "harga_total = (dt.harga+dt.harga_jasa)*dt.qty;";
       echo "harga_total = '<td style=\"vertical-align: middle;\" class=\"text-right\">'+formatRupiah(harga_total.toString())+'</td>';";
     }
   @endphp
@@ -392,16 +375,16 @@ function templateHS(dt,index) {
   return '<tr>\
     <td>'+(index+1)+'</td>\
     <td>\
-      <input type="text" class="form-control" name="hs_kode_item[]" value="'+data.KODE_ITEM+'" />\
+      <input type="text" class="form-control" name="hs_kode_item[]" value="'+dt.kode_item+'" />\
       <div class="error error-hs_kode_item"></div>\
     </td>\
     <td>\
-      <input type="text" class="form-control" name="hs_item[]" value="'+data.ITEM+'" />\
+      <input type="text" class="form-control" name="hs_item[]" value="'+dt.item+'" />\
       <div class="error error-hs_item"></div>\
     </td>\
       '+qty+'\
     <td>\
-      <input type="text" class="form-control" name="hs_satuan[]" value="'+data.SATUAN+'" />\
+      <input type="text" class="form-control" name="hs_satuan[]" value="'+dt.satuan+'" />\
       <div class="error error-hs_satuan"></div>\
     </td>\
     <td>\
@@ -412,16 +395,16 @@ function templateHS(dt,index) {
       <div class="error error-hs_mtu"></div>\
     </td>\
     <td>\
-      <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga[]" value="'+formatRupiah(data.HARGA)+'" />\
+      <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga[]" value="'+formatRupiah(dt.harga)+'" />\
       <div class="error error-hs_harga"></div>\
     </td>\
     <td>\
-      <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga_jasa[]" value="'+formatRupiah(data.HARGA_JASA)+'" />\
+      <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga_jasa[]" value="'+formatRupiah(dt.harga_jasa)+'" />\
       <div class="error error-hs_harga_jasa"></div>\
     </td>\
       '+harga_total+'\
     <td>\
-      <input type="text" class="form-control" name="hs_keterangan[]" value="'+data.KETERANGAN+'" />\
+      <input type="text" class="form-control" name="hs_keterangan[]" value="'+dt.keterangan+'" />\
     </td>\
     <td class="action"></td>\
   </tr>';

@@ -40,7 +40,7 @@ class AmandemenSpCreateController
     $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
     $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-    
+
     if(Config::get_config('auto-numb')=='off'){
       $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
     }
@@ -332,6 +332,9 @@ class AmandemenSpCreateController
     $type = $request->type;
     $rules = [];
     if($request->statusButton == '0'){
+    $rules['komentar']         = 'required|max:250|min:2';
+    $rules['divisi']           =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+    $rules['unit_bisnis']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
     $rules['doc_title']        =  'required|min:2';
     $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
     $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
@@ -340,7 +343,7 @@ class AmandemenSpCreateController
     $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_pihak2_nama']  =  'required|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-    
+
     if(Config::get_config('auto-numb')=='off'){
       $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
     }
@@ -377,7 +380,7 @@ class AmandemenSpCreateController
       $rules['scope_awal.*']  =  $rule_scope_awal.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['scope_akhir.*']  =  $rule_scope_akhir.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
-      
+
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
@@ -436,6 +439,16 @@ class AmandemenSpCreateController
       $doc->doc_no = $request->doc_no;
     }
     $doc->save();
+
+    //pemilik Kontrak
+    if(count($request->divisi)>0){
+      $doc_meta2 = new DocMeta();
+      $doc_meta2->documents_id = $doc->id;
+      $doc_meta2->meta_type = 'pemilik_kontrak';
+      $doc_meta2->meta_name = $request->divisi;
+      $doc_meta2->meta_title =$request->unit_bisnis;
+      $doc_meta2->save();
+    }
 
     if(count($request->f_judul)>0){
       foreach($request->f_judul as $key => $val){
@@ -522,7 +535,7 @@ class AmandemenSpCreateController
     if(count($request->f_latar_belakang_judul)>0){
       foreach($request->f_latar_belakang_judul as $key => $val){
         if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
-          
+
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = "latar_belakang_optional";

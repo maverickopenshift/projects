@@ -127,39 +127,38 @@
             <a class="btn btn-info btnPrevious" ><i class="glyphicon glyphicon-arrow-left"></i> Kembali</a>
             <a class="btn btn-info btnNext pull-right" >Selanjutnya <i class="glyphicon glyphicon-arrow-right"></i></a>
           </div>
-        </div>
-        <!-- /.tab-content -->
-        <div class="row">
-          <div class="col-md-12">
-            <div class="box box-primary direct-chat direct-chat-primary">
-              <div class="box-header with-border">
-                <i class="fa fa-comments-o"></i>
-                <h3 class="box-title">Comments</h3>
-                <div class="box-tools pull-right">
-                  <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                          </button>
-                </div>
-              </div><!-- /.box-header -->
-              <div class="box-body relative komentar {{ $errors->has('komentar') ? ' has-error' : '' }}">
-                  <div class="loading-ao"></div>
-                  <div id="alertBS"></div>
-                  <textarea class="form-control comment" rows="4" placeholder="Masukan Komentar" name="komentar">{{ old('komentar') }}</textarea>
-                  @if ($errors->has('komentar'))
-                      <span class="help-block col-sm-2">
-                          <strong>{{ $errors->first('komentar') }}</strong>
-                      </span>
-                  @endif
-              </div><!-- /.box-body -->
-            </div><!--/.direct-chat -->
-          </div>
-        </div>
+        </div>  <!-- /.tab-content -->
       </div>
-  </form>
-  <form id="form_me_boq" action="{{route('doc.upload.hs')}}" method="post" enctype="multipart/form-data">
-    {{ csrf_field() }}
-    <input type="file" name="daftar_harga" class="daftar_harga hide" accept=".csv,.xls,.xlsx">
-    <input type="text" name="type" class="hide" value="{{$doc_type->name}}">
-  </form>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="box box-primary direct-chat direct-chat-primary">
+          <div class="box-header with-border">
+            <i class="fa fa-comments-o"></i>
+            <h3 class="box-title">Comments</h3>
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                      </button>
+            </div>
+          </div><!-- /.box-header -->
+          <div class="box-body relative komentar formerror formerror-komentar">
+              <div class="loading-ao"></div>
+              <div id="alertBS"></div>
+              <textarea class="form-control comment" rows="4" placeholder="Masukan Komentar" name="komentar">{{ old('komentar') }}</textarea>
+              <div class="col-sm-10">
+              <strong><div class="error error-komentar"></div></strong>
+              </div>
+          </div><!-- /.box-body -->
+        </div><!--/.direct-chat -->
+      </div>
+    </div>
+  </div>
+</form>
+<form id="form_me_boq" action="{{route('doc.upload.hs')}}" method="post" enctype="multipart/form-data">
+  {{ csrf_field() }}
+  <input type="file" name="daftar_harga" class="daftar_harga hide" accept=".csv,.xls,.xlsx">
+  <input type="text" name="type" class="hide" value="{{$doc_type->name}}">
+</form>
 @endsection
 @push('scripts')
 <script>
@@ -201,43 +200,39 @@ $(function () {
       },
       callback: function (result) {
         if(result){
-                  $.ajax({
-                    url: formMe.attr('action'),
-                    type: 'post',
-                    processData: false,
-                    contentType: false,
-                    data: new FormData(document.getElementById("form-kontrak")),
-                    dataType: 'json',
-                    success: function(response){
-                      if(response.errors){
-                        $.each(response.errors, function(index, value){
-                            if (value.length !== 0){
-                              index = index.replace(".", "-");
-                              $(".formerror-"+ index).removeClass("has-error");
-                              $(".error-"+ index).html('');
+          $.ajax({
+            url: formMe.attr('action'),
+            type: 'post',
+            processData: false,
+            contentType: false,
+            data: new FormData(document.getElementById("form-kontrak")),
+            dataType: 'json',
+            success: function(response){
+              if(response.errors){
+                $.each(response.errors, function(index, value){
+                    if (value.length !== 0){
+                      index = index.replace(".", "-");
+                      $(".formerror-"+ index).removeClass("has-error");
+                      $(".error-"+ index).html('');
 
-                              $(".formerror-"+ index).addClass("has-error");
-                              $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
-                            }
-                        });
-
-                        bootbox.alert({
-                          title:"Pemberitahuan",
-                          message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
-                        });
-                      }else{
-                        if(response.status=="tracking"){
-                          window.location.href = "{{route('doc',['status'=>'tracking'])}}";
-                        }else if(response.status=="draft"){
-                          window.location.href = "{{route('doc',['status'=>'draft'])}}";
-                        }
-                      }
+                      $(".formerror-"+ index).addClass("has-error");
+                      $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
                     }
-                  });
+                });
 
-                ////// end ajax
+                bootbox.alert({
+                  title:"Pemberitahuan",
+                  message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
+                });
+              }else{
+                if(response.status=="tracking"){
+                  window.location.href = "{{route('doc',['status'=>'tracking'])}}";
+                }else if(response.status=="draft"){
+                  window.location.href = "{{route('doc',['status'=>'draft'])}}";
+                }
               }
             }
+          });
         }
       }
     });

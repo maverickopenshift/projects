@@ -11,7 +11,6 @@ use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocActivity;
 use Modules\Config\Entities\Config;
 use Modules\Documents\Entities\DocComment as Comments;
-use Modules\Config\Entities\Config;
 use App\Helpers\Helpers;
 use Validator;
 use DB;
@@ -307,6 +306,9 @@ class AmandemenKontrakCreateController
     $rules = [];
 
     if($request->statusButton == '0'){
+      $rules['komentar']         = 'required|max:250|min:2';
+      $rules['divisi']           =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      $rules['unit_bisnis']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['doc_title']        =  'required|min:2';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
@@ -324,7 +326,7 @@ class AmandemenKontrakCreateController
       }
 
       $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      $check_new_lampiran = false;      
+      $check_new_lampiran = false;
       foreach($request->doc_lampiran_old as $k => $v){
         if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
           $new_lamp[] = '';
@@ -357,7 +359,7 @@ class AmandemenKontrakCreateController
       $rules['scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      
+
       $rules['lt_judul_ketetapan_pemenang']     = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
       $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
@@ -407,6 +409,16 @@ class AmandemenKontrakCreateController
     $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
     $doc->doc_signing = $request->statusButton;
     $doc->save();
+
+    //pemilik Kontrak
+    if(count($request->divisi)>0){
+      $doc_meta2 = new DocMeta();
+      $doc_meta2->documents_id = $doc->id;
+      $doc_meta2->meta_type = 'pemilik_kontrak';
+      $doc_meta2->meta_name = $request->divisi;
+      $doc_meta2->meta_title =$request->unit_bisnis;
+      $doc_meta2->save();
+    }
 
     if(count($request->f_judul)>0){
       foreach($request->f_judul as $key => $val){
@@ -492,7 +504,7 @@ class AmandemenKontrakCreateController
     if(count($request->f_latar_belakang_judul)>0){
       foreach($request->f_latar_belakang_judul as $key => $val){
         if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
-          
+
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = "latar_belakang_optional";
@@ -509,7 +521,7 @@ class AmandemenKontrakCreateController
         }
       }
     }
-    
+
     if(count($request->scope_pasal)>0){
       foreach($request->scope_pasal as $key => $val){
         if(!empty($val)

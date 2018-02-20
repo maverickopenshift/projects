@@ -143,6 +143,28 @@ class Documents extends Model
       $peg = Pegawai::select('c_kode_unit')->where('n_nik','=',$doc->doc_pihak1_nama)->first();
       return $peg->c_kode_unit;
     }
+    public static function check_no_kontrak($doc_no,$user_type='telkom'){
+      $dt = \DB::table('documents');
+      if($user_type='telkom'){
+        $dt = $dt->selectRaw('documents.*,CONVERT(SUBSTR(doc_no,7,5),UNSIGNED INTEGER) as no_urut,RIGHT(doc_no,4) as tahun')
+                  ->whereRaw('CONVERT(SUBSTR(doc_no,7,5),UNSIGNED INTEGER) = ? ', [$doc_no])
+                  ->whereRaw('RIGHT(doc_no,4) = ? ', [date('Y')])
+                  ->whereRaw('doc_user_type = ? ', ['telkom'])
+                  ->whereRaw('doc_no is not null')
+                  ->orderByRaw('no_urut', 'desc');
+      }
+      else{
+        $dt = $dt->whereRaw('doc_no = ? ', [$doc_no])
+                 ->whereRaw('doc_user_type = ? ', ['subsidiary'])
+                 ->orderBy('id', 'desc');
+      }      
+      return $dt->first();
+    }
+    // $dt = $dt->selectRaw('documents.*,CONVERT(SUBSTR(doc_no,7,5),UNSIGNED INTEGER) as no_urut,RIGHT(doc_no,4) as tahun')
+    //           ->whereRaw('tahun = ? ', [date('Y')])
+    //           ->whereRaw('doc_user_type = ? ', ['telkom'])
+    //           ->whereRaw('doc_no is not null')
+    //           ->orderBy('id', 'desc')
     public static function create_no_kontrak($template_id,$doc_id){
       $loker = self::get_loker($doc_id);
       $doc = \DB::table('documents')->where('id',$doc_id)->first();

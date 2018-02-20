@@ -653,17 +653,24 @@
         });
     });
     function selectUser(attr,divisi,v_band_posisi) {
+      var urlnya = '{!! route('users.get-select-user-telkom') !!}';
+      var others = '';
+      if(attr == '#subsidiary_user_atasan'){
+        urlnya = '{!! route('users.get-select-user-subsidiary') !!}';
+        others = divisi;
+      }
       $(attr).select2().select2({
           placeholder : "Pilih PIC....",
           dropdownParent: $(attr).parent(),
           ajax: {
-              url: '{!! route('users.get-select-user-telkom') !!}',
+              url: urlnya,
               dataType: 'json',
               delay: 350,
               data: function (params) {
                   var datas =  {
                       q: params.term, // search term
-                      page: params.page
+                      page: params.page,
+                      subsidiary_id:others
                   };
                   console.log(divisi+v_band_posisi);
                   // if(divisi!==undefined && v_band_posisi!==undefined){

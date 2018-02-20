@@ -16,6 +16,7 @@ class ConfigDatabaseSeeder extends Seeder
     public function run()
     {
         Model::unguard();
-        $this->call(ConfigTableSeeder::class);
+        //$this->call(ConfigTableSeeder::class);
+        $this->call(NewConfigTableSeeder::class);
     }
 }

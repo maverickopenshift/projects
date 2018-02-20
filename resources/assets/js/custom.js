@@ -135,13 +135,13 @@ $(function(e){
         });
     }
     if(jqxhr.status==500) {
-      swal(
-          'Oops...',
-          'Ada sesuatu yg salah',
-          'error'
-        ).then(function(value){
-          window.location.reload();
-        });
+      // swal(
+      //     'Oops...',
+      //     'Ada sesuatu yg salah',
+      //     'error'
+      //   ).then(function(value){
+      //     window.location.reload();
+      //   });
     }
     if(jqxhr.status==401) {
       if(jqxhr.responseJSON.error=='Unauthenticated'){

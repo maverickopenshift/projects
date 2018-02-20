@@ -7,13 +7,7 @@
           <div class="btn-group" role="group" aria-label="...">
             @if(\Auth::user()->hasPermission('tambah-user'))
               <button type="button" class="btn btn-default" data-toggle="modal" data-target="#form-modal" data-title="Add"  data-backdrop="static" data-keyboard="false">
-                  <i class="glyphicon glyphicon-plus"></i> Tambah User
-              </button>
-              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#form-modal-nonorganik" data-title="Add"  data-backdrop="static" data-keyboard="false">
-                  <i class="glyphicon glyphicon-plus"></i> Tambah User Non-Organik
-              </button>
-              <button type="button" class="btn btn-default" data-toggle="modal" data-target="#form-modal-subsidiary" data-title="Add"  data-backdrop="static" data-keyboard="false">
-                  <i class="glyphicon glyphicon-plus"></i> Tambah User Subsidiary
+                  <i class="glyphicon glyphicon-plus"></i> Tambah
               </button>
             @endif
           </div>
@@ -38,14 +32,11 @@
             <thead>
             <tr>
                 <th width="20">No.</th>
-                <th width="200">Name</th>
-                <th width="100">Username</th>
-                <th width="200">Email</th>
-                <th width="100">Phone</th>
+                <th width="250">Name</th>
+                <th width="350">Address</th>
+                <th width="150">Phone</th>
                 <th width="100">Created At</th>
                 <th width="100">Updated At</th>
-                <th width="100">Roles</th>
-                <th width="100">Type</th>
                 <th width="100">Action</th>
             </tr>
             </thead>
@@ -53,10 +44,7 @@
     </div>
 <!-- /.box-body -->
 </div>
-@include('users::_form_modal')
-@include('users::_form_modal_nonorganik')
-@include('users::_form_modal_user_subsidiary')
-@include('users::_form_modal_edit')
+@include('users::_form_modal_subsidiary_telkom')
 @endsection
 @push('css')
   <style>
@@ -85,9 +73,9 @@ $(function() {
       // },
       order : [[ 5, 'desc' ]],
       pageLength: 50,
-      //ajax: '{!! route('users.data') !!}',
+      //ajax: '{!! route('users.subsidiary-telkom.data') !!}',
       ajax: {
-          "url": "{!! route('users.data') !!}",
+          "url": "{!! route('users.subsidiary-telkom.data') !!}",
           "type": "POST",
           'headers': {
               'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -96,13 +84,10 @@ $(function() {
       columns: [
           {data : 'DT_Row_Index',orderable:false,searchable:false},
           { data: 'name', name: 'name' },
-          { data: 'username', name: 'username' },
-          { data: 'email', name: 'email' },
+          { data: 'address', name: 'address' },
           { data: 'phone', name: 'phone' },
           { data: 'created_at', name: 'created_at' },
           { data: 'updated_at', name: 'updated_at' },
-          {data: 'role_name', name: 'roles.name'},
-          {data: 'type', name: 'type',orderable:false,searchable:false},
           { data: 'action', name: 'action',orderable:false,searchable:false }
       ]
   });

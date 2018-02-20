@@ -10,6 +10,7 @@ use Modules\Documents\Entities\DocType;
 use Modules\Documents\Entities\Documents;
 use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
+use Modules\Documents\Entities\DocMetaSideLetter;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Config\Entities\Config;
@@ -385,6 +386,7 @@ class AmandemenKontrakEditController extends Controller
     $rules = [];
 
     if(in_array($status,['0','2','3','1'])){
+      $rules['parent_kontrak']   =  'required|kontrak_exists';
       $rules['doc_title']        =  'required|min:2';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
@@ -427,28 +429,28 @@ class AmandemenKontrakEditController extends Controller
       $request->merge(['doc_lampiran' => $new_lamp]);
     }
 
-    $rule_scope_pasal = (count($request['scope_pasal'])>1)?'required':'sometimes|nullable';
-    $rule_scope_judul = (count($request['scope_judul'])>1)?'required':'sometimes|nullable';
+    $rule_scope_pasal = (count($request['f_scope_pasal'])>1)?'required':'sometimes|nullable';
+    $rule_scope_judul = (count($request['f_scope_judul'])>1)?'required':'sometimes|nullable';
     $rule_scope_isi = (count($request['scope_isi'])>1)?'required':'sometimes|nullable';
-    $rules['scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-    $rules['scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['f_scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['f_scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['f_scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
-    foreach($request->scope_file_old as $k => $v){
-      if(isset($request->scope_file[$k]) && is_object($request->scope_file[$k]) && !empty($v)){//jika ada file baru
+    foreach($request->f_scope_file_old as $k => $v){
+      if(isset($request->f_scope_file[$k]) && is_object($request->f_scope_file[$k]) && !empty($v)){//jika ada file baru
         $new_scope_file[] = '';
-        $new_scope_file_up[] = $request->scope_file[$k];
-        $rules['scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
+        $new_scope_file_up[] = $request->f_scope_file[$k];
+        $rules['f_scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
       }
       else if(empty($v)){
-        $rules['scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
-        if(!isset($request->scope_file[$k])){
+        $rules['f_scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
+        if(!isset($request->f_scope_file[$k])){
           $new_scope_file[] = $v;
           $new_scope_file_up[] = $v;
         }
         else{
           $new_scope_file[] = '';
-          $new_scope_file_up[] = $request->scope_file[$k];
+          $new_scope_file_up[] = $request->f_scope_file[$k];
         }
       }
       else{
@@ -456,19 +458,7 @@ class AmandemenKontrakEditController extends Controller
         $new_scope_file_up[] = $v;
       }
     }
-    $request->merge(['scope_file' => $new_scope_file]);
-
-    $rules['lt_judul_ketetapan_pemenang']     = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-    $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
-    if($request->lt_file_ketetapan_pemenang_old==null){
-      $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
-    }   
-
-    $rules['lt_judul_kesanggupan_mitra']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-    $rules['lt_tanggal_kesanggupan_mitra']  = 'required|date_format:"Y-m-d"';
-    if($request->lt_file_kesanggupan_mitra_old==null){
-      $rules['lt_file_kesanggupan_mitra']      = 'required|mimes:pdf';
-    } 
+    $request->merge(['f_scope_file' => $new_scope_file]);
 
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
     $validator->after(function ($validator) use ($request) {
@@ -478,7 +468,6 @@ class AmandemenKontrakEditController extends Controller
     });
     
     if ($validator->fails ()){
-      //return redirect()->back()->withInput($request->input())->withErrors($validator);
       return Response::json (array(
         'errors' => $validator->getMessageBag()->toArray()
       ));
@@ -491,7 +480,6 @@ class AmandemenKontrakEditController extends Controller
       $doc->doc_startdate = $request->doc_startdate;
       $doc->doc_enddate = $request->doc_enddate;
       $doc->doc_desc = $request->doc_desc;
-      // $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
       $doc->doc_pihak1 = $request->doc_pihak1;
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
@@ -561,54 +549,7 @@ class AmandemenKontrakEditController extends Controller
         }
       }
     }
-
-    // latar belakang wajib
-    if(isset($request->lt_judul_ketetapan_pemenang)){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','latar_belakang_ketetapan_pemenang']
-        ])->delete();
-      $doc_meta = new DocMeta();
-      $doc_meta->documents_id = $doc->id;
-      $doc_meta->meta_type = "latar_belakang_ketetapan_pemenang";
-      $doc_meta->meta_name = "Latar Belakang Ketetapan Pemenang";
-      $doc_meta->meta_desc = $request->lt_tanggal_ketetapan_pemenang;
-
-      if(is_object($request->lt_file_ketetapan_pemenang)){
-        $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_ketetapan_pemenang));
-        $file       = $request->lt_file_ketetapan_pemenang;
-        $file->storeAs('document/'.$type.'_latar_belakang_ketetapan_pemenang', $fileName);
-        $doc_meta->meta_file = $fileName;
-      }else{
-        $doc_meta->meta_file = $request->lt_file_ketetapan_pemenang_old;
-      }
-
-      $doc_meta->save();
-    }
-
-    if(isset($request->lt_judul_kesanggupan_mitra)){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','latar_belakang_kesanggupan_mitra']
-        ])->delete();
-      $doc_meta = new DocMeta();
-      $doc_meta->documents_id = $doc->id;
-      $doc_meta->meta_type = "latar_belakang_kesanggupan_mitra";
-      $doc_meta->meta_name = "Latar Belakang Kesanggupan Mitra";
-      $doc_meta->meta_desc = $request->lt_tanggal_kesanggupan_mitra;
-
-      if(is_object($request->lt_file_kesanggupan_mitra)){
-        $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_kesanggupan_mitra));
-        $file       = $request->lt_file_kesanggupan_mitra;
-        $file->storeAs('document/'.$type.'_latar_belakang_kesanggupan_mitra', $fileName);
-        $doc_meta->meta_file = $fileName;
-      }else{
-        $doc_meta->meta_file = $request->lt_file_kesanggupan_mitra_old;
-      }
-
-      $doc_meta->save();
-    }
-
+    
     // latar belakang optional
     if(count($request->f_latar_belakang_judul)>0){
       DocMeta::where([
@@ -638,23 +579,20 @@ class AmandemenKontrakEditController extends Controller
       }
     }
 
-    if(count($request->scope_pasal)>0){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','scope_perubahan']
-        ])->delete();
-      foreach($request->scope_pasal as $key => $val){
+    if(count($request->f_scope_pasal)>0){
+      DocMetaSideLetter::where('documents_id','=',$doc->id)->delete();
+      foreach($request->f_scope_pasal as $key => $val){
         if(!empty($val)
-            && !empty($request['scope_judul'][$key])
-            && !empty($request['scope_isi'][$key])
+            && !empty($request['f_scope_judul'][$key])
+            && !empty($request['f_scope_isi'][$key])
         ){
-          $doc_meta = new DocMeta();
+          $doc_meta = new DocMetaSideLetter();
           $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'scope_perubahan';
-          $doc_meta->meta_name = $request['scope_pasal'][$key];
-          $doc_meta->meta_title = $request['scope_judul'][$key];
-          $doc_meta->meta_desc = $request['scope_isi'][$key];
-
+          $doc_meta->meta_pasal  = $request['f_scope_pasal'][$key];
+          $doc_meta->meta_judul  = $request['f_scope_judul'][$key];
+          $doc_meta->meta_isi    = $request['f_scope_isi'][$key];
+          $doc_meta->meta_awal = $request['f_scope_awal'][$key];
+          $doc_meta->meta_akhir = $request['f_scope_akhir'][$key];
 
           if(is_object($new_scope_file_up[$key])){
             $fileName   = Helpers::set_filename('doc_scope_perubahan_',strtolower($val));

@@ -757,7 +757,6 @@ class EntryDocumentController extends Controller
       }else{
         $rules['doc_template_id']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-        $rules['pic_posisi.*']     =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         if(\Laratrust::hasRole('admin')){

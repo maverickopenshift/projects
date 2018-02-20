@@ -134,21 +134,6 @@
 
   @if(count($doc->latar_belakang_optional)>0)
     @foreach ($doc->latar_belakang_optional as $key=>$dt)
-
-      @php
-        if($dt->meta_name=="latar_belakang_surat_pengikatan"){
-          $title="Surat Pengikatan";
-        }else if($dt->meta_name=="latar_belakang_mou"){
-          $title="MoU";
-        }else if($dt->meta_name=="latar_belakang_bak"){
-          $title="BAK";
-        }else if($dt->meta_name=="latar_belakang_bap"){
-          $title="BAP";
-        }else if($dt->meta_name=="latar_belakang_lain"){
-          $title="Lainnya";
-        }
-      @endphp
-
       <div class="form-horizontal ao-jas" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
             <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">
@@ -158,7 +143,7 @@
             
           <div class="form-group">
             <label for="doc_jaminan" class="col-sm-2 control-label">Judul</label>
-            <div class="col-sm-10 text-me">{{$title}}</div>
+            <div class="col-sm-10 text-me">{{$dt->meta_name}}</div>
           </div>
 
           <div class="form-group">

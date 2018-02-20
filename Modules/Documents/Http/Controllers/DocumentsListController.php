@@ -27,7 +27,11 @@ class DocumentsListController extends Controller
       if($status=='proses'){
         $status_no = 3;
       }
+      if($status=='draft'){
+        $status_no = 2;
+      }
     }
+
     if ($request->ajax()) {
         $limit = 25;
         $search = $request->q;
@@ -38,11 +42,11 @@ class DocumentsListController extends Controller
         if(!empty($request->limit)){
           $limit = $request->limit;
         }
-        $documents = $this->documents
-            ->latest('documents.updated_at')
-        ;
+        
+        $documents = $this->documents->latest('documents.updated_at');
         $documents->selectRaw('DISTINCT (documents.id) , documents.*');
         $documents->whereRaw('(documents.`doc_signing`='.$status_no.')');
+
         if(!empty($request->q)){
           $documents->where(function($q) use ($search) {
               $q->orWhere('documents.doc_no', 'like', '%'.$search.'%');
@@ -71,49 +75,50 @@ class DocumentsListController extends Controller
         }
         $documents = $documents->with(['pegawai','users','jenis','supplier','pic']);
         $documents = $documents->paginate($limit);
-        $documents->getCollection()->transform(function ($value)use ($status_no) {
+        
+        $documents->getCollection()->transform(function ($value) use ($status_no) { 
+          if($value['doc_signing'] != '2'){
+            $n_nik = $value->pegawai->n_nik;
+            $v_nama_karyawan = $value->pegawai->v_nama_karyawan;
+          }else{
+            $username = $value->users->username;
+            $name = $value->users->name;
+          }
           
-          $n_nik = $value->pegawai->n_nik;
-          $v_nama_karyawan = $value->pegawai->v_nama_karyawan;
-
-          $username = $value->users->username;
-          $name = $value->users->name;
-
           $value['total_child']=0;
           $edit = '';
           if($value['doc_signing']==0 && \Laratrust::can('approve-kontrak')){
             $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-eye"></i> PERLU DI PROSES </a>';
-          }
-          else{
+          }else{
             $view = '<a class="btn btn-xs btn-primary" href="'.route('doc.view',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-eye"></i> LIHAT</a>';
           }
+
           if(!\Laratrust::hasRole('approver') && !\Laratrust::hasRole('monitor') ){
             $edit = '<a class="btn btn-xs btn-info" href="'.route('doc.edit',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-edit"></i> EDIT</a>';
-            // $hps = '<a class="btn btn-xs btn-danger" data-id="'.$value['id'].'" data-toggle="modal" data-target="#modal-delete"><i class="fa fa-trash"></i></a>';
           }
+
           if($status_no == "0"){
             $value['link'] = $view;
-          }
-          else {
+          }else {
             $value['link'] = $view.$edit;
           }
 
           if($value['doc_signing'] == '0'){
             $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason'])." <small> : ".$v_nama_karyawan." (".$n_nik.")</small>";
-          }
-          else{
+          }else{
             $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason'])." <small> To ".$name." (".$username.")</small>";
           }
+
           $value['sup_name']= $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
 
           //split judul kontrak (||)
           $myArray = explode('||', $value->doc_title);
           $doc_no = (!empty($value->doc_no))?' - '.$value->doc_no:'';
           $value['title'] = $myArray[0].Documents::get_parent_title($value).$doc_no;
-          // $value['supplier']['nm_vendor'] = $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
-          // $value->doc_title = $value->doc_title.' <i>'.$value->supplier_id.'</i>';
           return $value;
+          
         });
+        
         return Response::json($documents);
     }
     $data['page_title'] = 'Data Dokumen '.ucfirst($status);

@@ -76,7 +76,7 @@
                 @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
                   <th style="width:100px;">Harga Total</th>
                 @endif
-                <th>Keterangan {{$doc->doc_lampiran_teknis}}</th>
+                <th>Keterangan</th>
                 <th><button type="button" class="btn btn-success btn-xs add-harga_satuan"><i class="glyphicon glyphicon-plus"></i> tambah</button></th>
             </tr>
             </thead>
@@ -517,12 +517,13 @@ $(document).on('click', '.add-harga_satuan', function(event) {
   mdf_new_row.eq(5).find('.error').html('');
   mdf_new_row.eq(6).find('input').val('');
   mdf_new_row.eq(6).find('.error').html('');
+  mdf_new_row.eq(7).find('input').val('');
+  mdf_new_row.eq(7).find('.error').html('');
 
   @php
     if($doc_type->name!='khs'){
       echo "
-        mdf_new_row.eq(7).find('input').val('');
-        mdf_new_row.eq(7).find('.error').html('');
+        
         mdf_new_row.eq(8).html('0');
         mdf_new_row.eq(9).find('input').val('');
         mdf_new_row.eq(9).find('.error').html('');

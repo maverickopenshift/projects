@@ -83,11 +83,11 @@
           </div>
           <div class="form-group">
             <label for="akte_awal_tg" class="col-sm-2 control-label">Pihak II</label>
-            <div class="col-sm-10 text-me">{{$doc->supplier->bdn_usaha.'.'.$doc->supplier->nm_vendor}}</div>
+            <div class="col-sm-10 text-me">{{$doc->supplier->bdn_usaha}}.{{$doc->supplier->nm_vendor}}</div>
           </div>
           <div class="form-group">
             <label for="ttd_pihak2" class="col-sm-2 control-label">Penandatangan Pihak II</label>
-            <div class="col-sm-10 text-me">{{$doc->doc_pihak2_nama}}</div>
+            <div class="col-sm-10 text-me">{{$doc->doc_pihak2_nama or '-'}}</div>
           </div>
           <div class="form-group">
             <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran</label>
@@ -103,24 +103,24 @@
                       </thead>
                       <tbody>
                         @if(count($doc->lampiran_ttd)>0)
-                        @foreach ($doc->lampiran_ttd as $key=>$dt)
-                          <tr>
-                            <td>{{($key+1)}}</td>
-                            <td>{{($dt->meta_name)?$dt->meta_name:' - '}}</td>
-                            <td>
-                              @if(!empty($dt->meta_file))
-                                <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
-                                <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
-                                </a>
-                                <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}?nik={{$pegawai->n_nik}}&nama={{$pegawai->v_nama_karyawan}}">
-                                <i class="glyphicon glyphicon-download-alt"></i>  Download
-                                </a>
-                              @else
-                              -
-                              @endif
-                            </td>
-                          </tr>
-                        @endforeach
+                          @foreach ($doc->lampiran_ttd as $key=>$dt)
+                            <tr>
+                              <td>{{($key+1)}}</td>
+                              <td>{{($dt->meta_name)?$dt->meta_name:' - '}}</td>
+                              <td>
+                                @if(!empty($dt->meta_file))
+                                  <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
+                                  <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
+                                  </a>
+                                  <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}?nik={{$pegawai->n_nik}}&nama={{$pegawai->v_nama_karyawan}}">
+                                  <i class="glyphicon glyphicon-download-alt"></i>  Download
+                                  </a>
+                                @else
+                                -
+                                @endif
+                              </td>
+                            </tr>
+                          @endforeach
                         @else
                           <tr>
                               <td colspan="3" align="center">-</td>
@@ -186,7 +186,7 @@
         </div>
         @endif
 
-        @if($doc_type->name=="mou" or $doc_type->name=="khs" or $doc_type->name=="turnkey" or $doc_type->name=="sp")
+        @if($doc_type->name=="khs" or $doc_type->name=="turnkey" or $doc_type->name=="sp")
           <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             <div class="form-group">
               <label for="prinsipal_st" class="col-sm-2 control-label">Unit Penanggungjawab PIC</label>
@@ -204,16 +204,18 @@
                           </tr>
                         </thead>
                         <tbody>
-                          @foreach ($doc->pic as $key=>$dt)
-                            <tr>
-                              <td>{{($key+1)}}</td>
-                              <td>{{($dt->nama)}}</td>
-                              <td>{{($dt->jabatan)}}</td>
-                              <td>{{($dt->email)}}</td>
-                              <td>{{($dt->telp)}}</td>
-                              <td>{{($dt->posisi)}}</td>
-                            </tr>
-                          @endforeach
+                          @if(count($doc->pic)>0)
+                            @foreach ($doc->pic as $key=>$dt)
+                              <tr>
+                                <td>{{($key+1)}}</td>
+                                <td>{{($dt->nama)}}</td>
+                                <td>{{($dt->jabatan)}}</td>
+                                <td>{{($dt->email)}}</td>
+                                <td>{{($dt->telp)}}</td>
+                                <td>{{($dt->posisi)}}</td>
+                              </tr>
+                            @endforeach
+                            @endif
                         </tbody>
                     </table>
                   </div>

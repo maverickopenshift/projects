@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
     <div class="nav-tabs-custom content-view" style="position:relative;">
       <div class="loading2"></div>
@@ -10,8 +9,7 @@
         }elseif($doc_type->name=='mou'){
           $title_sow = 'RUANG LINGKUP';
         }
-
-      @endphp
+      @endphp      
       <ul class="nav nav-tabs">
         <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
 
@@ -46,7 +44,7 @@
         @endif
       </ul>
 
-        <div class="tab-content">
+        <div class="tab-content">          
           <div class="tab-pane active" id="tab_1">
             @include('documents::partials.alert-errors')
             @if(in_array($doc_type->name,['turnkey','sp','khs','surat_pengikatan','mou']))
@@ -82,9 +80,6 @@
 
           <div class="tab-pane ok" id="tab_3">
             @include('documents::partials.alert-errors')
-            {{--
-            @include('documents::doc-view.latar-belakang')
-            --}}
             @include('documents::doc-view.latar-belakang-fix')
             <div class="clearfix"></div>
             <div class="row">
@@ -112,9 +107,9 @@
             @if(in_array($doc_type->name,['turnkey','sp']))
               @include('documents::doc-view.jaminan-asuransi')
             @elseif(in_array($doc_type->name,['side_letter']))
-              @include('documents::doc-view.side_letter-scope-perubahan')
+              @include('documents::doc-view.scope-perubahan-fix')
             @else
-              @include('documents::doc-view.scope-perubahan-others')
+              @include('documents::doc-view.scope-perubahan-fix')
             @endif
             <div class="clearfix"></div>
             <div class="row">
@@ -124,7 +119,6 @@
               </div>
             </div>
           </div>
-
         </div>
         <!-- /.tab-content -->
           @include('documents::partials.comments')
@@ -338,6 +332,7 @@ $(document).on('click', '.btn-setuju', function(event) {
       }
   });
 }
+
 });
 </script>
 @endpush

@@ -117,9 +117,11 @@
         @if(in_array($doc_type->name,['turnkey','sp']))
           @include('documents::doc-form.jaminan-asuransi')
         @elseif(in_array($doc_type->name,['side_letter']))
-          @include('documents::doc-form.side_letter-scope-perubahan')
+          {{-- @include('documents::doc-form.side_letter-scope-perubahan') --}}
+          @include('documents::doc-form.scope-perubahan-fix')
         @else
-          @include('documents::doc-form.scope-perubahan-others')
+          {{-- @include('documents::doc-form.scope-perubahan-others') --}}
+          @include('documents::doc-form.scope-perubahan-fix')
         @endif
         <div class="clearfix"></div>
         <div class="row">
@@ -147,6 +149,82 @@ $(function () {
 
   $(document).on('click', '#btn-draft', function(event) {
     $('#statusButton').val('2');
+
+    event.preventDefault();
+    var content = $('.content-view');
+    var loading = content.find('.loading2');
+
+    var formMe = $('#form-kontrak');
+    $(".formerror").removeClass("has-error");
+    $(".error").html('');
+
+    bootbox.confirm({
+      title:"Konfirmasi",
+      message: "Apakah anda yakin untuk submit?",
+      buttons: {
+          confirm: {
+              label: 'Yakin',
+              className: 'btn-success'
+          },
+          cancel: {
+              label: 'Tidak',
+              className: 'btn-danger'
+          }
+      },
+      callback: function (result) {
+        if(result){
+          bootbox.prompt({
+            title: "Masukan Komentar",
+            inputType: 'textarea',
+            callback: function (komen) {
+              if(komen){
+                loading.show();
+                $('.komentar').val(komen);
+                //$('.btn_submit').click();
+                
+                  $.ajax({
+                    url: formMe.attr('action'),
+                    type: 'post',
+                    processData: false,
+                    contentType: false,
+                    data: new FormData(document.getElementById("form-kontrak")),
+                    dataType: 'json',
+                    success: function(response){
+                      if(response.errors){
+                        $.each(response.errors, function(index, value){
+                            if (value.length !== 0){
+                              index = index.replace(".", "-");
+                              $(".formerror-"+ index).removeClass("has-error");
+                              $(".error-"+ index).html('');             
+
+                              $(".formerror-"+ index).addClass("has-error");
+                              $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
+                            }
+                        });
+
+                        bootbox.alert({
+                          title:"Pemberitahuan",
+                          message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
+                        });
+                      }else{
+                        if(response.status=="tracking"){
+                          window.location.href = "{{route('doc',['status'=>'tracking'])}}";
+                        }else if(response.status=="draft"){
+                          window.location.href = "{{route('doc',['status'=>'draft'])}}";
+                        }
+                      }
+                    }
+                  });
+                
+                ////// end ajax
+              }
+            }
+          });
+        }
+      }
+    });
+
+
   });
 
   $(document).on('click', '#btn-submit', function(event) {
@@ -225,48 +303,6 @@ $(function () {
       }
     });
   });
-
-  /*
-  $(document).on('submit','#form-me-uploadboq',function (event) {
-    var btnSave = formMe.find('.btn-simpan')
-    btnSave.button('loading')
-
-    $.ajax({
-      url: formMe.attr('action'),
-      type: 'post',
-      data: formMe.serialize(),
-      dataType: 'json',
-      success: function(response){
-        if(response.errors){
-
-        }
-      }
-    });
-  });
-
-  $('.daftar_harga').on('change', function(event) {
-    event.stopPropagation();
-    event.preventDefault();
-    var validfile = [".csv", ".xls", ".xlsx"];
-    var namefile = $('.daftar_harga').val().split('\\').pop();
-    var valid = 0;
-
-    for (var i = 0; i < validfile.length; i++) {
-      var validfilex=validfile[i];
-
-      if (namefile.substr(namefile.length - validfilex.length, validfilex.length).toLowerCase() == validfilex.toLowerCase()) {
-        valid = 1;
-        break;
-      }
-    }
-
-    if(valid==1){
-      handleDaftarHargaFileSelect(this.files[0]);
-    }else{
-      $('.error-daftar_harga').html('Format File tidak valid! hanya CSV, XLS & XLXS yang valid');
-    }
-  });
-  */
 
 });
 </script>

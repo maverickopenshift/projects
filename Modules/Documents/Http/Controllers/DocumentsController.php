@@ -418,6 +418,10 @@ class DocumentsController extends Controller
           $data->where('documents.doc_type','mou');
         }elseif($type=='surat_pengikatan'){
           $data->where('documents.doc_type','surat_pengikatan');
+        }elseif($type=='amandemen_kontrak_khs'){
+          $data->where('documents.doc_type','khs');
+        }elseif($type=='amandemen_kontrak_turnkey'){
+          $data->where('documents.doc_type','turnkey');
         }
 
         if(!empty($search)){

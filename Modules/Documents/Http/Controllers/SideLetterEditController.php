@@ -29,14 +29,13 @@ class SideLetterEditController extends Controller
 
   public function store($request)
   {
-
-
     $type = $request->type;
     $id = $request->id;
     $status = Documents::where('id',$id)->first()->doc_signing;
     $rules = [];
 
     if(in_array($status,['0','2','3','1'])){
+      $rules['parent_kontrak']   =  'required|kontrak_exists';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -45,7 +44,7 @@ class SideLetterEditController extends Controller
       $rules['doc_pihak2_nama']  =  'required|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
       if( Config::get_config('auto-numb')=='off'){
-        $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no'.$id;
+        $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
       }
 
       if(\Laratrust::hasRole('admin')){
@@ -329,7 +328,7 @@ class SideLetterEditController extends Controller
       $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       
       if( Config::get_config('auto-numb')=='off'){
-        $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no'.$id;
+        $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
       }
       
       if(\Laratrust::hasRole('admin')){
@@ -361,40 +360,28 @@ class SideLetterEditController extends Controller
       $request->merge(['doc_lampiran' => $new_lamp]);
     }
 
-    $rules['lt_judul_ketetapan_pemenang']     = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-    $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
-    if($request->lt_file_ketetapan_pemenang_old==null){
-      $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
-    }    
-
-    $rules['lt_judul_kesanggupan_mitra']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-    $rules['lt_tanggal_kesanggupan_mitra']  = 'required|date_format:"Y-m-d"';
-    if($request->lt_file_kesanggupan_mitra_old==null){
-      $rules['lt_file_kesanggupan_mitra']     = 'required|mimes:pdf';
-    }
-
-    $rule_scope_pasal = (count($request['scope_pasal'])>1)?'required':'sometimes|nullable';
-    $rule_scope_judul = (count($request['scope_judul'])>1)?'required':'sometimes|nullable';
+    $rule_scope_pasal = (count($request['f_scope_pasal'])>1)?'required':'sometimes|nullable';
+    $rule_scope_judul = (count($request['f_scope_judul'])>1)?'required':'sometimes|nullable';
     $rule_scope_isi = (count($request['scope_isi'])>1)?'required':'sometimes|nullable';
-    $rules['scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-    $rules['scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['f_scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['f_scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['f_scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
-    foreach($request->scope_file_old as $k => $v){
-      if(isset($request->scope_file[$k]) && is_object($request->scope_file[$k]) && !empty($v)){//jika ada file baru
+    foreach($request->f_scope_file_old as $k => $v){
+      if(isset($request->f_scope_file[$k]) && is_object($request->f_scope_file[$k]) && !empty($v)){//jika ada file baru
         $new_scope_file[] = '';
-        $new_scope_file_up[] = $request->scope_file[$k];
-        $rules['scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
+        $new_scope_file_up[] = $request->f_scope_file[$k];
+        $rules['f_scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
       }
       else if(empty($v)){
-        $rules['scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
-        if(!isset($request->scope_file[$k])){
+        $rules['f_scope_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
+        if(!isset($request->f_scope_file[$k])){
           $new_scope_file[] = $v;
           $new_scope_file_up[] = $v;
         }
         else{
           $new_scope_file[] = '';
-          $new_scope_file_up[] = $request->scope_file[$k];
+          $new_scope_file_up[] = $request->f_scope_file[$k];
         }
       }
       else{
@@ -402,7 +389,7 @@ class SideLetterEditController extends Controller
         $new_scope_file_up[] = $v;
       }
     }
-    $request->merge(['scope_file' => $new_scope_file]);
+    $request->merge(['f_scope_file' => $new_scope_file]);
     
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
@@ -417,7 +404,7 @@ class SideLetterEditController extends Controller
         'errors' => $validator->getMessageBag()->toArray()
       ));
     }
-
+    
     if(in_array($status,['0','2','3','1'])){
       $doc = Documents::where('id',$id)->first();
       $doc->doc_title = $request->doc_title;
@@ -437,9 +424,6 @@ class SideLetterEditController extends Controller
       if( Config::get_config('auto-numb')=='off'){
         $doc->doc_no = $request->doc_no;
       }
-      else{
-        $doc->doc_no = null;
-      }
       
       $doc->doc_signing = '0';
       $doc->doc_parent = 0;
@@ -447,53 +431,6 @@ class SideLetterEditController extends Controller
       $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
       $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
       $doc->save();
-    }
-
-    // latar belakang wajib
-    if(isset($request->lt_judul_ketetapan_pemenang)){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','latar_belakang_ketetapan_pemenang']
-        ])->delete();
-      $doc_meta = new DocMeta();
-      $doc_meta->documents_id = $doc->id;
-      $doc_meta->meta_type = "latar_belakang_ketetapan_pemenang";
-      $doc_meta->meta_name = "Latar Belakang Ketetapan Pemenang";
-      $doc_meta->meta_desc = $request->lt_tanggal_ketetapan_pemenang;
-
-      if(is_object($request->lt_file_ketetapan_pemenang)){
-        $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_ketetapan_pemenang));
-        $file       = $request->lt_file_ketetapan_pemenang;
-        $file->storeAs('document/'.$type.'_latar_belakang_ketetapan_pemenang', $fileName);
-        $doc_meta->meta_file = $fileName;
-      }else{
-        $doc_meta->meta_file = $request->lt_file_ketetapan_pemenang_old;
-      }
-
-      $doc_meta->save();
-    }
-
-    if(isset($request->lt_judul_kesanggupan_mitra)){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','latar_belakang_kesanggupan_mitra']
-        ])->delete();
-      $doc_meta = new DocMeta();
-      $doc_meta->documents_id = $doc->id;
-      $doc_meta->meta_type = "latar_belakang_kesanggupan_mitra";
-      $doc_meta->meta_name = "Latar Belakang Kesanggupan Mitra";
-      $doc_meta->meta_desc = $request->lt_tanggal_kesanggupan_mitra;
-
-      if(is_object($request->lt_file_kesanggupan_mitra)){
-        $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_kesanggupan_mitra));
-        $file       = $request->lt_file_kesanggupan_mitra;
-        $file->storeAs('document/'.$type.'_latar_belakang_kesanggupan_mitra', $fileName);
-        $doc_meta->meta_file = $fileName;
-      }else{
-        $doc_meta->meta_file = $request->lt_file_kesanggupan_mitra_old;
-      }
-
-      $doc_meta->save();
     }
 
     // latar belakang optional
@@ -549,50 +486,21 @@ class SideLetterEditController extends Controller
         }
       }
     }
-    /*
-    if(count($request['lt_name'])>0){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','latar_belakang']
-        ])->delete();
-      foreach($request['lt_name'] as $key => $val){
-        if(!empty($request['lt_name'][$key])
-            && !empty($request['lt_desc'][$key])
-        ){
-          $doc_meta = new DocMeta();
-          $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'latar_belakang';
-          $doc_meta->meta_name = $request['lt_name'][$key];
-          $doc_meta->meta_desc = $request['lt_desc'][$key];
-          if(is_object($new_lt_file_up[$key])){
-            $fileName   = Helpers::set_filename('doc_',strtolower($request['lt_name'][$key]));
-            $file = $new_lt_file_up[$key];
-            $file->storeAs('document/'.$request->type.'_latar_belakang', $fileName);
-            $doc_meta->meta_file = $fileName;
-          }
-          else{
-            $doc_meta->meta_file = $new_lt_file_up[$key];
-          }
-          $doc_meta->save();
-        }
-      }
-    }
-    */
 
-    if(count($request->scope_pasal)>0){
+    if(count($request->f_scope_pasal)>0){
       DocMetaSideLetter::where('documents_id','=',$doc->id)->delete();
-      foreach($request->scope_pasal as $key => $val){
+      foreach($request->f_scope_pasal as $key => $val){
         if(!empty($val)
-            && !empty($request['scope_judul'][$key])
-            && !empty($request['scope_isi'][$key])
+            && !empty($request['f_scope_judul'][$key])
+            && !empty($request['f_scope_isi'][$key])
         ){
           $doc_meta = new DocMetaSideLetter();
           $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_pasal  = $request['scope_pasal'][$key];
-          $doc_meta->meta_judul  = $request['scope_judul'][$key];
-          $doc_meta->meta_isi    = $request['scope_isi'][$key];
-          $doc_meta->meta_awal = $request['scope_awal'][$key];
-          $doc_meta->meta_akhir = $request['scope_akhir'][$key];
+          $doc_meta->meta_pasal  = $request['f_scope_pasal'][$key];
+          $doc_meta->meta_judul  = $request['f_scope_judul'][$key];
+          $doc_meta->meta_isi    = $request['f_scope_isi'][$key];
+          $doc_meta->meta_awal = $request['f_scope_awal'][$key];
+          $doc_meta->meta_akhir = $request['f_scope_akhir'][$key];
 
           if(is_object($new_scope_file_up[$key])){
             $fileName   = Helpers::set_filename('doc_scope_perubahan_',strtolower($val));
@@ -627,9 +535,9 @@ class SideLetterEditController extends Controller
     }
 
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
-    //return redirect()->route('doc',['status'=>'tracking']);
     return Response::json (array(
       'status' => 'tracking'
     ));
+    
   }
 }

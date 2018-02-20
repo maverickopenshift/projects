@@ -25,7 +25,7 @@
       $f_latar_belakang_tanggal = Helper::old_prop_each($doc,'f_latar_belakang_tanggal');
       $f_latar_belakang_isi = Helper::old_prop_each($doc,'f_latar_belakang_isi');
       $f_latar_belakang_file = Helper::old_prop_each($doc,'f_latar_belakang_file');
-      $f_latar_belakang_file_oldss = Helper::old_prop_each($doc,'f_latar_belakang_file');
+      $f_latar_belakang_file_old = Helper::old_prop_each($doc,'f_latar_belakang_file');
 
       if($doc_type->name == "khs" || $doc_type->name == "turnkey" || $doc_type->name == "surat_pengikatan"){
         $judul = "Judul";
@@ -67,15 +67,15 @@
       </div>
 
       <div class="form-group formerror formerror-lt_file_rks">
-        <label class="col-sm-2 control-label"><span class="text-red">*</span> File</label>
+        <label class="col-sm-2 control-label"><span class="text-red">*</span> File awd {{$lt_file_rks_old}}</label>
         <div class="col-sm-4">
           <div class="input-group">
             <input type="file" class="hide" name="lt_file_rks">
             <input class="form-control" type="text" disabled>
-            <span class="input-group-btn">
+            <span class="input-group-btn"> 
               <button class="btn btn-default click-upload" type="button">Browse</button>
               <input type="hidden" name="lt_file_rks_old" value="{{$lt_file_rks}}">
-              @if(isset($lt_file_rks))
+              @if($lt_file_rks_old!=null)
                 <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$lt_file_rks,'type'=>$doc_type->name.'_latar_belakang_rks'])}}">
                 <i class="glyphicon glyphicon-paperclip"></i>  Lihat
                 </a>
@@ -90,7 +90,7 @@
     </div>
     @endif
 
-    @if(in_array($doc_type->name,['surat_pengikatan', 'khs', 'turnkey', 'sp', 'amandemen_sp', 'amandemen_kontrak', 'amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum', 'side_letter']))
+    @if(in_array($doc_type->name,['surat_pengikatan', 'khs', 'turnkey']))
     <!-- Surat Ketetapan Pemenang-->
     <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
       <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
@@ -131,7 +131,7 @@
             <span class="input-group-btn">
               <button class="btn btn-default click-upload" type="button">Browse</button>
               <input type="hidden" name="lt_file_ketetapan_pemenang_old" value="{{$lt_file_ketetapan_pemenang}}">
-              @if(isset($lt_file_ketetapan_pemenang))
+              @if($lt_file_ketetapan_pemenang_old!=null)
                 <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$lt_file_ketetapan_pemenang,'type'=>$doc_type->name.'_latar_belakang_ketetapan_pemenang'])}}">
                 <i class="glyphicon glyphicon-paperclip"></i>  Lihat
                 </a>
@@ -184,7 +184,7 @@
             <span class="input-group-btn">
               <button class="btn btn-default click-upload" type="button">Browse</button>
               <input type="hidden" name="lt_file_kesanggupan_mitra_old"  value="{{$lt_file_kesanggupan_mitra}}">
-              @if(isset($lt_file_kesanggupan_mitra))
+              @if($lt_file_kesanggupan_mitra!=null)
                 <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$lt_file_kesanggupan_mitra,'type'=>$doc_type->name.'_latar_belakang_kesanggupan_mitra'])}}">
                 <i class="glyphicon glyphicon-paperclip"></i>  Lihat
                 </a>
@@ -216,40 +216,7 @@
             <div class="form-group">
               <label for="f_judul" class="col-sm-2 control-label">{{$judul}}</label>
               <div class="col-sm-6">
-                @php
-                  $a="";
-                  $b="";
-                  $c="";
-                  $d="";
-                  $e="";
-
-                  if($f_latar_belakang_judul[$key]=="latar_belakang_surat_pengikatan"){
-                    $a="selected";
-                  }
-
-                  if($f_latar_belakang_judul[$key]=="latar_belakang_mou"){
-                    $b="selected";
-                  }
-
-                  if($f_latar_belakang_judul[$key]=="latar_belakang_bak"){
-                    $c="selected";
-                  }
-
-                  if($f_latar_belakang_judul[$key]=="latar_belakang_bap"){
-                    $d="selected";
-                  }
-
-                  if($f_latar_belakang_judul[$key]=="latar_belakang_lain"){
-                    $e="selected";
-                  }
-                @endphp
-                <select class="form-control f_latar_belakang_judul select2" name="f_latar_belakang_judul[]" style="width: 100%;">
-                  <option value="latar_belakang_surat_pengikatan" {{$a}}>No. Surat Pengikatan</option>
-                  <option value="latar_belakang_mou" {{$b}}>No. Mou</option>
-                  <option value="latar_belakang_bak" {{$c}}>BAK</option>
-                  <option value="latar_belakang_bap" {{$d}}>BAP</option>
-                  <option value="latar_belakang_bap" {{$e}}>Lainnya</option>
-                </select>
+                <input type="text" name="f_latar_belakang_judul[]" class="form-control f_latar_belakang_judul" value="{{$f_latar_belakang_judul[$key]}}" placeholder="Judul..">
               </div>
             </div>
 
@@ -277,11 +244,11 @@
               <div class="col-sm-6">
                 <div class="input-group">
                   <input type="file" class="hide" name="f_latar_belakang_file[]">
-                  <input class="form-control" type="text" disabled>
+                  <input class="form-control f_latar_belakang_file" type="text" disabled>
                   <span class="input-group-btn">
                     <button class="btn btn-default click-upload" type="button">Browse</button>
                     <input type="hidden" name="f_latar_belakang_file_old[]" value="{{$f_latar_belakang_file[$key]}}">
-                    @if(isset($f_latar_belakang_file[$key]))
+                    @if($f_latar_belakang_file[$key]!=null)
                       <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$f_latar_belakang_file[$key],'type'=>$doc_type->name.'_latar_belakang_optional'])}}">
                       <i class="glyphicon glyphicon-paperclip"></i>  Lihat
                       </a>
@@ -307,13 +274,7 @@
           <div class="form-group">
             <label for="f_judul" class="col-sm-2 control-label">{{$judul}}</label>
             <div class="col-sm-6">
-              <select class="form-control f_latar_belakang_judul" name="f_latar_belakang_judul[]" style="width: 100%;">
-                <option value=""></option>
-                <option value="latar_belakang_surat_pengikatan">No. Surat Pengikatan</option>
-                <option value="latar_belakang_mou">No. Mou</option>
-                <option value="latar_belakang_bak">BAK</option>
-                <option value="latar_belakang_bap">BAP</option>
-              </select>
+              <input type="text" name="f_latar_belakang_judul[]" class="form-control f_latar_belakang_judul" placeholder="Judul..">
             </div>
           </div>
 
@@ -341,7 +302,7 @@
             <div class="col-sm-6">
               <div class="input-group">
                 <input type="file" class="hide" name="f_latar_belakang_file[]">
-                <input class="form-control" type="text" disabled>
+                <input class="form-control f_latar_belakang_file" type="text" disabled>
                 <span class="input-group-btn">
                   <button class="btn btn-default click-upload" type="button">Browse</button>
                   <input type="hidden" name="f_latar_belakang_file_old[]">
@@ -365,18 +326,8 @@
       todayHighlight:true
     };
 
-    $(".f_latar_belakang_judul").select2({
-      placeholder:"Silahkan Pilih"
-    });
-
     $(document).on('click', '.add-latar-belakang', function(event) {
       event.preventDefault();
-
-      $('.parent-perubahan-latar_belakang').find(".f_latar_belakang_judul").each(function(index){
-        if($(this).data('select2')) {
-          $(this).select2('destroy');
-        }
-      });
 
       var btn_add = '<button type="button" class="btn btn-success add-latar-belakang" style="border-radius: 0;"><i class="glyphicon glyphicon-plus"></i></button>';
       var btn_del = '<button type="button" class="btn btn-danger delete-latar-belakang" style="border-radius: 0;"><i class="glyphicon glyphicon-trash"></i></button>';
@@ -416,10 +367,6 @@
           mdf_new_row_button.eq(0).append(btn_add)
           mdf_new_row_button.eq(0).append(btn_del)
         }
-      });
-
-      $(".f_latar_belakang_judul").select2({
-        placeholder:"Silahkan Pilih"
       });
 
       $('.date').datepicker(datepicker_ops);

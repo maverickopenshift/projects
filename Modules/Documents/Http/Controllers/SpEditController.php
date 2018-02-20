@@ -580,24 +580,36 @@ class SpEditController extends Controller
       $rules['doc_jaminan_startdate.*'] = $rule_doc_jaminan_startdate.'|date_format:"Y-m-d"'; //|date_format:"Y-m-d"
       $rules['doc_jaminan_enddate.*']   = $rule_doc_jaminan_enddate.'|date_format:"Y-m-d"'; //
       $rules['doc_jaminan_desc.*']      = $rule_doc_jaminan_desc.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_jaminan_file.*']      = 'sometimes|nullable|mimes:pdf';
+      
       $rules['doc_po']                  = 'sometimes|nullable|po_exists|regex:/^[a-z0-9 .\-]+$/i';
 
-      $rules['lt_judul_ketetapan_pemenang']     = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
-      if($request->lt_file_ketetapan_pemenang_old==null){
-        $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
-      }   
-
-      $rules['lt_judul_kesanggupan_mitra']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['lt_tanggal_kesanggupan_mitra']  = 'required|date_format:"Y-m-d"';
-      if($request->lt_file_kesanggupan_mitra_old==null){
-        $rules['lt_file_kesanggupan_mitra']      = 'required|mimes:pdf';
+      foreach($request->doc_jaminan_file_old as $k => $v){
+        if(isset($request->doc_jaminan_file[$k]) && is_object($request->doc_jaminan_file[$k]) && !empty($v)){//jika ada file baru
+          $new_jfile[] = '';
+          $new_jfile_up[] = $request->doc_jaminan_file[$k];
+          $rules['doc_jaminan_file.'.$k] = 'sometimes|nullable|mimes:pdf';
+        }
+        else if(empty($v)){
+          $rules['doc_jaminan_file.'.$k] = 'sometimes|nullable|mimes:pdf';
+          if(!isset($request->doc_jaminan_file[$k])){
+            $new_jfile[] = $v;
+            $new_jfile_up[] = $v;
+          }
+          else{
+            $new_jfile[] = '';
+            $new_jfile_up[] = $request->doc_jaminan_file[$k];
+          }
+        }
+        else{
+          $new_jfile[] = $v;
+          $new_jfile_up[] = $v;
+        }
       }
+      $request->merge(['doc_jaminan_file' => $new_jfile]);
 
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
-      $validator->after(function ($validator) use ($request) {
+      $validator->after(function ($validator) use ($request, $type) {
         if($request->doc_enddate < $request->doc_startdate){
           $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
         }
@@ -721,6 +733,7 @@ class SpEditController extends Controller
         }
       }
 
+      /*
       if(count($request->doc_asuransi)>0){
         DocAsuransi::where([
           ['documents_id','=',$doc->id]
@@ -736,12 +749,47 @@ class SpEditController extends Controller
             $asr->doc_jaminan_startdate = $request['doc_jaminan_startdate'][$key];
             $asr->doc_jaminan_enddate = $request['doc_jaminan_enddate'][$key];
             $asr->doc_jaminan_desc = $request['doc_jaminan_desc'][$key];
-            // dd($asr);
+            
             if(isset($request['doc_jaminan_file'][$key])){
               $fileName   = Helpers::set_filename('doc_',strtolower($val));
               $file = $request['doc_jaminan_file'][$key];
               $file->storeAs('document/'.$request->type.'_asuransi', $fileName);
               $asr->doc_jaminan_file = $fileName;
+            }
+            $asr->save();
+          }
+        }
+      }
+      */
+
+      if(count($request['doc_jaminan'])>0){
+        DocAsuransi::where([
+          ['documents_id','=',$doc->id]
+          ])->delete();
+        foreach($request['doc_jaminan'] as $key => $val){
+          if(!empty($request['doc_jaminan'][$key])
+              && !empty($request['doc_asuransi'][$key])
+              && !empty($request['doc_jaminan_nilai'][$key])
+              && !empty($request['doc_jaminan_startdate'][$key])
+              && !empty($request['doc_jaminan_enddate'][$key])
+          ){
+            $asr = new DocAsuransi();
+            $asr->documents_id = $doc->id;
+            $asr->doc_jaminan = $request['doc_jaminan'][$key];
+            $asr->doc_jaminan_name = $request['doc_asuransi'][$key];
+            $asr->doc_jaminan_nilai = Helpers::input_rupiah($request['doc_jaminan_nilai'][$key]);
+            $asr->doc_jaminan_startdate = $request['doc_jaminan_startdate'][$key];
+            $asr->doc_jaminan_enddate = $request['doc_jaminan_enddate'][$key];
+            $asr->doc_jaminan_desc = $request['doc_jaminan_desc'][$key];
+
+            if(is_object($new_jfile_up[$key])){
+              $fileName   = Helpers::set_filename('doc_',strtolower($val));
+              $file = $new_jfile_up[$key];
+              $file->storeAs('document/'.$request->type.'_asuransi', $fileName);
+              $asr->doc_jaminan_file = $fileName;
+            }
+            else{
+              $asr->doc_jaminan_file = $new_jfile_up[$key];
             }
             $asr->save();
           }
@@ -766,53 +814,6 @@ class SpEditController extends Controller
             $pic->save();
           }
         }
-      }
-
-      // latar belakang wajib
-      if(isset($request->lt_judul_ketetapan_pemenang)){
-        DocMeta::where([
-          ['documents_id','=',$doc->id],
-          ['meta_type','=','latar_belakang_ketetapan_pemenang']
-          ])->delete();
-        $doc_meta = new DocMeta();
-        $doc_meta->documents_id = $doc->id;
-        $doc_meta->meta_type = "latar_belakang_ketetapan_pemenang";
-        $doc_meta->meta_name = "Latar Belakang Ketetapan Pemenang";
-        $doc_meta->meta_desc = $request->lt_tanggal_ketetapan_pemenang;
-
-        if(is_object($request->lt_file_ketetapan_pemenang)){
-          $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_ketetapan_pemenang));
-          $file       = $request->lt_file_ketetapan_pemenang;
-          $file->storeAs('document/'.$type.'_latar_belakang_ketetapan_pemenang', $fileName);
-          $doc_meta->meta_file = $fileName;
-        }else{
-          $doc_meta->meta_file = $request->lt_file_ketetapan_pemenang_old;
-        }
-
-        $doc_meta->save();
-      }
-
-      if(isset($request->lt_judul_kesanggupan_mitra)){
-        DocMeta::where([
-          ['documents_id','=',$doc->id],
-          ['meta_type','=','latar_belakang_kesanggupan_mitra']
-          ])->delete();
-        $doc_meta = new DocMeta();
-        $doc_meta->documents_id = $doc->id;
-        $doc_meta->meta_type = "latar_belakang_kesanggupan_mitra";
-        $doc_meta->meta_name = "Latar Belakang Kesanggupan Mitra";
-        $doc_meta->meta_desc = $request->lt_tanggal_kesanggupan_mitra;
-
-        if(is_object($request->lt_file_kesanggupan_mitra)){
-          $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_kesanggupan_mitra));
-          $file       = $request->lt_file_kesanggupan_mitra;
-          $file->storeAs('document/'.$type.'_latar_belakang_kesanggupan_mitra', $fileName);
-          $doc_meta->meta_file = $fileName;
-        }else{
-          $doc_meta->meta_file = $request->lt_file_kesanggupan_mitra_old;
-        }
-
-        $doc_meta->save();
       }
 
       // latar belakang optional

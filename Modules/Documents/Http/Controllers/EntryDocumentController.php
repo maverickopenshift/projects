@@ -29,6 +29,7 @@ use App\Helpers\Helpers;
 use Validator;
 use DB;
 use Auth;
+use Excel;
 
 class EntryDocumentController extends Controller
 {
@@ -171,7 +172,9 @@ class EntryDocumentController extends Controller
 
       $rules = [];
       if($request->statusButton == '0'){
-
+        $rules['komentar']         = 'required|max:250|min:2';
+        $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+        $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_template_id']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
@@ -349,6 +352,15 @@ class EntryDocumentController extends Controller
 
       $doc->save();
 
+      //pemilik Kontrak
+      if(count($request->divisi)>0){
+        $doc_meta2 = new DocMeta();
+        $doc_meta2->documents_id = $doc->id;
+        $doc_meta2->meta_type = 'pemilik_kontrak';
+        $doc_meta2->meta_name = $request->divisi;
+        $doc_meta2->meta_title =$request->unit_bisnis;
+        $doc_meta2->save();
+      }
       /// pasal khusus
       if(count($request->ps_judul)>0){
         foreach($request->ps_judul as $key => $val){
@@ -562,10 +574,40 @@ class EntryDocumentController extends Controller
       }
     }
 
+    public function upload(Request $request)
+    {
+      if ($request->ajax()) {
+
+          $data = Excel::load($request->file('daftar_harga')->getRealPath(), function ($reader) {
+
+          })->get();
+          $type = $request->type;
+          if($type != "khs"){
+              $header = ['kode_item','item','qty','satuan','mtu','harga','harga_jasa','keterangan'];
+              $jml_header = '8';
+          }else {
+            $header = ['kode_item','item','satuan','mtu','harga','harga_jasa','keterangan'];
+            $jml_header = '7';
+          }
+          $colomn = $data->first()->keys()->toArray();
+          // dd($jml_header);
+// dd($colomn);
+          if(!empty($data) && count($colomn) == $jml_header && $colomn == $header){
+          return Response::json(['status'=>true,'csrf_token'=>csrf_token(),'data'=>$data]);
+        }
+        else{
+          return Response::json(['status'=>false]);
+        }
+      }
+      else{
+        return Response::json(['status'=>false]);
+      }
+  }
+
     public function store_ajax(Request $request)
-    { 
+    {
       $type = $request->type;
-      
+
       if($type=='surat_pengikatan'){
         return $this->SuratPengikatanCreate->store_ajax($request);
       }
@@ -622,7 +664,9 @@ class EntryDocumentController extends Controller
 
       $rules = [];
       if($request->statusButton == '0'){
-
+        $rules['komentar']         = 'required|max:250|min:2';
+        $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+        $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_template_id']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
@@ -634,11 +678,11 @@ class EntryDocumentController extends Controller
         $rules['doc_pihak2_nama']  =  'required|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_proc_process'] =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_mtu']          =  'required|min:1|max:20|regex:/^[a-z0-9 .\-]+$/i';
-        
+
         if(Config::get_config('auto-numb')=='off'){
           $rules['doc_no']  =  'required|min:1|max:500|unique:documents,doc_no';
         }
-        
+
         if($type!='khs'){
           $rules['doc_value']     =  'required|max:500|min:3|regex:/^[0-9 .]+$/i';
         }
@@ -691,7 +735,7 @@ class EntryDocumentController extends Controller
           $rules['doc_jaminan.*']           = $rule_doc_jaminan.'|in:PL,PM';
           $rules['doc_asuransi.*']          = $rule_doc_asuransi.'|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
           $rules['doc_jaminan_nilai.*']     = $rule_doc_jaminan_nilai.'|max:500|min:3|regex:/^[0-9 .]+$/i';
-          $rules['doc_jaminan_startdate.*'] = $rule_doc_jaminan_startdate.'|date_format:"Y-m-d"'; 
+          $rules['doc_jaminan_startdate.*'] = $rule_doc_jaminan_startdate.'|date_format:"Y-m-d"';
           $rules['doc_jaminan_enddate.*']   = $rule_doc_jaminan_enddate.'|date_format:"Y-m-d"';
           $rules['doc_jaminan_desc.*']      = $rule_doc_jaminan_desc.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
           $rules['doc_jaminan_file.*']      = 'sometimes|nullable|mimes:pdf';
@@ -751,7 +795,7 @@ class EntryDocumentController extends Controller
         if(isset($hs_qty) && count($hs_qty)>0){
           $request->merge(['hs_qty'=>$hs_qty]);
         }
-        
+
         if ($validator->fails ()){
           return Response::json (array(
             'errors' => $validator->getMessageBag()->toArray()
@@ -774,7 +818,7 @@ class EntryDocumentController extends Controller
           ));
         }
       }
-      
+// dd($request->input());
       $doc = new Documents();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
@@ -798,14 +842,24 @@ class EntryDocumentController extends Controller
       $doc->doc_sow = $request->doc_sow;
       $doc->doc_type = $request->type;
       $doc->doc_signing = $request->statusButton;
-      
-      
+
+
       $doc->penomoran_otomatis =  Config::get_penomoran_otomatis($request->penomoran_otomatis);
       if(Config::get_config('auto-numb')=='off'){
         $doc->doc_no = $request->doc_no;
       }
-      
+
       $doc->save();
+
+      //pemilik Kontrak
+      if(count($request->divisi)>0){
+        $doc_meta2 = new DocMeta();
+        $doc_meta2->documents_id = $doc->id;
+        $doc_meta2->meta_type = 'pemilik_kontrak';
+        $doc_meta2->meta_name = $request->divisi;
+        $doc_meta2->meta_title =$request->unit_bisnis;
+        $doc_meta2->save();
+      }
 
       /// pasal khusus
       if(count($request->ps_judul)>0){
@@ -822,7 +876,7 @@ class EntryDocumentController extends Controller
           }
         }
       }
-      
+
       // PO
       if(in_array($type,['turnkey','sp'])){
         if(count($request->doc_po_no)>0){
@@ -900,7 +954,7 @@ class EntryDocumentController extends Controller
           $pic->save();
         }
       }
-      
+
       // latar belakang wajib
       if(isset($request->lt_judul_ketetapan_pemenang)){
         $doc_meta = new DocMeta();

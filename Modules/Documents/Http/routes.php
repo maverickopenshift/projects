@@ -19,8 +19,8 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
     // test edit ajax
     Route::post('/approve', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@approve'])->name('doc.approve');
     Route::post('/reject', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@reject'])->name('doc.reject');
-
     Route::post('/hapus', ['middleware' => ['permission:hapus-kontrak'],'uses' => 'DocumentsController@hapus'])->name('doc.hapus');
+    Route::post('/hs-upload', ['middleware' => ['permission:tambah-kontrak'],'uses' => 'EntryDocumentController@upload'])->name('doc.upload.hs');
 
     Route::get('/getKontrak', ['middleware' => ['permission:approve-kontrak'],'uses' => 'DocumentsController@getKontrak'])->name('doc.getKontrak');
     Route::get('/get-select-kontrak', 'DocumentsController@getSelectKontrak')->name('doc.get-select-kontrak');
@@ -52,20 +52,20 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
     Route::get('/doc-template/storeEdit', ['middleware' => ['permission:tambah-template-pasal-pasal'],'uses' => 'DocTemplateController@storeEdit'])->name('doc.template.storeEdit');
     Route::get('/doc-template/{id}/edit', ['middleware' => ['permission:ubah-template-pasal-pasal'],'uses' => 'DocTemplateController@edit'])->name('doc.template.edit');
 
-    Route::get('/template/{filename}', function ($filename){
-        $path = public_path('template/template_' . $filename.'.csv');
+    Route::get('/tmp/{filename}', function ($filename){
+      $path = public_path('template/template_' . $filename.'.xlsx');
 
-        if (!File::exists($path)) {
-            abort(404);
-        }
+      if (!File::exists($path)) {
+          abort(404);
+      }
 
-        $type = File::mimeType($path);
-        $headers = array(
-             'Content-Type: '.$type,
-           );
-        $name = $filename.'_'.time().'.csv';
-        return response()->download($path, $name, $headers);
-    })->name('doc.template.download');
+      $type = File::mimeType($path);
+      $headers = array(
+           'Content-Type: '.$type,
+         );
+      $name = $filename.'_'.time().'.xlsx';
+      return response()->download($path, $name, $headers);
+    })->name('doc.tmp.download');
 
     Route::get('/file/{type}/{filename}', function ($type,$filename){
         $path = storage_path('app/document/'.$type.'/' . $filename);
@@ -140,7 +140,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
 
         return $response;
     })->name('doc.file.scope');
-    
+
     Route::get('/download/pdf/{type}/{filename}', ['middleware' => ['permission:lihat-kontrak'],'uses' => 'PdfDocController@index'])
     ->name('doc.download');
 

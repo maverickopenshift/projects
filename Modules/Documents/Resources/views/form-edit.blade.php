@@ -56,7 +56,7 @@
                 @include('documents::doc-view.general-info')
               @endif
             @else
-              @include('documents::doc-form-edit.amademen')
+              @include('documents::doc-view.amademen')
             @endif
             <div class="clearfix"></div>
             <div class="row">
@@ -89,7 +89,7 @@
               @include('documents::doc-form-edit.latar-belakang')
             @endif
             --}}
-            
+
             @include('documents::doc-form-edit.latar-belakang-fix')
             <div class="clearfix"></div>
             <div class="row">
@@ -130,7 +130,12 @@
         </div>
         @include('documents::partials.comments')
       </div>
-    </form>
+  </form>
+  <form id="form_me_boq" action="{{route('doc.upload.hs')}}" method="post" enctype="multipart/form-data">
+    {{ csrf_field() }}
+    <input type="file" name="daftar_harga" class="daftar_harga hide" accept=".csv,.xls,.xlsx">
+    <input type="text" name="type" class="hide" value="{{$doc_type->name}}">
+  </form>
 @endsection
 @push('scripts')
 <script>
@@ -141,8 +146,8 @@ $(function () {
   $('.btnPrevious').click(function(){
    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
   });
-  
-  $(document).on('click', '.btn-submit', function(event) {
+
+  $(document).on('click', '#btn-submit', function(event) {
     event.preventDefault();
     var content = $('.content-view');
     var loading = content.find('.loading2');
@@ -189,10 +194,10 @@ $(function () {
                           if (value.length !== 0){
                             index = index.replace(".", "-");
                             $(".formerror-"+ index).removeClass("has-error");
-                            $(".error-"+ index).html('');             
+                            $(".error-"+ index).html('');
 
                             $(".formerror-"+ index).addClass("has-error");
-                            $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');                
+                            $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
                           }
                       });
 
@@ -200,7 +205,7 @@ $(function () {
                         title:"Pemberitahuan",
                         message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
                       });
-                      
+
                     }else{
                       if(response.status=="tracking"){
                         window.location.href = "{{route('doc',['status'=>'tracking'])}}";
@@ -217,8 +222,8 @@ $(function () {
         }
       }
     });
-  }); 
-  
+  });
+
 });
 </script>
 @endpush

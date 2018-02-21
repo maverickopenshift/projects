@@ -44,11 +44,11 @@
       <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
         <div class="form-group">
           <label class="col-sm-2 control-label">Konseptor</label>
-          <div class="col-sm-10 text-me">{{$pegawai_konseptor->n_nik}} - {{$pegawai_konseptor->v_nama_karyawan}}</div>
+          <div class="col-sm-10 text-me">{{$pegawai->v_nama_karyawan.'/'.$pegawai->n_nik.' - '.$pegawai->v_short_posisi.' '.$pegawai->v_short_unit.'/'.$pegawai->v_short_divisi}}</div>
         </div>
         <div class="form-group">
-          <label class="col-sm-2 control-label">Divisi</label>
-          <div class="col-sm-10 text-me">{{$pegawai_konseptor->v_short_divisi}}</div>
+          <label class="col-sm-2 control-label">Pemilik Kontrak</label>
+          <div class="col-sm-10 text-me">Divisi: {{$divisi->v_short_divisi}} <br> Unit: {{$unit_bisnis->v_short_unit}}</div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label">Pihak I</label>

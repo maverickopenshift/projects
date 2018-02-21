@@ -28,7 +28,7 @@
                 <div class="form-group {{ $errors->has('lt_name.'.$key) ? ' has-error' : '' }}">
                   <label for="lt_name" class="col-sm-2 control-label">
                     @if(in_array($key,['0','3','4']))
-                      <span class="text-red">*</span> 
+                      <span class="text-red">*</span>
                     @endif
                    Judul</label>
                   <div class="col-sm-4">
@@ -43,7 +43,7 @@
                 <div class="form-group {{ $errors->has('lt_desc.'.$key) ? ' has-error' : '' }}">
                   <label for="lt_desc" class="col-sm-2 control-label">
                     @if(in_array($key,['0','3','4']))
-                      <span class="text-red">*</span> 
+                      <span class="text-red">*</span>
                     @endif
                    Tanggal</label>
                   <div class="col-sm-4">
@@ -61,7 +61,7 @@
                 <div class="form-group {{ $errors->has('lt_file.'.$key) ? ' has-error' : '' }}">
                   <label for="lt_file" class="col-sm-2 control-label">
                     @if(in_array($key,['0','3','4']))
-                      <span class="text-red">*</span> 
+                      <span class="text-red">*</span>
                     @endif
                    File</label>
                   <div class="col-sm-4">
@@ -77,7 +77,7 @@
                         -->
                         <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$lt_file_old[$key],'type'=>$doc_type->name.'_latar_belakang'])}}">
                         <i class="glyphicon glyphicon-paperclip"></i>  Lihat
-                        </a>  
+                        </a>
                         @endif
                       </span>
                     </div>

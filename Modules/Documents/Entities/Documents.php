@@ -47,6 +47,10 @@ class Documents extends Model
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta');
     }
+    public function pemilik_kontrak()
+    {
+        return $this->hasOne('Modules\Documents\Entities\DocMeta')->where('meta_type','pemilik_kontrak');
+    }
     public function lampiran_ttd()
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','lampiran_ttd');

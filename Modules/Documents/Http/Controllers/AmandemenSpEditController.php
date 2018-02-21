@@ -29,12 +29,13 @@ class AmandemenSpEditController extends Controller
   }
   public function store($request)
   {
+    /*
     $type = $request->type;
     $id = $request->id;
     $status = Documents::where('id',$id)->first()->doc_signing;
     $rules = [];
 
-    if(in_array($status,['0','2','3','1'])){
+    if(in_array($status,['0','2'])){
       $rules['parent_kontrak']   =  'required|kontrak_exists';
       $rules['doc_title']        =  'required|min:2';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
@@ -129,7 +130,7 @@ class AmandemenSpEditController extends Controller
       return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
 
-    if(in_array($status,['0','2','3','1'])){
+    if(in_array($status,['0','2'])){
       $doc = Documents::where('id',$id)->first();;
       $doc->doc_title = $request->doc_title;
       $doc->doc_date = $request->doc_startdate;
@@ -157,6 +158,11 @@ class AmandemenSpEditController extends Controller
       $doc->doc_parent_id = $request->parent_sp;
       $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
       $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
+      $doc->save();
+    }else{
+      //kalo dokumennya di return/ di approve dan di edit datanya (status = 3 & 1)
+      $doc = Documents::where('id',$id)->first();
+      $doc->doc_signing = '0';
       $doc->save();
     }
 
@@ -191,6 +197,7 @@ class AmandemenSpEditController extends Controller
       }
     }
 
+    if(in_array($status,['0','2'])){
     if(count($new_lamp_up)>0){
       DocMeta::where([
         ['documents_id','=',$doc->id],
@@ -215,6 +222,7 @@ class AmandemenSpEditController extends Controller
         }
       }
     }
+  }
 
     // latar belakang wajib
     if(isset($request->lt_judul_ketetapan_pemenang)){
@@ -292,36 +300,6 @@ class AmandemenSpEditController extends Controller
       }
     }
 
-    /*
-    if(count($request['lt_name'])>0){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','latar_belakang']
-        ])->delete();
-      foreach($request['lt_name'] as $key => $val){
-        if(!empty($request['lt_name'][$key])
-            && !empty($request['lt_desc'][$key])
-        ){
-          $doc_meta = new DocMeta();
-          $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'latar_belakang';
-          $doc_meta->meta_name = $request['lt_name'][$key];
-          $doc_meta->meta_desc = $request['lt_desc'][$key];
-          if(is_object($new_lt_file_up[$key])){
-            $fileName   = Helpers::set_filename('doc_',strtolower($request['lt_name'][$key]));
-            $file = $new_lt_file_up[$key];
-            $file->storeAs('document/'.$request->type.'_latar_belakang', $fileName);
-            $doc_meta->meta_file = $fileName;
-          }
-          else{
-            $doc_meta->meta_file = $new_lt_file_up[$key];
-          }
-          $doc_meta->save();
-        }
-      }
-    }
-    */
-
     if(count($request['scope_name'])>0){
       DocMeta::where([
         ['documents_id','=',$doc->id],
@@ -374,6 +352,7 @@ class AmandemenSpEditController extends Controller
 
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     return redirect()->route('doc',['status'=>'tracking']);
+    */
   }
 
   public function store_ajax($request)
@@ -383,7 +362,7 @@ class AmandemenSpEditController extends Controller
     $status = Documents::where('id',$id)->first()->doc_signing;
     $rules = [];
 
-    if(in_array($status,['0','2','3','1'])){
+    if(in_array($status,['0','2'])){
       $rules['parent_kontrak']   =  'required|kontrak_exists';
       $rules['doc_title']        =  'required|min:2';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
@@ -395,7 +374,7 @@ class AmandemenSpEditController extends Controller
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
-      
+
       if( Config::get_config('auto-numb')=='off'){
         $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
       }
@@ -424,7 +403,7 @@ class AmandemenSpEditController extends Controller
       }
       $request->merge(['doc_lampiran' => $new_lamp]);
     }
-        
+    
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
     $validator->after(function ($validator) use ($request) {
       if($request->doc_enddate < $request->doc_startdate){
@@ -437,7 +416,7 @@ class AmandemenSpEditController extends Controller
       ));
     }
 
-    if(in_array($status,['0','2','3','1'])){
+    if(in_array($status,['0','2'])){
       $doc = Documents::where('id',$id)->first();;
       $doc->doc_title = $request->doc_title;
       $doc->doc_date = $request->doc_startdate;
@@ -450,7 +429,7 @@ class AmandemenSpEditController extends Controller
       if((\Laratrust::hasRole('admin'))){
         $doc->user_id  = $request->user_id;
       }
-      
+
       $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
       if( Config::get_config('auto-numb')=='off'){
         $doc->doc_no = $request->doc_no;
@@ -458,12 +437,17 @@ class AmandemenSpEditController extends Controller
       else{
         $doc->doc_no = null;
       }
-      
+
       $doc->doc_signing = '0';
       $doc->doc_parent = 0;
       $doc->doc_parent_id = $request->parent_sp;
       $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
       $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
+      $doc->save();
+    }else{
+      //kalo dokumennya di return/ di approve dan di edit datanya (status = 3 & 1)
+      $doc = Documents::where('id',$id)->first();
+      $doc->doc_signing = '0';
       $doc->save();
     }
 
@@ -498,27 +482,29 @@ class AmandemenSpEditController extends Controller
       }
     }
 
-    if(count($new_lamp_up)>0){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','lampiran_ttd']
-        ])->delete();
-      foreach($new_lamp_up as $key => $val){
-        if(!empty($val)){
-          $doc_meta = new DocMeta();
-          $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'lampiran_ttd';
-          $doc_meta->meta_name = $request['doc_lampiran_nama'][$key];
-          if(is_object($val)){
-            $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
-            $file = $request['doc_lampiran'][$key];
-            $file->storeAs('document/'.$request->type.'_lampiran_ttd', $fileName);
-            $doc_meta->meta_file = $fileName;
+    if(in_array($status,['0','2'])){
+      if(count($new_lamp_up)>0){
+        DocMeta::where([
+          ['documents_id','=',$doc->id],
+          ['meta_type','=','lampiran_ttd']
+          ])->delete();
+        foreach($new_lamp_up as $key => $val){
+          if(!empty($val)){
+            $doc_meta = new DocMeta();
+            $doc_meta->documents_id = $doc->id;
+            $doc_meta->meta_type = 'lampiran_ttd';
+            $doc_meta->meta_name = $request['doc_lampiran_nama'][$key];
+            if(is_object($val)){
+              $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
+              $file = $request['doc_lampiran'][$key];
+              $file->storeAs('document/'.$request->type.'_lampiran_ttd', $fileName);
+              $doc_meta->meta_file = $fileName;
+            }
+            else{
+              $doc_meta->meta_file = $val;
+            }
+            $doc_meta->save();
           }
-          else{
-            $doc_meta->meta_file = $val;
-          }
-          $doc_meta->save();
         }
       }
     }
@@ -531,7 +517,7 @@ class AmandemenSpEditController extends Controller
         ])->delete();
       foreach($request->f_latar_belakang_judul as $key => $val){
         if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
-          
+
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = "latar_belakang_optional";

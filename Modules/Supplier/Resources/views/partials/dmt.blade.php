@@ -61,13 +61,13 @@
   Telah tercatat dalam Daftar Mitra PT Telekomunikasi Indonesia, Tbk.<br>
   Daftar Mitra ini berlaku 2 (dua) tahun sejak tanggal diterbitkan, atau sejak tanggal selesainya pekerjaan terakhir di Telkom.<br><br>
 
-  Jakarta, {{$date}}<br>
+  {{$kota_dmt}}, {{$date}}<br>
   <!-- <br>
   <br>
   <br>
   <br> -->
-  <p style="margin-top: 8%;"><u>SENO AJI WAHYONO</u><br>
-    AVP SUPPLY ANALYSIS</p>
+  <p style="margin-top: 8%;"><u>{{$nama_pegawai}}</u><br>
+    {{$jabatan}}</p>
   </p>
 
   <p  style="margin-top: 25%; margin-bottom: -10%;">Disclaimer: Tanpa ditanda-tangani dokumen ini sah di lingkungan PT. Telekomunikasi Indonesia, tbk.</p>

@@ -35,6 +35,9 @@ class SideLetterCreateController
 
     if($request->statusButton == '0'){
       $rules['parent_kontrak']   =  'required|kontrak_exists';
+      $rules['komentar']         = 'required|max:250|min:2';
+      $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -134,6 +137,16 @@ class SideLetterCreateController
       $doc->doc_no = $request->doc_no;
     }
     $doc->save();
+
+    //pemilik Kontrak
+    if(count($request->divisi)>0){
+      $doc_meta2 = new DocMeta();
+      $doc_meta2->documents_id = $doc->id;
+      $doc_meta2->meta_type = 'pemilik_kontrak';
+      $doc_meta2->meta_name = $request->divisi;
+      $doc_meta2->meta_title =$request->unit_bisnis;
+      $doc_meta2->save();
+    }
 
     if(count($request->f_judul)>0){
       foreach($request->f_judul as $key => $val){
@@ -298,6 +311,9 @@ class SideLetterCreateController
 
     if($request->statusButton == '0'){
       $rules['parent_kontrak']   =  'required|kontrak_exists';
+      $rules['komentar']         = 'required|max:250|min:2';
+      $rules['divisi']           =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      $rules['unit_bisnis']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -352,7 +368,7 @@ class SideLetterCreateController
         if($request->doc_enddate < $request->doc_startdate){
           $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
         }
-      }); 
+      });
       if ($validator->fails ()){
         return Response::json (array(
           'errors' => $validator->getMessageBag()->toArray()
@@ -397,6 +413,16 @@ class SideLetterCreateController
     }
 
     $doc->save();
+
+    //pemilik Kontrak
+    if(count($request->divisi)>0){
+      $doc_meta2 = new DocMeta();
+      $doc_meta2->documents_id = $doc->id;
+      $doc_meta2->meta_type = 'pemilik_kontrak';
+      $doc_meta2->meta_name = $request->divisi;
+      $doc_meta2->meta_title =$request->unit_bisnis;
+      $doc_meta2->save();
+    }
 
     if(count($request->f_judul)>0){
       foreach($request->f_judul as $key => $val){
@@ -448,7 +474,7 @@ class SideLetterCreateController
     if(count($request->f_latar_belakang_judul)>0){
       foreach($request->f_latar_belakang_judul as $key => $val){
         if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
-          
+
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = "latar_belakang_optional";

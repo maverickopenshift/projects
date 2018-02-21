@@ -54,12 +54,15 @@ class Supplier extends Model
 
     public static function gen_dmtnomer(){
   // dd("yo");
+  $config = DB::table('config')->where('object_key','set-dmt')->first();
+  $d = json_decode($config->object_value);
+  $kode_unit = $d->c_kode_unit;
   $thn=date("Y");
-  $loker = "COP-E0042000";
+  // $loker = "COP-E0042000";
   $kode = "LG.530";
   $pattern = "TEL.";
   $nomer = "0001";
-  $cekid=$pattern.$nomer.'/'.$kode.'/'.$loker.'/'.$thn;
+  $cekid=$pattern.$nomer.'/'.$kode.'/'.$kode_unit.'/'.$thn;
   $count = DB::table('supplier')->where('no_rekanan_telkom',$cekid)->count();
     if($count==0){
       $nextplgnya=$cekid;
@@ -75,7 +78,7 @@ class Supplier extends Model
       $lastplg = substr($last, 4,4);
       $nextplg = intval($lastplg) + 1;
       $idnya = sprintf('%04s', $nextplg);
-      $nextplgnya=$pattern.$idnya.'/'.$kode.'/'.$loker.'/'.$thn;
+      $nextplgnya=$pattern.$idnya.'/'.$kode.'/'.$kode_unit.'/'.$thn;
     }
 
     return $nextplgnya;

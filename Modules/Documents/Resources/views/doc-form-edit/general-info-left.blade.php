@@ -107,9 +107,9 @@
     @endif
       <div class="form-group formerror formerror-doc_mtu">
         <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Mata Uang</label>
-        <div class="col-sm-3">
+        <div class="col-sm-2">
           <select class="form-control mata-uang" name="doc_mtu">
-            <option value="RP" {!!Helper::old_prop_selected($doc,'doc_mtu','RP')!!}>Rp.</option>
+            <option value="IDR" {!!Helper::old_prop_selected($doc,'doc_mtu','IDR')!!}>Rp.</option>
             <option value="USD" {!!Helper::old_prop_selected($doc,'doc_mtu','USD')!!}>USD</option>
           </select>
         </div>

@@ -34,7 +34,7 @@ class SideLetterEditController extends Controller
     $status = Documents::where('id',$id)->first()->doc_signing;
     $rules = [];
 
-    if(in_array($status,['0','2','3','1'])){
+    if(in_array($status,['0','2'])){
       $rules['parent_kontrak']   =  'required|kontrak_exists';
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
@@ -107,32 +107,32 @@ class SideLetterEditController extends Controller
     }
     $request->merge(['scope_file' => $new_scope_file]);
 
-    $rules['lt_desc.*']  =  'required|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['lt_name.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    // $rules['lt_desc.*']  =  'required|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    // $rules['lt_name.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
-    foreach($request->lt_file_old as $k => $v){
-      if(isset($request->lt_file[$k]) && is_object($request->lt_file[$k]) && !empty($v)){//jika ada file baru
-        $new_lt_file[] = '';
-        $new_lt_file_up[] = $request->lt_file[$k];
-        $rules['lt_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
-      }
-      else if(empty($v)){
-        $rules['lt_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
-        if(!isset($request->lt_file[$k])){
-          $new_lt_file[] = $v;
-          $new_lt_file_up[] = $v;
-        }
-        else{
-          $new_lt_file[] = '';
-          $new_lt_file_up[] = $request->lt_file[$k];
-        }
-      }
-      else{
-        $new_lt_file[] = $v;
-        $new_lt_file_up[] = $v;
-      }
-    }
-    $request->merge(['lt_file' => $new_lt_file]);
+    // foreach($request->lt_file_old as $k => $v){
+    //   if(isset($request->lt_file[$k]) && is_object($request->lt_file[$k]) && !empty($v)){//jika ada file baru
+    //     $new_lt_file[] = '';
+    //     $new_lt_file_up[] = $request->lt_file[$k];
+    //     $rules['lt_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
+    //   }
+    //   else if(empty($v)){
+    //     $rules['lt_file.'.$k]  =  'sometimes|nullable|mimes:pdf';
+    //     if(!isset($request->lt_file[$k])){
+    //       $new_lt_file[] = $v;
+    //       $new_lt_file_up[] = $v;
+    //     }
+    //     else{
+    //       $new_lt_file[] = '';
+    //       $new_lt_file_up[] = $request->lt_file[$k];
+    //     }
+    //   }
+    //   else{
+    //     $new_lt_file[] = $v;
+    //     $new_lt_file_up[] = $v;
+    //   }
+    // }
+    // $request->merge(['lt_file' => $new_lt_file]);
 
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
@@ -146,7 +146,7 @@ class SideLetterEditController extends Controller
       return redirect()->back()->withInput($request->input())->withErrors($validator);
     }
 
-    if(in_array($status,['0','2','3','1'])){
+    if(in_array($status,['0','2'])){
       $doc = Documents::where('id',$id)->first();
       $doc->doc_title = $request->doc_title;
       $doc->doc_date = $request->doc_startdate;
@@ -174,6 +174,11 @@ class SideLetterEditController extends Controller
       $doc->doc_parent_id = $request->parent_kontrak;
       $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
       $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
+      $doc->save();
+    }else{
+      //kalo dokumennya di return/ di approve dan di edit datanya (status = 3 & 1)
+      $doc = Documents::where('id',$id)->first();
+      $doc->doc_signing = '0';
       $doc->save();
     }
 
@@ -208,58 +213,60 @@ class SideLetterEditController extends Controller
       }
     }
 
-    if(count($new_lamp_up)>0){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','lampiran_ttd']
-        ])->delete();
-      foreach($new_lamp_up as $key => $val){
-        if(!empty($val)){
-          $doc_meta = new DocMeta();
-          $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'lampiran_ttd';
-          $doc_meta->meta_name = $request['doc_lampiran_nama'][$key];
-          if(is_object($val)){
-            $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
-            $file = $request['doc_lampiran'][$key];
-            $file->storeAs('document/'.$request->type.'_lampiran_ttd', $fileName);
-            $doc_meta->meta_file = $fileName;
+    if(in_array($status,['0','2'])){
+      if(count($new_lamp_up)>0){
+        DocMeta::where([
+          ['documents_id','=',$doc->id],
+          ['meta_type','=','lampiran_ttd']
+          ])->delete();
+        foreach($new_lamp_up as $key => $val){
+          if(!empty($val)){
+            $doc_meta = new DocMeta();
+            $doc_meta->documents_id = $doc->id;
+            $doc_meta->meta_type = 'lampiran_ttd';
+            $doc_meta->meta_name = $request['doc_lampiran_nama'][$key];
+            if(is_object($val)){
+              $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
+              $file = $request['doc_lampiran'][$key];
+              $file->storeAs('document/'.$request->type.'_lampiran_ttd', $fileName);
+              $doc_meta->meta_file = $fileName;
+            }
+            else{
+              $doc_meta->meta_file = $val;
+            }
+            $doc_meta->save();
           }
-          else{
-            $doc_meta->meta_file = $val;
-          }
-          $doc_meta->save();
         }
       }
     }
 
-    if(count($request['lt_name'])>0){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','latar_belakang']
-        ])->delete();
-      foreach($request['lt_name'] as $key => $val){
-        if(!empty($request['lt_name'][$key])
-            && !empty($request['lt_desc'][$key])
-        ){
-          $doc_meta = new DocMeta();
-          $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'latar_belakang';
-          $doc_meta->meta_name = $request['lt_name'][$key];
-          $doc_meta->meta_desc = $request['lt_desc'][$key];
-          if(is_object($new_lt_file_up[$key])){
-            $fileName   = Helpers::set_filename('doc_',strtolower($request['lt_name'][$key]));
-            $file = $new_lt_file_up[$key];
-            $file->storeAs('document/'.$request->type.'_latar_belakang', $fileName);
-            $doc_meta->meta_file = $fileName;
-          }
-          else{
-            $doc_meta->meta_file = $new_lt_file_up[$key];
-          }
-          $doc_meta->save();
-        }
-      }
-    }
+    // if(count($request['lt_name'])>0){
+    //   DocMeta::where([
+    //     ['documents_id','=',$doc->id],
+    //     ['meta_type','=','latar_belakang']
+    //     ])->delete();
+    //   foreach($request['lt_name'] as $key => $val){
+    //     if(!empty($request['lt_name'][$key])
+    //         && !empty($request['lt_desc'][$key])
+    //     ){
+    //       $doc_meta = new DocMeta();
+    //       $doc_meta->documents_id = $doc->id;
+    //       $doc_meta->meta_type = 'latar_belakang';
+    //       $doc_meta->meta_name = $request['lt_name'][$key];
+    //       $doc_meta->meta_desc = $request['lt_desc'][$key];
+    //       if(is_object($new_lt_file_up[$key])){
+    //         $fileName   = Helpers::set_filename('doc_',strtolower($request['lt_name'][$key]));
+    //         $file = $new_lt_file_up[$key];
+    //         $file->storeAs('document/'.$request->type.'_latar_belakang', $fileName);
+    //         $doc_meta->meta_file = $fileName;
+    //       }
+    //       else{
+    //         $doc_meta->meta_file = $new_lt_file_up[$key];
+    //       }
+    //       $doc_meta->save();
+    //     }
+    //   }
+    // }
 
     if(count($request->scope_pasal)>0){
       DocMetaSideLetter::where('documents_id','=',$doc->id)->delete();
@@ -319,18 +326,18 @@ class SideLetterEditController extends Controller
     $status = Documents::where('id',$id)->first()->doc_signing;
     $rules = [];
 
-    if(in_array($status,['0','2','3','1'])){
+    if(in_array($status,['0','2'])){
       $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
       $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      
+
       if( Config::get_config('auto-numb')=='off'){
         $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
       }
-      
+
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
@@ -384,10 +391,7 @@ class SideLetterEditController extends Controller
           $new_scope_file_up[] = $request->f_scope_file[$k];
         }
       }
-      else{
-        $new_scope_file[] = $v;
-        $new_scope_file_up[] = $v;
-      }
+      $request->merge(['scope_file' => $new_scope_file]);
     }
     $request->merge(['f_scope_file' => $new_scope_file]);
     
@@ -404,8 +408,8 @@ class SideLetterEditController extends Controller
         'errors' => $validator->getMessageBag()->toArray()
       ));
     }
-    
-    if(in_array($status,['0','2','3','1'])){
+
+    if(in_array($status,['0','2'])){
       $doc = Documents::where('id',$id)->first();
       $doc->doc_title = $request->doc_title;
       $doc->doc_date = $request->doc_startdate;
@@ -419,7 +423,7 @@ class SideLetterEditController extends Controller
       if((\Laratrust::hasRole('admin'))){
         $doc->user_id  = $request->user_id;
       }
-      
+
       $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
       if( Config::get_config('auto-numb')=='off'){
         $doc->doc_no = $request->doc_no;
@@ -431,6 +435,11 @@ class SideLetterEditController extends Controller
       $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
       $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
       $doc->save();
+    }else{
+      //kalo dokumennya di return/ di approve dan di edit datanya (status = 3 & 1)
+      $doc = Documents::where('id',$id)->first();
+      $doc->doc_signing = '0';
+      $doc->save();
     }
 
     // latar belakang optional
@@ -441,7 +450,7 @@ class SideLetterEditController extends Controller
         ])->delete();
       foreach($request->f_latar_belakang_judul as $key => $val){
         if(!empty($val) && !empty($request['f_latar_belakang_judul'][$key])){
-          
+
           $doc_meta = new DocMeta();
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = "latar_belakang_optional";
@@ -462,27 +471,29 @@ class SideLetterEditController extends Controller
       }
     }
 
-    if(count($new_lamp_up)>0){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','lampiran_ttd']
-        ])->delete();
-      foreach($new_lamp_up as $key => $val){
-        if(!empty($val)){
-          $doc_meta = new DocMeta();
-          $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'lampiran_ttd';
-          $doc_meta->meta_name = $request['doc_lampiran_nama'][$key];
-          if(is_object($val)){
-            $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
-            $file = $request['doc_lampiran'][$key];
-            $file->storeAs('document/'.$request->type.'_lampiran_ttd', $fileName);
-            $doc_meta->meta_file = $fileName;
+    if(in_array($status,['0','2'])){
+      if(count($new_lamp_up)>0){
+        DocMeta::where([
+          ['documents_id','=',$doc->id],
+          ['meta_type','=','lampiran_ttd']
+          ])->delete();
+        foreach($new_lamp_up as $key => $val){
+          if(!empty($val)){
+            $doc_meta = new DocMeta();
+            $doc_meta->documents_id = $doc->id;
+            $doc_meta->meta_type = 'lampiran_ttd';
+            $doc_meta->meta_name = $request['doc_lampiran_nama'][$key];
+            if(is_object($val)){
+              $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
+              $file = $request['doc_lampiran'][$key];
+              $file->storeAs('document/'.$request->type.'_lampiran_ttd', $fileName);
+              $doc_meta->meta_file = $fileName;
+            }
+            else{
+              $doc_meta->meta_file = $val;
+            }
+            $doc_meta->save();
           }
-          else{
-            $doc_meta->meta_file = $val;
-          }
-          $doc_meta->save();
         }
       }
     }

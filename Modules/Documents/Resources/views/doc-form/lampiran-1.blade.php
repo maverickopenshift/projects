@@ -7,7 +7,7 @@
       $lampiran = Helper::old_prop_each($doc,'doc_lampiran');
       $lampiran_nama = Helper::old_prop_each($doc,'doc_lampiran_nama');
     @endphp
-    
+
     <div class="form-group input-lampiran formerror formerror-doc_lampiran-0">
       <div class="col-sm-6">
         <div class="">
@@ -30,7 +30,7 @@
       </div>
     </div>
 
-  </div>  
+  </div>
   <div class="col-sm-3 align-bottom">
     <button type="button" class="btn btn-success add-lampiran align-bottom"><i class="glyphicon glyphicon-plus"></i> Tambah Lampiran</button>
   </div>
@@ -45,7 +45,7 @@ $(function() {
     /* Act on the event */
     var $this = $('.input-lampiran');
     var new_row = $this.eq(0).clone();
-    
+
     new_row.removeClass('has-error');
     new_row.find('input').val('');
     new_row.find('.error').html('');
@@ -60,7 +60,7 @@ $(function() {
       }else{
         $(this).removeClass().addClass("form-group input-lampiran formerror formerror-doc_lampiran-"+ index);
       }
-      
+
       $(this).find('.error-lampiran').removeClass().addClass("error error-lampiran error-doc_lampiran-"+ index);
       $(this).find('.error-lampiran_nama').removeClass().addClass("error error-lampiran_nama error-doc_lampiran_nama-"+ index);
 
@@ -71,13 +71,13 @@ $(function() {
         $(this).find('.add-lampiran').remove();
         $(this).find('.input-group-btn').append(btn_del);
       }
-      
+
     });
   });
 
   $(document).on('click', '.delete-lampiran', function(event) {
     // $(this).parent().parent().parent().parent().parent().remove();
-    $(this).parent().parent().parent().parent().remove();
+    $(this).parent().parent().parent().parent().parent().remove();
     var $this = $('.input-lampiran');
     $.each($this,function(index, el) {
       if($(this).hasClass("has-error")){

@@ -152,6 +152,9 @@
                 @permission('lihat-config')
                   <li class="{{Request::is('config') ?'active':''}}"><a href="{{route('config')}}">Config</a></li>
                 @endpermission
+                @permission('set-dmt')
+                  <li class="{{Request::is('config/set-dmt') ?'active':''}}"><a href="{{route('set.dmt')}}">Setting DMT</a></li>
+                @endpermission
               </ul>
             </li>
             @endpermission

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Supplier\Entities\Supplier;
 use Modules\Supplier\Entities\SupplierMetadata;
+use Modules\Config\Entities\Config;
 use Response;
 use PDF;
 
@@ -40,20 +41,28 @@ class CetakDmtController extends Controller
       $alamat = $sup->alamat;
       $kota = $sup->kota;
       $kode_sup = $sup->kd_vendor;
-      // dd($kode_sup);
+
+      $config = Config::where('object_key','=','set-dmt')->first();
+      $d = json_decode($config->object_value);
+      $nama_pegawai = strtoupper($d->v_nama_karyawan);
+      $jabatan = strtoupper($d->jabatan);
+      $kota_dmt = ucwords($d->kota);
+
+      // dd($nama_pegawai);
       $sup = new Supplier();
       $kode = $sup->gen_dmtnomer();
       $endDate = date('Y-m-d', strtotime('+2 years'));
       $date = date('d-M-Y');
-      // dd($endDate);
+      // dd($kode);
       if($sup){
         $data = Supplier::where('id',$id)->first();
         $data->no_rekanan_telkom = $kode;
         $data->tg_rekanan_expired = $endDate;
-        $data->save();
+        // $data->save();
         $pdf = PDF::loadView('supplier::partials.dmt', ['pimpinan' => $pimpinan, 'nama_perusahaan' => $nama_perusahaan,
                             'alamat' => $alamat, 'kode' => $kode, 'kota' => $kota, 'date' => $date,
-                            'klasifikasi_text' => $klasifikasi_text, 'klasifikasi_kode' => $klasifikasi_kode]);
+                            'klasifikasi_text' => $klasifikasi_text, 'klasifikasi_kode' => $klasifikasi_kode,
+                            'nama_pegawai' => $nama_pegawai, 'jabatan' => $jabatan, 'kota_dmt' => $kota_dmt]);
         return $pdf->stream('dmt-'.$kode_sup.'.pdf');
       }else{
         abort(500);
@@ -86,12 +95,21 @@ class CetakDmtController extends Controller
       $kode_sup = $sup->kd_vendor;
       $kode = $sup->no_rekanan_telkom;
       $date = date('d-M-Y');
+
+      $config = Config::where('object_key','=','set-dmt')->first();
+      $d = json_decode($config->object_value);
+      $nama_pegawai = strtoupper($d->v_nama_karyawan);
+      $jabatan = strtoupper($d->jabatan);
+      $kota_dmt = ucwords($d->kota);
+
+      // dd($nama_pegawai);
       // dd($date);
       // dd($kode_sup);
       // $endDate = date('Y-m-d', strtotime('+2 years'));
         $pdf = PDF::loadView('supplier::partials.dmt', ['pimpinan' => $pimpinan, 'nama_perusahaan' => $nama_perusahaan,
                             'alamat' => $alamat, 'kode' => $kode, 'kota' => $kota, 'date' => $date,
-                            'klasifikasi_text' => $klasifikasi_text, 'klasifikasi_kode' => $klasifikasi_kode]);
+                            'klasifikasi_text' => $klasifikasi_text, 'klasifikasi_kode' => $klasifikasi_kode,
+                            'nama_pegawai' => $nama_pegawai, 'jabatan' => $jabatan, 'kota_dmt' => $kota_dmt]);
         return $pdf->stream('dmt-'.$kode_sup.'.pdf');
     }
 

@@ -53,17 +53,16 @@
         <div class="form-group" style="position:relative;margin-bottom: 34px;">
           <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">{{$title_hs}}</div>
         </div>
-        <div class="form-group top20">
-          <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
-          <div class="col-sm-10">
-              <input type="file" name="daftar_harga" class="daftar_harga hide" accept=".csv,.xls,.xlsx">
+
+          <div class="form-group top20">
+            <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
+            <div class="col-sm-10">
               <button class="btn btn-primary btn-sm upload-daftar_harga" type="button"><i class="fa fa-upload"></i> Upload {{$title_hs}}</button>
-              <a href="{{route('doc.template.download',['filename'=>$tm_download])}}" class="btn btn-info  btn-sm" title="Download Sample Template">
-                <i class="glyphicon glyphicon-download-alt"></i> Download sample template
-              </a>
+              <a href="{{route('doc.tmp.download',['filename'=>$tm_download])}}" class="btn btn-info  btn-sm" title="Download Sample Template"><i class="glyphicon glyphicon-download-alt"></i> Download sample template</a>
               <span class="error error-daftar_harga text-danger"></span>
+            </div>
           </div>
-        </div>
+
       <div class="table-responsive">
         <table class="table table-condensed table-striped" id="table-hargasatuan">
           <thead>
@@ -108,7 +107,7 @@
               </td>
               <td class="formerror formerror-hs_mtu-0">
                 <select name="hs_mtu[]" class="form-control" style="width: 100%;">
-                  <option value="RP">RP</option>
+                  <option value="IDR">IDR</option>
                   <option value="USD">USD</option>
                 </select>
                 <div class="error error-hs_mtu error-hs_mtu-0"></div>
@@ -168,75 +167,56 @@ $(function() {
   });
 
   $('.daftar_harga').on('change', function(event) {
+    // $('.btn_submit').click();
     event.stopPropagation();
     event.preventDefault();
-    var validfile = [".csv", ".xls", ".xlsx"];
-    var namefile = $('.daftar_harga').val().split('\\').pop();
-    var valid = 0;
 
-    for (var i = 0; i < validfile.length; i++) {
-      var validfilex=validfile[i];
-
-      if (namefile.substr(namefile.length - validfilex.length, validfilex.length).toLowerCase() == validfilex.toLowerCase()) {
-        valid = 1;
-        break;
-      }
+    var loading = $('.loading2');
+    var form_user =  $('#form_me_boq');
+    loading.show();
+    $.ajax({
+      url: form_user.attr('action'),
+      type: 'post',
+      processData: false,
+      contentType: false,
+      data: new FormData(document.getElementById("form_me_boq")),
+      dataType: 'json',
+    })
+    .done(function(data) {
+    if(data.status){
+      handleDaftarHargaFileSelect(data);
     }
-
-    if(valid==1){
-      handleDaftarHargaFileSelect(this.files[0]);
-    }else{
-      $('.error-daftar_harga').html('Format File tidak valid! hanya CSV, XLS & XLXS yang valid');
+    else{
+      $('.error-daftar_harga').html('Format File tidak valid!');
+        return false;
     }
+    loading.hide();
+    })
+    .always(function(){
+      loading.hide();
+    });
   });
+
 });
 
-function handleDaftarHargaFileSelect(file) {
-  Papa.parse(file, {
-    header: true,
-    dynamicTyping: true,
-    complete: function(results) {
-      var fields = results.meta.fields;
-
-      @php
-        if($doc_type->name!='khs'){
-          echo "var fields_dec = ['KODE_ITEM','ITEM','QTY','SATUAN','MTU','HARGA','HARGA_JASA','KETERANGAN'];";
-          echo "var fields_length_set = 8;";
-        }
-        else{
-          echo "var fields_dec = ['KODE_ITEM','ITEM','SATUAN','MTU','HARGA','HARGA_JASA','KETERANGAN'];";
-          echo "var fields_length_set = 7;";
-        }
-      @endphp
-
-      if(fields.length!==fields_length_set || JSON.stringify(fields_dec)!==JSON.stringify(fields)){
-        console.log(fields.length);
-        console.log(JSON.stringify(fields));
-        $('.error-daftar_harga').html('Format CSV tidak valid!');
-        return false;
-      }
-
-      if(results.data.length==0){
-        $('.error-daftar_harga').html('Data tidak ada!');
-        return false;
-      }
-
+function handleDaftarHargaFileSelect(data) {
       var $this = $('#table-hargasatuan');
       var tbody = $this.find('tbody');
       var parse_row,btn_del;
+      // console.log(data.data.length);exit();
 
-      if(results.data.length>1){
+      if(data.data.length>1){
         btn_del = '<button type="button" class="btn btn-danger btn-xs delete-hs"><i class="glyphicon glyphicon-remove"></i> hapus</button>';
       }
 
-      $.each(results.data,function(index, el) {
-        if(results.data[index].KODE_ITEM!=""){
-
-          row_html = templateHS(results.data[index],index);
+      $.each(data.data,function(index, el) {
+        // if(data[index].KODE_ITEM!=""){
+        var dt = data.data;
+          row_html = templateHS(dt[index],index);
           row_html = $(row_html).clone();
           row_html.find('.action').html(btn_del);
           parse_row += $('<tr>').append(row_html).html();
-        }
+        // }
       });
 
       tbody.append(parse_row);
@@ -260,13 +240,13 @@ function handleDaftarHargaFileSelect(file) {
           }else{
             mdf_new_row.eq(2).removeClass().addClass("formerror formerror-hs_item-"+ index);
           }
-          
+
           if(mdf_new_row.eq(3).hasClass("has-error")){
             mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-hs_qty-"+ index);
           }else{
             mdf_new_row.eq(3).removeClass().addClass("formerror formerror-hs_qty-"+ index);
           }
-          
+
           if(mdf_new_row.eq(4).hasClass("has-error")){
             mdf_new_row.eq(4).removeClass().addClass("has-error formerror formerror-hs_satuan-"+ index);
           }else{
@@ -319,7 +299,7 @@ function handleDaftarHargaFileSelect(file) {
           }else{
             mdf_new_row.eq(2).removeClass().addClass("formerror formerror-hs_item-"+ index);
           }
-          
+
           if(mdf_new_row.eq(3).hasClass("has-error")){
             mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-hs_satuan-"+ index);
           }else{
@@ -359,7 +339,7 @@ function handleDaftarHargaFileSelect(file) {
           mdf_new_row.eq(7).find('.error-hs_keterangan').removeClass().addClass("error error-pic_posisi error-hs_keterangan-"+ index);
         @php
         }
-        @endphp    
+        @endphp
 
         if(row.length==1){
           mdf.html('');
@@ -367,15 +347,13 @@ function handleDaftarHargaFileSelect(file) {
           mdf.html(btn_del);
         }
       });
-
-    }
-  });
 }
 
-function templateHS(data,index) {
+function templateHS(dt,index) {
+  // console.log(dt);exit();
   var qty,harga_total,a,b;
-
-  if(data.MTU=="USD"){
+// console.log(dt.mtu);exit();
+  if(dt.mtu=="USD"){
     a="";
     b="selected";
   }else{
@@ -386,10 +364,10 @@ function templateHS(data,index) {
   @php
     if($doc_type->name!='khs'){
       echo "qty = '<td>\
-          <input type=\"text\" class=\"form-control input-rupiah hitung_total\" name=\"hs_qty[]\" value=\"'+data.QTY+'\" />\
+          <input type=\"text\" class=\"form-control input-rupiah hitung_total\" name=\"hs_qty[]\" value=\"'+dt.qty+'\" />\
           <div class=\"error error-hs_qty\"></div>\
           </td>';";
-      echo "harga_total = (data.HARGA+data.HARGA_JASA)*data.QTY;";
+      echo "harga_total = (dt.harga+dt.harga_jasa)*dt.qty;";
       echo "harga_total = '<td style=\"vertical-align: middle;\" class=\"text-right\">'+formatRupiah(harga_total.toString())+'</td>';";
     }
   @endphp
@@ -397,36 +375,36 @@ function templateHS(data,index) {
   return '<tr>\
     <td>'+(index+1)+'</td>\
     <td>\
-      <input type="text" class="form-control" name="hs_kode_item[]" value="'+data.KODE_ITEM+'" />\
+      <input type="text" class="form-control" name="hs_kode_item[]" value="'+dt.kode_item+'" />\
       <div class="error error-hs_kode_item"></div>\
     </td>\
     <td>\
-      <input type="text" class="form-control" name="hs_item[]" value="'+data.ITEM+'" />\
+      <input type="text" class="form-control" name="hs_item[]" value="'+dt.item+'" />\
       <div class="error error-hs_item"></div>\
     </td>\
       '+qty+'\
     <td>\
-      <input type="text" class="form-control" name="hs_satuan[]" value="'+data.SATUAN+'" />\
+      <input type="text" class="form-control" name="hs_satuan[]" value="'+dt.satuan+'" />\
       <div class="error error-hs_satuan"></div>\
     </td>\
     <td>\
       <select name="hs_mtu[]" class="form-control" style="width: 100%;">\
-        <option value="RP" '+ a +'>RP</option>\
+        <option value="IDR" '+ a +'>IDR</option>\
         <option value="USD" '+ b +'>USD</option>\
       </select>\
       <div class="error error-hs_mtu"></div>\
     </td>\
     <td>\
-      <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga[]" value="'+formatRupiah(data.HARGA)+'" />\
+      <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga[]" value="'+formatRupiah(dt.harga)+'" />\
       <div class="error error-hs_harga"></div>\
     </td>\
     <td>\
-      <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga_jasa[]" value="'+formatRupiah(data.HARGA_JASA)+'" />\
+      <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga_jasa[]" value="'+formatRupiah(dt.harga_jasa)+'" />\
       <div class="error error-hs_harga_jasa"></div>\
     </td>\
       '+harga_total+'\
     <td>\
-      <input type="text" class="form-control" name="hs_keterangan[]" value="'+data.KETERANGAN+'" />\
+      <input type="text" class="form-control" name="hs_keterangan[]" value="'+dt.keterangan+'" />\
     </td>\
     <td class="action"></td>\
   </tr>';
@@ -488,13 +466,13 @@ $(document).on('click', '.add-harga_satuan', function(event) {
       }else{
         mdf_new_row.eq(2).removeClass().addClass("formerror formerror-hs_item-"+ index);
       }
-      
+
       if(mdf_new_row.eq(3).hasClass("has-error")){
         mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-hs_qty-"+ index);
       }else{
         mdf_new_row.eq(3).removeClass().addClass("formerror formerror-hs_qty-"+ index);
       }
-      
+
       if(mdf_new_row.eq(4).hasClass("has-error")){
         mdf_new_row.eq(4).removeClass().addClass("has-error formerror formerror-hs_satuan-"+ index);
       }else{
@@ -547,7 +525,7 @@ $(document).on('click', '.add-harga_satuan', function(event) {
       }else{
         mdf_new_row.eq(2).removeClass().addClass("formerror formerror-hs_item-"+ index);
       }
-      
+
       if(mdf_new_row.eq(3).hasClass("has-error")){
         mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-hs_satuan-"+ index);
       }else{
@@ -587,7 +565,7 @@ $(document).on('click', '.add-harga_satuan', function(event) {
       mdf_new_row.eq(7).find('.error-hs_keterangan').removeClass().addClass("error error-pic_posisi error-hs_keterangan-"+ index);
     @php
     }
-    @endphp    
+    @endphp
 
     if(row.length==1){
       mdf.html('');
@@ -622,13 +600,13 @@ $(document).on('click', '.delete-hs', function(event) {
       }else{
         mdf_new_row.eq(2).removeClass().addClass("formerror formerror-hs_item-"+ index);
       }
-      
+
       if(mdf_new_row.eq(3).hasClass("has-error")){
         mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-hs_qty-"+ index);
       }else{
         mdf_new_row.eq(3).removeClass().addClass("formerror formerror-hs_qty-"+ index);
       }
-      
+
       if(mdf_new_row.eq(4).hasClass("has-error")){
         mdf_new_row.eq(4).removeClass().addClass("has-error formerror formerror-hs_satuan-"+ index);
       }else{
@@ -681,7 +659,7 @@ $(document).on('click', '.delete-hs', function(event) {
       }else{
         mdf_new_row.eq(2).removeClass().addClass("formerror formerror-hs_item-"+ index);
       }
-      
+
       if(mdf_new_row.eq(3).hasClass("has-error")){
         mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-hs_satuan-"+ index);
       }else{
@@ -721,7 +699,7 @@ $(document).on('click', '.delete-hs', function(event) {
       mdf_new_row.eq(7).find('.error-hs_keterangan').removeClass().addClass("error error-pic_posisi error-hs_keterangan-"+ index);
     @php
     }
-    @endphp    
+    @endphp
 
     if(row.length==1){
       mdf.html('');

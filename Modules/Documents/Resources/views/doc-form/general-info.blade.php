@@ -288,5 +288,33 @@ function create_content(attr){
   </div>';
 }
 
+$(document).on('change', '#divisi', function(event) {
+  event.preventDefault();
+  /* Act on the event */
+  var divisi = this.value;
+  //if(unit!==""){
+  $('#unit_bisnis').find('option').not('option[value=""]').remove();
+    $.ajax({
+      url: '{!!route('doc.get-unit')!!}',
+      type: 'GET',
+      dataType: 'json',
+      data: {divisi: divisi}
+    })
+    .done(function(data) {
+      if(data.length>0){
+        $.each(data,function(index, el) {
+          $('#unit_bisnis').append('<option value="'+this.id+'">'+this.title+'</option>');
+        });
+      }
+    });
+  //}
+});
+$(function(e){
+  $('#unit_bisnis').find('option').not('option[value=""]').remove();
+  if($('#divisi').val()!==""){
+    $('#divisi').change();
+  }
+});
+
 </script>
 @endpush

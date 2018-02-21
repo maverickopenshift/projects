@@ -138,7 +138,7 @@ class DocumentsController extends Controller
           $documents = $documents->with(['jenis','supplier','pic']);
           $documents = $documents->paginate($limit);
           $documents->getCollection()->transform(function ($value)use ($status_no,$status) {
-            
+
             $value['total_child']=$this->documents->total_child($value['id'],$status_no);
 
             $edit = '';
@@ -154,7 +154,7 @@ class DocumentsController extends Controller
 
             if($status=='tutup' && \Laratrust::can('tutup-kontrak')){
                 $tutup = '<a class="btn btn-xs btn-danger" href="'.route('doc.closing',['type'=>$value['doc_type'],'id'=>$value['id']]).'"><i class="fa fa-close"></i> CLOSING</a>';
-            }            
+            }
 
             if($status == 'tutup'){
               if($value['doc_parent_id']==null){
@@ -164,7 +164,7 @@ class DocumentsController extends Controller
                   $value['link'] = $view.$edit.$tutup;
                 }else{
                   $value['link'] = $view.$edit;
-                }                
+                }
               }
             }else{
               $value['link'] = $view.$edit;
@@ -172,7 +172,7 @@ class DocumentsController extends Controller
 
             if($value['doc_signing']==4){
               $value['link'] = $view;
-            }            
+            }
 
             $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason']);
             $value['sup_name']= $value->supplier->bdn_usaha.'.'.$value->supplier->nm_vendor;
@@ -193,7 +193,7 @@ class DocumentsController extends Controller
     {
       $id = $request->id;
       $doc_type = DocType::where('name','=',$request->type)->first();
-      $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po','sow_boq','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter','latar_belakang_optional','latar_belakang_ketetapan_pemenang','latar_belakang_kesanggupan_mitra','latar_belakang_rks')->first();
+      $dt = $this->documents->where('id','=',$id)->with('pemilik_kontrak','jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po','sow_boq','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter','latar_belakang_optional','latar_belakang_ketetapan_pemenang','latar_belakang_kesanggupan_mitra','latar_belakang_rks')->first();
 
       if(!$doc_type || !$dt){
         abort(404);
@@ -228,18 +228,24 @@ class DocumentsController extends Controller
                                   ->where('a.users_id',$dt->user_id)->first();
       $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
 
+      $objiddivisi=$dt->pemilik_kontrak->meta_name;
+      $objidunit=$dt->pemilik_kontrak->meta_title;
+      $data['divisi'] = \DB::table('rptom')->where('objiddivisi',$objiddivisi)->first();
+      $data['unit_bisnis'] = \DB::table('rptom')->where('objidunit',$objidunit)->first();
+
+      // dd($data);
       return view('documents::view')->with($data);
     }
 
     public function getPo(Request $request){
-      
+
       $search = trim($request->po);
 
       if (empty($search)) {
         return Response::json(['status'=>false]);
       }
       if(config('app.env')=='production'){
-        $sap = Sap::get_po($search); 
+        $sap = Sap::get_po($search);
         return Response::json($sap);
       }
       else{
@@ -437,7 +443,7 @@ class DocumentsController extends Controller
           $data->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
         }
         $data = $data->paginate(30);
-        
+
         if($type!="all"){
           $data->getCollection()->transform(function ($value) use ($type){
             $types=DocType::select('id')->where('name',$type)->first();
@@ -742,7 +748,7 @@ class DocumentsController extends Controller
                          'harga' => $value->HARGA,
                          'harga_jasa' => $value->HARGA_JASA,
                          'keterangan' => $value->KETERANGAN,
-                       ];          
+                       ];
           }
 
           return Response::json (array(
@@ -751,7 +757,7 @@ class DocumentsController extends Controller
         }else{
           return Response::json (array(
             'error' => $data
-          ));          
+          ));
         }
       }
 
@@ -760,7 +766,7 @@ class DocumentsController extends Controller
 
         })->get();
         $header = ['cl','vendor','cty','name_1','city','postalcode','rg','searchterm','street','date','title','created_by','group','language','vat_registration_no'];
-        $colomn = $data->first()->keys()->toArray(); 
+        $colomn = $data->first()->keys()->toArray();
 
 
       if(!empty($data) && count($colomn) == 15){

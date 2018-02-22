@@ -79,10 +79,10 @@
                             @endif
                             <td>{{($dt->satuan)}}</td>
                             <td>{{($dt->mtu)}}</td>
-                            <td>{{($dt->harga)}}</td>
-                            <td>{{($dt->harga_jasa)}}</td>
+                            <td>{{number_format($dt->harga)}}</td>
+                            <td>{{number_format($dt->harga_jasa)}}</td>
                             @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
-                            <td>{{($dt->harga_total)}}</td>
+                            <td>{{number_format($dt->harga_total)}}</td>
                             @endif
                             <td>{{($dt->desc)}}</td>
                           </tr>

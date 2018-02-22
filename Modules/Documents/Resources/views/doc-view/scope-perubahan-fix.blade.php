@@ -9,7 +9,7 @@
               Pasal {{($key+1)}}
             </div>
           </div>
-            
+
           <div class="form-group">
             <label for="doc_jaminan" class="col-sm-2 control-label">Pasal</label>
             <div class="col-sm-10 text-me">{{$dt->meta_pasal}}</div>

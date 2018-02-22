@@ -168,6 +168,7 @@ $(function () {
   $('.datepicker').datepicker({
    format: 'dd-mm-yyyy',
    autoclose:true,
+   todayHighlight:true
   });
   var data = $('.form-control').val();
   $('.btnNext').click(function(){

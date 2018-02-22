@@ -24,7 +24,7 @@
       $f_latar_belakang_judul = Helper::old_prop_each($doc,'f_latar_belakang_judul');
       $f_latar_belakang_tanggal = Helper::old_prop_each($doc,'f_latar_belakang_tanggal');
       $f_latar_belakang_isi = Helper::old_prop_each($doc,'f_latar_belakang_isi');
-    
+
       if($doc_type->name == "khs" || $doc_type->name == "turnkey" || $doc_type->name == "surat_pengikatan"){
         $judul = "Judul";
       }else{
@@ -50,7 +50,7 @@
       </div>
       </div>
 
-      
+
       <div class="form-group formerror formerror-lt_tanggal_rks">
         <label class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal</label>
         <div class="col-sm-4">
@@ -58,7 +58,7 @@
               <div class="input-group-addon">
                   <span class="fa fa-calendar"></span>
               </div>
-              <input type="text" class="form-control" name="lt_tanggal_rks" autocomplete="off" placeholder="Tanggal..">
+              <input type="text" class="form-control datepicker" name="lt_tanggal_rks" autocomplete="off" placeholder="Tanggal..">
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
@@ -109,7 +109,7 @@
               <div class="input-group-addon">
                   <span class="fa fa-calendar"></span>
               </div>
-              <input type="text" value="{{$lt_tanggal_ketetapan_pemenang}}" class="form-control" name="lt_tanggal_ketetapan_pemenang" autocomplete="off" placeholder="Tanggal..">
+              <input type="text" value="{{$lt_tanggal_ketetapan_pemenang}}" class="form-control datepicker" name="lt_tanggal_ketetapan_pemenang" autocomplete="off" placeholder="Tanggal..">
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
@@ -157,7 +157,7 @@
               <div class="input-group-addon">
                   <span class="fa fa-calendar"></span>
               </div>
-              <input type="text" value="{{$lt_tanggal_kesanggupan_mitra}}" class="form-control" name="lt_tanggal_kesanggupan_mitra" autocomplete="off"  placeholder="Tanggal..">
+              <input type="text" value="{{$lt_tanggal_kesanggupan_mitra}}" class="form-control datepicker" name="lt_tanggal_kesanggupan_mitra" autocomplete="off"  placeholder="Tanggal..">
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
@@ -183,14 +183,14 @@
       </div>
     </div>
     @endif
-    
+
     <div class="parent-perubahan_latar_belakang">
       <div class="form-horizontal perubahan_latar_belakang" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
         <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
           <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Latar Belakang <span class="total_perubahan_latar_belakang">1</span></div>
           <div class="btn-group" style="position: absolute;right: 5px;top: -10px;border-radius: 0;">
             <button type="button" class="btn btn-success add-latar-belakang" style="border-radius: 0;"><i class="glyphicon glyphicon-plus"></i></button>
-          </div>            
+          </div>
         </div>
 
         <div class="form-group">
@@ -207,7 +207,7 @@
               <div class="input-group-addon">
                   <span class="fa fa-calendar"></span>
               </div>
-              <input type="text" name="f_latar_belakang_tanggal[]" class="form-control f_latar_belakang_tanggal" placeholder="Tanggal..">
+              <input type="text" name="f_latar_belakang_tanggal[]" class="form-control f_latar_belakang_tanggal datepicker" placeholder="Tanggal..">
             </div>
           </div>
         </div>
@@ -217,7 +217,7 @@
           <div class="col-sm-6">
             <textarea class="form-control f_latar_belakang_isi" name="f_latar_belakang_isi[]" cols="4" rows="4" placeholder="Isi.."></textarea>
           </div>
-        </div>         
+        </div>
 
         <div class="form-group">
           <label for="lt_file" class="col-sm-2 control-label"> File</label>
@@ -235,7 +235,7 @@
 
       </div>
     </div>
-    
+
     @include('documents::partials.buttons')
   </div>
 </div>
@@ -243,7 +243,7 @@
 <script>
   $(function(){
     var datepicker_ops={
-      format: 'yyyy-mm-dd',
+      format: 'dd-mm-yyyy',
       autoclose:true,
       todayHighlight:true
     };
@@ -265,7 +265,7 @@
       mdf_new_row.eq(1).find('.f_latar_belakang_judul').val('');
       mdf_new_row.eq(1).find('.error').html('');
 
-      mdf_new_row.eq(2).find('.f_latar_belakang_tanggal').val('');    
+      mdf_new_row.eq(2).find('.f_latar_belakang_tanggal').val('');
       mdf_new_row.eq(2).find('.error').html('');
 
       mdf_new_row.eq(3).find('.f_latar_belakang_isi').val('');
@@ -314,7 +314,7 @@
         }
       });
     });
-    
+
   });
 </script>
 @endpush

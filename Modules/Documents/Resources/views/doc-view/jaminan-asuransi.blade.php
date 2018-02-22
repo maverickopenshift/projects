@@ -20,7 +20,7 @@
       </div>
       <div class="form-group">
         <label for="doc_jaminan_nilai" class="col-sm-2 control-label">Nilai Jaminan</label>
-        <div class="col-sm-10 text-me">{{$dt->doc_jaminan_nilai or '-'}}</div>
+        <div class="col-sm-10 text-me">{{number_format($dt->doc_jaminan_nilai)}}</div>
       </div>
       <div class="form-group">
         <label for="doc_jaminan_startdate" class="col-sm-2 control-label">Tanggal Mulai</label>

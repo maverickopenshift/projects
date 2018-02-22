@@ -29,9 +29,9 @@
                 <div class="input-group-addon">
                     <span class="fa fa-calendar"></span>
                 </div>
-                <input type="text" class="form-control" name="doc_startdate" value="{{old('doc_startdate',Helper::prop_exists($doc,'doc_startdate'))}}" autocomplete="off">
+                <input type="text" class="form-control datepicker" name="doc_startdate" value="{{old('doc_startdate',Helper::prop_exists($doc,'doc_startdate'))}}" autocomplete="off">
             </div>
-          </div>            
+          </div>
           <div class="col-sm-10 col-sm-offset-2">
             <div class="error error-doc_startdate"></div>
           </div>
@@ -44,7 +44,7 @@
                 <div class="input-group-addon">
                     <span class="fa fa-calendar"></span>
                 </div>
-                <input type="text" class="form-control" name="doc_enddate" value="{{old('doc_enddate',Helper::prop_exists($doc,'doc_enddate'))}}" autocomplete="off">
+                <input type="text" class="form-control datepicker" name="doc_enddate" value="{{old('doc_enddate',Helper::prop_exists($doc,'doc_enddate'))}}" autocomplete="off">
             </div>
           </div>
           <div class="col-sm-10 col-sm-offset-2">

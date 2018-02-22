@@ -155,7 +155,7 @@
           @if($doc_type->name!="sp" && $doc_type->name!="khs")
             <div class="form-group">
               <label for="bdn_usaha" class="col-sm-2 control-label">Nilai Kontrak</label>
-              <div class="col-sm-10 text-me">{{$doc->doc_value}}</div>
+              <div class="col-sm-10 text-me">{{number_format($doc->doc_value)}}</div>
             </div>
           @endif
           @if($doc_type->name=="sp")
@@ -175,11 +175,11 @@
                         </thead>
                         <tbody>
                             <tr>
-                              <td>{{($doc->doc_nilai_material)}}</td>
-                              <td>{{($doc->doc_nilai_jasa)}}</td>
-                              <td>{{($doc->doc_nilai_total)}}</td>
-                              <td>{{($doc->doc_nilai_ppn)}} %</td>
-                              <td>{{($doc->doc_nilai_total_ppn)}}</td>
+                              <td>{{number_format($doc->doc_nilai_material)}}</td>
+                              <td>{{number_format($doc->doc_nilai_jasa)}}</td>
+                              <td>{{number_format($doc->doc_nilai_total)}}</td>
+                              <td>{{number_format($doc->doc_nilai_ppn)}} %</td>
+                              <td>{{number_format($doc->doc_nilai_total_ppn)}}</td>
                             </tr>
                         </tbody>
                     </table>

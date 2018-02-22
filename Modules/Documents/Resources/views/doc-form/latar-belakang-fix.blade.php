@@ -85,7 +85,7 @@
     </div>
     @endif
 
-    @if(in_array($doc_type->name,['surat_pengikatan', 'khs', 'turnkey', 'sp', 'amandemen_sp', 'amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum', 'side_letter']))
+    @if(in_array($doc_type->name,['surat_pengikatan', 'khs', 'turnkey']))
     <!-- Surat Ketetapan Pemenang-->
     <div class="form-horizontal lt" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
       <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
@@ -196,13 +196,7 @@
         <div class="form-group">
           <label for="f_judul" class="col-sm-2 control-label">Perubahan</label>
           <div class="col-sm-6">
-            <select class="form-control f_latar_belakang_judul" name="f_latar_belakang_judul[]" style="width: 100%;">
-              <option value=""></option>
-              <option value="latar_belakang_surat_pengikatan">No. Surat Pengikatan</option>
-              <option value="latar_belakang_mou">No. Mou</option>
-              <option value="latar_belakang_bak">BAK</option>
-              <option value="latar_belakang_bap">BAP</option>
-            </select>
+            <input type="text" name="f_latar_belakang_judul[]" class="form-control f_latar_belakang_judul" placeholder="Judul..">
           </div>
         </div>
 
@@ -254,18 +248,8 @@
       todayHighlight:true
     };
 
-    $(".f_latar_belakang_judul").select2({
-      placeholder:"Silahkan Pilih"
-    });
-
     $(document).on('click', '.add-latar-belakang', function(event) {
       event.preventDefault();
-
-      $('.parent-perubahan_latar_belakang').find(".f_latar_belakang_judul").each(function(index){
-        if($(this).data('select2')) {
-          $(this).select2('destroy');
-        }
-      });
 
       var btn_add = '<button type="button" class="btn btn-success add-latar-belakang" style="border-radius: 0;"><i class="glyphicon glyphicon-plus"></i></button>';
       var btn_del = '<button type="button" class="btn btn-danger delete-latar-belakang" style="border-radius: 0;"><i class="glyphicon glyphicon-trash"></i></button>';
@@ -307,10 +291,6 @@
         }
       });
 
-      $(".f_latar_belakang_judul").select2({
-        placeholder:"Silahkan Pilih"
-      });
-
       $('.date').datepicker(datepicker_ops);
     });
 
@@ -334,6 +314,7 @@
         }
       });
     });
+    
   });
 </script>
 @endpush

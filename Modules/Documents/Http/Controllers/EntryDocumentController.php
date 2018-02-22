@@ -267,8 +267,7 @@ class EntryDocumentController extends Controller
           if(isset($request->ps_judul[$k]) && $request->ps_judul[$k]=="Lainnya" && !empty($v)){//jika ada file baru
             $new_pasal[] = $request->ps_judul_new[$k];
             $rules['ps_judul_new.'.$k] = 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-          }
-          else{
+          }else{
             $new_pasal[] = $v;
           }
         }
@@ -771,7 +770,7 @@ class EntryDocumentController extends Controller
         $rules['pic_posisi.*']    =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
 
         $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-        $validator->after(function ($validator) use ($request) {
+        $validator->after(function ($validator) use ($request, $type) {
             if (!isset($request['pic_nama'][0])) {
                 $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
             }
@@ -779,10 +778,12 @@ class EntryDocumentController extends Controller
             if($request->doc_enddate < $request->doc_startdate){
               $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
             }
-            if(Config::get_config('auto-numb')=='off'){
-              $db = Documents::check_no_kontrak($request->doc_no,'telkom');
-              if($db){
-                $validator->errors()->add('doc_no', 'No Kontrak sudah ada!');
+
+            if(in_array($type,['turnkey','sp'])){
+              foreach($request->doc_jaminan_enddate as $k => $v){
+                if($request->doc_jaminan_enddate[$k] < $request->doc_jaminan_startdate[$k]){
+                  $validator->errors()->add('doc_jaminan_enddate.'.$k, 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+                }
               }
             }
         });
@@ -803,7 +804,6 @@ class EntryDocumentController extends Controller
       }else{
         $rules['doc_template_id']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-        $rules['pic_posisi.*']     =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         if(\Laratrust::hasRole('admin')){

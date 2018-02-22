@@ -7,7 +7,8 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 
 use App\Helpers\Pdf;
-use User;
+use App\User;
+use Auth;
 
 class PdfDocController extends Controller
 {
@@ -18,19 +19,14 @@ class PdfDocController extends Controller
     //if($type=='document')
     $file = storage_path('app/document/'.$type.'/' . $filename);
     //$file = storage_path("app/document/adendum/doc_lampiran__adendum-kontrak-1_1510160861_yt6kp.pdf");
-    $nama = 'Irfan';
-    $nik = '009923232';
 
-    /*
-    $jenis=check_usertype($Auth::user()->username);
+    
+    $jenis=User::check_usertype(Auth::user()->username);
     if($jenis=="subsidiary" && $jenis=="nonorganik"){
         $jenis_fix=1;
     }else{
         $jenis_fix=0;
     }
-    */
-
-    $jenis_fix=0;
 
     $pdf = new Pdf($file,$req->nama,$req->nik,$jenis_fix);
     //$pdf = new FPDI();

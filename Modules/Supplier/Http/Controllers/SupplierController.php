@@ -38,6 +38,7 @@ class SupplierController extends Controller
       $sts = $status;
       return view('supplier::index')->with(compact('sql','page_title','sts'));
     }
+
     public function data(Request $request)
     {
       $sql = Supplier::with('user','supplierSap');
@@ -46,17 +47,6 @@ class SupplierController extends Controller
         $sql->where('vendor_status', '=', '0');
       }
       $sql->get();
-      // dd($request);
-      // $search = trim($request->q);
-        // dd($request->user_id);
-        // $sql = Supplier::with('user','supplierSap')->get();
-
-        // if(!empty($search)){
-        //   $sql->where(function($q) use ($search) {
-        //       $q->orWhere('vendor_status', '=', '%'.$search.'%');
-        //   });
-        // }
-        // dd($sql);
         return Datatables::of($sql)
             ->addIndexColumn()
             ->addColumn('id_sap', function ($data){
@@ -84,8 +74,6 @@ class SupplierController extends Controller
               return $sts;
             })
             ->addColumn('action', function ($data) {
-              // dd($data->vendor_status);
-
                 $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
                 $roles = htmlspecialchars(json_encode($data->roles), ENT_QUOTES, 'UTF-8');
               $act= '<div class="">';
@@ -102,11 +90,6 @@ class SupplierController extends Controller
 
                 }
               }
-
-  //             if(\Auth::user()->hasPermission('ubah-supplier')){
-  //                 $act .='<button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#form-modal"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-roles="'.$roles.'">
-  // <i class="glyphicon glyphicon-edit"></i> Edit Status</button>';
-  //             }
               if(\Auth::user()->hasPermission('hapus-supplier')){
                 $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-toggle="modal" data-target="#modal-delete"><i class="glyphicon glyphicon-trash"></i> Deleteeee</button> <br>';
               }
@@ -132,12 +115,10 @@ class SupplierController extends Controller
             })
             ->make(true);
     }
+    
     public function getSelect(Request $request){
         $search = trim($request->q);
 
-        // if (empty($search)) {
-        //     return \Response::json([]);
-        // }
         $data = Supplier::select('id','nm_vendor','kd_vendor','bdn_usaha')->where('vendor_status', '=', '1');
         if(!empty($search)){
           $data->where(function($q) use ($search) {
@@ -148,6 +129,7 @@ class SupplierController extends Controller
         $data = $data->paginate(30);
         return \Response::json($data);
     }
+
     public function filtersupplier(Request $request){
       $isi = $request->kode;
       // dd($isi);

@@ -54,7 +54,6 @@
                 var data = button.data('data');
                 var role = data.roles;
 
-                //data = JSON.parse(data);
                 if(data.vendor_status=='0'){
                   $('.approve-action').addClass('btn-danger unapprove-action').text("Unapprove")
                 }else{
@@ -68,7 +67,6 @@
 
         })
         $(document).on('submit','#form-me',function (event) {
-            // event.preventDefault();
             var formMe = $(this)
             var btnSave = formMe.find('.btn-save')
             btnSave.button('loading')

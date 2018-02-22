@@ -29,8 +29,6 @@ class SupplierAddController extends Controller
 
   public function store(Request $request)
   {
-    // dd($request->komentar);
-    // dd($request->all());
     $asset = $request->asset;
     $request->merge(['asset' => Helpers::input_rupiah($request->asset)]);
     $rules = array (
@@ -39,7 +37,6 @@ class SupplierAddController extends Controller
         'nm_vendor'         => 'required|max:500|min:3',
         'nm_vendor_uq'      => 'max:3|min:3',
         'prinsipal_st'      => 'required|boolean',
-        // 'klasifikasi_usaha.*' => 'required',
         'pengalaman_kerja'  => 'required|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
         'alamat'            => 'required|max:1000|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i',
         'kota'              => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
@@ -62,30 +59,28 @@ class SupplierAddController extends Controller
         'akte_akhir_no'     => 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'akte_akhir_tg'     => 'sometimes|nullable|date_format:"Y-m-d"',
         'akte_akhir_notaris'=> 'sometimes|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'siup_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'siup_tg_terbit'     => 'required|date_format:"Y-m-d"',
-        'siup_tg_expired'     => 'required|date_format:"Y-m-d"|after:siup_tg_terbit',
-        'siup_kualifikasi'     => 'required|in:"1","2","3"',
-        'pkp'      => 'required|boolean',
-        'npwp_no'     => 'required_if:pkp,"1"|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'npwp_tg'     => 'required_if:pkp,"1"|nullable|date_format:"Y-m-d"',
-        'tdp_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'siup_no'           => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'siup_tg_terbit'    => 'required|date_format:"Y-m-d"',
+        'siup_tg_expired'   => 'required|date_format:"Y-m-d"|after:siup_tg_terbit',
+        'siup_kualifikasi'  => 'required|in:"1","2","3"',
+        'pkp'               => 'required|boolean',
+        'npwp_no'           => 'required_if:pkp,"1"|nullable|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'npwp_tg'           => 'required_if:pkp,"1"|nullable|date_format:"Y-m-d"',
+        'tdp_no'            => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'tdp_tg_terbit'     => 'required|date_format:"Y-m-d"',
-        'tdp_tg_expired'     => 'required|date_format:"Y-m-d"|after:tdp_tg_terbit',
-        'idp_no'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'tdp_tg_expired'    => 'required|date_format:"Y-m-d"|after:tdp_tg_terbit',
+        'idp_no'            => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'idp_tg_terbit'     => 'required|date_format:"Y-m-d"',
-        'idp_tg_expired'     => 'required|date_format:"Y-m-d"|after:idp_tg_terbit',
-        'nm_direktur_utama'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'nm_komisaris_utama'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'cp1_nama'     => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        'cp1_telp'     => 'required|digits_between:7,20',
-        'cp1_email'     => 'required|max:50|min:4|email',
-        'jml_peg_domestik'     => 'required|integer',
+        'idp_tg_expired'    => 'required|date_format:"Y-m-d"|after:idp_tg_terbit',
+        'nm_direktur_utama' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'nm_komisaris_utama'=> 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'cp1_nama'          => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
+        'cp1_telp'          => 'required|digits_between:7,20',
+        'cp1_email'         => 'required|max:50|min:4|email',
+        'jml_peg_domestik'  => 'required|integer',
         'jml_peg_asing'     => 'required|integer',
         'legal_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
         'legal_dokumen.*.file' => 'required|mimes:pdf',
-        // 'sertifikat_dokumen.*.name' => 'required|max:500|min:3|regex:/^[a-z0-9 .\-]+$/i',
-        // 'sertifikat_dokumen.*.file' => 'required|mimes:pdf',
     );
 
     $rule_iujk_no = (count($request['iujk_no'])>1)?'required':'sometimes|nullable';

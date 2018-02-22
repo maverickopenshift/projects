@@ -22,7 +22,7 @@
             <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label>
             <div class="col-sm-10">
               <textarea class="form-control" name="doc_sow" cols="4" rows="4">{{Helper::old_prop($doc,'doc_sow')}}</textarea>
-              <div class="error error-doc_title"></div>
+              <div class="error error-doc_sow"></div>
             </div>
           </div>
         </div>
@@ -426,18 +426,18 @@ $(document).on('click', '.add-harga_satuan', function(event) {
   mdf_new_row.eq(2).find('.error').html('');
   mdf_new_row.eq(3).find('input').val('');
   mdf_new_row.eq(3).find('.error').html('');
-  mdf_new_row.eq(4).find('select').val(mdf_new_row.eq(4).find('select option:first').val());
+  mdf_new_row.eq(4).find('input').val('');
   mdf_new_row.eq(4).find('.error').html('');
   mdf_new_row.eq(5).find('input').val('');
   mdf_new_row.eq(5).find('.error').html('');
   mdf_new_row.eq(6).find('input').val('');
   mdf_new_row.eq(6).find('.error').html('');
+  mdf_new_row.eq(7).find('input').val('');
+  mdf_new_row.eq(7).find('.error').html('');
 
   @php
     if($doc_type->name!='khs'){
       echo "
-        mdf_new_row.eq(7).find('input').val('');
-        mdf_new_row.eq(7).find('.error').html('');
         mdf_new_row.eq(8).html('0');
         mdf_new_row.eq(9).find('input').val('');
         mdf_new_row.eq(9).find('.error').html('');

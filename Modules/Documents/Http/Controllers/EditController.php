@@ -281,6 +281,7 @@ class EditController extends Controller
     $objidunit=$dt->pemilik_kontrak->meta_title;
     $data['divisi'] = \DB::table('rptom')->where('objiddivisi',$objiddivisi)->first();
     $data['unit_bisnis'] = \DB::table('rptom')->where('objidunit',$objidunit)->first();
+
     return view('documents::form-edit')->with($data);
   }
   public function store(Request $request)
@@ -951,17 +952,26 @@ class EditController extends Controller
     }
     $request->merge(['ps_judul_new' => $new_pasal]);
 
+    $rules['pic_posisi.*']    =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
 
     if(in_array($status,['0','2'])){
       $rules['pic_posisi.*']    =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
-      $validator->after(function ($validator) use ($request) {
+      $validator->after(function ($validator) use ($request, $type) {
           if (!isset($request['pic_nama'][0])) {
-              $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
+            $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
           }
 
           if($request->doc_enddate < $request->doc_startdate){
             $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+          }
+
+          if(in_array($type,['turnkey','sp'])){
+            foreach($request->doc_jaminan_enddate as $k => $v){
+              if($request->doc_jaminan_enddate[$k] < $request->doc_jaminan_startdate[$k]){
+                $validator->errors()->add('doc_jaminan_enddate.'.$k, 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+              }
+            }
           }
       });
     }
@@ -970,6 +980,7 @@ class EditController extends Controller
     if(isset($hs_harga) && count($hs_harga)>0){
       $request->merge(['hs_harga'=>$hs_harga]);
     }
+    
     if(isset($hs_qty) && count($hs_qty)>0){
       $request->merge(['hs_qty'=>$hs_qty]);
     }
@@ -992,18 +1003,26 @@ class EditController extends Controller
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       $doc->doc_signing = '0';
-      if((\Laratrust::hasRole('admin'))){
-        $doc->user_id = $request->user_id;
-      }
       $doc->supplier_id = $request->supplier_id;
-      if(in_array($type,['turnkey','sp'])){
-        $doc->doc_po_no = $request->doc_po;
-      }
       $doc->doc_proc_process = $request->doc_proc_process;
       $doc->doc_mtu = $request->doc_mtu;
       $doc->doc_value = Helpers::input_rupiah($request->doc_value);
       $doc->doc_sow = $request->doc_sow;
       $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
+
+      if((\Laratrust::hasRole('admin'))){
+        $doc->user_id = $request->user_id;
+      }
+      
+      if(in_array($type,['turnkey','sp'])){
+        $doc->doc_po_no = $request->doc_po;
+      }
+
+      $doc->penomoran_otomatis =  Config::get_penomoran_otomatis($request->penomoran_otomatis);
+      if(Config::get_config('auto-numb')=='off'){
+        $doc->doc_no = $request->doc_no;
+      }
+
       $doc->save();
     }else{
       //kalo dokumennya di return/ di approve dan di edit datanya (status = 3 & 1)

@@ -459,9 +459,11 @@ class SpCreateController
       $rules = [];
 
       if($request->statusButton == '0'){
+
         $rules['komentar']         = 'required|max:250|min:2';
         $rules['divisi']           =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         $rules['unit_bisnis']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+
         $rules['parent_kontrak']   =  'required|kontrak_exists';
         $rules['doc_title']        =  'required|min:2';
         $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -535,23 +537,23 @@ class SpCreateController
         $rules['doc_jaminan_file.*']      = 'sometimes|nullable|mimes:pdf';
         $rules['doc_po']                  = 'sometimes|nullable|po_exists|regex:/^[a-z0-9 .\-]+$/i';
 
-        $rules['lt_judul_ketetapan_pemenang']     = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
-        $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
-
-        $rules['lt_judul_kesanggupan_mitra']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['lt_tanggal_kesanggupan_mitra']  = 'required|date_format:"Y-m-d"';
-        $rules['lt_file_kesanggupan_mitra']     = 'required|mimes:pdf';
-
         $rules['pic_posisi.*']    =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
         $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-        $validator->after(function ($validator) use ($request) {
+        $validator->after(function ($validator) use ($request,$type) {
           if (!isset($request['pic_nama'][0])) {
               $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
           }
 
           if($request->doc_enddate < $request->doc_startdate){
             $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+          }
+
+          if(in_array($type,['turnkey','sp'])){
+            foreach($request->doc_jaminan_enddate as $k => $v){
+              if($request->doc_jaminan_enddate[$k] < $request->doc_jaminan_startdate[$k]){
+                $validator->errors()->add('doc_jaminan_enddate.'.$k, 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+              }
+            }
           }
         });
 
@@ -568,7 +570,9 @@ class SpCreateController
           ));
         }
       }else{
-
+        $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['parent_kontrak']   =  'required|kontrak_exists';
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
@@ -684,7 +688,7 @@ class SpCreateController
             $asr->doc_jaminan_startdate = $request['doc_jaminan_startdate'][$key];
             $asr->doc_jaminan_enddate = $request['doc_jaminan_enddate'][$key];
             $asr->doc_jaminan_desc = $request['doc_jaminan_desc'][$key];
-            // dd($asr);
+            
             if(isset($request['doc_jaminan_file'][$key])){
               $fileName   = Helpers::set_filename('doc_',strtolower($val));
               $file = $request['doc_jaminan_file'][$key];
@@ -708,41 +712,6 @@ class SpCreateController
           $pic->posisi = $request['pic_posisi'][$key];
           $pic->save();
         }
-      }
-
-      // latar belakang wajib
-      if(isset($request->lt_judul_ketetapan_pemenang)){
-        $doc_meta = new DocMeta();
-        $doc_meta->documents_id = $doc->id;
-        $doc_meta->meta_type = "latar_belakang_ketetapan_pemenang";
-        $doc_meta->meta_name = "Latar Belakang Ketetapan Pemenang";
-        $doc_meta->meta_desc = $request->lt_tanggal_ketetapan_pemenang;
-
-        if(isset($request->lt_file_ketetapan_pemenang)){
-          $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_ketetapan_pemenang));
-          $file = $request->lt_file_ketetapan_pemenang;
-          $file->storeAs('document/'.$type.'_latar_belakang_ketetapan_pemenang', $fileName);
-          $doc_meta->meta_file = $fileName;
-        }
-
-        $doc_meta->save();
-      }
-
-      if(isset($request->lt_judul_kesanggupan_mitra)){
-        $doc_meta = new DocMeta();
-        $doc_meta->documents_id = $doc->id;
-        $doc_meta->meta_type = "latar_belakang_kesanggupan_mitra";
-        $doc_meta->meta_name = "Latar Belakang Kesanggupan Mitra";
-        $doc_meta->meta_desc = $request->lt_tanggal_kesanggupan_mitra;
-
-        if(isset($request->lt_file_kesanggupan_mitra)){
-          $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_kesanggupan_mitra));
-          $file = $request->lt_file_kesanggupan_mitra;
-          $file->storeAs('document/'.$type.'_latar_belakang_kesanggupan_mitra', $fileName);
-          $doc_meta->meta_file = $fileName;
-        }
-
-        $doc_meta->save();
       }
 
       // latar belakang optional

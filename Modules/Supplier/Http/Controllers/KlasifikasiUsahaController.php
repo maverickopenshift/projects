@@ -21,7 +21,8 @@ class KlasifikasiUsahaController extends Controller
         $data['page_title'] = 'Klasifikasi Usaha';
         return view('supplier::klasifikasi-usaha.index')->with($data);
     }
-    public function data()
+
+    public function data(Request $request)
     {
         $sql = KlasifikasiUsaha::get();
         return Datatables::of($sql)

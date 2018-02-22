@@ -6,6 +6,7 @@ use Modules\Documents\Entities\DocType;
 use Modules\Documents\Entities\Documents;
 use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
+use Modules\Documents\Entities\DocMetaSideLetter;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocActivity;
@@ -26,7 +27,7 @@ class AmandemenKontrakKhsCreateController
 
   public function store($request)
   {
-
+    /*
     $type = $request->type;
     $rules = [];
 
@@ -347,6 +348,7 @@ class AmandemenKontrakKhsCreateController
     }else{
       return redirect()->route('doc',['status'=>'draft']);
     }
+    */
   }
 
   public function store_ajax($request)
@@ -392,6 +394,7 @@ class AmandemenKontrakKhsCreateController
     }
 
     if($request->statusButton == '0'){
+      $rules['parent_kontrak']   =  'required|kontrak_exists';
       $rules['komentar']         = 'required|max:250|min:2';
       $rules['divisi']           =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['unit_bisnis']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
@@ -437,14 +440,13 @@ class AmandemenKontrakKhsCreateController
       }
       $request->merge(['doc_lampiran' => $new_lamp]);
 
-      $rule_scope_pasal = (count($request['scope_pasal'])>1)?'required':'sometimes|nullable';
-      $rule_scope_judul = (count($request['scope_judul'])>1)?'required':'sometimes|nullable';
-      $rule_scope_isi = (count($request['scope_isi'])>1)?'required':'sometimes|nullable';
-      $rules['scope_file.*']  =  'sometimes|nullable|mimes:pdf';
-      $rules['scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-
+      $rule_scope_pasal = (count($request['f_scope_pasal'])>1)?'required':'sometimes|nullable';
+      $rule_scope_judul = (count($request['f_scope_judul'])>1)?'required':'sometimes|nullable';
+      $rule_scope_isi = (count($request['f_scope_isi'])>1)?'required':'sometimes|nullable';
+      $rules['f_scope_file.*']  =  'sometimes|nullable|mimes:pdf';
+      $rules['f_scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['f_scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['f_scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['hs_kode_item.*']   =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
       $rules['hs_satuan.*']      =  'sometimes|nullable|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
@@ -453,14 +455,6 @@ class AmandemenKontrakKhsCreateController
       $rules['hs_harga_jasa.*']  =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
       $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
-
-      $rules['lt_judul_ketetapan_pemenang']     = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
-      $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
-
-      $rules['lt_judul_kesanggupan_mitra']      = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['lt_tanggal_kesanggupan_mitra']    = 'required|date_format:"Y-m-d"';
-      $rules['lt_file_kesanggupan_mitra']       = 'required|mimes:pdf';
 
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
       $validator->after(function ($validator) use ($request) {
@@ -474,6 +468,9 @@ class AmandemenKontrakKhsCreateController
         ));
       }
     }else{
+      $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['parent_kontrak']   =  'required|kontrak_exists';
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
@@ -485,8 +482,7 @@ class AmandemenKontrakKhsCreateController
         ));
       }
     }
-
-
+    
     $doc = new Documents();
     $doc->doc_title = $request->doc_title;
     $doc->doc_date = $request->doc_startdate;
@@ -504,6 +500,12 @@ class AmandemenKontrakKhsCreateController
     $doc->doc_parent_id = $request->parent_kontrak;
     $doc->supplier_id = Documents::where('id',$request->parent_kontrak)->first()->supplier_id;
     $doc->doc_signing = $request->statusButton;
+
+    $doc->penomoran_otomatis =  Config::get_penomoran_otomatis($request->penomoran_otomatis);
+    if(Config::get_config('auto-numb')=='off'){
+      $doc->doc_no = $request->doc_no;
+    }
+      
     $doc->save();
 
     //pemilik Kontrak
@@ -534,42 +536,7 @@ class AmandemenKontrakKhsCreateController
         }
       }
     }
-
-    // latar belakang wajib
-    if(isset($request->lt_judul_ketetapan_pemenang)){
-      $doc_meta = new DocMeta();
-      $doc_meta->documents_id = $doc->id;
-      $doc_meta->meta_type = "latar_belakang_ketetapan_pemenang";
-      $doc_meta->meta_name = "Latar Belakang Ketetapan Pemenang";
-      $doc_meta->meta_desc = $request->lt_tanggal_ketetapan_pemenang;
-
-      if(isset($request->lt_file_ketetapan_pemenang)){
-        $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_ketetapan_pemenang));
-        $file = $request->lt_file_ketetapan_pemenang;
-        $file->storeAs('document/'.$type.'_latar_belakang_ketetapan_pemenang', $fileName);
-        $doc_meta->meta_file = $fileName;
-      }
-
-      $doc_meta->save();
-    }
-
-    if(isset($request->lt_judul_kesanggupan_mitra)){
-      $doc_meta = new DocMeta();
-      $doc_meta->documents_id = $doc->id;
-      $doc_meta->meta_type = "latar_belakang_kesanggupan_mitra";
-      $doc_meta->meta_name = "Latar Belakang Kesanggupan Mitra";
-      $doc_meta->meta_desc = $request->lt_tanggal_kesanggupan_mitra;
-
-      if(isset($request->lt_file_kesanggupan_mitra)){
-        $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_kesanggupan_mitra));
-        $file = $request->lt_file_kesanggupan_mitra;
-        $file->storeAs('document/'.$type.'_latar_belakang_kesanggupan_mitra', $fileName);
-        $doc_meta->meta_file = $fileName;
-      }
-
-      $doc_meta->save();
-    }
-
+    
     // latar belakang optional
     if(count($request->f_latar_belakang_judul)>0){
       foreach($request->f_latar_belakang_judul as $key => $val){
@@ -629,25 +596,26 @@ class AmandemenKontrakKhsCreateController
       }
     }
 
-    if(count($request->scope_pasal)>0){
-      foreach($request->scope_pasal as $key => $val){
+    if(count($request->f_scope_pasal)>0){
+      foreach($request->f_scope_pasal as $key => $val){
         if(!empty($val)
-            && !empty($request['scope_judul'][$key])
-            && !empty($request['scope_isi'][$key])
+            && !empty($request['f_scope_judul'][$key])
+            && !empty($request['f_scope_isi'][$key])
         ){
-          $scope_judul = $request['scope_judul'][$key];
-          $scope_isi = $request['scope_isi'][$key];
-          $doc_meta = new DocMeta();
+          $scope_judul = $request['f_scope_judul'][$key];
+          $scope_isi = $request['f_scope_isi'][$key];
+
+          $doc_meta = new DocMetaSideLetter();
           $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'scope_perubahan';
-          $doc_meta->meta_name = $request['scope_pasal'][$key];
-          $doc_meta->meta_title = $request['scope_judul'][$key];
-          $doc_meta->meta_desc = $request['scope_isi'][$key];
+          $doc_meta->meta_pasal  = $request['f_scope_pasal'][$key];
+          $doc_meta->meta_judul  = $request['f_scope_judul'][$key];
+          $doc_meta->meta_isi    = $request['f_scope_isi'][$key];
+          $doc_meta->meta_awal = $request['f_scope_awal'][$key];
+          $doc_meta->meta_akhir = $request['f_scope_akhir'][$key];
 
-
-          if(isset($request['scope_file'][$key])){
+          if(isset($request['f_scope_file'][$key])){
             $fileName   = Helpers::set_filename('doc_scope_perubahan_',strtolower($val));
-            $file = $request['scope_file'][$key];
+            $file = $request['f_scope_file'][$key];
             $file->storeAs('document/'.$request->type.'_scope_perubahan', $fileName);
             $doc_meta->meta_file = $fileName;
           }
@@ -665,13 +633,6 @@ class AmandemenKontrakKhsCreateController
       $comment->data = "Submitted";
       $comment->save();
     }
-
-    // $log_activity = new DocActivity();
-    // $log_activity->users_id = Auth::id();
-    // $log_activity->documents_id = $doc->id;
-    // $log_activity->activity = "Submitted";
-    // $log_activity->date = new \DateTime();
-    // $log_activity->save();
 
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     if($request->statusButton == '0'){

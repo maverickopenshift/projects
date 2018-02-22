@@ -4,19 +4,17 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
 
     Route::get('/klasifikasiusaha', ['middleware' => ['permission:lihat-klasifikasi-usaha'],'uses' => 'KlasifikasiUsahaController@index'])->name('supplier.klasifikasi');
     Route::get('/klasifikasiusaha/getselect', 'KlasifikasiUsahaController@getSelect')->name('supplier.klasifikasi.getselect');
-    Route::get('/klasifikasiusaha/data', ['middleware' => ['permission:lihat-klasifikasi-usaha'],'uses' => 'KlasifikasiUsahaController@data'])->name('supplier.klasifikasi.data');
+    Route::post('/klasifikasiusaha/data', ['middleware' => ['permission:lihat-klasifikasi-usaha'],'uses' => 'KlasifikasiUsahaController@data'])->name('supplier.klasifikasi.data');
     Route::post('/klasifikasiusaha/update', ['middleware' => ['permission:ubah-klasifikasi-usaha'],'uses' => 'KlasifikasiUsahaController@update'])->name('supplier.klasifikasi.update');
     Route::post('/klasifikasiusaha/add', ['middleware' => ['permission:tambah-klasifikasi-usaha'],'uses' => 'KlasifikasiUsahaController@add'])->name('supplier.klasifikasi.add');
     Route::delete('/klasifikasiusaha/delete', ['middleware' => ['permission:hapus-klasifikasi-usaha'],'uses' => 'KlasifikasiUsahaController@delete'])->name('supplier.klasifikasi.delete');
     Route::get('/get-klasifikasi', 'KlasifikasiUsahaController@getSelect')->name('supplier.get-klasifikasi');
 
-
     Route::get('/badanusaha', ['middleware' => ['permission:lihat-badan-usaha'],'uses' => 'BadanUsahaController@index'])->name('supplier.badanusaha');
-    Route::get('/badanusaha/data', ['middleware' => ['permission:lihat-badan-usaha'],'uses' => 'BadanUsahaController@data'])->name('supplier.badanusaha.data');
+    Route::post('/badanusaha/data', ['middleware' => ['permission:lihat-badan-usaha'],'uses' => 'BadanUsahaController@data'])->name('supplier.badanusaha.data');
     Route::post('/badanusaha/update', ['middleware' => ['permission:lihat-badan-usaha'],'uses' => 'BadanUsahaController@update'])->name('supplier.badanusaha.update');
     Route::post('/badanusaha/add', ['middleware' => ['permission:lihat-badan-usaha'],'uses' => 'BadanUsahaController@add'])->name('supplier.badanusaha.add');
     Route::delete('/badanusaha/delete', ['middleware' => ['permission:lihat-badan-usaha'],'uses' => 'BadanUsahaController@delete'])->name('supplier.badanusaha.delete');
-
 
     Route::get('/status/{status}', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@index'])->name('supplier');
     Route::get('/data/{status}', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@data'])->name('supplier.data');

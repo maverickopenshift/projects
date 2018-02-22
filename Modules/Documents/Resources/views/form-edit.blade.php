@@ -116,10 +116,8 @@
             @include('documents::partials.alert-errors')
             @if(in_array($doc_type->name,['turnkey','sp']))
               @include('documents::doc-form-edit.jaminan-asuransi')
-            @elseif(in_array($doc_type->name,['side_letter']))
-              @include('documents::doc-form-edit.side_letter-scope-perubahan')
-            @else
-              @include('documents::doc-form-edit.scope-perubahan-others')
+            @elseif(in_array($doc_type->name,['side_letter','amandemen_kontrak_turnkey','amandemen_kontrak_khs','adendum']))
+              @include('documents::doc-form-edit.scope-perubahan-fix')
             @endif
             <div class="clearfix"></div>
             <div class="row">

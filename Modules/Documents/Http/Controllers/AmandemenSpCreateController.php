@@ -25,6 +25,7 @@ class AmandemenSpCreateController
   }
   public function store($request)
   {
+    /*
     $type = $request->type;
     $rules = [];
     if($request->statusButton == '0'){
@@ -252,29 +253,6 @@ class AmandemenSpCreateController
       }
     }
 
-    /*
-    if(count($request->lt_name)>0){
-      foreach($request->lt_name as $key => $val){
-        if(!empty($val)
-            && !empty($request['lt_desc'][$key])
-        ){
-          $doc_meta = new DocMeta();
-          $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'latar_belakang';
-          $doc_meta->meta_name = $val;
-          $doc_meta->meta_desc = $request['lt_desc'][$key];
-          if(isset($request['lt_file'][$key])){
-            $fileName   = Helpers::set_filename('doc_',strtolower($val));
-            $file = $request['lt_file'][$key];
-            $file->storeAs('document/'.$request->type.'_latar_belakang', $fileName);
-            $doc_meta->meta_file = $fileName;
-          }
-          $doc_meta->save();
-        }
-      }
-    }
-    */
-
     if(count($request->scope_name)>0){
       foreach($request->scope_name as $key => $val){
         if(!empty($val)
@@ -325,73 +303,70 @@ class AmandemenSpCreateController
     }else{
       return redirect()->route('doc',['status'=>'draft']);
     }
+
+    */
   }
 
   public function store_ajax($request)
   {
     $type = $request->type;
     $rules = [];
+
     if($request->statusButton == '0'){
-    $rules['komentar']         = 'required|max:250|min:2';
-    $rules['divisi']           =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-    $rules['unit_bisnis']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-    $rules['doc_title']        =  'required|min:2';
-    $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
-    $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
-    $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['doc_pihak2_nama']  =  'required|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-
-    if(Config::get_config('auto-numb')=='off'){
-      $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
-    }
-
-    foreach($request->doc_lampiran_old as $k => $v){
-      if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
-        $new_lamp[] = '';
-        $new_lamp_up[] = $request->doc_lampiran[$k];
-        $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+      $rules['parent_kontrak']   =  'required|kontrak_exists';
+      $rules['komentar']         = 'required|max:250|min:2';
+      $rules['divisi']           =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      $rules['unit_bisnis']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      $rules['parent_sp']        =  'required';
+      $rules['doc_title']        =  'required|min:2';
+      $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
+      $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
+      $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak2_nama']  =  'required|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    
+      if(Config::get_config('auto-numb')=='off'){
+        $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
       }
-      else if(empty($v)){
-        $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
-        if(!isset($request->doc_lampiran[$k])){
-          $new_lamp[] = $v;
-          $new_lamp_up[] = $v;
-        }
-        else{
+      
+      $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
+      $check_new_lampiran = false;
+        foreach($request->doc_lampiran_old as $k => $v){
+          if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
             $new_lamp[] = '';
             $new_lamp_up[] = $request->doc_lampiran[$k];
+            $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+          }
+          else if(empty($v)){
+            $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+            if(!isset($request->doc_lampiran[$k])){
+              $new_lamp[] = $v;
+              $new_lamp_up[] = $v;
+            }
+            else{
+              $new_lamp[] = '';
+              $new_lamp_up[] = $request->doc_lampiran[$k];
+            }
+          }
+          else{
+            $new_lamp[] = $v;
+            $new_lamp_up[] = $v;
           }
         }
-        else{
-          $new_lamp[] = $v;
-          $new_lamp_up[] = $v;
+        $request->merge(['doc_lampiran' => $new_lamp]);
+
+        $rule_scope_pasal = (count($request['f_scope_pasal'])>1)?'required':'sometimes|nullable';
+        $rule_scope_judul = (count($request['f_scope_judul'])>1)?'required':'sometimes|nullable';
+        $rule_scope_isi = (count($request['f_scope_isi'])>1)?'required':'sometimes|nullable';
+        $rules['f_scope_file.*']  =  'sometimes|nullable|mimes:pdf';
+        $rules['f_scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $rules['f_scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+        $rules['f_scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+
+        if(\Laratrust::hasRole('admin')){
+          $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
-      }
-      $request->merge(['doc_lampiran' => $new_lamp]);
-
-      $rule_scope_name = (count($request['scope_name'])>1)?'required':'sometimes|nullable';
-      $rule_scope_awal = (count($request['scope_awal'])>1)?'required':'sometimes|nullable';
-      $rule_scope_akhir = (count($request['scope_akhir'])>1)?'required':'sometimes|nullable';
-      $rules['scope_file.*']  =  'sometimes|nullable|mimes:pdf';
-      $rules['scope_name.*']  =  $rule_scope_name.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['scope_awal.*']  =  $rule_scope_awal.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['scope_akhir.*']  =  $rule_scope_akhir.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-
-
-      if(\Laratrust::hasRole('admin')){
-        $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-      }
-
-      $rules['lt_judul_ketetapan_pemenang']     = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
-      $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
-
-      $rules['lt_judul_kesanggupan_mitra']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['lt_tanggal_kesanggupan_mitra']  = 'required|date_format:"Y-m-d"';
-      $rules['lt_file_kesanggupan_mitra']     = 'required|mimes:pdf';
 
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
       $validator->after(function ($validator) use ($request) {
@@ -405,6 +380,10 @@ class AmandemenSpCreateController
         ));
       }
     }else{
+      $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['parent_kontrak']   =  'required|kontrak_exists';
+      $rules['parent_sp']   =  'required';
 
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
@@ -417,6 +396,7 @@ class AmandemenSpCreateController
         ));
       }
     }
+
 
     $doc = new Documents();
     $doc->doc_title = $request->doc_title;
@@ -496,41 +476,6 @@ class AmandemenSpCreateController
       }
     }
 
-    // latar belakang wajib
-    if(isset($request->lt_judul_ketetapan_pemenang)){
-      $doc_meta = new DocMeta();
-      $doc_meta->documents_id = $doc->id;
-      $doc_meta->meta_type = "latar_belakang_ketetapan_pemenang";
-      $doc_meta->meta_name = "Latar Belakang Ketetapan Pemenang";
-      $doc_meta->meta_desc = $request->lt_tanggal_ketetapan_pemenang;
-
-      if(isset($request->lt_file_ketetapan_pemenang)){
-        $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_ketetapan_pemenang));
-        $file = $request->lt_file_ketetapan_pemenang;
-        $file->storeAs('document/'.$type.'_latar_belakang_ketetapan_pemenang', $fileName);
-        $doc_meta->meta_file = $fileName;
-      }
-
-      $doc_meta->save();
-    }
-
-    if(isset($request->lt_judul_kesanggupan_mitra)){
-      $doc_meta = new DocMeta();
-      $doc_meta->documents_id = $doc->id;
-      $doc_meta->meta_type = "latar_belakang_kesanggupan_mitra";
-      $doc_meta->meta_name = "Latar Belakang Kesanggupan Mitra";
-      $doc_meta->meta_desc = $request->lt_tanggal_kesanggupan_mitra;
-
-      if(isset($request->lt_file_kesanggupan_mitra)){
-        $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_kesanggupan_mitra));
-        $file = $request->lt_file_kesanggupan_mitra;
-        $file->storeAs('document/'.$type.'_latar_belakang_kesanggupan_mitra', $fileName);
-        $doc_meta->meta_file = $fileName;
-      }
-
-      $doc_meta->save();
-    }
-
     // latar belakang optional
     if(count($request->f_latar_belakang_judul)>0){
       foreach($request->f_latar_belakang_judul as $key => $val){
@@ -587,15 +532,6 @@ class AmandemenSpCreateController
       $comment->data = "Submitted";
       $comment->save();
     }
-
-    /*
-    $request->session()->flash('alert-success', 'Data berhasil disimpan');
-    if($request->statusButton == '0'){
-      return redirect()->route('doc',['status'=>'tracking']);
-    }else{
-      return redirect()->route('doc',['status'=>'draft']);
-    }
-    */
 
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     if($request->statusButton == '0'){

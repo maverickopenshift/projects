@@ -32,6 +32,7 @@ class SuratPengikatanCreateController extends Controller
 
     public function store(Request $request)
     {
+      /*
       $type = $request->type;
       $doc_value = $request->doc_value;
       $request->merge(['doc_value' => Helpers::input_rupiah($request->doc_value)]);
@@ -315,28 +316,6 @@ class SuratPengikatanCreateController extends Controller
         }
       }
 
-      // latar belakang
-      /*
-      if(count($request->lt_name)>0){
-        foreach($request->lt_name as $key => $val){
-          if(!empty($val)){
-            $doc_meta = new DocMeta();
-            $doc_meta->documents_id = $doc->id;
-            $doc_meta->meta_type = 'latar_belakang';
-            $doc_meta->meta_name = $val;
-            $doc_meta->meta_desc = $request['lt_desc'][$key];
-            if(isset($request['lt_file'][$key])){
-              $fileName   = Helpers::set_filename('doc_',strtolower($val));
-              $file = $request['lt_file'][$key];
-              $file->storeAs('document/'.$request->type.'_latar_belakang', $fileName);
-              $doc_meta->meta_file = $fileName;
-            }
-            $doc_meta->save();
-          }
-        }
-      }
-      */
-
       if($request->statusButton == '0'){
         $comment = new Comments();
         $comment->content = $request->komentar;
@@ -347,19 +326,13 @@ class SuratPengikatanCreateController extends Controller
         $comment->save();
       }
 
-      // $log_activity = new DocActivity();
-      // $log_activity->users_id = Auth::id();
-      // $log_activity->documents_id = $doc->id;
-      // $log_activity->activity = "Submitted";
-      // $log_activity->date = new \DateTime();
-      // $log_activity->save();
-
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
       if($request->statusButton == '0'){
         return redirect()->route('doc',['status'=>'tracking']);
       }else{
         return redirect()->route('doc',['status'=>'draft']);
       }
+      */
     }
 
     public function store_ajax(Request $request)

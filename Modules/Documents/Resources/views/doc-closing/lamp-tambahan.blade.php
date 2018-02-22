@@ -120,21 +120,19 @@ $(function() {
   $(document).on('click', '.add-lampiran', function(event) {
     event.preventDefault();
     var btn_del = '<button type="button" class="btn btn-danger delete-lampiran" style="position: absolute;right: 5px;top: -10px;border-radius: 0;"><i class="glyphicon glyphicon-trash"></i></button>';
-    /* Act on the event */
+    
     var $this = $('.lampiran');
     var new_row = $this.eq(0).clone();
     new_row.find('.has-error').removeClass('has-error');
     var mdf_new_row = new_row.find('.form-group');
 
-    // mdf_new_row.eq(1).find('.total_lampiran').text($this+1);//title and button
+    mdf_new_row.eq(1).find('input').val(''); //baut_judul
+    mdf_new_row.eq(1).find('.err').remove(); //baut_judul
 
-    mdf_new_row.eq(1).find('input').val('');      //baut_judul
-    mdf_new_row.eq(1).find('.err').remove();    //baut_judul
+    mdf_new_row.eq(2).find('input').val(''); //baut_tgl
+    mdf_new_row.eq(2).find('.err').remove(); //baut_tgl
 
-    mdf_new_row.eq(2).find('input').val('');   //baut_tgl
-    mdf_new_row.eq(2).find('.err').remove();  //baut_tgl
-
-    mdf_new_row.eq(3).find('input').val('');   //baut_file
+    mdf_new_row.eq(3).find('input').val(''); //baut_file
     mdf_new_row.eq(3).find('.err').remove(); //baut_file
 
     $('.parent-lampiran').append(new_row);
@@ -158,13 +156,13 @@ $(function() {
     var $this = $('.lampiran');
     $.each($this,function(index, el) {
       var mdf_new_row = $(this).find('.form-group');
-      // mdf_new_row.eq(1).find('.total_lampiran').text(index+1);
       var mdf = $(this).find('.delete-lampiran');
       if($this.length==1){
         mdf.remove();
       }
     });
   });
+
 });
 </script>
 @endpush

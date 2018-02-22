@@ -27,7 +27,7 @@
           </div>
         </div>
       @endif
-
+      
       @if(!in_array($doc_type->name,['mou']))
         @php
           $kode_item = Helper::old_prop_each($doc,'hs_kode_item');
@@ -50,9 +50,9 @@
           }
         @endphp
         <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-        <div class="form-group" style="position:relative;margin-bottom: 34px;">
-          <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">{{$title_hs}}</div>
-        </div>
+          <div class="form-group" style="position:relative;margin-bottom: 34px;">
+            <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">{{$title_hs}}</div>
+          </div>
 
           <div class="form-group top20">
             <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
@@ -63,86 +63,28 @@
             </div>
           </div>
 
-      <div class="table-responsive">
-        <table class="table table-condensed table-striped" id="table-hargasatuan">
-          <thead>
-          <tr>
-            <th style="width:50px;">No.</th>
-            <th>Kode Item</th>
-            <th>Item</th>
-            @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
-              <th  style="width:70px;">Qty</th>
-            @endif
-            <th style="width:100px;">Satuan</th>
-            <th>Currency</th>
-            <th>Harga</th>
-            <th>Harga Jasa</th>
-            @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
-              <th style="width:100px;">Harga Total</th>
-            @endif
-            <th>Keterangan</th>
-            <th><button type="button" class="btn btn-success btn-xs add-harga_satuan"><i class="glyphicon glyphicon-plus"></i> Tambah</button></th>
-          </tr>
-          </thead>
-          @if(isset($kode_item) && count($kode_item)>0)
-          <tbody>
-            @foreach ($kode_item as $key => $value)
+          <div class="table-responsive">
+            <table class="table table-condensed table-striped" id="table-hargasatuan">
+              <thead>
               <tr>
-                <td>{{$key+1}}</td>
-                <td class="formerror formerror-hs_kode_item-0">
-                  <input type="text" class="form-control" name="hs_kode_item[]" value="{{$value}}" placeholder="Kode..">
-                  <div class="error error-hs_kode_item error-hs_kode_item-0"></div>
-                </td>
-                <td class="formerror formerror-hs_item-0">
-                  <input type="text" class="form-control" name="hs_item[]" value="{{$item[$key]}}" placeholder="Nama..">
-                  <div class="error error-hs_item error-hs_item-0"></div>
-                </td>
+                <th style="width:50px;">No.</th>
+                <th>Kode Item</th>
+                <th>Item</th>
                 @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
-                  <td class="formerror formerror-hs_qty-0">
-                    <input type="text" class="form-control input-rupiah hitung_total" name="hs_qty[]" value="{{$qty[$key]}}" placeholder="Jumlah..">
-                    <div class="error error-hs_qty error-hs_qty-0"></div>
-                  </td>
+                  <th  style="width:70px;">Qty</th>
                 @endif
-                <td class="formerror formerror-hs_satuan-0">
-                  <input type="text" class="form-control" name="hs_satuan[]" value="{{$satuan[$key]}}" placeholder="Satuan..">
-                  <div class="error error-hs_satuan error-hs_satuan-0"></div>
-                </td>
-                <td class="formerror formerror-hs_mtu-0">
-                  @php
-                    if($mtu[$key]=="IDR"){
-                        $a="selected";
-                        $b="";
-                    }else if($mtu[$key]=="USD"){
-                        $a="";
-                        $b="selected";
-                    }else{
-                        $a="";
-                        $b="";
-                    }
-                  @endphp
-                  <select name="hs_mtu[]" class="form-control" style="width: 100%;">
-                      <option value="IDR" {{$a}}>IDR</option>
-                      <option value="USD" {{$b}}>USD</option>
-                  </select>
-                  <div class="error error-hs_mtu error-hs_mtu-0"></div>
-                </td>
-                <td class="formerror formerror-hs_harga-0">
-                  <input type="text" class="form-control input-rupiah text-right hitung_total" name="hs_harga[]" value="{{$harga[$key]}}" placeholder="Harga Material..">
-                  <div class="error error-hs_harga error-hs_harga-0"></div>
-                </td>
-
-                <td class="formerror formerror-hs_harga_jasa-0">
-                  <input type="text" class="form-control input-rupiah text-right hitung_total" name="hs_harga_jasa[]" value="{{$harga_jasa[$key]}}" placeholder="Harga Jasa..">
-                  <div class="error error-hs_harga_jasa error-hs_harga_jasa-0"></div>
-                </td>
+                <th style="width:100px;">Satuan</th>
+                <th>Currency</th>
+                <th>Harga</th>
+                <th>Harga Jasa</th>
                 @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
-                  <td class="text-right" style="vertical-align: middle;">0</td>
+                  <th style="width:100px;">Harga Total</th>
                 @endif
                 <th>Keterangan</th>
-                <th><button type="button" class="btn btn-success btn-xs add-harga_satuan"><i class="glyphicon glyphicon-plus"></i> tambah</button></th>
-            </tr>
-            </thead>
-            @if(isset($kode_item) && count($kode_item)>0)
+                <th><button type="button" class="btn btn-success btn-xs add-harga_satuan"><i class="glyphicon glyphicon-plus"></i> Tambah</button></th>
+              </tr>
+              </thead>              
+                @if(isset($kode_item) && count($kode_item)>0)
                   <tbody>
                     @foreach ($kode_item as $key => $value)
                       <tr>
@@ -208,75 +150,76 @@
                       </tr>
                     @endforeach
                   </tbody>
-            @else
-              <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td class="formerror formerror-hs_kode_item-0">
-                      <input type="text" class="form-control" name="hs_kode_item[]" placeholder="Kode..">
-                      <div class="error error-hs_kode_item error-hs_kode_item-0"></div>
-                    </td>
-                    <td class="formerror formerror-hs_item-0">
-                      <input type="text" class="form-control" name="hs_item[]" placeholder="Nama..">
-                      <div class="error error-hs_item error-hs_item-0"></div>
-                    </td>
-                    @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
-                      <td class="formerror formerror-hs_qty-0">
-                        <input type="text" class="form-control input-rupiah hitung_total" name="hs_qty[]" placeholder="Jumlah..">
-                        <div class="error error-hs_qty error-hs_qty-0"></div>
+                @else
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td class="formerror formerror-hs_kode_item-0">
+                        <input type="text" class="form-control" name="hs_kode_item[]" placeholder="Kode..">
+                        <div class="error error-hs_kode_item error-hs_kode_item-0"></div>
                       </td>
-                    @endif
-                    <td class="formerror formerror-hs_satuan-0">
-                      <input type="text" class="form-control" name="hs_satuan[]" placeholder="Satuan..">
-                      <div class="error error-hs_satuan error-hs_satuan-0"></div>
-                    </td>
-                    <td class="formerror formerror-hs_mtu-0">
-                      <select name="hs_mtu[]" class="form-control" style="width: 100%;">
-                        <option value="IDR">IDR</option>
-                        <option value="USD">USD</option>
-                      </select>
-                      <div class="error error-hs_mtu error-hs_mtu-0"></div>
-                    </td>
-                    <td class="formerror formerror-hs_harga-0">
-                      <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga[]" placeholder="Harga Barang..">
-                      <div class="error error-hs_harga error-hs_harga-0"></div>
-                    </td>
-                    <td class="formerror formerror-hs_harga_jasa-0">
-                      <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga_jasa[]"  placeholder="Harga Jasa..">
-                      <div class="error error-hs_harga_jasa error-hs_harga_jasa-0"></div>
-                    </td>
-                    @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
-                      <td class="text-right" style="vertical-align: middle;">0</td>
-                    @endif
-                    <td class="formerror formerror-hs_keterangan-0">
-                      <input type="text" class="form-control" name="hs_keterangan[]" placeholder="Keterangan.." />
-                      <div class="error error-hs_keterangan error-hs_keterangan-0"></div>
-                    </td>
-                    <td class="action"></td>
-                </tr>
-            </tbody>
-          @endif
-        </table>
-      </div>
-    </div>
-      @if($doc_type['title']=="SP")
-        <div class="form-group formerror formerror-doc_lampiran_teknis">
-          <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran Teknis</label>
-          <div class="col-sm-6">
-            <div class="input-group">
-              <input type="file" class="hide" name="doc_lampiran_teknis">
-              <input class="form-control" type="text" disabled>
-              <span class="input-group-btn">
-                <button class="btn btn-default click-upload" type="button">Browse</button>
-              </span>
-            </div>
-          </div>
-          <div class="col-sm-10 col-sm-offset-2">
-            <div class="error error-doc_lampiran_teknis"></div>
+                      <td class="formerror formerror-hs_item-0">
+                        <input type="text" class="form-control" name="hs_item[]" placeholder="Nama..">
+                        <div class="error error-hs_item error-hs_item-0"></div>
+                      </td>
+                      @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
+                        <td class="formerror formerror-hs_qty-0">
+                          <input type="text" class="form-control input-rupiah hitung_total" name="hs_qty[]" placeholder="Jumlah..">
+                          <div class="error error-hs_qty error-hs_qty-0"></div>
+                        </td>
+                      @endif
+                      <td class="formerror formerror-hs_satuan-0">
+                        <input type="text" class="form-control" name="hs_satuan[]" placeholder="Satuan..">
+                        <div class="error error-hs_satuan error-hs_satuan-0"></div>
+                      </td>
+                      <td class="formerror formerror-hs_mtu-0">
+                        <select name="hs_mtu[]" class="form-control" style="width: 100%;">
+                          <option value="IDR">IDR</option>
+                          <option value="USD">USD</option>
+                        </select>
+                        <div class="error error-hs_mtu error-hs_mtu-0"></div>
+                      </td>
+                        <td class="formerror formerror-hs_harga-0">
+                        <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga[]" placeholder="Harga Barang..">
+                        <div class="error error-hs_harga error-hs_harga-0"></div>
+                      </td>
+                      <td class="formerror formerror-hs_harga_jasa-0">
+                        <input type="text" class="form-control input-rupiah hitung_total" name="hs_harga_jasa[]"  placeholder="Harga Jasa..">
+                        <div class="error error-hs_harga_jasa error-hs_harga_jasa-0"></div>
+                      </td>
+                      @if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs')
+                        <td class="text-right" style="vertical-align: middle;">0</td>
+                      @endif
+                      <td class="formerror formerror-hs_keterangan-0">
+                        <input type="text" class="form-control" name="hs_keterangan[]" placeholder="Keterangan.." />
+                        <div class="error error-hs_keterangan error-hs_keterangan-0"></div>
+                      </td>
+                      <td class="action"></td>
+                    </tr>
+                  </tbody>  
+                @endif                
+            </table>
           </div>
         </div>
+        @if($doc_type['title']=="SP")
+          <div class="form-group formerror formerror-doc_lampiran_teknis">
+            <label for="ttd_pihak2" class="col-sm-2 control-label">Lampiran Teknis</label>
+            <div class="col-sm-6">
+              <div class="input-group">
+                <input type="file" class="hide" name="doc_lampiran_teknis">
+                <input class="form-control" type="text" disabled>
+                <span class="input-group-btn">
+                  <button class="btn btn-default click-upload" type="button">Browse</button>
+                </span>
+              </div>
+            </div>
+            <div class="col-sm-10 col-sm-offset-2">
+              <div class="error error-doc_lampiran_teknis"></div>
+            </div>
+          </div>
+        @endif
       @endif
-      @endif
+
       @include('documents::partials.button-edit')
     </div>
   </div>

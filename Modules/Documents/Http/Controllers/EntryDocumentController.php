@@ -590,8 +590,7 @@ class EntryDocumentController extends Controller
             $jml_header = '7';
           }
           $colomn = $data->first()->keys()->toArray();
-          // dd($jml_header);
-// dd($colomn);
+          
           if(!empty($data) && count($colomn) == $jml_header && $colomn == $header){
           return Response::json(['status'=>true,'csrf_token'=>csrf_token(),'data'=>$data]);
         }

@@ -15,7 +15,7 @@
       $f_scope_file_old = Helper::old_prop_each($doc,'scope_file');
     @endphp
 
-    @if(count($f_scope_pasal)>=1)
+    @if(count($f_scope_pasal)>0)
       @foreach ($f_scope_pasal as $key => $value)
         <div class="parent_scope_perubahan">
           <div class="form-horizontal scope_perubahan" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">

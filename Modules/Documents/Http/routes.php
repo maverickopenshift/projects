@@ -35,6 +35,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
 
     Route::get('/closing/{type}/{id}/', ['middleware' => ['permission:tutup-kontrak'],'uses' => 'DocumentsClosingController@index'])->name('doc.closing');
     Route::post('/closing/store/{id}',['middleware' => ['permission:tutup-kontrak'],'uses' => 'DocumentsClosingController@create'])->name('doc.closing.store');
+    Route::post('/closing/store_ajax/{id}',['middleware' => ['permission:tutup-kontrak'],'uses' => 'DocumentsClosingController@store_ajax'])->name('doc.closing.store_ajax');
 
     ////////
     

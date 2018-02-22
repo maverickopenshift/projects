@@ -19,14 +19,14 @@
       @if(count($f_judul)>=1)
         @foreach ($f_judul as $key => $value)
           <div class="form-horizontal perubahan" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-            
+
             <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Sow-Boq <span class="total_pasal">{{$key+1}}</span></div>
+              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">SoW-BoQ <span class="total_pasal">{{$key+1}}</span></div>
               @if(count($f_judul)>1)
                 <button type="button" class="btn btn-danger delete-pasal" style="position: absolute;right: 5px;top: -10px;border-radius: 0;"><i class="glyphicon glyphicon-trash"></i></button>
               @endif
             </div>
-            
+
             <div class="form-group">
               <label for="f_judul" class="col-sm-2 control-label">Judul {{$f_isi[$key]}}</label>
               <div class="col-sm-6">
@@ -82,7 +82,7 @@
       @else
         <div class="form-horizontal perubahan" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
-              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Sow-Boq <span class="total_perubahan">1</span></div>
+              <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">SoW-BoQ <span class="total_perubahan">1</span></div>
             </div>
 
             <div class="form-group">
@@ -151,7 +151,7 @@
 
 function freeText() {
   var row = $('.perubahan');
-  $.each(row,function(index, el) {  
+  $.each(row,function(index, el) {
     var judul = $(this).find('.f_judul').find(":selected").val();
 
     if(judul=="Harga"){
@@ -175,7 +175,7 @@ function freeText() {
       $(this).find('.show_tanggal2').hide();
       $(this).find('.show_lainnya').hide();
     }
-    
+
   });
 }
 
@@ -197,7 +197,7 @@ $(function() {
     mdf_new_row.eq(1).find('.f_judul').val('');
     mdf_new_row.eq(1).find('.error').remove();
 
-    mdf_new_row.eq(2).find('.f_isi').val('');    
+    mdf_new_row.eq(2).find('.f_isi').val('');
     mdf_new_row.eq(2).find('.error').remove();
     mdf_new_row.eq(2).hide();
 

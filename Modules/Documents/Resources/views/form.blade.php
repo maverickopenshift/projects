@@ -165,6 +165,10 @@
 @push('scripts')
 <script>
 $(function () {
+  $('.datepicker').datepicker({
+   format: 'dd-mm-yyyy',
+   autoclose:true,
+  });
   var data = $('.form-control').val();
   $('.btnNext').click(function(){
     $('.nav-tabs > .active').next('li').find('a').trigger('click');
@@ -262,53 +266,40 @@ $(function () {
       },
       callback: function (result) {
         if(result){
-          bootbox.prompt({
-            title: "Masukan Komentar",
-            inputType: 'textarea',
-            callback: function (komen) {
-              if(komen){
-                loading.show();
-                $('.komentar').val(komen);
-                //$('.btn_submit').click();
-                
-                  $.ajax({
-                    url: formMe.attr('action'),
-                    type: 'post',
-                    processData: false,
-                    contentType: false,
-                    data: new FormData(document.getElementById("form-kontrak")),
-                    dataType: 'json',
-                    success: function(response){
-                      if(response.errors){
-                        $.each(response.errors, function(index, value){
-                            if (value.length !== 0){
-                              index = index.replace(".", "-");
-                              $(".formerror-"+ index).removeClass("has-error");
-                              $(".error-"+ index).html('');             
+            $.ajax({
+              url: formMe.attr('action'),
+              type: 'post',
+              processData: false,
+              contentType: false,
+              data: new FormData(document.getElementById("form-kontrak")),
+              dataType: 'json',
+              success: function(response){
+                if(response.errors){
+                  $.each(response.errors, function(index, value){
+                      if (value.length !== 0){
+                        index = index.replace(".", "-");
+                        $(".formerror-"+ index).removeClass("has-error");
+                        $(".error-"+ index).html('');
 
-                              $(".formerror-"+ index).addClass("has-error");
-                              $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
-                            }
-                        });
-
-                        bootbox.alert({
-                          title:"Pemberitahuan",
-                          message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
-                        });
-                      }else{
-                        if(response.status=="tracking"){
-                          window.location.href = "{{route('doc',['status'=>'tracking'])}}";
-                        }else if(response.status=="draft"){
-                          window.location.href = "{{route('doc',['status'=>'draft'])}}";
-                        }
+                        $(".formerror-"+ index).addClass("has-error");
+                        $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
                       }
-                    }
                   });
-                
-                ////// end ajax
+
+                  bootbox.alert({
+                    title:"Pemberitahuan",
+                    message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
+                  });
+                }else{
+                  if(response.status=="tracking"){
+                    window.location.href = "{{route('doc',['status'=>'tracking'])}}";
+                  }else if(response.status=="draft"){
+                    window.location.href = "{{route('doc',['status'=>'draft'])}}";
+                  }
+                }
               }
-            }
-          });
+            });
+                ////// end ajax
         }
       }
     });

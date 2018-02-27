@@ -50,10 +50,6 @@
               <option value="6">6 Bulan</option>
             </select>
           </div>
-        </div>
-
-        <div class="form-inline bottom25">
-          
           <div class="form-group top10">
             <div class="input-group date" data-provide="datepicker">
               <div class="input-group-addon">

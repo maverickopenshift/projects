@@ -143,10 +143,10 @@ class DocumentsController extends Controller
             }
             if(!empty($sampai)){
               $documents->where(function($q) use ($sampai) {
-                $q->orwhere('documents.doc_enddate','>=','$sampai');
-                $q->orwhere('child.doc_enddate','>=','$sampai');
-                $q->orwhere('child2.doc_enddate','>=','$sampai');
-                $q->orwhere('child3.doc_enddate','>=','$sampai');
+                $q->orwhere('documents.doc_enddate','<=','$sampai');
+                $q->orwhere('child.doc_enddate','<=','$sampai');
+                $q->orwhere('child2.doc_enddate','<=','$sampai');
+                $q->orwhere('child3.doc_enddate','<=','$sampai');
               });
             }
           }

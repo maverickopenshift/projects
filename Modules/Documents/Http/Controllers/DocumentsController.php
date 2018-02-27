@@ -134,19 +134,20 @@ class DocumentsController extends Controller
               });
             }
             if(!empty($dari)){
+
               $documents->where(function($q) use ($dari) {
-                $q->orwhere('documents.doc_enddate','>=','$dari');
-                $q->orwhere('child.doc_enddate','>=','$dari');
-                $q->orwhere('child2.doc_enddate','>=','$dari');
-                $q->orwhere('child3.doc_enddate','>=','$dari');
+                $q->orwhere('documents.doc_enddate','>=',"$dari");
+                $q->orwhere('child.doc_enddate','>=',"$dari");
+                $q->orwhere('child2.doc_enddate','>=',"$dari");
+                $q->orwhere('child3.doc_enddate','>=',"$dari");
               });
             }
             if(!empty($sampai)){
               $documents->where(function($q) use ($sampai) {
-                $q->orwhere('documents.doc_enddate','<=','$sampai');
-                $q->orwhere('child.doc_enddate','<=','$sampai');
-                $q->orwhere('child2.doc_enddate','<=','$sampai');
-                $q->orwhere('child3.doc_enddate','<=','$sampai');
+                $q->orwhere('documents.doc_enddate','<=',"$sampai");
+                $q->orwhere('child.doc_enddate','<=',"$sampai");
+                $q->orwhere('child2.doc_enddate','<=',"$sampai");
+                $q->orwhere('child3.doc_enddate','<=',"$sampai");
               });
             }
           }

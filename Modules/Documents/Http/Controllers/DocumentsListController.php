@@ -19,6 +19,7 @@ class DocumentsListController extends Controller
 
   public function list($request,$status_no)
   {
+    
     $status = $request->status;
     if(\Laratrust::hasRole('konseptor')){
       if($status=='tracking'){
@@ -63,6 +64,9 @@ class DocumentsListController extends Controller
             $documents->where('g.objidposisi',$posisi);
           }
           $documents->where('g.objidunit',$unit);
+        }
+        if(!empty($jenis)){
+          $documents->where('documents.doc_type',$jenis);
         }
         if(!empty($jenis)){
           $documents->where('documents.doc_type',$jenis);

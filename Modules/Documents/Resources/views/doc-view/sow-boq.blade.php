@@ -4,7 +4,7 @@
         @if($doc_type['title']=="Turnkey" || $doc_type['title']=="SP" || $doc_type['title']=="amandemen_kontrak_turnkey")
 
         @elseif($doc_type['title']=="Mou")
-          Ruang Lingkup Kerjasama
+
         @else
 
         @endif
@@ -19,8 +19,8 @@
               <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">SoW</div>
             </div>
             <div class="form-group ">
-              <label class="col-sm-2 control-label">Lingkup Pekerjaan</label>
-              <div class="col-sm-10 text-me">{{$doc->doc_sow or '-'}}</div>
+              <!-- <label class="col-sm-2 control-label">Lingkup Pekerjaan</label> -->
+              <div class="col-sm-12 text-me">{{$doc->doc_sow or '-'}}</div>
             </div>
           </div>
         @endif
@@ -46,8 +46,8 @@
               <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">{{$title_hs}}</div>
             </div>
             <div class="form-group">
-              <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
-              <div class="table-responsive col-sm-10">
+              <!-- <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label> -->
+              <div class="table-responsive col-sm-12">
                 <table class="table table-condensed table-striped">
                     <thead>
                       <tr>
@@ -112,6 +112,8 @@
                     <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}?nik={{$pegawai->n_nik}}&nama={{$pegawai->v_nama_karyawan}}">
                     <i class="glyphicon glyphicon-download-alt"></i>  Download
                     </a>
+                    @else
+                    -
                 @endif
               </div>
             </div>

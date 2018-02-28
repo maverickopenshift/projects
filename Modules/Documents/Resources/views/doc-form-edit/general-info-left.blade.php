@@ -1,7 +1,7 @@
 <div class="form-horizontal">
   @include('documents::form-penomoran-otomatis')
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-    
+
     @if(!in_array($doc_type->name,['khs','turnkey','surat_pengikatan','mou']))
       @include('documents::doc-form-edit.no-kontrak')
     @else
@@ -42,7 +42,7 @@
               <div class="input-group-addon">
                   <span class="fa fa-calendar"></span>
               </div>
-              <input type="text" class="form-control" name="doc_startdate" value="{{old('doc_startdate',Helper::prop_exists($doc,'doc_startdate'))}}" autocomplete="off">
+              <input type="text" class="form-control datepicker" name="doc_startdate" value="{{old('doc_startdate',Helper::prop_exists($doc,'doc_startdate'))}}" autocomplete="off">
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
@@ -57,7 +57,7 @@
               <div class="input-group-addon">
                   <span class="fa fa-calendar"></span>
               </div>
-              <input type="text" class="form-control" name="doc_enddate" value="{{old('doc_enddate',Helper::prop_exists($doc,'doc_enddate'))}}" autocomplete="off">
+              <input type="text" class="form-control datepicker" name="doc_enddate" value="{{old('doc_enddate',Helper::prop_exists($doc,'doc_enddate'))}}" autocomplete="off">
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
@@ -72,7 +72,7 @@
               <div class="input-group-addon">
                   <span class="fa fa-calendar"></span>
               </div>
-              <input type="text" class="form-control" name="doc_date" value="{{old('doc_date',Helper::prop_exists($doc,'doc_date'))}}" autocomplete="off">
+              <input type="text" class="form-control datepicker" name="doc_date" value="{{old('doc_date',Helper::prop_exists($doc,'doc_date'))}}" autocomplete="off">
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">

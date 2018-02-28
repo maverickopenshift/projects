@@ -362,7 +362,7 @@ function templateHS(dt,index) {
   }
 
   @php
-    if($doc_type->name!='khs'){
+    if($doc_type->name!='khs' && $doc_type->name!='amandemen_kontrak_khs'){
       echo "qty = '<td>\
           <input type=\"text\" class=\"form-control input-rupiah hitung_total\" name=\"hs_qty[]\" value=\"'+dt.qty+'\" />\
           <div class=\"error error-hs_qty\"></div>\

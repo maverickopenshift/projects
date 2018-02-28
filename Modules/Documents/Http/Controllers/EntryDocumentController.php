@@ -582,7 +582,8 @@ class EntryDocumentController extends Controller
 
           })->get();
           $type = $request->type;
-          if($type != "khs"){
+          // dd($type);
+          if($type != "khs" && $type != "amandemen_kontrak_khs"){
               $header = ['kode_item','item','qty','satuan','mtu','harga','harga_jasa','keterangan'];
               $jml_header = '8';
           }else {
@@ -590,7 +591,7 @@ class EntryDocumentController extends Controller
             $jml_header = '7';
           }
           $colomn = $data->first()->keys()->toArray();
-          
+
           if(!empty($data) && count($colomn) == $jml_header && $colomn == $header){
           return Response::json(['status'=>true,'csrf_token'=>csrf_token(),'data'=>$data]);
         }

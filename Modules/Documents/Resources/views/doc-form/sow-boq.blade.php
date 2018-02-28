@@ -4,7 +4,7 @@
       @if($doc_type['title']=="Turnkey" || $doc_type['title']=="SP" || $doc_type['title']=="amandemen_kontrak_turnkey" )
 
       @elseif($doc_type['title']=="Mou")
-        Ruang Lingkup Kerjasama
+        
       @else
 
       @endif
@@ -19,8 +19,8 @@
             <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">SoW</div>
           </div>
           <div class="form-group  formerror formerror-doc_sow">
-            <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label>
-            <div class="col-sm-10">
+            <!-- <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label> -->
+            <div class="col-sm-12">
               <textarea class="form-control" name="doc_sow" cols="4" rows="4">{{Helper::old_prop($doc,'doc_sow')}}</textarea>
               <div class="error error-doc_sow"></div>
             </div>
@@ -55,8 +55,8 @@
         </div>
 
           <div class="form-group top20">
-            <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
-            <div class="col-sm-10">
+            <!-- <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label> -->
+            <div class="col-sm-12">
               <button class="btn btn-primary btn-sm upload-daftar_harga" type="button"><i class="fa fa-upload"></i> Upload {{$title_hs}}</button>
               <a href="{{route('doc.tmp.download',['filename'=>$tm_download])}}" class="btn btn-info  btn-sm" title="Download Sample Template"><i class="glyphicon glyphicon-download-alt"></i> Download sample template</a>
               <span class="error error-daftar_harga text-danger"></span>

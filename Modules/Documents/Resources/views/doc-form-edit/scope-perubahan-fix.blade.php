@@ -1,7 +1,7 @@
 <div class="box">
   <div class="box-header with-border" style="padding-bottom: 14px;">
     <h3 class="box-title">
-      Latar Belakang
+      
     </h3>
   </div>
   <div class="box-body">
@@ -19,12 +19,12 @@
       @foreach ($f_scope_pasal as $key => $value)
         <div class="parent_scope_perubahan">
           <div class="form-horizontal scope_perubahan" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-            
+
             <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
               <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Pasal <span class="total_scope_perubahan">{{$key+1}}</span></div>
               <div class="btn-group" style="position: absolute;right: 5px;top: -10px;border-radius: 0;">
                 <button type="button" class="btn btn-success add_scope_perubahan" style="border-radius: 0;"><i class="glyphicon glyphicon-plus"></i></button>
-              </div>            
+              </div>
             </div>
 
             <div class="form-group">
@@ -89,12 +89,12 @@
     @else
       <div class="parent_scope_perubahan">
         <div class="form-horizontal scope_perubahan" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-          
+
           <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
             <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Pasal <span class="total_scope_perubahan">1</span></div>
             <div class="btn-group" style="position: absolute;right: 5px;top: -10px;border-radius: 0;">
               <button type="button" class="btn btn-success add_scope_perubahan" style="border-radius: 0;"><i class="glyphicon glyphicon-plus"></i></button>
-            </div>            
+            </div>
           </div>
 
           <div class="form-group">
@@ -179,7 +179,7 @@
       mdf_new_row.eq(1).find('.f_latar_belakang_judul').val('');
       mdf_new_row.eq(1).find('.error').html('');
 
-      mdf_new_row.eq(2).find('.f_latar_belakang_tanggal').val('');    
+      mdf_new_row.eq(2).find('.f_latar_belakang_tanggal').val('');
       mdf_new_row.eq(2).find('.error').html('');
 
       mdf_new_row.eq(3).find('.f_latar_belakang_isi').val('');

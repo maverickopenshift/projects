@@ -1,7 +1,7 @@
 <div class="box">
   <div class="box-header with-border" style="padding-bottom: 14px;">
     <h3 class="box-title">
-      Latar Belakang
+      
     </h3>
   </div>
   <div class="box-body">

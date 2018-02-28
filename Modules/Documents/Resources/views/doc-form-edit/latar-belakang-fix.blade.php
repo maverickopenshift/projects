@@ -67,7 +67,7 @@
       </div>
 
       <div class="form-group formerror formerror-lt_file_rks">
-        <label class="col-sm-2 control-label"><span class="text-red">*</span> File awd {{$lt_file_rks_old}}</label>
+        <label class="col-sm-2 control-label"><span class="text-red">*</span> File</label>
         <div class="col-sm-4">
           <div class="input-group">
             <input type="file" class="hide" name="lt_file_rks">

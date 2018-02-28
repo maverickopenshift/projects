@@ -127,12 +127,25 @@
 @push('scripts')
 <script>
 $(function () {
+  $('.btn-setuju').prop('disabled', true);
+  $('.btn-reject').prop('disabled', true);
+
   $('.btnNext').click(function(){
    $('.nav-tabs > .active').next('li').find('a').trigger('click');
   });
   $('.btnPrevious').click(function(){
    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
   });
+});
+
+$(document).on('click', '.disclaimer', function(event) {
+  if($('.disclaimer').is(':checked')) {
+    $('.btn-setuju').prop('disabled', false);
+    $('.btn-reject').prop('disabled', false);
+  }else{
+    $('.btn-setuju').prop('disabled', true);
+    $('.btn-reject').prop('disabled', true);
+  }
 });
 
 $(document).on('click', '.btn-reject', function(event) {

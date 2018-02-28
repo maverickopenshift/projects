@@ -21,19 +21,53 @@
       <div class="table-kontrak">
         <div class="form-inline bottom25">
           <div class="form-group top10">
-            <input  style="width:290px;" type="text" class="form-control cari-judul" placeholder="Judul/Nomor Kontrak">
-          </div>
+            <input style="width:290px;" type="text" class="form-control cari-judul" placeholder="Judul/Nomor Kontrak">
+          </div>          
           @role('admin')
-          <div class="form-group top10">
-            {!!Helper::select_all_divisi('divisi')!!}
-          </div>
+            <div class="form-group top10">
+              {!!Helper::select_all_divisi('divisi')!!}
+            </div>
           @endrole
+
           <div class="form-group top10">
             {!!Helper::select_unit('unit_bisnis')!!}
           </div>
           <div class="form-group top10">
             {!! Helper::select_type2('doc_type') !!}
           </div>
+          <div class="form-group top10">
+            <select class="form-control" id="doc_signing" name="doc_signing">
+              <option value="">Pilih Status</option>
+              <option value="1">Open</option>
+              <option value="2">Close</option>
+            </select>
+          </div>
+          <div class="form-group top10">
+            <select class="form-control" id="doc_range" name="doc_range">
+              <option value="">Pilih Range</option>
+              <option value="1">Bulan Ini</option>
+              <option value="3">3 Bulan</option>
+              <option value="6">6 Bulan</option>
+            </select>
+          </div>
+          <div class="form-group top10">
+            <div class="input-group date" data-provide="datepicker">
+              <div class="input-group-addon">
+                <span class="fa fa-calendar"></span>
+              </div>
+              <input type="text" class="form-control" id="doc_daritanggal" name="doc_enddate" placeholder="Dari Tanggal.." autocomplete="off">
+            </div>
+          </div>
+
+          <div class="form-group top10">
+            <div class="input-group date" data-provide="datepicker">
+              <div class="input-group-addon">
+                <span class="fa fa-calendar"></span>
+              </div>
+              <input type="text" class="form-control" id="doc_sampaitanggal" name="doc_enddate" placeholder="Sampai Tanggal.." autocomplete="off">
+            </div>
+          </div>
+
           <button type="button" class="btn btn-success search top10">Cari</button>
           <button type="button" class="btn btn-danger reset top10">Reset</button>
         </div>
@@ -73,6 +107,7 @@ if(is_admin()){
     }
   });
 }
+
 $.fn.tableOke = function(options) {
     options.tableAttr = this;
     options.tableClass = 'table table-condensed table-striped';
@@ -85,6 +120,10 @@ $.fn.tableOke = function(options) {
     options.unitAttr = options.tableAttr.find('#unit_bisnis');
     options.divisiAttr = options.tableAttr.find('#divisi');
     options.jenisAttr = options.tableAttr.find('#doc_type');
+    options.openAttr = options.tableAttr.find('#doc_signing');
+    options.rangeAttr = options.tableAttr.find('#doc_range');
+    options.dariAttr = options.tableAttr.find('#doc_daritanggal');
+    options.sampaiAttr = options.tableAttr.find('#doc_sampaitanggal');
     options.q = options.qAttr.val();
     options.divisi = options.divisiAttr.val();
     options.unit = options.unitAttr.val();
@@ -241,7 +280,7 @@ $.fn.tableOke = function(options) {
     }
     options.pagination = function(data){
       var render_pg='';
-      var url = '&limit='+options.limit+'&q='+options.q+'&divisi='+options.divisi+'&unit='+options.unit+'&jenis='+options.jenis;
+      var url = '&limit='+options.limit+'&q='+options.q+'&divisi='+options.divisi+'&unit='+options.unit+'&jenis='+options.jenis+'&open='+options.open+'&range='+options.range+'&dari='+options.dari+'&sampai='+options.sampai;
       if(data.last_page>1){
         render_pg += '<ul class="pagination">';
           if(data.current_page != 1 && data.last_page >=5){
@@ -308,6 +347,10 @@ $.fn.tableOke = function(options) {
     options.unit = options.getParams('unit',options.unit);
     options.divisi = options.getParams('divisi',options.divisi);
     options.jenis = options.getParams('jenis',options.jenis);
+    options.open = options.getParams('open',options.open);
+    options.range = options.getParams('open',options.range);
+    options.dari = options.getParams('open',options.dari);
+    options.sampai = options.getParams('open',options.sampai);
     options.ajaxPro = function(){
       $.ajax({
         url: options.url,
@@ -319,12 +362,17 @@ $.fn.tableOke = function(options) {
           divisi : (options.divisi!==undefined)?options.divisi:'',
           unit : (options.unit!==undefined)?options.unit:'',
           jenis : (options.jenis!==undefined)?options.jenis:'',
+          open : (options.open!==undefined)?options.open:'',
+          range : (options.range!==undefined)?options.range:'',
+          dari : (options.dari!==undefined)?options.dari:'',
+          sampai : (options.sampai!==undefined)?options.sampai:'',
           limit : options.limit
         }
       })
       .done(function(data) {
         options.unitAttr.val(options.unit);
         options.jenisAttr.val(options.jenis);
+        options.openAttr.val(options.open);
         if(data.data.length>0){
           options.tableAttr.find('.empty-data').remove();
           var render;
@@ -377,6 +425,10 @@ $.fn.tableOke = function(options) {
           divisi : (options.divisi!==undefined)?options.divisi:'',
           unit : (options.unit!==undefined)?options.unit:'',
           jenis : (options.jenis!==undefined)?options.jenis:'',
+          open : (options.open!==undefined)?options.open:'',
+          range : (options.open!==undefined)?options.range:'',
+          dari : (options.open!==undefined)?options.dari:'',
+          sampai : (options.sampai!==undefined)?options.sampai:'',
         }
       })
       .done(function(data) {
@@ -434,7 +486,11 @@ $.fn.tableOke = function(options) {
         options.divisi = options.divisiAttr.val();
         options.unit = options.unitAttr.val();
         options.jenis = options.jenisAttr.val();
-        var urls = options.url+'?page='+options.page+'&limit='+options.limit+'&q='+options.q+'&divisi='+options.divisi+'&unit='+options.unit+'&jenis='+options.jenis;
+        options.open = options.openAttr.val();
+        options.range = options.rangeAttr.val();
+        options.dari = options.dariAttr.val();
+        options.sampai = options.sampaiAttr.val();
+        var urls = options.url+'?page='+options.page+'&limit='+options.limit+'&q='+options.q+'&divisi='+options.divisi+'&unit='+options.unit+'&jenis='+options.jenis+'&open='+options.open+'&range='+options.range+'&dari='+options.dari+'&sampai='+options.sampai;
         window.history.pushState({}, "", urls);
         options.ajaxPro();
     });
@@ -447,11 +503,19 @@ $.fn.tableOke = function(options) {
         options.divisi = "";
         options.unit = "";
         options.jenis = "";
+        options.open = "";
+        options.range = "";
+        options.dari = "";
+        options.sampai = "";
         $('#unit_bisnis').find('option').not('option[value=""]').remove();
         options.qAttr.val('');
         options.divisiAttr.val('');
         options.unitAttr.val('');
         options.jenisAttr.val('');
+        options.openAttr.val('');
+        options.rangeAttr.val('');
+        options.dariAttr.val('');
+        options.sampaiAttr.val('');
         window.history.pushState({}, "", options.url);
         options.ajaxPro();
     });
@@ -530,6 +594,7 @@ $.fn.tableOke = function(options) {
     });
     return this;
 }
+
 $(function () {
   var options = {
     url : '{!!route('doc',['status'=>$doc_status])!!}',
@@ -537,7 +602,7 @@ $(function () {
     data : [
       { name : 'title' , title  : 'Judul - No Kontrak',orderable:true},
       { name : 'sup_name' , title  : 'Vendor',orderable:true},
-      // { name : 'supplier.nm_vendor' , title  : 'Vendor',orderable:true},
+      { name : 'doc_enddate' , title  : 'Tanggal Akhir',orderable:true},
       // { name : 'status' , title  : 'Status',orderable:true},
       { name : 'jenis.type.title' , title  : 'Type',orderable:true},
       { name : 'link' , title  : 'Action'},
@@ -548,11 +613,13 @@ $(function () {
   };
   var tbl = $('.table-kontrak').tableOke(options);
 });
+
 $.expr[":"].contains = $.expr.createPseudo(function(arg) {
     return function( elem ) {
         return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
     };
 });
+
 function yellowBro(string){
   if(string!=""){
     $('.table-kontrak').find(':contains('+string+')').each(function(){
@@ -569,6 +636,7 @@ function yellowBro(string){
     });
   }
 }
+
 $(document).on('click', '.btn-reject', function(event) {
   event.preventDefault();
   /* Act on the event */

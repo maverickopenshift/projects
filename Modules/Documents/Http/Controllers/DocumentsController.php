@@ -39,6 +39,7 @@ class DocumentsController extends Controller
      */
     public function index(Request $request)
     {
+      
       $status = $request->status;
       $status_arr = ['proses','selesai','draft','tracking','tutup','close'];
       if(!in_array($status,$status_arr)){
@@ -67,6 +68,18 @@ class DocumentsController extends Controller
           $posisi = $request->posisi;
           $divisi = $request->divisi;
           $jenis = $request->jenis;
+          $open = $request->open;
+          $range = $request->range;
+          $dari = $request->dari;
+          $sampai = $request->sampai;
+
+          if(!empty($open)){            
+            if($open==1){
+              $status_no=1;
+            }elseif($open==2){
+              $status_no=4;
+            }
+          }
 
           if(!empty($request->limit)){
             $limit = $request->limit;
@@ -90,6 +103,7 @@ class DocumentsController extends Controller
             $documents->leftJoin('documents as child3','child3.doc_parent_id','=','child2.id');
             $documents->selectRaw('DISTINCT (documents.id) , documents.*');
             $documents->where('documents.doc_parent',1);
+
             $documents->whereRaw('(child.`doc_signing`='.$status_no.' OR child2.`doc_signing`='.$status_no.' OR child3.`doc_signing`='.$status_no.' OR documents.`doc_signing`='.$status_no.')');
             if(!empty($request->q)){
               $documents->where(function($q) use ($search) {
@@ -109,6 +123,31 @@ class DocumentsController extends Controller
                   $q->orWhere('child.doc_type',$jenis);
                   $q->orWhere('child2.doc_type',$jenis);
                   $q->orWhere('child3.doc_type',$jenis);
+              });
+            }
+            if(!empty($range)){
+              $documents->where(function($q) use ($range) {
+                $q->orwhereRaw("documents.doc_enddate >= last_day(now()) + interval 1 day - interval $range month");
+                $q->orwhereRaw("child.doc_enddate >= last_day(now()) + interval 1 day - interval $range month");
+                $q->orwhereRaw("child2.doc_enddate >= last_day(now()) + interval 1 day - interval $range month");
+                $q->orwhereRaw("child3.doc_enddate >= last_day(now()) + interval 1 day - interval $range month");
+              });
+            }
+            if(!empty($dari)){
+
+              $documents->where(function($q) use ($dari) {
+                $q->orwhere('documents.doc_enddate','>=',"$dari");
+                $q->orwhere('child.doc_enddate','>=',"$dari");
+                $q->orwhere('child2.doc_enddate','>=',"$dari");
+                $q->orwhere('child3.doc_enddate','>=',"$dari");
+              });
+            }
+            if(!empty($sampai)){
+              $documents->where(function($q) use ($sampai) {
+                $q->orwhere('documents.doc_enddate','<=',"$sampai");
+                $q->orwhere('child.doc_enddate','<=',"$sampai");
+                $q->orwhere('child2.doc_enddate','<=',"$sampai");
+                $q->orwhere('child3.doc_enddate','<=',"$sampai");
               });
             }
           }

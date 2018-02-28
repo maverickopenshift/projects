@@ -240,8 +240,6 @@ $(function () {
         }
       }
     });
-
-
   });
 
   $(document).on('click', '#btn-submit', function(event) {

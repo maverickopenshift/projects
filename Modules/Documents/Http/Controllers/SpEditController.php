@@ -516,7 +516,7 @@ class SpEditController extends Controller
         $rules['doc_title']        =  'required|min:2';
         $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_startdate']    =  'required';
-        $rules['doc_enddate']      =  'required';
+        $rules['doc_enddate']      =  'required|after:doc_startdate';
         $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak2_nama']  =  'required|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -579,7 +579,7 @@ class SpEditController extends Controller
       $rules['doc_asuransi.*']          = $rule_doc_asuransi.'|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
       $rules['doc_jaminan_nilai.*']     = $rule_doc_jaminan_nilai.'|max:500|min:3|regex:/^[0-9 .]+$/i';
       $rules['doc_jaminan_startdate.*'] = $rule_doc_jaminan_startdate; //|date_format:"Y-m-d"
-      $rules['doc_jaminan_enddate.*']   = $rule_doc_jaminan_enddate; //
+      $rules['doc_jaminan_enddate.*']   = $rule_doc_jaminan_enddate.'|after:doc_jaminan_startdate.*'; //
       $rules['doc_jaminan_desc.*']      = $rule_doc_jaminan_desc.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
       $rules['doc_po']                  = 'sometimes|nullable|po_exists|regex:/^[a-z0-9 .\-]+$/i';
@@ -615,17 +615,17 @@ class SpEditController extends Controller
             $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
         }
 
-        if($request->doc_enddate < $request->doc_startdate){
-          $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
-        }
-
-        if(in_array($type,['turnkey','sp'])){
-          foreach($request->doc_jaminan_enddate as $k => $v){
-            if($request->doc_jaminan_enddate[$k] < $request->doc_jaminan_startdate[$k]){
-              $validator->errors()->add('doc_jaminan_enddate.'.$k, 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
-            }
-          }
-        }
+        // if($request->doc_enddate < $request->doc_startdate){
+        //   $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+        // }
+        //
+        // if(in_array($type,['turnkey','sp'])){
+        //   foreach($request->doc_jaminan_enddate as $k => $v){
+        //     if($request->doc_jaminan_enddate[$k] < $request->doc_jaminan_startdate[$k]){
+        //       $validator->errors()->add('doc_jaminan_enddate.'.$k, 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+        //     }
+        //   }
+        // }
       });
 
       if(isset($hs_harga) && count($hs_harga)>0){

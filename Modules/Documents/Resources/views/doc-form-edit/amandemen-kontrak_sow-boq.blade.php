@@ -92,7 +92,7 @@
                       <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                       </div>
-                      <input type="text" name="f_tanggal1[]" value="{{$f_tanggal1}}" class="form-control f_tanggal1">
+                      <input type="text" name="f_tanggal1[]" value="{{date('d-m-Y', strtotime($f_tanggal1))}}" class="form-control f_tanggal1 datepicker">
                   </div>
                 </div>
             </div>
@@ -104,7 +104,7 @@
                       <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                       </div>
-                      <input type="text" name="f_tanggal2[]" value="{{$f_tanggal2}}" class="form-control f_tanggal2">
+                      <input type="text" name="f_tanggal2[]" value="{{date('d-m-Y', strtotime($f_tanggal2))}}" class="form-control f_tanggal2 datepicker">
                   </div>
                 </div>
             </div>
@@ -153,7 +153,7 @@
                       <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                       </div>
-                      <input type="text" name="f_tanggal1[]" class="form-control f_tanggal1">
+                      <input type="text" name="f_tanggal1[]" class="form-control f_tanggal1 datepicker">
                   </div>
                 </div>
             </div>
@@ -165,7 +165,7 @@
                       <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                       </div>
-                      <input type="text" name="f_tanggal2[]" class="form-control f_tanggal2">
+                      <input type="text" name="f_tanggal2[]" class="form-control f_tanggal2 datepicker">
                   </div>
                 </div>
             </div>
@@ -217,6 +217,11 @@ function freeText() {
 }
 
 $(function() {
+  var datepicker_ops={
+    format: 'dd-mm-yyyy',
+    autoclose:true,
+    todayHighlight:true
+  };
   freeText();
 
   $(document).on('click', '.add-sow-boq', function(event) {
@@ -251,6 +256,7 @@ $(function() {
     mdf_new_row.eq(5).hide();
 
     $this.parent().prepend(new_row);
+    $('.date').datepicker(datepicker_ops);
     new_row.find('.jdl_lain').remove();
     var row = $('.perubahan');
     $.each(row,function(index, el) {

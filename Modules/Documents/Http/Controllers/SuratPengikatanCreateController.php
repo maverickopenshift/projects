@@ -69,8 +69,8 @@ class SuratPengikatanCreateController extends Controller
         $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-        $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
-        $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
+        $rules['doc_startdate']    =  'required';
+        $rules['doc_enddate']      =  'required';
         $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
@@ -110,15 +110,15 @@ class SuratPengikatanCreateController extends Controller
         $request->merge(['doc_lampiran' => $new_lamp]);
 
         $rules['lt_judul_ketetapan_pemenang']     = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
+        $rules['lt_tanggal_ketetapan_pemenang']   = 'required';
         $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
 
         $rules['lt_judul_kesanggupan_mitra']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['lt_tanggal_kesanggupan_mitra']  = 'required|date_format:"Y-m-d"';
+        $rules['lt_tanggal_kesanggupan_mitra']  = 'required';
         $rules['lt_file_kesanggupan_mitra']     = 'required|mimes:pdf';
 
         $rules['lt_judul_rks']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['lt_tanggal_rks']  = 'required|date_format:"Y-m-d"';
+        $rules['lt_tanggal_rks']  = 'required';
         $rules['lt_file_rks']     = 'required|mimes:pdf';
 
         $rule_ps_judul = (count($request['ps_judul'])>1)?'required':'sometimes|nullable';
@@ -373,8 +373,8 @@ class SuratPengikatanCreateController extends Controller
         $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-        $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
-        $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
+        $rules['doc_startdate']    =  'required';
+        $rules['doc_enddate']      =  'required|after:doc_startdate';
         $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
@@ -414,15 +414,15 @@ class SuratPengikatanCreateController extends Controller
         $request->merge(['doc_lampiran' => $new_lamp]);
 
         $rules['lt_judul_ketetapan_pemenang']     = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
+        $rules['lt_tanggal_ketetapan_pemenang']   = 'required';
         $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
 
         $rules['lt_judul_kesanggupan_mitra']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['lt_tanggal_kesanggupan_mitra']  = 'required|date_format:"Y-m-d"';
+        $rules['lt_tanggal_kesanggupan_mitra']  = 'required';
         $rules['lt_file_kesanggupan_mitra']     = 'required|mimes:pdf';
 
         $rules['lt_judul_rks']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['lt_tanggal_rks']  = 'required|date_format:"Y-m-d"';
+        $rules['lt_tanggal_rks']  = 'required';
         $rules['lt_file_rks']     = 'required|mimes:pdf';
 
         $rule_ps_judul = (count($request['ps_judul'])>1)?'required':'sometimes|nullable';
@@ -445,11 +445,11 @@ class SuratPengikatanCreateController extends Controller
         }
 
         $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-        $validator->after(function ($validator) use ($request) {
-          if($request->doc_enddate < $request->doc_startdate){
-            $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
-          }
-        });
+        // $validator->after(function ($validator) use ($request) {
+        //   if($request->doc_enddate < $request->doc_startdate){
+        //     $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+        //   }
+        // });
         $request->merge(['doc_value' => $doc_value]);
         if(isset($hs_harga) && count($hs_harga)>0){
           $request->merge(['hs_harga'=>$hs_harga]);
@@ -485,8 +485,8 @@ class SuratPengikatanCreateController extends Controller
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
       $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
-      $doc->doc_startdate = $request->doc_startdate;
-      $doc->doc_enddate = $request->doc_enddate;
+      $doc->doc_startdate = date("Y-m-d", strtotime($request->doc_startdate));
+      $doc->doc_enddate = date("Y-m-d", strtotime($request->doc_enddate));
       $doc->doc_pihak1 = $request->doc_pihak1;
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
@@ -560,7 +560,7 @@ class SuratPengikatanCreateController extends Controller
         $doc_meta->documents_id = $doc->id;
         $doc_meta->meta_type = "latar_belakang_rks";
         $doc_meta->meta_name = "Latar Belakang rks";
-        $doc_meta->meta_desc = $request->lt_tanggal_rks;
+        $doc_meta->meta_desc = date("Y-m-d", strtotime($request->lt_tanggal_rks));
 
         if(isset($request->lt_file_rks)){
           $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_rks));
@@ -577,7 +577,7 @@ class SuratPengikatanCreateController extends Controller
         $doc_meta->documents_id = $doc->id;
         $doc_meta->meta_type = "latar_belakang_ketetapan_pemenang";
         $doc_meta->meta_name = "Latar Belakang Ketetapan Pemenang";
-        $doc_meta->meta_desc = $request->lt_tanggal_ketetapan_pemenang;
+        $doc_meta->meta_desc = date("Y-m-d", strtotime($request->lt_tanggal_ketetapan_pemenang));
 
         if(isset($request->lt_file_ketetapan_pemenang)){
           $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_ketetapan_pemenang));
@@ -594,7 +594,7 @@ class SuratPengikatanCreateController extends Controller
         $doc_meta->documents_id = $doc->id;
         $doc_meta->meta_type = "latar_belakang_kesanggupan_mitra";
         $doc_meta->meta_name = "Latar Belakang Kesanggupan Mitra";
-        $doc_meta->meta_desc = $request->lt_tanggal_kesanggupan_mitra;
+        $doc_meta->meta_desc = date("Y-m-d", strtotime($request->lt_tanggal_kesanggupan_mitra));
 
         if(isset($request->lt_file_kesanggupan_mitra)){
           $fileName   = Helpers::set_filename('doc_',strtolower($request->lt_judul_kesanggupan_mitra));
@@ -615,7 +615,7 @@ class SuratPengikatanCreateController extends Controller
             $doc_meta->documents_id = $doc->id;
             $doc_meta->meta_type = "latar_belakang_optional";
             $doc_meta->meta_name = $request['f_latar_belakang_judul'][$key];
-            $doc_meta->meta_title = $request['f_latar_belakang_tanggal'][$key];
+            $doc_meta->meta_title = date("Y-m-d", strtotime($request['f_latar_belakang_tanggal'][$key]));
             $doc_meta->meta_desc = $request['f_latar_belakang_isi'][$key];
             if(isset($request['f_latar_belakang_file'][$key])){
               $fileName   = Helpers::set_filename('doc_',strtolower($val));

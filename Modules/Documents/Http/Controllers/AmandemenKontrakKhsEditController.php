@@ -428,8 +428,8 @@ class AmandemenKontrakKhsEditController extends Controller
     if(in_array($status,['0','2'])){
       $rules['parent_kontrak']   =  'required|kontrak_exists';
       $rules['doc_title']        =  'required|min:2';
-      $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
-      $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
+      $rules['doc_startdate']    =  'required';
+      $rules['doc_enddate']      =  'required|after:doc_startdate';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -467,7 +467,7 @@ class AmandemenKontrakKhsEditController extends Controller
       $request->merge(['doc_lampiran' => $new_lamp]);
     }
 
-    
+
     $rule_scope_pasal = (count($request['f_scope_pasal'])>1)?'required':'sometimes|nullable';
     $rule_scope_judul = (count($request['f_scope_judul'])>1)?'required':'sometimes|nullable';
     $rule_scope_isi = (count($request['scope_isi'])>1)?'required':'sometimes|nullable';
@@ -501,9 +501,9 @@ class AmandemenKontrakKhsEditController extends Controller
 
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
     $validator->after(function ($validator) use ($request) {
-      if($request->doc_enddate < $request->doc_startdate){
-        $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
-      }
+      // if($request->doc_enddate < $request->doc_startdate){
+      //   $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+      // }
     });
 
     if ($validator->fails ()){
@@ -515,14 +515,14 @@ class AmandemenKontrakKhsEditController extends Controller
     if(in_array($status,['0','2'])){
       $doc = Documents::where('id',$id)->first();
       $doc->doc_title = $request->doc_title;
-      $doc->doc_date = $request->doc_startdate;
-      $doc->doc_startdate = $request->doc_startdate;
-      $doc->doc_enddate = $request->doc_enddate;
+      $doc->doc_date = date("Y-m-d", strtotime($request->doc_startdate));
+      $doc->doc_startdate = date("Y-m-d", strtotime($request->doc_startdate));
+      $doc->doc_enddate = date("Y-m-d", strtotime($request->doc_enddate));
       $doc->doc_desc = $request->doc_desc;
       $doc->doc_sow = $request->doc_sow;
       $doc->doc_pihak1 = $request->doc_pihak1;
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
-      $doc->doc_pihak2_nama = $request->doc_pihak2_nama;      
+      $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
       $doc->doc_signing = '0';
       $doc->doc_parent = 0;
       $doc->doc_parent_id = $request->parent_kontrak;
@@ -587,7 +587,7 @@ class AmandemenKontrakKhsEditController extends Controller
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = "latar_belakang_optional";
           $doc_meta->meta_name = $request['f_latar_belakang_judul'][$key];
-          $doc_meta->meta_title = $request['f_latar_belakang_tanggal'][$key];
+          $doc_meta->meta_title = date("Y-m-d", strtotime($request['f_latar_belakang_tanggal'][$key]));
           $doc_meta->meta_desc = $request['f_latar_belakang_isi'][$key];
 
           if(is_object($request['f_latar_belakang_file'][$key])){

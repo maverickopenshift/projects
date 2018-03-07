@@ -21,7 +21,7 @@ $.fn.dataTable.ext.order['dom-text'] = function  ( settings, col )
         return $('input', td).val();
     } );
 }
- 
+
 /* Create an array with the values of all the input boxes in a column, parsed as numbers */
 $.fn.dataTable.ext.order['dom-text-numeric'] = function  ( settings, col )
 {
@@ -29,7 +29,7 @@ $.fn.dataTable.ext.order['dom-text-numeric'] = function  ( settings, col )
         return $('input', td).val() * 1;
     } );
 }
- 
+
 /* Create an array with the values of all the select options in a column */
 $.fn.dataTable.ext.order['dom-select'] = function  ( settings, col )
 {
@@ -37,7 +37,7 @@ $.fn.dataTable.ext.order['dom-select'] = function  ( settings, col )
         return $('select', td).val();
     } );
 }
- 
+
 /* Create an array with the values of all the checkboxes in a column */
 $.fn.dataTable.ext.order['dom-checkbox'] = function  ( settings, col )
 {
@@ -46,7 +46,7 @@ $.fn.dataTable.ext.order['dom-checkbox'] = function  ( settings, col )
     } );
 }
 var datepicker_ops={
-    format: 'yyyy-mm-dd',
+    format: 'dd-mm-yyyy',
     autoclose:true,
     todayHighlight:true
 };
@@ -121,7 +121,7 @@ $(function(e){
     $file.click();
     $file.change(function(){
       $file_txt.val($(this).val());
-    }); 
+    });
   });
   $( document ).ajaxError(function( event, jqxhr, settings, thrownError ) {
     console.log(JSON.stringify(jqxhr));
@@ -163,7 +163,7 @@ function toRP(bilangan){
   	sisa 	= split[0].length % 3,
   	rupiah 	= split[0].substr(0, sisa),
   	ribuan 	= split[0].substr(sisa).match(/\d{1,3}/gi);
-  		
+
   if (ribuan) {
   	separator = sisa ? '.' : '';
   	rupiah += separator + ribuan.join('.');
@@ -185,12 +185,12 @@ function formatRupiah(angka, prefix)
 		sisa 	= split[0].length % 3,
 		rupiah 	= split[0].substr(0, sisa),
 		ribuan 	= split[0].substr(sisa).match(/\d{3}/gi);
-		
+
 	if (ribuan) {
 		separator = sisa ? '.' : '';
 		rupiah += separator + ribuan.join('.');
 	}
-	
+
 	rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
 	return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
 }

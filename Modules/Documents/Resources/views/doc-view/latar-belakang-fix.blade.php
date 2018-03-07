@@ -5,13 +5,13 @@
       <div class="form-horizontal ao-jas" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
             <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">
-              Latar Belakang
+              RKS
             </div>
           </div>
-            
+
           <div class="form-group">
             <label for="doc_jaminan" class="col-sm-2 control-label">Judul</label>
-            <div class="col-sm-10 text-me">Ketetapan Pemenang</div>
+            <div class="col-sm-10 text-me">RKS</div>
           </div>
 
           <div class="form-group">
@@ -19,8 +19,8 @@
             <div class="col-sm-10 text-me">
               @if(isset($dt->meta_desc))
                 {{Carbon\Carbon::parse($dt->meta_desc)->format('l, d F Y')}}
-              @else 
-              - 
+              @else
+              -
               @endif
             </div>
           </div>
@@ -49,10 +49,10 @@
       <div class="form-horizontal ao-jas" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
             <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">
-              Latar Belakang
+              Ketetapan Pemenang
             </div>
           </div>
-            
+
           <div class="form-group">
             <label for="doc_jaminan" class="col-sm-2 control-label">Judul</label>
             <div class="col-sm-10 text-me">Ketetapan Pemenang</div>
@@ -63,8 +63,8 @@
             <div class="col-sm-10 text-me">
               @if(isset($dt->meta_desc))
                 {{Carbon\Carbon::parse($dt->meta_desc)->format('l, d F Y')}}
-              @else 
-              - 
+              @else
+              -
               @endif
             </div>
           </div>
@@ -93,10 +93,10 @@
       <div class="form-horizontal ao-jas" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
             <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">
-              Latar Belakang
+              Kesanggupan Mitra
             </div>
           </div>
-            
+
           <div class="form-group">
             <label for="doc_jaminan" class="col-sm-2 control-label">Judul</label>
             <div class="col-sm-10 text-me">Kesanggupan Mitra</div>
@@ -107,8 +107,8 @@
             <div class="col-sm-10 text-me">
               @if(isset($dt->meta_desc))
                 {{Carbon\Carbon::parse($dt->meta_desc)->format('l, d F Y')}}
-              @else 
-              - 
+              @else
+              -
               @endif
             </div>
           </div>
@@ -137,10 +137,10 @@
       <div class="form-horizontal ao-jas" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
             <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">
-              Latar Belakang
+              Lain-lain
             </div>
           </div>
-            
+
           <div class="form-group">
             <label for="doc_jaminan" class="col-sm-2 control-label">Judul</label>
             <div class="col-sm-10 text-me">{{$dt->meta_name}}</div>
@@ -151,8 +151,8 @@
             <div class="col-sm-10 text-me">
               @if(isset($dt->meta_title))
                 {{Carbon\Carbon::parse($dt->meta_title)->format('l, d F Y')}}
-              @else 
-              - 
+              @else
+              -
               @endif
             </div>
           </div>

@@ -241,6 +241,7 @@ class CustomErrors
             '*.required' => 'Inputan harus diisi',
             'doc_title.max' => 'Input maksimal 500 karakter',
             '*.regex' => 'Karakter input tidak valid',
+            '*.after' => 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!',
 
             'doc_desc.min' => 'Input minimum 30 karakter',
             'doc_date.format' => 'Input tanggal tidak valid',

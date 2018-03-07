@@ -1,7 +1,7 @@
 <div class="box">
   <div class="box-header with-border" style="padding-bottom: 14px;">
     <h3 class="box-title">
-      Latar Belakang
+      
     </h3>
   </div>
   <div class="box-body">
@@ -50,7 +50,7 @@
           <div class="error error-lt_judul_rks"></div>
         </div>
       </div>
-      
+
       <div class="form-group formerror formerror-lt_tanggal_rks">
         <label class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal</label>
         <div class="col-sm-4">
@@ -58,7 +58,7 @@
               <div class="input-group-addon">
                   <span class="fa fa-calendar"></span>
               </div>
-              <input type="text" value="{{$lt_tanggal_rks}}" class="form-control" name="lt_tanggal_rks" autocomplete="off" placeholder="Tanggal..">
+              <input type="text" value="{{date('d-m-Y', strtotime($lt_tanggal_rks))}}" class="form-control datepicker" name="lt_tanggal_rks" autocomplete="off" placeholder="Tanggal..">
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
@@ -72,7 +72,7 @@
           <div class="input-group">
             <input type="file" class="hide" name="lt_file_rks">
             <input class="form-control" type="text" disabled>
-            <span class="input-group-btn"> 
+            <span class="input-group-btn">
               <button class="btn btn-default click-upload" type="button">Browse</button>
               <input type="hidden" name="lt_file_rks_old" value="{{$lt_file_rks}}">
               @if($lt_file_rks_old!=null)
@@ -114,7 +114,7 @@
               <div class="input-group-addon">
                   <span class="fa fa-calendar"></span>
               </div>
-              <input type="text" value="{{$lt_tanggal_ketetapan_pemenang}}" class="form-control" name="lt_tanggal_ketetapan_pemenang" autocomplete="off" placeholder="Tanggal..">
+              <input type="text" value="{{date('d-m-Y', strtotime($lt_tanggal_ketetapan_pemenang))}}" class="form-control datepicker" name="lt_tanggal_ketetapan_pemenang" autocomplete="off" placeholder="Tanggal..">
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
@@ -167,7 +167,7 @@
               <div class="input-group-addon">
                   <span class="fa fa-calendar"></span>
               </div>
-              <input type="text" value="{{$lt_tanggal_kesanggupan_mitra}}" class="form-control" name="lt_tanggal_kesanggupan_mitra" autocomplete="off"  placeholder="Tanggal..">
+              <input type="text" value="{{date('d-m-Y', strtotime($lt_tanggal_kesanggupan_mitra))}}" class="form-control datepicker" name="lt_tanggal_kesanggupan_mitra" autocomplete="off"  placeholder="Tanggal..">
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
@@ -202,7 +202,7 @@
     @if(count($f_latar_belakang_judul)>=1)
       @foreach ($f_latar_belakang_judul as $key => $value)
         <div class="parent-perubahan-latar_belakang">
-          <div class="form-horizontal perubahan" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
+          <div class="form-horizontal perubahan-latar_belakang" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
             <div class="form-group button-delete" style="position:relative;margin-bottom: 34px;">
               <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">Lain-lain</div>
               <div class="btn-group" style="position: absolute;right: 5px;top: -10px;border-radius: 0;">
@@ -227,7 +227,7 @@
                   <div class="input-group-addon">
                     <span class="fa fa-calendar"></span>
                   </div>
-                  <input type="text" name="f_latar_belakang_tanggal[]" class="form-control f_latar_belakang_tanggal" value="{{$f_latar_belakang_tanggal[$key]}}" placeholder="Tanggal..">
+                  <input type="text" name="f_latar_belakang_tanggal[]" class="form-control f_latar_belakang_tanggal datepicker" value="{{date('d-m-Y', strtotime($f_latar_belakang_tanggal[$key]))}}" placeholder="Tanggal..">
                 </div>
               </div>
             </div>
@@ -285,7 +285,7 @@
                 <div class="input-group-addon">
                     <span class="fa fa-calendar"></span>
                 </div>
-                <input type="text" name="f_latar_belakang_tanggal[]" class="form-control f_latar_belakang_tanggal" placeholder="Tanggal..">
+                <input type="text" name="f_latar_belakang_tanggal[]" class="form-control f_latar_belakang_tanggal datepicker" placeholder="Tanggal..">
               </div>
             </div>
           </div>
@@ -321,7 +321,7 @@
 <script>
   $(function(){
     var datepicker_ops={
-      format: 'yyyy-mm-dd',
+      format: 'dd-mm-yyyy',
       autoclose:true,
       todayHighlight:true
     };
@@ -343,7 +343,7 @@
       mdf_new_row.eq(1).find('.f_latar_belakang_judul').val('');
       mdf_new_row.eq(1).find('.error').html('');
 
-      mdf_new_row.eq(2).find('.f_latar_belakang_tanggal').val('');    
+      mdf_new_row.eq(2).find('.f_latar_belakang_tanggal').val('');
       mdf_new_row.eq(2).find('.error').html('');
 
       mdf_new_row.eq(3).find('.f_latar_belakang_isi').val('');

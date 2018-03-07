@@ -68,8 +68,8 @@ class MouCreateController extends Controller
         $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-        $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
-        $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
+        $rules['doc_startdate']    =  'required';
+        $rules['doc_enddate']      =  'required';
         $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
@@ -324,8 +324,8 @@ class MouCreateController extends Controller
         $rules['unit_bisnis']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-        $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
-        $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
+        $rules['doc_startdate']    =  'required';
+        $rules['doc_enddate']      =  'required|after:doc_startdate';
         $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
@@ -387,9 +387,9 @@ class MouCreateController extends Controller
 
         $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
         $validator->after(function ($validator) use ($request) {
-          if($request->doc_enddate < $request->doc_startdate){
-            $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
-          }
+          // if($request->doc_enddate < $request->doc_startdate){
+          //   $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+          // }
         });
         $request->merge(['doc_value' => $doc_value]);
         if(isset($hs_harga) && count($hs_harga)>0){
@@ -426,8 +426,8 @@ class MouCreateController extends Controller
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
       $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
-      $doc->doc_startdate = $request->doc_startdate;
-      $doc->doc_enddate = $request->doc_enddate;
+      $doc->doc_startdate = date("Y-m-d", strtotime($request->doc_startdate));
+      $doc->doc_enddate = date("Y-m-d", strtotime($request->doc_enddate));
       $doc->doc_pihak1 = $request->doc_pihak1;
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;

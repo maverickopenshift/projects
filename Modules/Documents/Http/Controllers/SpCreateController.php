@@ -67,8 +67,8 @@ class SpCreateController
         $rules['parent_kontrak']   =  'required|kontrak_exists';
         $rules['doc_title']        =  'required|min:2';
         $rules['doc_desc']         =  'sometimes|nullable|min:10|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-        $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
-        $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
+        $rules['doc_startdate']    =  'required';
+        $rules['doc_enddate']      =  'required|after:doc_startdate';
         $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak2_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -131,18 +131,18 @@ class SpCreateController
         $rules['doc_jaminan.*']           = $rule_doc_jaminan.'|in:PL,PM';
         $rules['doc_asuransi.*']          = $rule_doc_asuransi.'|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_jaminan_nilai.*']     = $rule_doc_jaminan_nilai.'|max:500|min:3|regex:/^[0-9 .]+$/i';
-        $rules['doc_jaminan_startdate.*'] = $rule_doc_jaminan_startdate.'|date_format:"Y-m-d"'; //|date_format:"Y-m-d"
-        $rules['doc_jaminan_enddate.*']   = $rule_doc_jaminan_enddate.'|date_format:"Y-m-d"'; //
+        $rules['doc_jaminan_startdate.*'] = $rule_doc_jaminan_startdate; //|date_format:"Y-m-d"
+        $rules['doc_jaminan_enddate.*']   = $rule_doc_jaminan_enddate.'|after:doc_jaminan_startdate.*'; //
         $rules['doc_jaminan_desc.*']      = $rule_doc_jaminan_desc.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_jaminan_file.*']      = 'sometimes|nullable|mimes:pdf';
         $rules['doc_po']                  = 'sometimes|nullable|po_exists|regex:/^[a-z0-9 .\-]+$/i';
 
         $rules['lt_judul_ketetapan_pemenang']     = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['lt_tanggal_ketetapan_pemenang']   = 'required|date_format:"Y-m-d"';
+        $rules['lt_tanggal_ketetapan_pemenang']   = 'required';
         $rules['lt_file_ketetapan_pemenang']      = 'required|mimes:pdf';
 
         $rules['lt_judul_kesanggupan_mitra']    = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['lt_tanggal_kesanggupan_mitra']  = 'required|date_format:"Y-m-d"';
+        $rules['lt_tanggal_kesanggupan_mitra']  = 'required';
         $rules['lt_file_kesanggupan_mitra']     = 'required|mimes:pdf';
 
         $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
@@ -151,9 +151,9 @@ class SpCreateController
               $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
           }
 
-          if($request->doc_enddate < $request->doc_startdate){
-            $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
-          }
+          // if($request->doc_enddate < $request->doc_startdate){
+          //   $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+          // }
         });
 
         if(isset($hs_harga) && count($hs_harga)>0){
@@ -467,8 +467,8 @@ class SpCreateController
         $rules['parent_kontrak']   =  'required|kontrak_exists';
         $rules['doc_title']        =  'required|min:2';
         $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-        $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
-        $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
+        $rules['doc_startdate']    =  'required';
+        $rules['doc_enddate']      =  'required|after:doc_startdate';
         $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_pihak2_nama']  =  'required|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -531,8 +531,8 @@ class SpCreateController
         $rules['doc_jaminan.*']           = $rule_doc_jaminan.'|in:PL,PM';
         $rules['doc_asuransi.*']          = $rule_doc_asuransi.'|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_jaminan_nilai.*']     = $rule_doc_jaminan_nilai.'|max:500|min:3|regex:/^[0-9 .]+$/i';
-        $rules['doc_jaminan_startdate.*'] = $rule_doc_jaminan_startdate.'|date_format:"Y-m-d"'; //|date_format:"Y-m-d"
-        $rules['doc_jaminan_enddate.*']   = $rule_doc_jaminan_enddate.'|date_format:"Y-m-d"'; //
+        $rules['doc_jaminan_startdate.*'] = $rule_doc_jaminan_startdate; //|date_format:"Y-m-d"
+        $rules['doc_jaminan_enddate.*']   = $rule_doc_jaminan_enddate.'|after:doc_jaminan_startdate.*'; //
         $rules['doc_jaminan_desc.*']      = $rule_doc_jaminan_desc.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $rules['doc_jaminan_file.*']      = 'sometimes|nullable|mimes:pdf';
         $rules['doc_po']                  = 'sometimes|nullable|po_exists|regex:/^[a-z0-9 .\-]+$/i';
@@ -544,17 +544,17 @@ class SpCreateController
               $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
           }
 
-          if($request->doc_enddate < $request->doc_startdate){
-            $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
-          }
+          // if($request->doc_enddate < $request->doc_startdate){
+          //   $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+          // }
 
-          if(in_array($type,['turnkey','sp'])){
-            foreach($request->doc_jaminan_enddate as $k => $v){
-              if($request->doc_jaminan_enddate[$k] < $request->doc_jaminan_startdate[$k]){
-                $validator->errors()->add('doc_jaminan_enddate.'.$k, 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
-              }
-            }
-          }
+          // if(in_array($type,['turnkey','sp'])){
+          //   foreach($request->doc_jaminan_enddate as $k => $v){
+          //     if($request->doc_jaminan_enddate[$k] < $request->doc_jaminan_startdate[$k]){
+          //       $validator->errors()->add('doc_jaminan_enddate.'.$k, 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+          //     }
+          //   }
+          // }
         });
 
         if(isset($hs_harga) && count($hs_harga)>0){
@@ -590,9 +590,9 @@ class SpCreateController
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
       $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
-      $doc->doc_date = $request->doc_startdate;
-      $doc->doc_startdate = $request->doc_startdate;
-      $doc->doc_enddate = $request->doc_enddate;
+      $doc->doc_date = date("Y-m-d", strtotime($request->doc_startdate));
+      $doc->doc_startdate = date("Y-m-d", strtotime($request->doc_startdate));
+      $doc->doc_enddate = date("Y-m-d", strtotime($request->doc_enddate));
       $doc->doc_pihak1 = $request->doc_pihak1;
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
@@ -643,7 +643,7 @@ class SpCreateController
         $doc_meta2->save();
       }
 
-
+      //save po
       if(isset($request->doc_po)){
         $doc_po = new DocPo();
         $doc_po->documents_id = $doc->id;
@@ -657,6 +657,7 @@ class SpCreateController
         $doc_po->save();
       }
 
+      //lampiran ttd
       if(count($request->doc_lampiran)>0){
         foreach($request->doc_lampiran as $key => $val){
           if(!empty($val)
@@ -676,6 +677,7 @@ class SpCreateController
         }
       }
 
+      //asuransi
       if(count($request->doc_asuransi)>0){
         foreach($request['doc_asuransi'] as $key => $val){
           if(!empty($val)
@@ -685,10 +687,10 @@ class SpCreateController
             $asr->doc_jaminan = $request['doc_jaminan'][$key];
             $asr->doc_jaminan_name = $request['doc_asuransi'][$key];
             $asr->doc_jaminan_nilai = Helpers::input_rupiah($request['doc_jaminan_nilai'][$key]);
-            $asr->doc_jaminan_startdate = $request['doc_jaminan_startdate'][$key];
-            $asr->doc_jaminan_enddate = $request['doc_jaminan_enddate'][$key];
+            $asr->doc_jaminan_startdate = date("Y-m-d", strtotime($request['doc_jaminan_startdate'][$key]));
+            $asr->doc_jaminan_enddate = date("Y-m-d", strtotime($request['doc_jaminan_enddate'][$key]));
             $asr->doc_jaminan_desc = $request['doc_jaminan_desc'][$key];
-            
+
             if(isset($request['doc_jaminan_file'][$key])){
               $fileName   = Helpers::set_filename('doc_',strtolower($val));
               $file = $request['doc_jaminan_file'][$key];
@@ -700,6 +702,7 @@ class SpCreateController
         }
       }
 
+      //PIC
       if(count($request->pic_nama)>0){
         foreach($request['pic_nama'] as $key => $val){
           $pic = new DocPic();
@@ -723,7 +726,7 @@ class SpCreateController
             $doc_meta->documents_id = $doc->id;
             $doc_meta->meta_type = "latar_belakang_optional";
             $doc_meta->meta_name = $request['f_latar_belakang_judul'][$key];
-            $doc_meta->meta_title = $request['f_latar_belakang_tanggal'][$key];
+            $doc_meta->meta_title = date("Y-m-d", strtotime($request['f_latar_belakang_tanggal'][$key]));
             $doc_meta->meta_desc = $request['f_latar_belakang_isi'][$key];
             if(isset($request['f_latar_belakang_file'][$key])){
               $fileName   = Helpers::set_filename('doc_',strtolower($val));

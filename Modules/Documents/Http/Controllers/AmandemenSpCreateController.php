@@ -319,17 +319,18 @@ class AmandemenSpCreateController
       $rules['unit_bisnis']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       $rules['parent_sp']        =  'required';
       $rules['doc_title']        =  'required|min:2';
-      $rules['doc_startdate']    =  'required|date_format:"Y-m-d"';
-      $rules['doc_enddate']      =  'required|date_format:"Y-m-d"';
+      $rules['doc_startdate']    =  'required';
+      $rules['doc_enddate']      =  'required|after:doc_startdate';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak2_nama']  =  'required|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-    
+
+
       if(Config::get_config('auto-numb')=='off'){
         $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
       }
-      
+
       $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $check_new_lampiran = false;
         foreach($request->doc_lampiran_old as $k => $v){
@@ -370,9 +371,9 @@ class AmandemenSpCreateController
 
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
       $validator->after(function ($validator) use ($request) {
-        if($request->doc_enddate < $request->doc_startdate){
-          $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
-        }
+        // if($request->doc_enddate < $request->doc_startdate){
+        //   $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
+        // }
       });
       if ($validator->fails ()){
         return Response::json (array(
@@ -400,9 +401,9 @@ class AmandemenSpCreateController
 
     $doc = new Documents();
     $doc->doc_title = $request->doc_title;
-    $doc->doc_date = $request->doc_startdate;
-    $doc->doc_startdate = $request->doc_startdate;
-    $doc->doc_enddate = $request->doc_enddate;
+    $doc->doc_date = date("Y-m-d", strtotime($request->doc_startdate));
+    $doc->doc_startdate = date("Y-m-d", strtotime($request->doc_startdate));
+    $doc->doc_enddate = date("Y-m-d", strtotime($request->doc_enddate));
     $doc->doc_desc = $request->doc_desc;
     $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
     $doc->doc_pihak1 = $request->doc_pihak1;
@@ -439,7 +440,7 @@ class AmandemenSpCreateController
             $desc=$request->f_harga[$key];
           }elseif($val=="Jangka Waktu"){
             $f_name="jangka_waktu";
-            $desc=$request->f_tanggal1[$key] ."|". $request->f_tanggal2[$key];
+            $desc= date("Y-m-d", strtotime($request->f_tanggal1[$key])) ."|". date("Y-m-d", strtotime($request->f_tanggal2[$key]));
           }elseif($val=="Lainnya"){
             $f_name="lainnya";
             $desc=$request->f_isi[$key];
@@ -485,7 +486,7 @@ class AmandemenSpCreateController
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = "latar_belakang_optional";
           $doc_meta->meta_name = $request['f_latar_belakang_judul'][$key];
-          $doc_meta->meta_title = $request['f_latar_belakang_tanggal'][$key];
+          $doc_meta->meta_title = date("Y-m-d", strtotime($request['f_latar_belakang_tanggal'][$key]));
           $doc_meta->meta_desc = $request['f_latar_belakang_isi'][$key];
           if(isset($request['f_latar_belakang_file'][$key])){
             $fileName   = Helpers::set_filename('doc_',strtolower($val));

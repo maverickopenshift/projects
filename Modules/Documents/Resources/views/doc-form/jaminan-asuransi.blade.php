@@ -75,7 +75,7 @@
                         <div class="input-group-addon">
                             <span class="fa fa-calendar"></span>
                         </div>
-                        <input type="text" class="form-control" name="doc_jaminan_startdate[]" autocomplete="off" value="{{$doc_jaminan_startdate[$key]}}">
+                        <input type="text" class="form-control datepicker" name="doc_jaminan_startdate[]" autocomplete="off" value="{{$doc_jaminan_startdate[$key]}}">
                     </div>
                   </div>
                   <div class="col-sm-10 col-sm-offset-2">
@@ -90,7 +90,7 @@
                       <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                       </div>
-                      <input type="text" class="form-control" name="doc_jaminan_enddate[]" autocomplete="off" value="{{$doc_jaminan_enddate[$key]}}">
+                      <input type="text" class="form-control datepicker" name="doc_jaminan_enddate[]" autocomplete="off" value="{{$doc_jaminan_enddate[$key]}}">
                     </div>
                   </div>
                   <div class="col-sm-10 col-sm-offset-2">
@@ -181,7 +181,7 @@
                   <div class="input-group-addon">
                       <span class="fa fa-calendar"></span>
                   </div>
-                  <input type="text" class="form-control" name="doc_jaminan_startdate[]" autocomplete="off">
+                  <input type="text" class="form-control datepicker" name="doc_jaminan_startdate[]" autocomplete="off">
               </div>
             </div>
             <div class="col-sm-10 col-sm-offset-2">
@@ -196,7 +196,7 @@
                 <div class="input-group-addon">
                     <span class="fa fa-calendar"></span>
                 </div>
-                <input type="text" class="form-control" name="doc_jaminan_enddate[]" autocomplete="off">
+                <input type="text" class="form-control datepicker" name="doc_jaminan_enddate[]" autocomplete="off">
               </div>
             </div>
             <div class="col-sm-10 col-sm-offset-2">
@@ -225,7 +225,7 @@
                   <input type="hidden" name="doc_jaminan_file_old[]">
                 </span>
               </div>
-            </div>            
+            </div>
             <div class="col-sm-10 col-sm-offset-2">
               <div class="error error-doc_jaminan_file error-doc_jaminan_file-0"></div>
             </div>
@@ -277,7 +277,12 @@ $(function() {
     mdf_new_row.eq(7).find('.error').html('');
 
     $this.parent().prepend(new_row);
-    $('.date').datepicker(datepicker_ops);
+    $('.date').datepicker({
+     format: 'dd-mm-yyyy',
+     autoclose:true,
+     todayHighlight:true
+    });
+    
     var row = $('.ao-jas');
     $.each(row,function(index, el) {
       var mdf = $(this).find('.delete-ao-jas');
@@ -325,7 +330,7 @@ $(function() {
       }else{
         mdf_new_row.eq(7).removeClass().addClass("form-group formerror formerror-doc_jaminan_file-"+ index);
       }
-      
+
       mdf_new_row.eq(1).find('.error-doc_jaminan').removeClass().addClass("error error-doc_jaminan error-doc_jaminan-"+ index);
       mdf_new_row.eq(2).find('.error-doc_asuransi').removeClass().addClass("error error-doc_asuransi error-doc_asuransi-"+ index);
       mdf_new_row.eq(3).find('.error-doc_jaminan_nilai').removeClass().addClass("error error-doc_jaminan_nilai error-doc_jaminan_nilai-"+ index);
@@ -391,7 +396,7 @@ $(function() {
       }else{
         mdf_new_row.eq(7).removeClass().addClass("form-group formerror formerror-doc_jaminan_file-"+ index);
       }
-      
+
       mdf_new_row.eq(1).find('.error-doc_jaminan').removeClass().addClass("error error-doc_jaminan error-doc_jaminan-"+ index);
       mdf_new_row.eq(2).find('.error-doc_asuransi').removeClass().addClass("error error-doc_asuransi error-doc_asuransi-"+ index);
       mdf_new_row.eq(3).find('.error-doc_jaminan_nilai').removeClass().addClass("error error-doc_jaminan_nilai error-doc_jaminan_nilai-"+ index);
@@ -399,7 +404,7 @@ $(function() {
       mdf_new_row.eq(5).find('.error-doc_jaminan_enddate').removeClass().addClass("error error-doc_jaminan_enddate error-doc_jaminan_enddate-"+ index);
       mdf_new_row.eq(6).find('.error-doc_jaminan_desc').removeClass().addClass("error error-doc_jaminan_desc error-doc_jaminan_desc-"+ index);
       mdf_new_row.eq(7).find('.error-doc_jaminan_file').removeClass().addClass("error error-doc_jaminan_file error-doc_jaminan_file-"+ index);
-      
+
       var mdf = $(this).find('.delete-ao-jas');
       if($this.length==1){
         mdf.remove();

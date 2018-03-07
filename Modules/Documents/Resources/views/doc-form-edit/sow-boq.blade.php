@@ -4,7 +4,7 @@
       @if($doc_type['title']=="Turnkey" || $doc_type['title']=="SP" || $doc_type['title']=="amandemen_kontrak_turnkey" )
 
       @elseif($doc_type['title']=="Mou")
-        Ruang Lingkup Kerjasama
+
       @else
 
       @endif
@@ -19,15 +19,15 @@
             <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">SoW</div>
           </div>
           <div class="form-group  formerror formerror-doc_sow">
-            <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label>
-            <div class="col-sm-10">
+            <!-- <label for="doc_sow" class="col-sm-2 control-label"> Lingkup Pekerjaan</label> -->
+            <div class="col-sm-12">
               <textarea class="form-control" name="doc_sow" cols="4" rows="4">{{Helper::old_prop($doc,'doc_sow')}}</textarea>
               <div class="error error-doc_title"></div>
             </div>
           </div>
         </div>
       @endif
-      
+
       @if(!in_array($doc_type->name,['mou']))
         @php
           $kode_item = Helper::old_prop_each($doc,'hs_kode_item');
@@ -55,8 +55,8 @@
           </div>
 
           <div class="form-group top20">
-            <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label>
-            <div class="col-sm-10">
+            <!-- <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label> -->
+            <div class="col-sm-12">
               <button class="btn btn-primary btn-sm upload-daftar_harga" type="button"><i class="fa fa-upload"></i> Upload {{$title_hs}}</button>
               <a href="{{route('doc.tmp.download',['filename'=>$tm_download])}}" class="btn btn-info  btn-sm" title="Download Sample Template"><i class="glyphicon glyphicon-download-alt"></i> Download sample template</a>
               <span class="error error-daftar_harga text-danger"></span>
@@ -83,7 +83,7 @@
                 <th>Keterangan</th>
                 <th><button type="button" class="btn btn-success btn-xs add-harga_satuan"><i class="glyphicon glyphicon-plus"></i> Tambah</button></th>
               </tr>
-              </thead>              
+              </thead>
                 @if(isset($kode_item) && count($kode_item)>0)
                   <tbody>
                     @foreach ($kode_item as $key => $value)
@@ -196,8 +196,8 @@
                       </td>
                       <td class="action"></td>
                     </tr>
-                  </tbody>  
-                @endif                
+                  </tbody>
+                @endif
             </table>
           </div>
         </div>
@@ -507,7 +507,7 @@ $(document).on('click', '.add-harga_satuan', function(event) {
   @php
     if($doc_type->name!='khs'){
       echo "
-        
+
         mdf_new_row.eq(8).html('0');
         mdf_new_row.eq(9).find('input').val('');
         mdf_new_row.eq(9).find('.error').html('');

@@ -1,7 +1,7 @@
 <div class="box">
     <div class="box-header with-border" style="padding-bottom: 14px;">
       <h3 class="box-title">
-          
+
       </h3>
       <div class="pull-right box-tools">
         <button type="button" class="btn btn-success add-ao-jas"><i class="glyphicon glyphicon-plus"></i> tambah</button>
@@ -74,7 +74,7 @@
                         <div class="input-group-addon">
                             <span class="fa fa-calendar"></span>
                         </div>
-                        <input type="text" class="form-control" name="doc_jaminan_startdate[]" autocomplete="off" value="{{$doc_jaminan_startdate[$key]}}">
+                        <input type="text" class="form-control datepicker" name="doc_jaminan_startdate[]" autocomplete="off" value="{{date('d-m-Y', strtotime($doc_jaminan_startdate[$key]))}}">
                     </div>
                   </div>
                   <div class="col-sm-10 col-sm-offset-2">
@@ -89,7 +89,7 @@
                       <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                       </div>
-                      <input type="text" class="form-control" name="doc_jaminan_enddate[]" autocomplete="off" value="{{$doc_jaminan_enddate[$key]}}">
+                      <input type="text" class="form-control datepicker" name="doc_jaminan_enddate[]" autocomplete="off" value="{{date('d-m-Y', strtotime($doc_jaminan_enddate[$key]))}}">
                     </div>
                   </div>
                   <div class="col-sm-10 col-sm-offset-2">
@@ -179,9 +179,9 @@
                   <div class="input-group-addon">
                       <span class="fa fa-calendar"></span>
                   </div>
-                  <input type="text" class="form-control" name="doc_jaminan_startdate[]" autocomplete="off">
+                  <input type="text" class="form-control datepicker" name="doc_jaminan_startdate[]" autocomplete="off">
               </div>
-            </div>            
+            </div>
             <div class="col-sm-10 col-sm-offset-2">
               <div class="error error-doc_jaminan_startdate error-doc_jaminan_startdate-0"></div>
             </div>
@@ -194,7 +194,7 @@
                 <div class="input-group-addon">
                     <span class="fa fa-calendar"></span>
                 </div>
-                <input type="text" class="form-control" name="doc_jaminan_enddate[]" autocomplete="off">
+                <input type="text" class="form-control datepicker" name="doc_jaminan_enddate[]" autocomplete="off">
               </div>
             </div>
             <div class="col-sm-10 col-sm-offset-2">
@@ -243,6 +243,11 @@ $(function() {
   // $('.formatTanggal').datepicker({
   //       dateFormat: 'Y-m-d'
   //   });
+  var datepicker_ops={
+    format: 'dd-mm-yyyy',
+    autoclose:true,
+    todayHighlight:true
+  };
 
   $(document).on('click', '.add-ao-jas', function(event) {
     event.preventDefault();
@@ -283,7 +288,7 @@ $(function() {
       var mdf = $(this).find('.delete-ao-jas');
       var mdf_new_row = $(this).find('.form-group');
       mdf_new_row.eq(0).find('.total_asu').text(index+1);
-      
+
       if(mdf_new_row.eq(1).hasClass("has-error")){
         mdf_new_row.eq(1).removeClass().addClass("form-group has-error formerror formerror-doc_jaminan-"+ index);
       }else{
@@ -325,7 +330,7 @@ $(function() {
       }else{
         mdf_new_row.eq(7).removeClass().addClass("form-group formerror formerror-doc_jaminan_file-"+ index);
       }
-      
+
       mdf_new_row.eq(1).find('.error-doc_jaminan').removeClass().addClass("error error-doc_jaminan error-doc_jaminan-"+ index);
       mdf_new_row.eq(2).find('.error-doc_asuransi').removeClass().addClass("error error-doc_asuransi error-doc_asuransi-"+ index);
       mdf_new_row.eq(3).find('.error-doc_jaminan_nilai').removeClass().addClass("error error-doc_jaminan_nilai error-doc_jaminan_nilai-"+ index);
@@ -390,7 +395,7 @@ $(function() {
       }else{
         mdf_new_row.eq(7).removeClass().addClass("form-group formerror formerror-doc_jaminan_file-"+ index);
       }
-      
+
       mdf_new_row.eq(1).find('.error-doc_jaminan').removeClass().addClass("error error-doc_jaminan error-doc_jaminan-"+ index);
       mdf_new_row.eq(2).find('.error-doc_asuransi').removeClass().addClass("error error-doc_asuransi error-doc_asuransi-"+ index);
       mdf_new_row.eq(3).find('.error-doc_jaminan_nilai').removeClass().addClass("error error-doc_jaminan_nilai error-doc_jaminan_nilai-"+ index);
@@ -398,7 +403,7 @@ $(function() {
       mdf_new_row.eq(5).find('.error-doc_jaminan_enddate').removeClass().addClass("error error-doc_jaminan_enddate error-doc_jaminan_enddate-"+ index);
       mdf_new_row.eq(6).find('.error-doc_jaminan_desc').removeClass().addClass("error error-doc_jaminan_desc error-doc_jaminan_desc-"+ index);
       mdf_new_row.eq(7).find('.error-doc_jaminan_file').removeClass().addClass("error error-doc_jaminan_file error-doc_jaminan_file-"+ index);
-      
+
       var mdf = $(this).find('.delete-ao-jas');
       if($this.length==1){
         mdf.remove();

@@ -140,6 +140,11 @@
 @push('scripts')
 <script>
 $(function () {
+  $('.datepicker').datepicker({
+   format: 'dd-mm-yyyy',
+   autoclose:true,
+   todayHighlight:true
+  });
   $('.btnNext').click(function(){
    $('.nav-tabs > .active').next('li').find('a').trigger('click');
   });

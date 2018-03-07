@@ -105,8 +105,6 @@ $(function() {
     });
   });
 
-
-
   datatablesMe = $('#datatables').on('xhr.dt', function ( e, settings, json, xhr ) {
       //console.log(JSON.stringify(xhr));
       if(xhr.responseText=='Unauthorized.'){
@@ -120,7 +118,14 @@ $(function() {
 
       order : [[ 0, 'desc' ]],
       pageLength: 10,
-      ajax: '{!! route('supplier.sap.data') !!}',
+      //ajax: '{!! route('supplier.sap.data') !!}',
+      ajax: {
+          "url": "{!! route('supplier.sap.data') !!}",
+          "type": "POST",
+          'headers': {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}'
+              }
+      },
       columns: [
           {data : 'DT_Row_Index',orderable:false,searchable:false},
           { data: 'name_1', name: 'name_1' },

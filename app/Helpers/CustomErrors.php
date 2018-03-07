@@ -178,13 +178,13 @@ class CustomErrors
             'jml_peg_asing.required' => 'Jumlah Pegawai Asing harus diisi',
             'jml_peg_asing.integer' => 'Jumlah Pegawai Asing harus angka',
 
-            'legal_dokumen.*.name.required' => 'Nama Dokumen harus diisi',
-            'legal_dokumen.*.name.max' => 'Nama Dokumen maksimal 500 karakter',
-            'legal_dokumen.*.name.min' => 'Nama Dokumen minimal 3 karakter',
-            'legal_dokumen.*.name.regex' => 'Nama Dokumen  harus huruf dan angka',
+            'legal_dokumen_nama.*.required' => 'Nama Dokumen harus diisi',
+            'legal_dokumen_nama.*.max' => 'Nama Dokumen maksimal 500 karakter',
+            'legal_dokumen_nama.*.min' => 'Nama Dokumen minimal 3 karakter',
+            'legal_dokumen_nama.*.regex' => 'Nama Dokumen  harus huruf dan angka',
 
-            'legal_dokumen.*.file.required' => 'File Dokumen harus diisi',
-            'legal_dokumen.*.file.mimes' => 'File Dokumen harus format PDF',
+            'legal_dokumen.*.required' => 'File Dokumen harus diisi',
+            'legal_dokumen.*.mimes' => 'File Dokumen harus format PDF',
 
             'iujk_no.*.required' => 'Nomer Sertifikat harus diisi',
             'iujk_no.*.max' => 'Nomer Sertifikat maksimal 500 karakter',

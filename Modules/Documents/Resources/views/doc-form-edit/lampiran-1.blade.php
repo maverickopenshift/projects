@@ -10,7 +10,7 @@
 
     @if (is_array($lampiran) && count($lampiran)>0)
       @foreach ($lampiran as $key => $value)
-        <div class="form-group input-lampiran  formerror formerror-doc_lampiran-{{$key}}">
+        <div class="form-group input-lampiran formerror formerror-doc_lampiran-{{$key}}">
           <div class="col-sm-6">
             <div class="">
               <input type="text" class="form-control" name="doc_lampiran_nama[]" placeholder="Nama Lampiran" autocomplete="off" value="{{$lampiran_nama[$key]}}">

@@ -1,13 +1,11 @@
 @extends('layouts.app')
 
 @section('content')
-
-
     @if($action_type=='lihat' || $action_type=='edit')
-      <form action="{{ route('supplier.update') }}" method="post" enctype="multipart/form-data">
+      <form action="{{ route('supplier.update_ajax') }}" method="post" id="form-kontrak" enctype="multipart/form-data">
       <input type="hidden" value="{{$id}}" name="id" id="id_supplier" />
     @else
-      <form action="{{ route('supplier.store') }}" method="post" id="FormMe" enctype="multipart/form-data">
+      <form action="{{ route('supplier.store_ajax') }}" method="post" id="form-kontrak" enctype="multipart/form-data">
         <input type="hidden" value="" name="id" id="id_supplier" />
     @endif
     {{ csrf_field() }}
@@ -104,7 +102,6 @@ $(function () {
     $('.form-control, .check-me').attr('disabled',true);
     $('.delete-atasan').hide();
 
-
     $(document).on('click', '.btn-approve', function(event) {
       event.preventDefault();
       var content = $('.content-view');
@@ -195,8 +192,7 @@ $(function () {
       }
       });
     });
-  }
-  else if(type=="edit"){
+  }else if(type=="edit"){
      $('.form-control, .check-me').attr('disabled',false);
      $('.btn_edit').hide();
      $('.btn_btl').show();
@@ -204,12 +200,68 @@ $(function () {
      //tombol dibawah
      $('.btn_smpn').show();
      $('.btn_apprv').hide();
+  }else{
+    $('.komentar').show();
+    $('.btn_smpn').show();
+  }
 
-}else{
-  $('.komentar').show();
-  $('.btn_smpn').show();
-}
+  $(document).on('click', '.btn-sbm', function(event) {
+    event.preventDefault();
 
+    var formMe = $('#form-kontrak');
+    $(".formerror").removeClass("has-error");
+    $(".error").html('');
+
+    bootbox.confirm({
+      title:"Konfirmasi",
+      message: "Apakah anda yakin untuk submit?",
+      buttons: {
+          confirm: {
+              label: 'Yakin',
+              className: 'btn-success'
+          },
+          cancel: {
+              label: 'Tidak',
+              className: 'btn-danger'
+          }
+      },
+      callback: function (result) {
+        if(result){
+          $.ajax({
+            url: formMe.attr('action'),
+            type: 'post',
+            processData: false,
+            contentType: false,
+            data: new FormData(document.getElementById("form-kontrak")),
+            dataType: 'json',
+            success: function(response){
+              if(response.errors){
+                $.each(response.errors, function(index, value){
+                    if (value.length !== 0){
+                      index = index.replace(".", "-");
+                      $(".formerror-"+ index).removeClass("has-error");
+                      $(".error-"+ index).html('');
+
+                      $(".formerror-"+ index).addClass("has-error");
+                      $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
+                    }
+                });
+
+                bootbox.alert({
+                  title:"Pemberitahuan",
+                  message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
+                });
+              }else{
+                if(response.status=="all"){
+                  window.location.href = "{{route('supplier',['status'=>'all'])}}";
+                }
+              }
+            }
+          });
+        }
+      }
+    });
+  });
 
 });
 </script>

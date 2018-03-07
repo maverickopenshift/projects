@@ -18,19 +18,26 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
 
     Route::get('/status/{status}', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@index'])->name('supplier');
     Route::get('/data/{status}', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@data'])->name('supplier.data');
+    //////
     Route::post('/store', ['middleware' => ['permission:tambah-supplier'],'uses' => 'SupplierAddController@store'])->name('supplier.store');
+    Route::post('/store_ajax', ['middleware' => ['permission:tambah-supplier'],'uses' => 'SupplierAddController@store_ajax'])->name('supplier.store_ajax');
+    /////
+
     Route::get('/create', ['middleware' => ['permission:tambah-supplier'],'uses' => 'SupplierAddController@index'])->name('supplier.create');
     // Route::get('/{id}/{status}', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@index'])->name('supplier.edit');
     Route::get('/{id}/{status}', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@index'])->name('supplier.lihat');
     Route::post('/editstatus', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@editstatus'])->name('supplier.editstatus');
     Route::post('/return', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@return'])->name('supplier.return');
+    //////
     Route::post('/update', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@update'])->name('supplier.update');
+    Route::post('/update_ajax', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@update_ajax'])->name('supplier.update_ajax');
+    //////
     Route::get('/get-select', 'SupplierController@getSelect')->name('supplier.get-select');
     Route::get('/cari-supplier', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierController@filtersupplier'])->name('supplier.filter');
     Route::post('/smile-upload', ['middleware' => ['permission:tambah-supplier'],'uses' => 'UploadSapController@uploadsmile'])->name('supplier.upload.smile');
 
     Route::get('/sap', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierSapController@index'])->name('suppliersap');
-    Route::get('/sap-data', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierSapController@data'])->name('supplier.sap.data');
+    Route::post('/sap-data', ['middleware' => ['permission:lihat-supplier'],'uses' => 'SupplierSapController@data'])->name('supplier.sap.data');
     Route::get('/sap-lihat-{id}', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierSapController@lihat'])->name('supplier.sap.lihat');
     Route::post('/sap-upload', ['middleware' => ['permission:tambah-supplier'],'uses' => 'UploadSapController@store'])->name('supplier.upload.sap');
     Route::get('/sap-mapping-{id}', ['middleware' => ['permission:ubah-supplier'],'uses' => 'MappingSapController@index'])->name('supplier.mapping.sap');

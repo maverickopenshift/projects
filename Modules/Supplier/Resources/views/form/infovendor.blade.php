@@ -13,64 +13,44 @@
     <!-- /.box-header -->
     <div class="box-body">
       <div class="form-horizontal">
-          <div class="form-group {{ $errors->has('bdn_usaha') ? ' has-error' : '' }}">
+          <div class="form-group formerror formerror-bdn_usaha">
             <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Badan Usaha</label>
             <div class="col-sm-10">
               {!!Helper::select_badan_usaha(old('bdn_usaha',Helper::prop_exists($supplier,'bdn_usaha')))!!}
-              @if ($errors->has('bdn_usaha'))
-                  <span class="help-block">
-                      <strong>{{ $errors->first('bdn_usaha') }}</strong>
-                  </span>
-              @endif
+              <div class="error error-bdn_usaha"></div>
             </div>
           </div>
-          <div class="form-group {{ $errors->has('nm_vendor') ? ' has-error' : '' }}">
+          <div class="form-group formerror formerror-nm_vendor">
             <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Nama Perusahaan</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="nm_vendor" value="{{ old('nm_vendor',Helper::prop_exists($supplier,'nm_vendor')) }}"  placeholder="Masukan Nama Perusahaan" autocomplete="off">
-              @if ($errors->has('nm_vendor'))
-                  <span class="help-block">
-                      <strong>{{ $errors->first('nm_vendor') }}</strong>
-                  </span>
-              @endif
+              <div class="error error-nm_vendor"></div>
             </div>
           </div>
-          <div class="form-group {{ $errors->has('nm_vendor_uq') ? ' has-error' : '' }}">
+          <div class="form-group formerror formerror-nm_vendor_uq">
             <label for="nm_vendor" class="col-sm-2 control-label">Inisial Perusahaan</label>
             <div class="col-sm-10">
               <input type="text" class="form-control" name="nm_vendor_uq" value="{{ old('nm_vendor_uq',Helper::prop_exists($supplier,'nm_vendor_uq')) }}" placeholder="Isikan 3 Digit Inisial Perusahaan" autocomplete="off">
-              @if ($errors->has('nm_vendor_uq'))
-                  <div class="help-block">
-                      <strong>{{ $errors->first('nm_vendor_uq') }}</strong>
-                  </div>
-              @endif
+              <div class="error error-nm_vendor_uq"></div>
             </div>
           </div>
-          <div class="form-group {{ $errors->has('prinsipal_st') ? ' has-error' : '' }}">
+          <div class="form-group formerror formerror-prinsipal_st">
             <label for="prinsipal_st" class="col-sm-2 control-label"><span class="text-red">*</span> Prinsipal</label>
             <div class="col-sm-10">
               <select class="form-control" name="prinsipal_st">
                 <option value="1" {{ old('prinsipal_st',Helper::prop_exists($supplier,'prinsipal_st'))=='1'?"selected='selected'":"" }}>Ya</option>
                 <option value="0" {{ old('prinsipal_st',Helper::prop_exists($supplier,'prinsipal_st'))!='1'?"selected='selected'":"" }}>Tidak</option>
               </select>
-              @if ($errors->has('prinsipal_st'))
-                  <span class="help-block">
-                      <strong>{{ $errors->first('prinsipal_st') }}</strong>
-                  </span>
-              @endif
+              <div class="error error-prinsipal_st"></div>
             </div>
           </div>
           @include('supplier::form.klasifikasi')
 
-          <div class="form-group {{ $errors->has('pengalaman_kerja') ? ' has-error' : '' }}">
+          <div class="form-group formerror formerror-pengalaman_kerja">
             <label for="bdn_usaha" class="col-sm-2 control-label"><span class="text-red">*</span> Pengalaman Kerja</label>
             <div class="col-sm-10">
               <textarea class="form-control" rows="4" name="pengalaman_kerja"  placeholder="Masukan Pengalaman Kerja">{{ old('pengalaman_kerja',Helper::prop_exists($supplier,'pengalaman_kerja')) }}</textarea>
-              @if ($errors->has('pengalaman_kerja'))
-                  <span class="help-block">
-                      <strong>{{ $errors->first('pengalaman_kerja') }}</strong>
-                  </span>
-              @endif
+              <div class="error error-pengalaman_kerja"></div>
             </div>
           </div>
           @if($action_type=='lihat' || $action_type=='edit')
@@ -88,6 +68,7 @@ $(function() {
   add_select('klasifikasi_usaha');
   delete_select('klasifikasi_usaha');
 });
+
 function add_select(attr) {
   $(document).on('click','.add-'+attr,function(){
     var _this = $(this);
@@ -102,6 +83,7 @@ function add_select(attr) {
     }
   });
 }
+
 function delete_select(attr) {
   $(document).on('click','.delete-'+attr,function(){
     var _this = $(this);
@@ -113,6 +95,7 @@ function delete_select(attr) {
     }
   });
 }
+
 function create_content(attr){
   var content = $('.'+attr),btnDelete;
   //console.log(content.length)
@@ -127,6 +110,7 @@ function create_content(attr){
         </div>\
       </div>';
 }
+
 function autocomp(attr,url) {
   $('.'+attr).autocomplete({
     serviceUrl: url,

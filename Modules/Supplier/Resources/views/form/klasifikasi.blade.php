@@ -1,16 +1,16 @@
-<div class="form-group {{ $errors->has('klasifikasi_err') ? ' has-error' : '' }}">
+<div class="form-group formerror formerror-klasifikasi_err">
   <label class="col-sm-2 control-label"><span class="text-red">*</span> Klasifikasi Usaha</label>
   <div class="col-sm-10">
     <select class="form-control select-klasifikasi-usaha" style="width: 100%;" name="klasifikasi_usaha" id="klasifikasi_usaha" data-action="klasifikasi_usaha">
         <option value="">Pilih Klasifikasi Usaha</option>
     </select>
     <div class="col-sm-10">
-      {!!Helper::error_help($errors,'klasifikasi_err')!!}
+      <div class="error error-klasifikasi_err"></div>
     </div>
   </div>
 </div>
 @php
-    $klasifikasi_kode        = Helper::old_prop_each($supplier,'klasifikasi_kode');
+    $klasifikasi_kode    = Helper::old_prop_each($supplier,'klasifikasi_kode');
     $klasifikasi_text    = Helper::old_prop_each($supplier,'klasifikasi_text');
 @endphp
 <div class="table-klasifikasi_usaha table-responsive">
@@ -59,15 +59,8 @@ $('.select-klasifikasi-usaha').select2({
             return datas;
 
         },
-        //id: function(data){ return data.store_id; },
         processResults: function (data, params) {
-            // parse the results into the format expected by Select2
-            // since we are using custom formatting functions we do not need to
-            // alter the remote JSON data, except to indicate that infinite
-            // scrolling can be used
-
             var results = [];
-
             $.each(data.data, function (i, v) {
                 var o = {};
                 o.id = v.id;
@@ -109,20 +102,19 @@ function aoTempSelect(data){
 }
 function templateAtasan(){
   return '<tr>\
-          <td>1</td>\
-          <td class="hide"><input type="hidden" name="klasifikasi_kode[]"></td>\
-          <td></td>\
-          <td></td>\
-          <td class="hide"><input type="hidden" name="klasifikasi_text[]"></td>\
-          <td class="action"><button type="button" class="btn btn-danger btn-xs delete-atasan"><i class="glyphicon glyphicon-remove"></i> hapus</button></td>\
-      </tr>';
+            <td>1</td>\
+            <td class="hide"><input type="hidden" name="klasifikasi_kode[]"></td>\
+            <td></td>\
+            <td></td>\
+            <td class="hide"><input type="hidden" name="klasifikasi_text[]"></td>\
+            <td class="action"><button type="button" class="btn btn-danger btn-xs delete-atasan"><i class="glyphicon glyphicon-remove"></i> hapus</button></td>\
+          </tr>';
 }
+
 $(document).on('select2:select', '#klasifikasi_usaha', function(event) {
   event.preventDefault();
-  /* Act on the event */
   var data = event.params.data;
-  // console.log(data);
-  // exit();
+  
   $(this).val('');
   $('#select2-klasifikasi_usaha-container').html('');
   console.log(data);

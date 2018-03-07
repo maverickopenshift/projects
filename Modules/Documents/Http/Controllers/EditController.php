@@ -422,19 +422,16 @@ class EditController extends Controller
             $new_jfile[] = '';
             $new_jfile_up[] = $request->doc_jaminan_file[$k];
             $rules['doc_jaminan_file.'.$k] = 'sometimes|nullable|mimes:pdf';
-          }
-          else if(empty($v)){
+          }else if(empty($v)){
             $rules['doc_jaminan_file.'.$k] = 'sometimes|nullable|mimes:pdf';
             if(!isset($request->doc_jaminan_file[$k])){
               $new_jfile[] = $v;
               $new_jfile_up[] = $v;
-            }
-            else{
+            }else{
               $new_jfile[] = '';
               $new_jfile_up[] = $request->doc_jaminan_file[$k];
             }
-          }
-          else{
+          }else{
             $new_jfile[] = $v;
             $new_jfile_up[] = $v;
           }
@@ -463,8 +460,7 @@ class EditController extends Controller
       if(isset($request->ps_judul[$k]) && $request->ps_judul[$k]=="Lainnya" && !empty($v)){//jika ada file baru
         $new_pasal[] = $request->ps_judul_new[$k];
         $rules['ps_judul_new.'.$k] = 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-      }
-      else{
+      }else{
         $new_pasal[] = $v;
       }
     }

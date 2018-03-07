@@ -114,6 +114,7 @@ class EntryDocumentController extends Controller
      * @param  Request $request
      * @return Response
      */
+    /*
     public function store(Request $request)
     {
       $type = $request->type;
@@ -573,6 +574,7 @@ class EntryDocumentController extends Controller
         return redirect()->route('doc',['status'=>'draft']);
       }
     }
+    */
 
     public function upload(Request $request)
     {
@@ -785,6 +787,9 @@ class EntryDocumentController extends Controller
                 }
               }
             }
+
+            
+
         });
 
         $request->merge(['doc_value' => $doc_value]);
@@ -817,7 +822,7 @@ class EntryDocumentController extends Controller
           ));
         }
       }
-// dd($request->input());
+
       $doc = new Documents();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
@@ -1058,13 +1063,6 @@ class EntryDocumentController extends Controller
         $comment->save();
       }
 
-      // $log_activity = new DocActivity();
-      // $log_activity->users_id = Auth::id();
-      // $log_activity->documents_id = $doc->id;
-      // $log_activity->activity = "Submitted";
-      // $log_activity->date = new \DateTime();
-      // $log_activity->save();
-
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
       if($request->statusButton == '0'){
         return Response::json (array(
@@ -1075,15 +1073,6 @@ class EntryDocumentController extends Controller
           'status' => 'draft'
         ));
       }
-
-      /*
-      $request->session()->flash('alert-success', 'Data berhasil disimpan');
-      if($request->statusButton == '0'){
-        return redirect()->route('doc',['status'=>'tracking']);
-      }else{
-        return redirect()->route('doc',['status'=>'draft']);
-      }
-      */
     }
 
     /**

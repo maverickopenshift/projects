@@ -68,9 +68,10 @@
             modal.find('.modal-title').text(title+' Klasifikasi Usaha')
             if(title=='Edit'){
                 var data = button.data('data');
+                console.log(data);
                 //data = JSON.parse(data);
                 modal.find('.modal-body input#id').val(data.id)
-                modal.find('.modal-body input#text').val(data.kode)
+                modal.find('.modal-body input#kode').val(data.kode)
                 modal.find('.modal-body input#text').val(data.text)
                 modal.find('form').attr('action','{!! route('supplier.klasifikasi.update') !!}')
             }

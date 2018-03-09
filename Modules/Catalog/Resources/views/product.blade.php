@@ -72,7 +72,9 @@ $f_parentid=old('f_parentid');
                             </a>
                             <input type="file" name="upload-boq" class="upload-boq hide"/>
                             <a class="btn btn-primary upload-boq-btn" type="button"><i class="fa fa-upload"></i> Upload</a>
-                            <a href="{{route('doc.template.download',['filename'=>'harga_satuan'])}}" class="btn btn-info"><i class="glyphicon glyphicon-download-alt"></i> Download Template</a>
+                            
+                            <a href="{{route('doc.tmp.download',['filename'=>'harga_satuan'])}}" class="btn btn-info"><i class="glyphicon glyphicon-download-alt"></i> Download Template</a>
+                            
                         </div>
                     </div>
 

@@ -4,6 +4,7 @@
 <div class="box box-success">
     <div class="box-header with-border">
       <form class="" action="" method="get">
+      {{--
       <div class="form-inline">
           <div class="form-group">
             {!!Helper::select_month($month)!!}
@@ -11,6 +12,60 @@
           <div class="form-group">
             {!!Helper::select_year($year)!!}
           </div>
+          <button type="submit" class="btn btn-success">Submit</button>
+      </div>
+      --}}
+      <div class="form-inline">
+          <div class="form-group top10">
+            <select class="form-control" id="doc_range" name="doc_range">
+              @php
+                if($range==1){
+                  $a="";
+                  $b="selected";
+                  $c="";
+                  $d="";
+                }elseif($range==3){
+                  $a="";
+                  $b="";
+                  $c="selected";
+                  $d="";
+                }elseif($range==6){
+                  $a="";
+                  $b="";
+                  $c="";
+                  $d="selected";
+                }else{
+                  $a="selected";
+                  $b="";
+                  $c="";
+                  $d="";
+                }
+              @endphp
+              <option value="" {{$a}}>Pilih Range</option>
+              <option value="1" {{$b}}>Bulan Ini</option>
+              <option value="3" {{$c}}>3 Bulan</option>
+              <option value="6" {{$d}}>6 Bulan</option>
+            </select>
+          </div>
+
+          <div class="form-group top10">
+            <div class="input-group date" data-provide="datepicker">
+              <div class="input-group-addon">
+                <span class="fa fa-calendar"></span>
+              </div>
+              <input type="text" class="form-control" id="doc_daritanggal" name="doc_daritanggal" placeholder="Dari Tanggal.." value="{{$dari}}" autocomplete="off">
+            </div>
+          </div>
+
+          <div class="form-group top10">
+            <div class="input-group date" data-provide="datepicker">
+              <div class="input-group-addon">
+                <span class="fa fa-calendar"></span>
+              </div>
+              <input type="text" class="form-control" id="doc_sampaitanggal" name="doc_sampaitanggal" placeholder="Sampai Tanggal.." value="{{$sampai}}" autocomplete="off">
+            </div>
+          </div>
+
           <button type="submit" class="btn btn-success">Submit</button>
       </div>
       </form>
@@ -21,7 +76,8 @@
     </div>
 <!-- /.box-body -->
 </div>
-{{-- <div class="box box-danger">
+{{-- 
+<div class="box box-danger">
     <div class="box-header with-border">
       <h3 class="box-title">Box Danger</h3>
 
@@ -36,7 +92,8 @@
         Test Box danger
     </div>
 <!-- /.box-body -->
-</div> --}}
+</div> 
+--}}
 @endsection
 @push('scripts')
 <script src="https://code.highcharts.com/highcharts.js"></script>
@@ -47,7 +104,7 @@ Highcharts.chart('container', {
       type: 'column'
   },
   title: {
-      text: 'Data Bulan {!!Helper::month_name($month)!!} {!!$year!!}'
+      text: '{{$title}}'
   },
   xAxis: {
       type: 'category',
@@ -69,7 +126,7 @@ Highcharts.chart('container', {
       enabled: false
   },
   tooltip: {
-      pointFormat: 'Data di {!!Helper::month_name($month)!!} {!!$year!!}: <b>{point.y}</b>'
+      pointFormat: '{{$title}}: <b>{point.y}</b>'
   },
   series: [{
       name: 'Population',

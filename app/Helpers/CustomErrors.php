@@ -50,6 +50,7 @@ class CustomErrors
             'email.max' => 'Email maksimal 50 karakter',
             'email.min' => 'Email minimal 4 karakter',
             'email.email' => 'Email harus format email',
+            'email.unique' => 'Email ini sudah di pakai oleh supplier lain',
 
             'password.required' => 'Password harus diisi',
             'password.max' => 'Password maksimal 50 karakter',

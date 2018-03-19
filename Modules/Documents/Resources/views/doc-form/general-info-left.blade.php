@@ -186,7 +186,11 @@
 
   @if($doc_type->name!="surat_pengikatan" and $doc_type->name!="mou")
   <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-    @include('documents::doc-form.pic')
+    @if($user_type=='subsidiary')
+      @include('documents::doc-form.subsidiary.pic-subsidiary')
+    @else
+      @include('documents::doc-form.pic')
+    @endif
   </div>
   @endif
 

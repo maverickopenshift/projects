@@ -23,17 +23,19 @@
           <div class="form-group top10">
             <input style="width:290px;" type="text" class="form-control cari-judul" placeholder="Judul/Nomor Kontrak">
           </div>
-          @role('admin')
-          <div class="form-group top10">
-            {!!Helper::select_all_divisi('divisi')!!}
-          </div>
-          @endrole
-          <div class="form-group top10">
-            {!!Helper::select_unit('unit_bisnis')!!}
-          </div>
-          <div class="form-group top10">
-            {!! Helper::select_type2('doc_type') !!}
-          </div>
+          @if($user_type!='subsidiary')
+            @role('admin')
+            <div class="form-group top10">
+              {!!Helper::select_all_divisi('divisi')!!}
+            </div>
+            @endrole
+            <div class="form-group top10">
+              {!!Helper::select_unit('unit_bisnis')!!}
+            </div>
+            <div class="form-group top10">
+              {!! Helper::select_type2('doc_type') !!}
+            </div>
+          @endif
           <button type="button" class="btn btn-success search top10">Cari</button>
           <button type="button" class="btn btn-danger reset top10">Reset</button>
         </div>

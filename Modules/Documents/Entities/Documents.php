@@ -30,7 +30,7 @@ class Documents extends Model
       return $this->hasOne('App\User','id','user_id');
     }
     public function pegawai(){
-      return $this->hasOne('Modules\Users\Entities\Pegawai','n_nik','doc_pihak1_nama');
+      return $this->hasOne('Modules\Users\Entities\Mtzpegawai','n_nik','doc_pihak1_nama');
     }
     public function jenis(){
       return $this->hasOne('Modules\Documents\Entities\DocTemplate','id','doc_template_id')->with('category','type');
@@ -240,11 +240,17 @@ class Documents extends Model
       }
     }
     public static function check_permission_doc($doc_id,$type){
+      $user_type = \App\User::check_usertype(\Auth::user()->username);
       $doc = self::selectRaw('documents.id,documents.user_id');
-      $doc->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
-      $doc->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
+      $doc->join('v_users_pegawai','v_users_pegawai.user_id','=','documents.user_id');
       if(!\Laratrust::hasRole('admin')){
-        $doc->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+        if($user_type=='subsidiary'){
+          $doc->where('v_users_pegawai.company_id',\App\User::get_subsidiary_user()->company_id)
+          ->where('v_users_pegawai.pegawai_type','subsidiary');
+        }else{
+          $doc->where('v_users_pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+        }
+        
       }
       $doc->where('documents.id','=',$doc_id);
       if(!empty($type)){

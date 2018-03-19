@@ -278,6 +278,7 @@ class UsersController extends Controller
               else{
                 UsersPgs::where('users_id','=',$data->id)->delete();
               }
+              Pegawai::callProc($data->username,'organik');
               return response()->json($data);
           }
     }
@@ -398,7 +399,7 @@ class UsersController extends Controller
                   $atasan->save();
                 }
             }
-            
+            Pegawai::callProc($data->username,'nonorganik');
             // if ($request->has(['approver_id'])) {
             //     foreach($request->approver_id as $key=>$v){
             //       $approver = new Approver();
@@ -547,6 +548,7 @@ class UsersController extends Controller
               $pgs->pgs_status = 'active';
               $pgs->save();
             }
+            Pegawai::callProc($data->username,'organik');
             // $sendTo = $request->email;
             // $subject = 'User Registration - Do Not Reply';
             // $email_password= $request->password;
@@ -663,7 +665,7 @@ class UsersController extends Controller
                   $atasan->save();
                 }
             }
-            
+            Pegawai::callProc($data->username,'nonorganik');
             // if ($request->has(['approver_id'])) {
             //     foreach($request->approver_id as $key=>$v){
             //       $approver = new Approver();
@@ -726,12 +728,15 @@ class UsersController extends Controller
                 UsersPgs::where('users_id','=',$request->id)->delete();
                 if($user_type=='nonorganik'){
                   PegawaiNonorganik::where('n_nik',$user->username)->delete();
+                  Pegawai::callProc($user->username,'nonorganik');
                 }
                 if($user_type=='subsidiary'){
                   PegawaiSubsidiary::where('n_nik',$user->username)->delete();
+                  Pegawai::callProc($user->username,'subsidiary');
                 }
                 UsersPegawai::where('users_id','=',$request->id)->delete();
                 User::where('id',$request->id)->delete();
+                
                 $status = true;
                 $msg = 'Data berhasil dihapus';
               }
@@ -762,6 +767,12 @@ class UsersController extends Controller
         $subsidiary_id = trim($request->subsidiary_id);
         
         $data = SubsidiaryTelkom::get_user($search,$subsidiary_id)->paginate(30);
+        return \Response::json($data);
+    }
+    public function getSelectPicSubsidiary(Request $request){
+        $search = trim($request->q);
+        $subs = User::get_subsidiary_user();
+        $data = DB::table('v_pegawai_subsidiary')->select('*')->where('company_id',$subs->company_id)->whereNotIn('user_id',[$subs->user_id])->paginate(30);
         return \Response::json($data);
     }
     public function getSelectUserTelkomByNik(Request $request){

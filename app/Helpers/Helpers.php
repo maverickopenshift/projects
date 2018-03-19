@@ -138,20 +138,49 @@ public static function select_atasan_by_id($id,$val=null)
 }
 public static function get_approver_by_id($id)
 {
-  $cat = \DB::table('users_atasan')
-          ->join('users_pegawai', 'users_pegawai.id', '=', 'users_atasan.users_pegawai_id')
-          ->select('pegawai.v_short_posisi','pegawai.v_nama_karyawan','pegawai.n_nik')
-          ->join('pegawai', 'pegawai.n_nik', '=', 'users_atasan.nik')
-          ->where('users_pegawai.users_id',$id);
-  $cat = $cat->get();
-  $data = [];
-  foreach ($cat as $dt) {
-    // $data[] = $dt->v_short_posisi;
-    $data[] = $dt->v_nama_karyawan.'/'.$dt->n_nik.' - '.$dt->v_short_posisi;
+  $user_type = self::usertype();
+  $cat = \DB::table('v_users_pegawai')
+          ->select('v_users_pegawai.v_short_posisi','v_users_pegawai.v_nama_karyawan','v_users_pegawai.n_nik');
+  if($user_type=='subsidiary'){
+    $subs = \App\User::get_subsidiary_user_by_id($id);
+    $cat->where('company_id',$subs->company_id);
   }
-  return implode(", \n",$data);
+  else{
+    $cat->where('objiddivisi',\App\User::get_divisi_by_user_id($id));
+  }
+  $cat = $cat->where('role_name','approver')->get();
+  $data = '';
+  foreach ($cat as $key=>$dt) {
+    // $data[] = $dt->v_short_posisi;
+    $data .= ($key+1).'. '.$dt->v_nama_karyawan.'/'.$dt->n_nik.' - '.$dt->v_short_posisi.'</br>';
+  }
+  if(count($cat)==0){
+    return 'Tidak ada Approver di Divisi Anda';
+  }
+  return $data;
 }
-
+public static function get_approver($pegawai=null)
+{
+  $user_type = self::usertype();
+  $cat = \DB::table('v_users_pegawai')
+          ->select('v_users_pegawai.v_short_posisi','v_users_pegawai.v_nama_karyawan','v_users_pegawai.n_nik');
+  if($user_type=='subsidiary'){
+    $subs = \App\User::get_subsidiary_user();
+    $cat->where('company_id',$subs->company_id);
+  }
+  else{
+    $cat->where('objiddivisi',\App\User::get_divisi_by_user_id());
+  }
+  $cat = $cat->where('role_name','approver')->get();
+  $data = '';
+  foreach ($cat as $key=>$dt) {
+    $data .= ($key+1).'. '.$dt->v_nama_karyawan.'/'.$dt->n_nik.' - '.$dt->v_short_posisi.'</br>';
+  }
+  if(count($cat)==0){
+    return 'Tidak ada Approver di Divisi Anda';
+  }
+  return $data;
+}
 public static function get_pihak1_by_id($id)
 {
   $cat = \DB::table('users_atasan')
@@ -162,7 +191,7 @@ public static function get_pihak1_by_id($id)
   $cat = $cat->get();
   return $cat;
 }
-public static function get_approver($pegawai)
+public static function select_atasan_subsidiary($pegawai,$val=null)
 {
   $cat = \DB::table('users_atasan')
           ->join('users_pegawai', 'users_pegawai.id', '=', 'users_atasan.users_pegawai_id')
@@ -174,25 +203,45 @@ public static function get_approver($pegawai)
   else{
     $cat = $cat->get();
   }
-  $data = [];
+  $select  = '<select class="form-control" id="doc_pihak1_nama" name="doc_pihak1_nama">';
+  $select .= '<option value="">Pilih Penandatangan Pihak 1</option>';
   foreach ($cat as $dt) {
-    $data[] = $dt->v_nama_karyawan.'/'.$dt->n_nik.' - '.$dt->v_short_posisi;
+    $selected = '';
+    if($val==$dt->n_nik){
+      $selected = 'selected="selected"';
+    }
+    $select .= '<option value="'.$dt->n_nik.'" '.$selected.'>'.$dt->v_nama_karyawan.' - '.$dt->v_short_posisi.'</option>';
   }
-
-  return implode(",\n",$data);
+  $select .= '</select>';
+  return $select;
 }
+// public static function select_atasan($pegawai,$val=null)
+// {
+//   $cat = \DB::table('users_atasan')
+//           ->join('users_pegawai', 'users_pegawai.id', '=', 'users_atasan.users_pegawai_id')
+//           ->join('pegawai', 'pegawai.n_nik', '=', 'users_atasan.nik')
+//           ->where('users_pegawai.users_id',\Auth::id());
+//   if($cat->count()==0){
+//     $cat = \App\User::get_atasan_by_divisi($pegawai->objiddivisi,$pegawai->v_band_posisi);
+//   }
+//   else{
+//     $cat = $cat->get();
+//   }
+//   $select  = '<select class="form-control" id="doc_pihak1_nama" name="doc_pihak1_nama">';
+//   $select .= '<option value="">Pilih Penandatangan Pihak 1</option>';
+//   foreach ($cat as $dt) {
+//     $selected = '';
+//     if($val==$dt->n_nik){
+//       $selected = 'selected="selected"';
+//     }
+//     $select .= '<option value="'.$dt->n_nik.'" '.$selected.'>'.$dt->v_nama_karyawan.' - '.$dt->v_short_posisi.'</option>';
+//   }
+//   $select .= '</select>';
+//   return $select;
+// }
 public static function select_atasan($pegawai,$val=null)
 {
-  $cat = \DB::table('users_atasan')
-          ->join('users_pegawai', 'users_pegawai.id', '=', 'users_atasan.users_pegawai_id')
-          ->join('pegawai', 'pegawai.n_nik', '=', 'users_atasan.nik')
-          ->where('users_pegawai.users_id',\Auth::id());
-  if($cat->count()==0){
-    $cat = \App\User::get_atasan_by_divisi($pegawai->objiddivisi,$pegawai->v_band_posisi);
-  }
-  else{
-    $cat = $cat->get();
-  }
+  $cat = \App\User::get_atasan();
   $select  = '<select class="form-control" id="doc_pihak1_nama" name="doc_pihak1_nama">';
   $select .= '<option value="">Pilih Penandatangan Pihak 1</option>';
   foreach ($cat as $dt) {
@@ -472,5 +521,8 @@ public static function select_atasan($pegawai,$val=null)
             @fclose($ping);
             return true;
         }
+    }
+    public static function usertype(){
+      return \App\User::check_usertype(\Auth::user()->username);
     }
 }

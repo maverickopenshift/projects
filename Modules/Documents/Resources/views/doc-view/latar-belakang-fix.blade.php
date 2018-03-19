@@ -32,7 +32,7 @@
                 <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_rks'])}}">
                   <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
                 </a>
-                <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_rks'])}}?nik={{$pegawai->n_nik}}&nama={{$pegawai->v_nama_karyawan}}">
+                <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_rks'])}}">
                   <i class="glyphicon glyphicon-download-alt"></i>  Download
                 </a>
               @else
@@ -76,7 +76,7 @@
                 <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_ketetapan_pemenang'])}}">
                   <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
                 </a>
-                <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_ketetapan_pemenang'])}}?nik={{$pegawai->n_nik}}&nama={{$pegawai->v_nama_karyawan}}">
+                <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_ketetapan_pemenang'])}}">
                   <i class="glyphicon glyphicon-download-alt"></i>  Download
                 </a>
               @else
@@ -120,7 +120,7 @@
                 <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_kesanggupan_mitra'])}}">
                   <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
                 </a>
-                <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_kesanggupan_mitra'])}}?nik={{$pegawai->n_nik}}&nama={{$pegawai->v_nama_karyawan}}">
+                <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_kesanggupan_mitra'])}}">
                   <i class="glyphicon glyphicon-download-alt"></i>  Download
                 </a>
               @else
@@ -171,7 +171,7 @@
                 <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_optional'])}}">
                   <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
                 </a>
-                <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_optional'])}}?nik={{$pegawai->n_nik}}&nama={{$pegawai->v_nama_karyawan}}">
+                <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang_optional'])}}">
                   <i class="glyphicon glyphicon-download-alt"></i>  Download
                 </a>
               @else

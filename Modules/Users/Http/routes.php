@@ -32,6 +32,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'users', 'namespace' =
     Route::get('/get-select-konseptor', 'UsersController@getSelectKonseptor')->name('users.get-select-konseptor');
     Route::get('/get-atasan-by-userid', 'UsersController@getAtasanByUserid')->name('users.get-atasan-by-userid');
     Route::get('/get-select', 'UsersController@getSelect')->name('users.get-select');
+      Route::get('/get-select-pic-subsidiary', 'UsersController@getSelectPicSubsidiary')->name('users.get-select-pic-subsidiary');
 
 
     Route::get('/permissions', ['middleware' => ['permission:lihat-permission'],'uses' => 'PermissionsController@index'])

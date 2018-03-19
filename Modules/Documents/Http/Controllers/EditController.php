@@ -14,6 +14,7 @@ use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
 use Modules\Documents\Entities\DocComment as Comments;
 use Modules\Config\Entities\Config;
+use Modules\Users\Entities\Mtzpegawai;
 use Modules\Documents\Http\Controllers\SuratPengikatanEditController as SuratPengikatanEdit;
 use Modules\Documents\Http\Controllers\SideLetterEditController as SideLetterEdit;
 use Modules\Documents\Http\Controllers\MouEditController as MouEdit;
@@ -70,7 +71,7 @@ class EditController extends Controller
     $lt  = [];
     $pasal = [];
     $lampiran = [];
-
+    $user_type = \App\User::check_usertype(\Auth::user()->username);
     if($type=='amandemen_sp'){
       $qry = $this->documents->where('documents.id','=',$id)
                             ->join('documents as doc','doc.id','=', 'documents.doc_parent_id')
@@ -265,22 +266,27 @@ class EditController extends Controller
     $data['doc_type'] = $dt->jenis->type;
     $data['doc'] = $dt;
 
-    $data['pegawai'] = \App\User::get_user_pegawai();
+    $konseptor = \App\User::get_user_pegawai($dt->user_id);
     $data['action_type'] = 'edit';
     $data['auto_numb']=Config::get_config('auto-numb');
     $data['action_url'] = route('doc.storeedit_ajax',['type'=>$dt->jenis->type->name,'id'=>$dt->id]);
     $data['data'] = [];
     $data['id'] = $dt->id;
-    $data['pegawai_pihak1'] = \DB::table('pegawai')->where('n_nik',$dt->doc_pihak1_nama)->first();
-    $data['pegawai_konseptor'] = \DB::table('users_pegawai as a')
-                                  ->join('pegawai as b','a.nik','=','b.n_nik')
-                                  ->where('a.users_id',$dt->user_id)->first();
+    $data['pegawai_pihak1'] = Mtzpegawai::where('n_nik',$dt->doc_pihak1_nama)->first();
+    $data['pegawai_konseptor'] = $konseptor;
     $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
-
-    $objiddivisi=$dt->pemilik_kontrak->meta_name;
-    $objidunit=$dt->pemilik_kontrak->meta_title;
-    $data['divisi'] = \DB::table('rptom')->where('objiddivisi',$objiddivisi)->first();
-    $data['unit_bisnis'] = \DB::table('rptom')->where('objidunit',$objidunit)->first();
+    
+    if($user_type!='subsidiary'){
+      $objiddivisi=$dt->pemilik_kontrak->meta_name;
+      $objidunit=$dt->pemilik_kontrak->meta_title;
+      $data['divisi'] = \DB::table('rptom')->where('objiddivisi',$objiddivisi)->first();
+      $data['unit_bisnis'] = \DB::table('rptom')->where('objidunit',$objidunit)->first();
+    }
+    else{
+      $data['divisi'] = $konseptor;
+      $data['unit_bisnis'] = $konseptor;
+    }
+    $data['user_type'] = $user_type;
 
     return view('documents::form-edit')->with($data);
   }

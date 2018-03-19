@@ -9,6 +9,7 @@ use App\User;
 use Modules\Users\Entities\SubsidiaryTelkom;
 use Modules\Users\Entities\PegawaiSubsidiary;
 use Modules\Users\Entities\UsersPegawai;
+use Modules\Users\Entities\Pegawai;
 use Modules\Users\Entities\UsersAtasan as Atasan;
 use Datatables;
 use Response;
@@ -209,6 +210,7 @@ class SubsidiaryTelkomController extends Controller
               $atasan->save();
             }
         }
+        Pegawai::callProc($data->username,'subsidiary');
         return response()->json($data);
       }
     }
@@ -278,6 +280,7 @@ class SubsidiaryTelkomController extends Controller
                 $atasan->save();
               }
           }
+          Pegawai::callProc($data->username,'subsidiary');
           return response()->json($data);
         }
     }

@@ -28,7 +28,7 @@ class PdfDocController extends Controller
         $jenis_fix=0;
     }
 
-    $pdf = new Pdf($file,$req->nama,$req->nik,$jenis_fix);
+    $pdf = new Pdf($file,Auth::user()->name,Auth::user()->username,$jenis_fix);
     //$pdf = new FPDI();
     $pdf->AddPage();
     $pdf->SetFont('arial', '', 12);

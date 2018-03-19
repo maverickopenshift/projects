@@ -214,6 +214,7 @@ class Documents extends Model
           $doc_template = \DB::table('doc_template')->where('id',$template_id)->first();
           $no_kontrak=$pattern.$start.'/'.$doc_template->kode.'/'.$loker."/".$year;
           $count = \DB::table('documents')
+                        ->whereRaw('doc_user_type = ? ', ['telkom'])
                         ->whereRaw('SUBSTR(doc_no,7,5) = ? ', [$start])
                         ->whereRaw('RIGHT(doc_no,4) = ? ', [$year])
                         ->count();
@@ -225,6 +226,7 @@ class Documents extends Model
               $dt = \DB::table('documents')
                       ->select('doc_no')
                       ->whereNotNull('doc_no')
+                      ->whereRaw('doc_user_type = ? ', ['telkom'])
                       ->orderByRaw('CONVERT(SUBSTR(doc_no,7,5),UNSIGNED INTEGER) DESC')
                       ->orderByRaw('RIGHT(doc_no,4) DESC')
                       ->first();

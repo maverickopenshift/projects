@@ -36,6 +36,10 @@ class SpCreateController
       $m_hs_harga=[];
       $m_hs_qty=[];
 
+
+      $user_type = Helpers::usertype();
+      $auto_numb =Config::get_config('auto-numb');
+
       if(isset($request['hs_harga']) && count($request['hs_harga'])>0){
         foreach($request['hs_harga'] as $key => $val){
           $hs_harga[] = $val;
@@ -62,7 +66,7 @@ class SpCreateController
       if($request->statusButton == '0'){
 
         $rules['komentar']         = 'required|max:250|min:2';
-        if(Helpers::usertype()!='subsidiary'){
+        if($user_type!='subsidiary'){
           $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
           $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
@@ -82,8 +86,13 @@ class SpCreateController
           $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
 
         }
-        if( Config::get_config('auto-numb')=='off' || Helpers::usertype()=='subsidiary'){
+        if($user_type=='subsidiary'){
           $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
+        }
+        else{
+          if($auto_numb=='off'){
+            $rules['doc_no']  =  'required|digits_between:1,5';
+          }
         }
 
         $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
@@ -142,11 +151,16 @@ class SpCreateController
 
         $rules['pic_posisi.*']    =  'required|max:500|min:2|regex:/^[a-z0-9 .\-]+$/i';
         $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-        $validator->after(function ($validator) use ($request,$type) {
+        $validator->after(function ($validator) use ($request,$type,$auto_numb,$user_type) {
           if (!isset($request['pic_nama'][0])) {
               $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
           }
-
+          if($user_type!='subsidiary' && $auto_numb=='off' && !$validator->errors()->has('doc_no')){
+            $d = Documents::check_no_kontrak($request['doc_no'],date('Y',strtotime($request['doc_startdate'])));
+            if($d){
+              $validator->errors()->add('doc_no', 'No Kontrak yang Anda masukan sudah ada!');
+            }
+          }
           // if($request->doc_enddate < $request->doc_startdate){
           //   $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
           // }
@@ -192,7 +206,8 @@ class SpCreateController
       $doc = new Documents();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
-      $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
+      $template_id = DocTemplate::get_by_type($type)->id;
+      $doc->doc_template_id = $template_id;
       $doc->doc_date = date("Y-m-d", strtotime($request->doc_startdate));
       $doc->doc_startdate = date("Y-m-d", strtotime($request->doc_startdate));
       $doc->doc_enddate = date("Y-m-d", strtotime($request->doc_enddate));
@@ -231,17 +246,20 @@ class SpCreateController
       $doc->doc_parent_id = Documents::get_id_parent_sp($request->parent_kontrak);
       $doc->supplier_id = Documents::where('id',$doc->doc_parent_id)->first()->supplier_id;
       $doc->penomoran_otomatis = Config::get_penomoran_otomatis($request->penomoran_otomatis);
-      if( Config::get_config('auto-numb')=='off' || Helpers::usertype()=='subsidiary'){
+      if($user_type=='subsidiary'){
         $doc->doc_no = $request->doc_no;
       }
-      if(Helpers::usertype()=='subsidiary'){
+      if($user_type!='subsidiary' && $auto_numb=='off'){
+        $doc->doc_no = Documents::create_manual_no_kontrak($request->doc_no,$request->doc_pihak1_nama,$template_id,$doc->doc_startdate,$request->type);
+      }
+      if($user_type=='subsidiary'){
         $doc->doc_user_type = 'subsidiary';
         $doc->penomoran_otomatis = 'no';
       }
       $doc->save();
 
       //pemilik Kontrak
-      if(count($request->divisi)>0 && Helpers::usertype()=='subsidiary'){
+      if(count($request->divisi)>0 && $user_type!='subsidiary'){
         $doc_meta2 = new DocMeta();
         $doc_meta2->documents_id = $doc->id;
         $doc_meta2->meta_type = 'pemilik_kontrak';

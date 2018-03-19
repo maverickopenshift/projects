@@ -33,6 +33,7 @@ class AmandemenKontrakTurnkeyCreateController
     $m_hs_harga_jasa=[];
     $m_hs_qty=[];
     $user_type = Helpers::usertype();
+    $auto_numb =Config::get_config('auto-numb');
     if(isset($request['hs_harga']) && count($request['hs_harga'])>0){
       foreach($request['hs_harga'] as $key => $val){
         $hs_harga[] = $val;
@@ -85,8 +86,13 @@ class AmandemenKontrakTurnkeyCreateController
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
 
-      if(Config::get_config('auto-numb')=='off' || $user_type=='subsidiary'){
+      if($user_type=='subsidiary'){
         $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
+      }
+      else{
+        if($auto_numb=='off'){
+          $rules['doc_no']  =  'required|digits_between:1,5';
+        }
       }
 
       $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
@@ -124,10 +130,13 @@ class AmandemenKontrakTurnkeyCreateController
       $rules['f_scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-      $validator->after(function ($validator) use ($request) {
-        // if($request->doc_enddate < $request->doc_startdate){
-        //   $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
-        // }
+      $validator->after(function ($validator) use ($request,$auto_numb,$user_type) {
+        if($user_type!='subsidiary' && $auto_numb=='off' && !$validator->errors()->has('doc_no')){
+          $d = Documents::check_no_kontrak($request['doc_no'],date('Y',strtotime($request['doc_startdate'])));
+          if($d){
+            $validator->errors()->add('doc_no', 'No Kontrak yang Anda masukan sudah ada!');
+          }
+        }
       });
       if ($validator->fails ()){
         return Response::json (array(
@@ -157,7 +166,8 @@ class AmandemenKontrakTurnkeyCreateController
     $doc->doc_startdate = date("Y-m-d", strtotime($request->doc_startdate));
     $doc->doc_enddate = date("Y-m-d", strtotime($request->doc_enddate));
     $doc->doc_desc = $request->doc_desc;
-    $doc->doc_template_id = DocTemplate::get_by_type($type)->id;
+    $template_id = DocTemplate::get_by_type($type)->id;
+    $doc->doc_template_id = $template_id;
     $doc->doc_pihak1 = $request->doc_pihak1;
     $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
     $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
@@ -170,8 +180,11 @@ class AmandemenKontrakTurnkeyCreateController
     $doc->doc_signing = $request->statusButton;
 
     $doc->penomoran_otomatis =  Config::get_penomoran_otomatis($request->penomoran_otomatis);
-    if(Config::get_config('auto-numb')=='off' || $user_type=='subsidiary'){
+    if($user_type=='subsidiary'){
       $doc->doc_no = $request->doc_no;
+    }
+    if($user_type!='subsidiary' && $auto_numb=='off'){
+      $doc->doc_no = Documents::create_manual_no_kontrak($request->doc_no,$request->doc_pihak1_nama,$template_id,$doc->doc_startdate,$request->type);
     }
     if($user_type=='subsidiary'){
       $doc->doc_user_type = 'subsidiary';

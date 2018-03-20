@@ -46,8 +46,7 @@ class SupplierAddController extends Controller
         'kd_pos'            => 'required|max:5',
         'telepon'           => 'required|digits_between:7,12',
         'fax'               => 'required|digits_between:7,12',
-        //'email'             => 'required|max:50|min:4|email',unique:documents,doc_no
-        'email'             => 'required|max:50|min:4|email|unique:supplier,email',
+        'email'             => 'required|max:50|min:4|email|unique:supplier,email|unique:users,email',
         'password'          => 'required|max:50|min:6|confirmed',
         'web_site'          => 'sometimes|nullable|url',
         'induk_perus'       => 'sometimes|nullable|min:3|regex:/^[a-z0-9 .\-]+$/i',

@@ -33,6 +33,11 @@ $f_parentid=old('f_parentid');
         pointer-events: none;
         opacity: 0.4;
     }
+
+    .modal-xl {
+        width: 90%;
+        max-width:1200px;
+    }
 </style>
 
 <div class="row">
@@ -81,10 +86,11 @@ $f_parentid=old('f_parentid');
                     <table class="table table-striped table-parent-product" width="100%">
                         <thead>
                             <tr>
+                                <th>Supplier</th>
                                 <th>Kode</th>
                                 <th>Nama</th>
                                 <th>Unit</th>
-                                <th>Mata Uang</th>
+                                <th width="10%">Mata Uang</th>
                                 <th>Harga Barang</th>
                                 <th>Harga Jasa</th>
                                 <th>Deksripsi</th>
@@ -92,104 +98,84 @@ $f_parentid=old('f_parentid');
                             </tr>
                         </thead>
                         <tbody class="table-test">
-                            @if(count($f_kodeproduct)>0)
-                                @foreach ($f_kodeproduct as $key => $value)
-                                <tr class="tabel-product">
-                                    <td class="{{ $errors->has('f_kodeproduct.'.$key) ? ' has-error' : '' }}">
-                                        <input type="text" value="{{$f_kodeproduct[$key]}}" name="f_kodeproduct[]" placeholder="Kode.." class="form-control">
-                                        {!!Helper::error_help($errors,'f_kodeproduct.'.$key)!!}
-                                    </td>
-                                    <td class="{{ $errors->has('f_namaproduct.'.$key) ? ' has-error' : '' }}">
-                                        <input type="text" value="{{$f_namaproduct[$key]}}" name="f_namaproduct[]" placeholder="Nama .." class="form-control">
-                                        {!!Helper::error_help($errors,'f_namaproduct.'.$key)!!}
-                                    </td>
-                                    <td class="{{ $errors->has('f_unitproduct.'.$key) ? ' has-error' : '' }}">
-                                        <input type="text" value="{{$f_unitproduct[$key]}}" name="f_unitproduct[]" placeholder="Unit.." class="form-control">
-                                        {!!Helper::error_help($errors,'f_unitproduct.'.$key)!!}
-                                    </td>
-                                    <td class="{{ $errors->has('f_mtuproduct.'.$key) ? ' has-error' : '' }}">
-                                      @php
-                                          if($f_mtuproduct[$key]=="RP"){
-                                              $a="selected";
-                                              $b="";
-                                          }else if($f_mtuproduct[$key]=="USD"){
-                                              $a="";
-                                              $b="selected";
-                                          }else{
-                                              $a="";
-                                              $b="";
-                                          }
-                                      @endphp
-                                        <select name="f_mtuproduct[]" class="form-control select2" style="width: 100%;">
-                                            <option value=""></option>
-                                            <option value="RP" {{$a}}>RP</option>
-                                            <option value="USD" {{$b}}>USD</option>
-                                        </select>
-                                        {!!Helper::error_help($errors,'f_mtuproduct.'.$key)!!}
-                                    </td>
-                                    <td class="{{ $errors->has('f_hargaproduct.'.$key) ? ' has-error' : '' }}">
-                                        <input type="text" value="{{$f_hargaproduct[$key]}}" name="f_hargaproduct[]" placeholder="Harga Barang.." class="form-control input-rupiah">
-                                        {!!Helper::error_help($errors,'f_hargaproduct.'.$key)!!}
-                                    </td>
-                                    <td class="{{ $errors->has('f_hargajasa.'.$key) ? ' has-error' : '' }}">
-                                        <input type="text" value="{{$f_hargajasa[$key]}}" name="f_hargajasa[]" placeholder="Harga Jasa.." class="form-control input-rupiah">
-                                        {!!Helper::error_help($errors,'f_hargajasa.'.$key)!!}
-                                    </td>
-                                    <td class="{{ $errors->has('f_descproduct.'.$key) ? ' has-error' : '' }}">
-                                        <input type="text" value="{{$f_descproduct[$key]}}" name="f_descproduct[]" placeholder="Deskripsi.." class="form-control">
-                                        {!!Helper::error_help($errors,'f_descproduct.'.$key)!!}
-                                    </td>
-                                    <td width="100px">
-                                        <div class="btn-group">
-                                            <a class="btn btn-primary add-product">
-                                                <i class="glyphicon glyphicon-plus"></i>
-                                            </a>
-                                            <a class="btn bg-red btn-delete" style="margin-bottom: 2px;">
-                                                <i class="glyphicon glyphicon-trash"></i>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                                @endforeach
-                            @else
                             <tr class="tabel-product">
-                                <td>
-                                    <input type="text" name="f_kodeproduct[]" placeholder="Kode.." class="form-control">
-                                </td>
-                                <td>
-                                    <input type="text" name="f_namaproduct[]" placeholder="Nama .." class="form-control">
-                                </td>
-                                <td>
-                                    <input type="text" name="f_unitproduct[]" placeholder="Unit.." class="form-control">
-                                </td>
-                                <td>
-                                    <select name="f_mtuproduct[]" class="form-control select2" style="width: 100%;">
-                                        <option value=""></option>
-                                        <option value="RP">RP</option>
-                                        <option value="USD">USD</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <input type="text" name="f_hargaproduct[]" placeholder="Harga Barang.." class="form-control input-rupiah">
-                                </td>
-                                <td>
-                                    <input type="text" name="f_hargajasa[]" placeholder="Harga Jasa.." class="form-control input-rupiah">
-                                </td>
-                                <td>
-                                    <input type="text" name="f_descproduct[]" placeholder="Deskripsi.." class="form-control">
-                                </td>
-                                <td width="100px">
-                                    <div class="btn-group">
-                                        <a class="btn btn-primary add-product">
-                                            <i class="glyphicon glyphicon-plus"></i>
-                                        </a>
-                                        <a class="btn bg-red btn-delete" style="margin-bottom: 2px;">
-                                            <i class="glyphicon glyphicon-trash"></i>
-                                        </a>
-                                    </div>
-                                </td>
                             </tr>
-                            @endif
+                        </tbody>
+                    </table>
+                </div>
+                <div class="box-footer">
+                    <div class="box-tools pull-right">
+                        <a class="btn bg-red btn-reset" href="{{route('catalog.product')}}" style="margin-bottom: 2px;">
+                            Reset
+                        </a>
+                        <input type="submit" class="btn btn-primary simpan-product" value="Simpan">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="box box-danger">
+            <div class="box-header with-border">
+                <i class="fa fa-cogs"></i>
+                <h3 class="box-title">Daftar Kategori</h3>
+            </div>
+            <div class="box-body form-horizontal">
+                <div class="form-group">
+                    <div class="col-sm-12">
+                        <input type="text" placeholder="Search Kategori.." class="form-control f_carikategori">
+                    </div>
+                </div>
+                <div id="jstree"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <div class="box box-danger test-product">
+            <div class="box-header with-border">
+                <i class="fa fa-cogs"></i>
+                <h3 class="box-title f_parentname">Tambah Item Katalog</h3>
+            </div>    
+            <form method="post" action="{{route('catalog.product.add')}}">
+                <input type="hidden" class="f_parentid" name="f_parentid" value="{{$f_parentid}}">
+                {{ csrf_field() }}
+                <div class="box-body form-horizontal">
+                    <div id="alertBS"></div>
+
+                    <div class="form-group pull-right">
+                        <div class="col-sm-12">
+                            <a class="btn btn-default add-boq" data-toggle="modal" data-target="#modalboq">
+                                <i class="glyphicon glyphicon-plus"></i> BOQ Kontrak
+                            </a>
+                            <input type="file" name="upload-boq" class="upload-boq hide"/>
+                            <a class="btn btn-primary upload-boq-btn" type="button"><i class="fa fa-upload"></i> Upload</a>
+                            
+                            <a href="{{route('doc.tmp.download',['filename'=>'harga_satuan'])}}" class="btn btn-info"><i class="glyphicon glyphicon-download-alt"></i> Download Template</a>
+                            
+                        </div>
+                    </div>
+
+                    <table class="table table-striped table-parent-product" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Supplier</th>
+                                <th>Kode</th>
+                                <th>Nama</th>
+                                <th>Unit</th>
+                                <th width="10%">Mata Uang</th>
+                                <th>Harga Barang</th>
+                                <th>Harga Jasa</th>
+                                <th>Deksripsi</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-test">
+                            <tr class="tabel-product">
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -207,7 +193,7 @@ $f_parentid=old('f_parentid');
 </div>
 
 <div class="modal fade" id="modalboq" style="overflow:hidden;" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -224,10 +210,11 @@ $f_parentid=old('f_parentid');
 
                 <div class="form-group table-parent-boq">
                     <div style=" max-height: 500px; overflow: auto;" style="text-align: center;" id="holder">
-                        <table id="daftar2" class="table table-striped table-parent-boq" width="100%">
+                        <table id="daftar1" class="table table-striped table-parent-boq" width="100%">
                             <thead>
                                 <tr>
                                     <th>Aksi</th>
+                                    <th>Supplier</th>
                                     <th>Kode</th>
                                     <th>Nama</th>
                                     <th>Unit</th>
@@ -245,7 +232,7 @@ $f_parentid=old('f_parentid');
             </div>
 
             <div class="modal-footer">
-                <a class="btn btn-primary simpan-boq">Simpan</a>
+                <button class="btn btn-primary simpan-boq">Simpan</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -257,13 +244,12 @@ $f_parentid=old('f_parentid');
 <script>
 $(function() {
     normal();
+    
     $('#daftar1').DataTable();
+    /*
     $('#daftar1').DataTable();
     $('#daftar2').DataTable();
-
-    $(".select2").select2({
-        placeholder:"Silahkan Pilih"
-    });
+    */
 
     function normal(){
         $(".add-product").prop("disabled", true);
@@ -271,6 +257,14 @@ $(function() {
         $(".add-boq").prop("disabled", true);
         $(".upload-boq-btn").prop("disabled", true);
         $(".simpan-product").prop( "disabled", true );
+
+        var new_row = $(template_add()).clone(true).insertAfter(".tabel-product:last");
+        var input_new_row = new_row.find('td');
+        
+        select_supplier(input_new_row.eq(0).find('.select-supplier'));
+        input_new_row.eq(4).find('select').select2({
+            placeholder:"Silahkan Pilih"
+        });
     }
 
     $('.upload-boq-btn').on('click', function(event) {
@@ -401,53 +395,71 @@ $(function() {
         }
     });
 
-    $(document).on('click', '.add-product', function(event) {
-        $('.table-parent-product').find(".select2").each(function(index){
-            if($(this).data('select2')) {
-                $(this).select2('destroy');
-            }
-        });
-
-        var new_row = $('.tabel-product:last').clone(true).insertAfter(".tabel-product:last");
+    $(document).on('click', '.add-product', function(event) {        
+        var new_row = $(template_add()).clone(true).insertAfter(".tabel-product:last");
         var input_new_row = new_row.find('td');
-
-        input_new_row.eq(0).find('input').val("");
-        input_new_row.eq(0).find('.error').remove();
-        input_new_row.eq(0).removeClass("has-error");
-        input_new_row.eq(1).find('input').val("");
-        input_new_row.eq(1).find('.error').remove();
-        input_new_row.eq(1).removeClass("has-error");
-        input_new_row.eq(2).find('input').val("");
-        input_new_row.eq(2).find('.error').remove();
-        input_new_row.eq(2).removeClass("has-error");
-        input_new_row.eq(3).find('select').val("");
-        input_new_row.eq(3).find('.error').remove();
-        input_new_row.eq(3).removeClass("has-error");
-        input_new_row.eq(4).find('input').val("");
-        input_new_row.eq(4).find('.error').remove();
-        input_new_row.eq(4).removeClass("has-error");
-        input_new_row.eq(5).find('input').val("");
-        input_new_row.eq(5).find('.error').remove();
-        input_new_row.eq(5).removeClass("has-error");
-        input_new_row.eq(6).find('input').val("");
-        input_new_row.eq(6).find('.error').remove();
-        input_new_row.eq(6).removeClass("has-error");
-
-        $(".select2").select2({
+        
+        select_supplier(input_new_row.eq(0).find('.select-supplier'));
+        input_new_row.eq(4).find('select').select2({
             placeholder:"Silahkan Pilih"
         });
     });
 
     $(document).on('click', '.add-boq', function(event) {
-        $.ajax({
-            url: "{{route('catalog.no_kontrak')}}",
-            dataType: 'json',
-            success: function(data)
-            {
-                $(".select-kontrak").select2({
-                    data: data
-                });
+        if($(".select-kontrak").data('select2')){
+            $(".select-kontrak").select2('destroy');
+        }
 
+        $('.select-kontrak').select2({
+            placeholder : "Silahkan Pilih....",
+            dropdownParent: $('.select-kontrak').parent(),
+            ajax: {
+                url: '{!! route('catalog.no_kontrak') !!}',
+                dataType: 'json',
+                delay: 350,
+                
+                data: function (params) {
+                    var datas =  {
+                        q: params.term,
+                        page: params.page
+                    };
+                    return datas;
+                },                
+                processResults: function (data, params) {
+                    var results = [];
+                    $.each(data.data, function (i, v) {                       
+                        var o = {};
+                        o.id = v.id;
+                        o.text = v.text;
+                        results.push(o);
+                    })
+                    params.page = params.page || 1;
+                    return {
+                        results: data.data,
+                        pagination: {
+                            more: (data.next_page_url ? true: false)
+                        }
+                    };
+                },                
+                cache: true
+            },        
+            escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            minimumInputLength: 0,
+            templateResult: function (state) {
+                if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching..' ;  }
+                var $state = $(
+                    '<span>'+  state.text + '</span>'
+                );
+                return $state;
+            },
+            templateSelection: function (data) {
+                if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
+                    return "Silahkan Pilih..";
+                }
+                if(data.text === undefined){
+                  return data.text;
+                }
+                return data.text ;
             }
         });
     });
@@ -459,12 +471,12 @@ $(function() {
             dataType: 'json',
             success: function(data)
             {
-                console.log(id_kontrak);
                 $('.table-boq').html("");
                 var html = '';
                 for(var i = 0; i < data.length; i++){
                    html += "<tr>"+
                                 "<td><input type='checkbox' name='f_boq[]' value='"+ data[i].id +"'></td>" +
+                                "<td>" + data[i].bdn_usaha + "."+ data[i].nm_vendor +"</td>" +
                                 "<td>" + data[i].kode_item + "</td>" +
                                 "<td>" + data[i].item + "</td>" +
                                 "<td>" + data[i].satuan + "</td>" +
@@ -481,56 +493,239 @@ $(function() {
     });
 
     $(document).on('click', '.simpan-boq', function(event) {
+        $(".simpan-boq").prop("disabled",true);
+        
         $('.table-boq').find('input[type=checkbox]').each(function (index) {
             if (this.checked) {
-                console.log($(this).val());
-
                 $.ajax({
                     url: "{{route('catalog.boq')}}?id=" + $(this).val(),
                     dataType: 'json',
                     success: function(data)
                     {
-                        console.log(data);
-                        $('.table-parent-product').find(".select2").each(function(index){
-                            if($(this).data('select2')) {
-                                $(this).select2('destroy');
-                            }
-                        });
-
-                        var new_row = $('.tabel-product:last').clone(true).insertAfter(".tabel-product:last");
+                        var new_row = $(template_boq()).clone(true).insertAfter(".tabel-product:last");
                         var input_new_row = new_row.find('td');
 
-                        input_new_row.eq(0).find('input').val(data[0].kode_item);
-                        input_new_row.eq(0).find('.error').remove();
-                        input_new_row.eq(0).removeClass("has-error");
-                        input_new_row.eq(1).find('input').val(data[0].item);
-                        input_new_row.eq(1).find('.error').remove();
-                        input_new_row.eq(1).removeClass("has-error");
-                        input_new_row.eq(2).find('input').val(data[0].satuan);
-                        input_new_row.eq(2).find('.error').remove();
-                        input_new_row.eq(2).removeClass("has-error");
-                        input_new_row.eq(3).find('select').val(data[0].mtu);
-                        input_new_row.eq(3).find('.error').remove();
-                        input_new_row.eq(3).removeClass("has-error");
-                        input_new_row.eq(4).find('input').val(data[0].harga);
-                        input_new_row.eq(4).find('.error').remove();
-                        input_new_row.eq(4).removeClass("has-error");
-                        input_new_row.eq(5).find('input').val(data[0].harga_jasa);
-                        input_new_row.eq(5).find('.error').remove();
-                        input_new_row.eq(5).removeClass("has-error");
-                        input_new_row.eq(6).find('input').val(data[0].desc);
-                        input_new_row.eq(6).find('.error').remove();
-                        input_new_row.eq(6).removeClass("has-error");
-                        $(".select2").select2({
+                        input_new_row.eq(0).find('.f_nosupplier').val(data[0].supplier_id);
+                        input_new_row.eq(0).find('.f_namasupplier').val(data[0].bdn_usaha + "."+ data[0].nm_vendor);                        
+                        input_new_row.eq(1).find('input').val(data[0].kode_item);                        
+                        input_new_row.eq(2).find('input').val(data[0].item);                        
+                        input_new_row.eq(3).find('input').val(data[0].satuan);                        
+                        input_new_row.eq(4).find('select').val(data[0].mtu);
+                        input_new_row.eq(4).find('select').select2({
                             placeholder:"Silahkan Pilih"
                         });
 
-                        $("#modalboq").modal('hide');
+                        input_new_row.eq(5).find('input').val(data[0].harga);                        
+                        input_new_row.eq(6).find('input').val(data[0].harga_jasa);                        
+                        input_new_row.eq(7).find('input').val(data[0].desc);                        
                     }
                 });
             }
         });
+
+        $("#modalboq").modal('hide');
+        $(".simpan-boq").prop("disabled",false);
     });
+
+    function template_boq(){
+        return '\
+        <tr class="tabel-product">\
+            <td>\
+                <input type="hidden" name="f_nosupplier[]" class="f_nosupplier">\
+                <input type="text" name="f_namasupplier[]" placeholder="Kode.." class="form-control f_namasupplier" readonly>\
+            </td>\
+            <td>\
+                <input type="text" name="f_kodeproduct[]" placeholder="Kode.." class="form-control">\
+            </td>\
+            <td>\
+                <input type="text" name="f_namaproduct[]" placeholder="Nama .." class="form-control">\
+            </td>\
+            <td>\
+                <input type="text" name="f_unitproduct[]" placeholder="Unit.." class="form-control">\
+            </td>\
+            <td >\
+                <select name="f_mtuproduct[]" class="form-control" style="width: 100%;">\
+                    <option value="IDR">IDR</option>\
+                    <option value="USD">USD</option>\
+                </select>\
+            </td>\
+            <td>\
+                <input type="text" name="f_hargaproduct[]" placeholder="Harga Barang.." class="form-control input-rupiah">\
+            </td>\
+            <td>\
+                <input type="text" name="f_hargajasa[]" placeholder="Harga Jasa.." class="form-control input-rupiah">\
+            </td>\
+            <td>\
+                <input type="text" name="f_descproduct[]" placeholder="Deskripsi.." class="form-control">\
+            </td>\
+            <td width="100px">\
+                <div class="btn-group">\
+                    <a class="btn btn-primary add-product">\
+                        <i class="glyphicon glyphicon-plus"></i>\
+                    </a>\
+                    <a class="btn bg-red btn-delete" style="margin-bottom: 2px;">\
+                        <i class="glyphicon glyphicon-trash"></i>\
+                    </a>\
+                </div>\
+            </td>\
+        </tr>';
+    }
+
+    function template_add(){
+        return '\
+        <tr class="tabel-product">\
+            <td>\
+                <select class="form-control select-supplier" style="width: 100%;">\
+                </select>\
+            </td>\
+            <td>\
+                <input type="text" name="f_kodeproduct[]" placeholder="Kode.." class="form-control">\
+            </td>\
+            <td>\
+                <input type="text" name="f_namaproduct[]" placeholder="Nama .." class="form-control">\
+            </td>\
+            <td>\
+                <input type="text" name="f_unitproduct[]" placeholder="Unit.." class="form-control">\
+            </td>\
+            <td >\
+                <select name="f_mtuproduct[]" class="form-control" style="width: 100%;">\
+                    <option value="IDR" selected>IDR</option>\
+                    <option value="USD">USD</option>\
+                </select>\
+            </td>\
+            <td>\
+                <input type="text" name="f_hargaproduct[]" placeholder="Harga Barang.." class="form-control input-rupiah">\
+            </td>\
+            <td>\
+                <input type="text" name="f_hargajasa[]" placeholder="Harga Jasa.." class="form-control input-rupiah">\
+            </td>\
+            <td>\
+                <input type="text" name="f_descproduct[]" placeholder="Deskripsi.." class="form-control">\
+            </td>\
+            <td width="100px">\
+                <div class="btn-group">\
+                    <a class="btn btn-primary add-product">\
+                        <i class="glyphicon glyphicon-plus"></i>\
+                    </a>\
+                    <a class="btn bg-red btn-delete" style="margin-bottom: 2px;">\
+                        <i class="glyphicon glyphicon-trash"></i>\
+                    </a>\
+                </div>\
+            </td>\
+        </tr>';
+    }
+
+    function select_supplier(input){
+        input.select2({
+            placeholder : "xxSilahkan Pilih....",
+            ajax: {
+                url: '{!! route('catalog.supplier') !!}',
+                dataType: 'json',
+                delay: 350,
+                
+                data: function (params) {
+                    var datas =  {
+                        q: params.term,
+                        page: params.page
+                    };
+                    return datas;
+                },                
+                processResults: function (data, params) {
+                    var results = [];
+                    $.each(data.data, function (i, v) {                       
+                        var o = {};
+                        o.id = v.id;
+                        o.text = v.text;
+                        results.push(o);
+                    })
+                    params.page = params.page || 1;
+                    return {
+                        results: data.data,
+                        pagination: {
+                            more: (data.next_page_url ? true: false)
+                        }
+                    };
+                },                
+                cache: true
+            },        
+            escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            minimumInputLength: 0,
+            templateResult: function (state) {
+                if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching..' ;  }
+                var $state = $(
+                    '<span>'+  state.text + '</span>'
+                );
+                return $state;
+            },
+            templateSelection: function (data) {
+                if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
+                    return "Silahkan Pilih..";
+                }
+                if(data.text === undefined){
+                  return data.text;
+                }
+                return data.text ;
+            }
+        });
+    }
+
+    $(document).on('click', '.btn-sbm', function(event) {
+        event.preventDefault();
+
+        var formMe = $('#form-kontrak');
+        $(".formerror").removeClass("has-error");
+        $(".error").html('');
+
+        bootbox.confirm({
+          title:"Konfirmasi",
+          message: "Apakah anda yakin untuk submit?",
+          buttons: {
+              confirm: {
+                  label: 'Yakin',
+                  className: 'btn-success'
+              },
+              cancel: {
+                  label: 'Tidak',
+                  className: 'btn-danger'
+              }
+          },
+          callback: function (result) {
+            if(result){
+              $.ajax({
+                url: formMe.attr('action'),
+                type: 'post',
+                processData: false,
+                contentType: false,
+                data: new FormData(document.getElementById("form-kontrak")),
+                dataType: 'json',
+                success: function(response){
+                  if(response.errors){
+                    $.each(response.errors, function(index, value){
+                        if (value.length !== 0){
+                          index = index.replace(".", "-");
+                          $(".formerror-"+ index).removeClass("has-error");
+                          $(".error-"+ index).html('');
+
+                          $(".formerror-"+ index).addClass("has-error");
+                          $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
+                        }
+                    });
+
+                    bootbox.alert({
+                      title:"Pemberitahuan",
+                      message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
+                    });
+                  }else{
+                    if(response.status=="all"){
+                      window.location.href = "{{route('supplier',['status'=>'all'])}}";
+                    }
+                  }
+                }
+              });
+            }
+          }
+        });
+      });
 });
 </script>
 @endpush

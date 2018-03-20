@@ -417,6 +417,7 @@ class AmandemenSpEditController extends Controller
     }
 
     if(in_array($status,['0','2'])){
+
       $doc = Documents::where('id',$id)->first();;
       $doc->doc_title = $request->doc_title;
       $doc->doc_date = date("Y-m-d", strtotime($request->doc_startdate));

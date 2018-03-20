@@ -45,8 +45,9 @@ if(isset($data->id)){
                 <table class="table table-striped" id="daftar_product">
                     <thead>
                         <tr>
-                            <th>No</th>
+                            <th>No</th>                            
                             <th>Kode</th>
+                            <th>Supplier</th>
                             <th>Nama</th>
                             <th>Harga Material</th>
                             <th>Harga Jasa</th>
@@ -80,6 +81,13 @@ if(isset($data->id)){
                         <div class="error-f_kodeproduk"></div>
                     </div>
 
+                    <div class="form-group formerror-f_nosupplier">
+                        <label>Nama Supplier</label>
+                        <select class="form-control" id="f_nosupplier" name="f_nosupplier" style="width: 100%;" required>
+                        </select>
+                        <div class="error-f_nosupplier"></div>
+                    </div>
+
                     <div class="form-group formerror-f_namaproduk">
                         <label>Nama Produk</label>
                         <input type="text" class="form-control" id="f_namaproduk" name="f_namaproduct"  placeholder="Nama Produk ...">
@@ -103,7 +111,7 @@ if(isset($data->id)){
                         <label>Mata Uang</label>
                         <select class="form-control select2" id="f_matauangproduk" name="f_mtuproduct" style="width: 100%;" required>
                             <option value=""></option>
-                            <option value="RP">RP</option>
+                            <option value="IDR">IDR</option>
                             <option value="USD">USD</option>
                         </select>
                         <div class="error-f_matauangproduk"></div>
@@ -166,10 +174,11 @@ $(function() {
     $(".select2").select2({
         placeholder:"Silahkan Pilih"
     });
-
+    /*
     $(".f_produk_parentid_select").select2({
-            data:{id:0,text:"asd"}
-        });
+        data:{id:0,text:"asd"}
+    });
+    */
 
     $('#jstree')
         .on("changed.jstree", function (e, data) {
@@ -224,6 +233,7 @@ $(function() {
         columns: [
             { data: 'DT_Row_Index',orderable:false,searchable:false},
             { data: 'code'},
+            { data: 'supplier_nama'},
             { data: 'name'},
             { data: 'price'},
             { data: 'price_jasa'},
@@ -235,7 +245,7 @@ $(function() {
 
     function refresh_product(no_kategori){
         table_product.destroy();
-
+        
         table_product = $('#daftar_product').on('xhr.dt', function ( e, settings, json, xhr ) {
             if(xhr.responseText=='Unauthorized.'){
                 location.reload();
@@ -255,6 +265,7 @@ $(function() {
             columns: [
                 { data: 'DT_Row_Index',orderable:false,searchable:false},
                 { data: 'code'},
+                { data: 'supplier_nama'},
                 { data: 'name'},
                 { data: 'price'},
                 { data: 'price_jasa'},
@@ -264,7 +275,7 @@ $(function() {
             ]
         });
     }
-
+    /*
     function refresh_kategori(no_kategori){
         table_kategori.destroy();
 
@@ -293,6 +304,7 @@ $(function() {
             ]
         });
     }
+    */
 
     var modalDelete = $('#modal-delete');
     modalDelete.on('show.bs.modal', function (event) {
@@ -307,6 +319,7 @@ $(function() {
         btnDelete.button('reset');
     });
 
+    /*
     $(document).on('click', '.btn-delete-modal', function(event) {
         event.preventDefault();
         var btnDelete = $(this)
@@ -355,6 +368,7 @@ $(function() {
             });
         }
     });
+    */
 
     function get_produk_induk(parent){
         $("#f_produk_parent").empty().trigger('change');
@@ -373,6 +387,23 @@ $(function() {
         });
     }
 
+    function get_produk_supplier(parent){
+        $("#f_nosupplier").empty().trigger('change');
+
+        $.ajax({
+            url: "{{route('catalog.product.get_product_supplier')}}",
+            dataType: 'json',
+            success: function(data)
+            {
+                $("#f_nosupplier").select2({
+                    data: data
+                });
+
+                $("#f_nosupplier").val(parent).trigger('change');
+            }
+        });
+    }
+    /*
     var formModal = $('#form-modal-category');
     formModal.on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget)
@@ -391,7 +422,7 @@ $(function() {
         modal.find('.modal-body input#f_namakategori').val(data.display_name);
         modal.find('.modal-body textarea#f_deskripsikategori').val(data.desc);
     });
-
+    
     $(document).on('submit','#form-me-category',function (event) {
         event.preventDefault();
 
@@ -455,7 +486,7 @@ $(function() {
             }
         });
     });
-
+    */
     var formModal = $('#form-modal-product');
     formModal.on('show.bs.modal', function (event) {
         var button = $(event.relatedTarget)
@@ -469,9 +500,11 @@ $(function() {
         var data = button.data('data');
 
         get_produk_induk(data.catalog_category_id);
+        get_produk_supplier(data.supplier_id);
 
         modal.find('.modal-body input#f_id').val(data.id);
         modal.find('.modal-body input#f_parentid').val(data.catalog_category_id);
+
         modal.find('.modal-body input#f_kodeproduk').val(data.code);
         modal.find('.modal-body input#f_namaproduk').val(data.name);
         modal.find('.modal-body input#f_unitproduk').val(data.unit);
@@ -479,7 +512,7 @@ $(function() {
         modal.find('.modal-body input#f_hargaproduk').val(data.price);
         modal.find('.modal-body input#f_hargajasa').val(data.price_jasa);
         modal.find('.modal-body textarea#f_descproduk').val(data.desc);
-    });
+    });    
 
     $(document).on('submit','#form-me-product',function (event) {
         event.preventDefault();
@@ -492,6 +525,7 @@ $(function() {
         var attError_f_matauangproduk = formMe.find('.error-f_matauangproduk')
         var attError_f_hargaproduk = formMe.find('.error-f_hargaproduk')
         var attError_f_hargajasa = formMe.find('.error-f_hargajasa')
+        var attError_f_descproduk = formMe.find('.error-f_descproduk')
         var attError_f_descproduk = formMe.find('.error-f_descproduk')
 
         formMe.find('.formerror-f_kodeproduk').removeClass("has-error");
@@ -511,7 +545,7 @@ $(function() {
         attError_f_descproduk.html('')
 
         var btnSave = formMe.find('.btn-simpan')
-        btnSave.button('loading')
+        //btnSave.button('loading')
 
         $.ajax({
             url: formMe.attr('action'),
@@ -520,7 +554,6 @@ $(function() {
             dataType: 'json',
             success: function(response){
                 if(response.errors){
-
                     alertBS_2('Something Wrong','danger');
 
                     if(response.errors.f_kodeproduk){

@@ -84,11 +84,13 @@ class DocumentsListController extends Controller
           if($value['doc_signing'] != '2'){
             $n_nik = $value->pegawai->n_nik;
             $v_nama_karyawan = $value->pegawai->v_nama_karyawan;
+            $username = $value->users->username;
+            $name = $value->users->name;
           }else{
             $username = $value->users->username;
             $name = $value->users->name;
           }
-          
+
           $value['total_child']=0;
           $edit = '';
           if($value['doc_signing']==0 && \Laratrust::can('approve-kontrak')){

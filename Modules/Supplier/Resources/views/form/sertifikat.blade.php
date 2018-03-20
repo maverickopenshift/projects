@@ -1,7 +1,7 @@
 <div class="form-group" style="position: relative;margin-top: 15px;margin-bottom: 50px;">
   @if($action_type!='lihat')
   <div class="pull-right">
-    <button type="button" class="btn btn-success add-sertifikat"><i class="glyphicon glyphicon-plus"></i> tambah</button>
+    <button type="button" class="btn btn-success add-sertifikat"><i class="glyphicon glyphicon-plus"></i> Tambah Sertifikat</button>
   </div>
   @endif
 </div>

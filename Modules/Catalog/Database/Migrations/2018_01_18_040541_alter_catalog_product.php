@@ -14,7 +14,7 @@ class AlterCatalogProduct extends Migration
     public function up()
     {
         Schema::table('catalog_product', function (Blueprint $table) {
-            $table->string('price_jasa')->nullable();
+            $table->string('price_jasa')->unsigned();
         });
     }
 

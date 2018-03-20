@@ -258,6 +258,7 @@ class EditController extends Controller
     }
 
     $dt->doc_po = $dt->doc_po_no;
+    $konseptor = \App\User::get_user_pegawai($dt->user_id);
     $dt->doc_no = $dt->doc_no;
     $dt->penomoran_otomatis = $dt->penomoran_otomatis;
     $dt->supplier_text = $dt->supplier->bdn_usaha.'.'.$dt->supplier->nm_vendor;

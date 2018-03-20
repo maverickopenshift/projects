@@ -13,6 +13,7 @@ use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocActivity;
+use Modules\Users\Entities\Mtzpegawai;
 use Modules\Documents\Entities\DocComment as Comments;
 use Modules\Documents\Http\Controllers\DocumentsListController as DocList;
 use Modules\Documents\Entities\DocChildLatest;
@@ -32,6 +33,7 @@ class DocumentsController extends Controller
     {
         $this->documents = $documents;
         $this->docList = $docList;
+        
     }
     /**
      * Display a listing of the resource.
@@ -45,6 +47,7 @@ class DocumentsController extends Controller
       if(!in_array($status,$status_arr)){
         abort(404);
       }
+      $user_type = \App\User::check_usertype(\Auth::user()->username);
       foreach ($status_arr as $key => $st){
         if($status==$st){
           $status_no = $key;
@@ -166,12 +169,13 @@ class DocumentsController extends Controller
           }
 
           if(!\Auth::user()->hasRole('admin')){
-            $documents->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
-            $documents->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
-            $documents->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
-          }
-          else{
-
+            $documents->join('v_users_pegawai','v_users_pegawai.user_id','=','documents.user_id');
+            if($user_type=='subsidiary'){
+              $documents->where('v_users_pegawai.company_id',\App\User::get_subsidiary_user()->company_id);
+            }
+            else {
+              $documents->where('v_users_pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+            }
           }
 
           $documents = $documents->with(['jenis','supplier','pic']);
@@ -225,11 +229,13 @@ class DocumentsController extends Controller
      }
       $data['page_title'] = 'Data Dokumen '.ucfirst($status);
       $data['doc_status'] = $status;
+      $data['user_type'] = $user_type;
       return view('documents::list-selesai')->with($data);
     }
 
     public function view(Request $request)
     {
+      $user_type = \App\User::check_usertype(\Auth::user()->username);
       $id = $request->id;
       $doc_type = DocType::where('name','=',$request->type)->first();
       $dt = $this->documents->where('id','=',$id)->with('pemilik_kontrak','jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po','sow_boq','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter','latar_belakang_optional','latar_belakang_ketetapan_pemenang','latar_belakang_kesanggupan_mitra','latar_belakang_rks')->first();
@@ -259,19 +265,24 @@ class DocumentsController extends Controller
       $data['page_title'] = 'View Kontrak - '.$doc_type['title'];
       $data['doc'] = $dt;
       $data['id'] = $id;
-
-      $data['pegawai'] = \App\User::get_user_pegawai();
-      $data['pegawai_pihak1'] = \DB::table('pegawai')->where('n_nik',$dt->doc_pihak1_nama)->first();
-      $data['pegawai_konseptor'] = \DB::table('users_pegawai as a')
-                                  ->join('pegawai as b','a.nik','=','b.n_nik')
-                                  ->where('a.users_id',$dt->user_id)->first();
+      
+      $konseptor = \App\User::get_user_pegawai($dt->user_id);
+      $data['pegawai_pihak1'] = Mtzpegawai::where('n_nik',$dt->doc_pihak1_nama)->first();
+      $data['pegawai_konseptor'] =$konseptor;
       $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
 
-      $objiddivisi=$dt->pemilik_kontrak->meta_name;
-      $objidunit=$dt->pemilik_kontrak->meta_title;
-      $data['divisi'] = \DB::table('rptom')->where('objiddivisi',$objiddivisi)->first();
-      $data['unit_bisnis'] = \DB::table('rptom')->where('objidunit',$objidunit)->first();
 
+      if($user_type!='subsidiary'){
+        $objiddivisi=$dt->pemilik_kontrak->meta_name;
+        $objidunit=$dt->pemilik_kontrak->meta_title;
+        $data['divisi'] = \DB::table('rptom')->where('objiddivisi',$objiddivisi)->first();
+        $data['unit_bisnis'] = \DB::table('rptom')->where('objidunit',$objidunit)->first();
+      }
+      else{
+        $data['divisi'] = $konseptor;
+        $data['unit_bisnis'] = $konseptor;
+      }
+      $data['user_type'] = $user_type;
       // dd($data);
       return view('documents::view')->with($data);
     }
@@ -455,6 +466,7 @@ class DocumentsController extends Controller
         if (empty($type)) {
             return \Response::json([]);
         }
+        $user_type = \App\User::check_usertype(Auth::user()->username);
         $data = $this->documents->select('documents.id','documents.doc_no','documents.doc_date','documents.doc_title','documents.doc_template_id','documents.doc_startdate','documents.doc_enddate','documents.supplier_id')
         ->with('jenis','supplier','pic')->whereNotNull('documents.doc_no')->where('documents.doc_parent',1)->where('documents.doc_signing', 1);
         if($type=='sp'){
@@ -476,10 +488,13 @@ class DocumentsController extends Controller
           });
         }
         if(!\Auth::user()->hasRole('admin')){
-          $data->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
-          $data->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
-
-          $data->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+          $data->join('v_users_pegawai','v_users_pegawai.user_id','=','documents.user_id');
+          if($user_type=='subsidiary'){
+            $data->where('v_users_pegawai.company_id',\App\User::get_subsidiary_user()->company_id);
+          }
+          else {
+            $data->where('v_users_pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+          }
         }
         $data = $data->paginate(30);
 
@@ -544,6 +559,7 @@ class DocumentsController extends Controller
         if (empty($type)) {
             return \Response::json([]);
         }
+        $user_type = Helpers::usertype();
         $data = $this->documents->select('documents.id','documents.doc_no','documents.doc_date','documents.doc_title','documents.doc_template_id','documents.doc_startdate','documents.doc_enddate','documents.supplier_id')
         ->with('jenis','supplier','pic')->whereNotNull('documents.doc_no')->where('documents.doc_parent',1)->where('documents.doc_signing', 1)->where('documents.doc_type','khs');
 
@@ -554,10 +570,13 @@ class DocumentsController extends Controller
           });
         }
         if(!\Auth::user()->hasRole('admin')){
-          $data->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
-          $data->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
-
-          $data->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+          $data->join('v_users_pegawai','v_users_pegawai.user_id','=','documents.user_id');
+          if($user_type=='subsidiary'){
+            $data->where('v_users_pegawai.company_id',\App\User::get_subsidiary_user()->company_id);
+          }
+          else {
+            $data->where('v_users_pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+          }
         }
         // dd($data->toSql());
         $data = $data->paginate(30);

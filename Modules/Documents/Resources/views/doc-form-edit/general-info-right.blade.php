@@ -4,34 +4,50 @@
 <div class="form-group">
   <label class="col-sm-2 control-label">Konseptor </label>
   <div class="col-sm-6">
-    <textarea class="form-control" name="konseptor" disabled="disabled">{{$pegawai->v_nama_karyawan.'/'.$pegawai->n_nik.' - '.$pegawai->v_short_posisi.' '.$pegawai->v_short_unit.'/'.$pegawai->v_short_divisi}}
+    <textarea class="form-control" name="konseptor" disabled="disabled">{{$pegawai_konseptor->v_nama_karyawan.'/'.$pegawai_konseptor->n_nik.' - '.$pegawai_konseptor->v_short_posisi.' '.$pegawai_konseptor->v_short_unit.'/'.$pegawai_konseptor->v_short_divisi}}
     </textarea>
   </div>
 </div>
 <!-- <div class="form-group">
   <label class="col-sm-2 control-label">Divisi</label>
   <div class="col-sm-6">
-    <input type="text" class="form-control" name="divisi"  disabled="disabled" autocomplete="off" value="{{$pegawai->v_short_divisi}}">
+    <input type="text" class="form-control" name="divisi"  disabled="disabled" autocomplete="off" value="{{$pegawai_konseptor->v_short_divisi}}">
   </div>
 </div>
 <div class="form-group">
   <label class="col-sm-2 control-label">Loker</label>
   <div class="col-sm-6">
-    <input type="text" class="form-control" name="loker"  disabled="disabled" autocomplete="off" value="{{$pegawai->v_short_unit}}">
+    <input type="text" class="form-control" name="loker"  disabled="disabled" autocomplete="off" value="{{$pegawai_konseptor->v_short_unit}}">
   </div>
 </div>
 <div class="form-group">
   <label class="col-sm-2 control-label">Jabatan</label>
   <div class="col-sm-6">
-    <input type="text" class="form-control" name="jabatan"  disabled="disabled" autocomplete="off" value="{{$pegawai->v_short_posisi}}">
+    <input type="text" class="form-control" name="jabatan"  disabled="disabled" autocomplete="off" value="{{$pegawai_konseptor->v_short_posisi}}">
   </div>
 </div> -->
 <div class="form-group">
   <label class="col-sm-2 control-label">Approver</label>
-  <div class="col-sm-6">
-    <textarea class="form-control" name="approver" disabled="disabled" rows="4">{{Helper::get_approver($pegawai)}}</textarea>
+  <div class="col-sm-6 text-me text-uppercase">{!!Helper::get_approver($pegawai_konseptor)!!}
   </div>
 </div>
+
+<div class="form-group formerror formerror-divisi formerror-unit_bisnis">
+  <label for="pemilik_kontrak" class="col-sm-2 control-label"><span class="text-red">*</span>Pemilik Kontrak</label>
+  <div class="col-sm-6">
+    <div class="form-group">
+      <div class="col-sm-6">
+        {!!Helper::select_all_divisi('divisi',old('divisi',Helper::prop_exists($doc,'divisi')))!!}
+        <div class="error error-divisi"></div>
+      </div>
+      <div class="col-sm-6">
+          {!!Helper::select_unit('unit_bisnis',old('unit_bisnis',Helper::prop_exists($doc,'unit_bisnis')))!!}
+          <div class="error error-unit_bisnis"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="form-group formerror formerror-doc_pihak1">
   <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Pihak I</label>
   <div class="col-sm-6">
@@ -50,7 +66,7 @@
         <option value="">Pilih Penandatangan Pihak 1</option>
       </select>
     @else
-      {!!Helper::select_atasan($pegawai,old('doc_pihak1_nama',Helper::prop_exists($doc,'doc_pihak1_nama')))!!}
+      {!!Helper::select_atasan($pegawai_konseptor,old('doc_pihak1_nama',Helper::prop_exists($doc,'doc_pihak1_nama')))!!}
     @endif
   </div>
   <div class="col-sm-10 col-sm-offset-2">

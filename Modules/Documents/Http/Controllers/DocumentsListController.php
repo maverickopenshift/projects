@@ -8,6 +8,7 @@ use Response;
 
 use Modules\Documents\Entities\Documents;
 use App\Helpers\Helpers;
+use App\User;
 
 class DocumentsListController extends Controller
 {
@@ -21,6 +22,7 @@ class DocumentsListController extends Controller
   {
     
     $status = $request->status;
+    $user_type = User::check_usertype(\Auth::user()->username);
     if(\Laratrust::hasRole('konseptor')){
       if($status=='tracking'){
         $status_no = 0;
@@ -33,7 +35,7 @@ class DocumentsListController extends Controller
       }
     }
 
-    if ($request->ajax()) {
+    if ($request->ajax() || $request->ajax=="1") {
         $limit = 25;
         $search = $request->q;
         $unit = $request->unit;
@@ -73,14 +75,19 @@ class DocumentsListController extends Controller
         }
 
         if(!\Auth::user()->hasRole('admin')){
-          $documents->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
-          $documents->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
-          $documents->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+          $documents->join('v_users_pegawai','v_users_pegawai.user_id','=','documents.user_id');
+          if($user_type=='subsidiary'){
+            $documents->where('v_users_pegawai.company_id',\App\User::get_subsidiary_user()->company_id);
+          }
+          else {
+            $documents->where('v_users_pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+          }
+          
         }
         $documents = $documents->with(['pegawai','users','jenis','supplier','pic']);
         $documents = $documents->paginate($limit);
         
-        $documents->getCollection()->transform(function ($value) use ($status_no) { 
+        $documents->getCollection()->transform(function ($value) use ($status_no,$user_type) { 
           if($value['doc_signing'] != '2'){
             $n_nik = $value->pegawai->n_nik;
             $v_nama_karyawan = $value->pegawai->v_nama_karyawan;
@@ -90,7 +97,7 @@ class DocumentsListController extends Controller
             $username = $value->users->username;
             $name = $value->users->name;
           }
-
+          
           $value['total_child']=0;
           $edit = '';
           if($value['doc_signing']==0 && \Laratrust::can('approve-kontrak')){
@@ -129,6 +136,7 @@ class DocumentsListController extends Controller
     }
     $data['page_title'] = 'Data Dokumen '.ucfirst($status);
     $data['doc_status'] = $status;
+    $data['user_type'] = $user_type;
     return view('documents::list-others')->with($data);
   }
 }

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Schema;
 use Modules\Documents\Entities\DocType;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Users\Entities\Pegawai;
+use Modules\Config\Entities\Config;
 
 use Modules\Documents\Entities\Sap;
 
@@ -30,7 +31,7 @@ class Documents extends Model
       return $this->hasOne('App\User','id','user_id');
     }
     public function pegawai(){
-      return $this->hasOne('Modules\Users\Entities\Pegawai','n_nik','doc_pihak1_nama');
+      return $this->hasOne('Modules\Users\Entities\Mtzpegawai','n_nik','doc_pihak1_nama');
     }
     public function jenis(){
       return $this->hasOne('Modules\Documents\Entities\DocTemplate','id','doc_template_id')->with('category','type');
@@ -140,42 +141,80 @@ class Documents extends Model
     }
     public static function get_loker($doc_id){
       $doc = self::select('doc_pihak1_nama')->where('id','=',$doc_id)->first();
-      $peg = Pegawai::select('c_kode_unit')->where('n_nik','=',$doc->doc_pihak1_nama)->first();
+      $peg = \DB::table('__mtz_pegawai')->select('c_kode_unit')->whereNotIn('pegawai_type',['subsidiary'])->where('n_nik','=',$doc->doc_pihak1_nama)->first();
+      if(!$peg){
+        return null;
+      }
       return $peg->c_kode_unit;
     }
-    public static function check_no_kontrak($doc_no,$user_type='telkom'){
+    public static function get_loker_by_nik($nik){
+      $peg = \DB::table('__mtz_pegawai')->select('c_kode_unit')
+                  ->where('n_nik','=',$nik)
+                  ->whereNotIn('pegawai_type',['subsidiary'])
+                  ->first();
+      if(!$peg){
+        return null;
+      }
+      return $peg->c_kode_unit;
+    }
+    public static function check_no_kontrak($doc_no,$year,$user_type='telkom'){
       $dt = \DB::table('documents');
       if($user_type='telkom'){
-        $dt = $dt->selectRaw('documents.*,CONVERT(SUBSTR(doc_no,7,5),UNSIGNED INTEGER) as no_urut,RIGHT(doc_no,4) as tahun')
-                  ->whereRaw('CONVERT(SUBSTR(doc_no,7,5),UNSIGNED INTEGER) = ? ', [$doc_no])
-                  ->whereRaw('RIGHT(doc_no,4) = ? ', [date('Y')])
+        $start = sprintf('%05s', $doc_no);
+        $dt = $dt->whereRaw('SUBSTR(doc_no,7,5) = ? ', [$start])
                   ->whereRaw('doc_user_type = ? ', ['telkom'])
-                  ->whereRaw('doc_no is not null')
-                  ->orderByRaw('no_urut', 'desc');
+                    ->whereRaw('RIGHT(doc_no,4) = ? ', [$year]);
+        // $dt = $dt->selectRaw('documents.*,CONVERT(SUBSTR(doc_no,7,5),UNSIGNED INTEGER) as no_urut,RIGHT(doc_no,4) as tahun')
+        //           ->whereRaw('CONVERT(SUBSTR(doc_no,7,5),UNSIGNED INTEGER) = ? ', [$doc_no])
+        //           ->whereRaw('RIGHT(doc_no,4) = ? ', [date('Y')])
+        //           ->whereRaw('doc_user_type = ? ', ['telkom'])
+        //           ->whereRaw('doc_no is not null')
+        //           ->orderByRaw('id', 'desc');
       }
       else{
         $dt = $dt->whereRaw('doc_no = ? ', [$doc_no])
                  ->whereRaw('doc_user_type = ? ', ['subsidiary'])
                  ->orderBy('id', 'desc');
-      }      
+      }
       return $dt->first();
+    }
+    public static function create_manual_no_kontrak($doc_no,$nik,$template_id,$date,$doc_type){
+      $no = sprintf('%05s', $doc_no);
+      $loker = self::get_loker_by_nik($nik);
+      $year = date('Y',strtotime($date));
+      $doc_template = \DB::table('doc_template')->where('id',$template_id)->first();
+      $pattern = ($doc_type=='surat_pengikatan')?'C.TEL.':'K.TEL.';
+      $no_kontrak=$pattern.$no.'/'.$doc_template->kode.'/'.$loker."/".$year;
+      $count = \DB::table('documents')
+                    ->whereRaw('SUBSTR(doc_no,7,5) = ? ', [$no])
+                    ->whereRaw('RIGHT(doc_no,4) = ? ', [$year])
+                    ->count();
+      if($count==0){
+        $new_id = $no_kontrak;
+      }
+      else{
+        $doc_no = $doc_no+1;
+        $new_id = self::create_manual_no_kontrak($doc_no,$nik,$template_id,$date,$doc_type);
+      }
+      return $new_id;
     }
     // $dt = $dt->selectRaw('documents.*,CONVERT(SUBSTR(doc_no,7,5),UNSIGNED INTEGER) as no_urut,RIGHT(doc_no,4) as tahun')
     //           ->whereRaw('tahun = ? ', [date('Y')])
     //           ->whereRaw('doc_user_type = ? ', ['telkom'])
     //           ->whereRaw('doc_no is not null')
     //           ->orderBy('id', 'desc')
-    public static function create_no_kontrak($template_id,$doc_id){
+    public static function create_no_kontrak($template_id,$doc_id,$int=1){
       $loker = self::get_loker($doc_id);
       $doc = \DB::table('documents')->where('id',$doc_id)->first();
       if($doc){
-        if($doc->penomoran_otomatis=='yes'){
-          $start = '00001';
-          $pattern = ($doc->doc_type=='surat_pengikatan')?'C.TEL':'K.TEL.';
+        if($doc->penomoran_otomatis=='yes' && $doc->doc_user_type=='telkom'){
+          $start = sprintf('%05s', Config::get_config('start-number'));
+          $pattern = ($doc->doc_type=='surat_pengikatan')?'C.TEL.':'K.TEL.';
           $year = date('Y');
           $doc_template = \DB::table('doc_template')->where('id',$template_id)->first();
           $no_kontrak=$pattern.$start.'/'.$doc_template->kode.'/'.$loker."/".$year;
           $count = \DB::table('documents')
+                        ->whereRaw('doc_user_type = ? ', ['telkom'])
                         ->whereRaw('SUBSTR(doc_no,7,5) = ? ', [$start])
                         ->whereRaw('RIGHT(doc_no,4) = ? ', [$year])
                         ->count();
@@ -187,18 +226,20 @@ class Documents extends Model
               $dt = \DB::table('documents')
                       ->select('doc_no')
                       ->whereNotNull('doc_no')
-                      ->orderBy('updated_at','DESC')
+                      ->whereRaw('doc_user_type = ? ', ['telkom'])
+                      ->orderByRaw('CONVERT(SUBSTR(doc_no,7,5),UNSIGNED INTEGER) DESC')
+                      ->orderByRaw('RIGHT(doc_no,4) DESC')
                       ->first();
-
               $last = $dt->doc_no;
               $lastplg = substr($last, 6,5);
-              $nextplg = intval($lastplg) + 1;
+              $nextplg = intval($lastplg) + $int;
               $idnya = sprintf('%05s', $nextplg);
               $new_id=$pattern.$idnya.'/'.$doc_template->kode.'/'.$loker."/".$year;
             }
             $count = \DB::table('documents')->where('doc_no',$new_id)->count();
             if($count>1){
-              $new_id = self::create_no_kontrak($template_id,$doc_id);
+              $int = $int+1;
+              $new_id = self::create_no_kontrak($template_id,$doc_id,$int);
             }
             return $new_id;
         }
@@ -240,11 +281,17 @@ class Documents extends Model
       }
     }
     public static function check_permission_doc($doc_id,$type){
+      $user_type = \App\User::check_usertype(\Auth::user()->username);
       $doc = self::selectRaw('documents.id,documents.user_id');
-      $doc->join('users_pegawai','users_pegawai.users_id','=','documents.user_id');
-      $doc->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');
+      $doc->join('v_users_pegawai','v_users_pegawai.user_id','=','documents.user_id');
       if(!\Laratrust::hasRole('admin')){
-        $doc->where('pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+        if($user_type=='subsidiary'){
+          $doc->where('v_users_pegawai.company_id',\App\User::get_subsidiary_user()->company_id)
+          ->where('v_users_pegawai.pegawai_type','subsidiary');
+        }else{
+          $doc->where('v_users_pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+        }
+
       }
       $doc->where('documents.id','=',$doc_id);
       if(!empty($type)){

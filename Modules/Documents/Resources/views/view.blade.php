@@ -284,8 +284,8 @@ $(document).on('click', '.btn-setuju', function(event) {
   var nm_pihak1 = '{{$pegawai_pihak1->v_nama_karyawan}}';
   var nik_pihak1 = '{{$pegawai_pihak1->n_nik}}';
   var jbtn_pihak1 = '{{$pegawai_pihak1->v_short_posisi}}';
-  var loker = '{{$pegawai->c_kode_unit}}';
-  var nm_loker = '{{$pegawai->v_short_unit}}';
+  var loker = '{{$pegawai_pihak1->c_kode_unit}}';
+  var nm_loker = '{{$pegawai_pihak1->v_short_unit}}';
   bootbox.confirm({
     size:"large",
     title:"Konfirmasi",

@@ -1,4 +1,4 @@
-@if($auto_numb=='off')
+@if($auto_numb=='off' || $user_type=='subsidiary')
 <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;padding-bottom:0">
   <div id="penomoran-otomatis-form" class="form-group  formerror formerror-doc_no">
     <label class="col-sm-2 control-label"><span class="text-red">*</span> No. Kontrak</label>

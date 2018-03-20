@@ -102,8 +102,8 @@ let mix = require('laravel-mix');
             'resources/assets/js/po_dummy.js',
         ], 'public/js/po_dummy.js', './')
         .scripts([
-            'resources/assets/js/pdfjs/pdf.js',
-        ], 'public/js/pdf.js', './')
+            'resources/assets/js/pdfjs/pdf.worker.js',
+        ], 'public/js/pdf.worker.js', './')
         .scripts([
             'resources/assets/js/pdfjs/pdf.js',
         ], 'public/js/pdf.js', './')

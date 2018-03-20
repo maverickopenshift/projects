@@ -62,7 +62,7 @@
 
           <div class="form-group">
             <label class="col-sm-2 control-label">Konseptor</label>
-            <div class="col-sm-10 text-me">{{$pegawai->v_nama_karyawan.'/'.$pegawai->n_nik.' - '.$pegawai->v_short_posisi.' '.$pegawai->v_short_unit.'/'.$pegawai->v_short_divisi}}</div>
+            <div class="col-sm-10 text-me">{{$pegawai_konseptor->v_nama_karyawan.'/'.$pegawai_konseptor->n_nik.' - '.$pegawai_konseptor->v_short_posisi.' '.$pegawai_konseptor->v_short_unit.'/'.$pegawai_konseptor->v_short_divisi}}</div>
           </div>
           <div class="form-group">
             <label class="col-sm-2 control-label">Pemilik Kontrak</label>
@@ -75,7 +75,7 @@
           @include('documents::doc-view.general-info-right') -->
           <div class="form-group">
             <label class="col-sm-2 control-label">Approver</label>
-            <div class="col-sm-10 text-me">{{Helper::get_approver_by_id($doc->user_id)}}</div>
+            <div class="col-sm-10 text-me">{!!Helper::get_approver_by_id($doc->user_id)!!}</div>
           </div>
           <div class="form-group">
             <label class="col-sm-2 control-label">Pihak I </label>
@@ -116,7 +116,7 @@
                                   <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
                                   <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
                                   </a>
-                                  <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}?nik={{$pegawai->n_nik}}&nama={{$pegawai->v_nama_karyawan}}">
+                                  <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_lampiran_ttd'])}}">
                                   <i class="glyphicon glyphicon-download-alt"></i>  Download
                                   </a>
                                 @else

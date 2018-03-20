@@ -55,20 +55,30 @@ class User extends Authenticatable
       $data->where('v_band_posisi','<',$posisi);
       return $data->orderBy('v_band_posisi','asc')->get();
     }
+    public static function get_atasan(){
+      $data = \DB::table('users_pegawai')
+                ->join('users_atasan','users_atasan.users_pegawai_id','=','users_pegawai.id');  
+      if(self::is_subsidiary(\Auth::user()->username)){
+        $data->select('pegawai_subsidiary.*')->join('pegawai_subsidiary','pegawai_subsidiary.n_nik','=','users_atasan.nik'); 
+      }
+      else{
+        $data->select('pegawai.*')->join('pegawai','pegawai.n_nik','=','users_atasan.nik'); 
+      }
+      $data->where('users_id',\Auth::id());
+      return $data->get();
+    }
     public static function get_divisi_by_user_id($id=null){
       if(is_null($id)){
         $id = \Auth::id();
       }
-      $data = \DB::table('users_pegawai')->select('*');  
-      $data->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');  
-      $data->where('users_pegawai.users_id',$id)->orderBy('users_pegawai.users_id','desc');
+      $data = \DB::table('v_users_pegawai')->select('*');
+      $data->where('user_id',$id);
       $data = $data->first();
       return $data->objiddivisi;
     }
     public static function get_pegawai_by_id($id){
-      $data = \DB::table('users_pegawai')->select('*');  
-      $data->join('pegawai','pegawai.n_nik','=','users_pegawai.nik');  
-      $data->where('users_pegawai.users_id',$id)->orderBy('users_pegawai.users_id','desc');
+      $data = \DB::table('v_users_pegawai')->select('*');  
+      $data->where('user_id',$id);
       $data = $data->first();
       return $data;
     }
@@ -143,15 +153,13 @@ class User extends Authenticatable
       }
       return $data;
     }
-    public static function get_user_pegawai(){
-      $data = \DB::table('users_pegawai')
-                ->join('pegawai', 'pegawai.n_nik', '=', 'users_pegawai.nik')
-                ->where('users_pegawai.users_id',\Auth::id())->first();
-      if(!$data){
-        $data = \DB::table('users_pegawai')
-                  ->join('pegawai_nonorganik', 'pegawai_nonorganik.n_nik', '=', 'users_pegawai.nik')
-                  ->where('users_pegawai.users_id',\Auth::id())->first();
+    public static function get_user_pegawai($id=null){
+      if(is_null($id)){
+        $id = \Auth::id();
       }
+      $data = \DB::table('v_users_pegawai');
+      $data =  $data->where('v_users_pegawai.user_id',$id)->first();
+      // dd($data);
       return $data;
     }
     public static function get_user_by_role($role){
@@ -218,5 +226,14 @@ class User extends Authenticatable
       }
       return false;
     }
-    
+    public static function get_subsidiary_user(){
+      $data = \DB::table('v_pegawai_subsidiary')
+                ->where('user_id',\Auth::id());
+      return $data->first();
+    }
+    public static function get_subsidiary_user_by_id($id){
+      $data = \DB::table('v_pegawai_subsidiary')
+                ->where('user_id',$id);
+      return $data->first();
+    }
 }

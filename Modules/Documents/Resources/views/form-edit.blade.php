@@ -14,7 +14,7 @@
         @endphp
         <ul class="nav nav-tabs">
           <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO</a></li>
-
+          <input type="hidden" id="statusButton" name="statusButton"></li>
           @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum','side_letter']))
             @if(in_array($doc_type->name,['amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey']))
               <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
@@ -228,7 +228,69 @@ $(function () {
       }
     });
   });
+  $(document).on('click', '#btn-draft', function(event) {
+    $('#statusButton').val('2');
 
+    event.preventDefault();
+    var content = $('.content-view');
+    var loading = content.find('.loading2');
+
+    var formMe = $('#form-kontrak');
+    $(".formerror").removeClass("has-error");
+    $(".error").html('');
+
+    bootbox.confirm({
+      title:"Konfirmasi",
+      message: "Apakah anda yakin untuk submit?",
+      buttons: {
+          confirm: {
+              label: 'Yakin',
+              className: 'btn-success'
+          },
+          cancel: {
+              label: 'Tidak',
+              className: 'btn-danger'
+          }
+      },
+      callback: function (result) {
+        if(result){
+          $.ajax({
+            url: formMe.attr('action'),
+            type: 'post',
+            processData: false,
+            contentType: false,
+            data: new FormData(document.getElementById("form-kontrak")),
+            dataType: 'json',
+            success: function(response){
+              if(response.errors){
+                $.each(response.errors, function(index, value){
+                    if (value.length !== 0){
+                      index = index.replace(".", "-");
+                      $(".formerror-"+ index).removeClass("has-error");
+                      $(".error-"+ index).html('');
+
+                      $(".formerror-"+ index).addClass("has-error");
+                      $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
+                    }
+                });
+
+                bootbox.alert({
+                  title:"Pemberitahuan",
+                  message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
+                });
+              }else{
+                if(response.status=="tracking"){
+                  window.location.href = "{{route('doc',['status'=>'tracking'])}}";
+                }else if(response.status=="draft"){
+                  window.location.href = "{{route('doc',['status'=>'draft'])}}";
+                }
+              }
+            }
+          });
+        }
+      }
+    });
+  });
 });
 </script>
 @endpush

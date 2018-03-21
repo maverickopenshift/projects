@@ -24,7 +24,7 @@ class ProductController extends Controller
                         ->join('catalog_category as b','b.id','=','a.catalog_category_id')
                         ->get();          
         $data['page_title'] = 'Item Katalog';
-        return view('catalog::product2')->with($data);
+        return view('catalog::product')->with($data);
     }
 
     public function get_product_induk(Request $request){

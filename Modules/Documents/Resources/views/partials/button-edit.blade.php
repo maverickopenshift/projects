@@ -10,7 +10,9 @@
     <button type="submit" class="btn btn-success" style="padding:5px 20px;font-weight:bold;font-size:16px;" id="btn-simpan">SIMPAN</button>
   @endif --}}
   <textarea class="form-control komentar hide" rows="4" name="komentar">{{old('komentar')}}</textarea>
-  <button type="submit" class="btn btn-warning" style="padding:5px 20px;font-weight:bold;font-size:16px;margin-right:10px;" id="btn-draft">SIMPAN KE DRAFT</button>
+  @if(!in_array($doc->doc_signing,['1']))
+    <button type="submit" class="btn btn-warning" style="padding:5px 20px;font-weight:bold;font-size:16px;margin-right:10px;" id="btn-draft">SIMPAN KE DRAFT</button>
+  @endif
   <button class="btn btn-success btn-submit" id="btn-submit" style="padding:5px 20px;font-weight:bold;font-size:16px;">SUBMIT</button>
   <button class="btn btn-primary btn-sm btn_submit hide" type="submit"></button>
 </div>

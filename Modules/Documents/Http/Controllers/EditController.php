@@ -277,6 +277,12 @@ class EditController extends Controller
       $dt->divisi = $konseptor->objiddivisi;
       $dt->unit_bisnis = $konseptor->objidunit;
     }
+    
+    $pr = DocMeta::get_first($dt->id,'eproposal_pr');
+    if($pr){
+      $dt->doc_pr = $pr->meta_name;
+    }
+    
     $data['doc'] = $dt;
 
     $konseptor = \App\User::get_user_pegawai($dt->user_id);
@@ -366,7 +372,7 @@ class EditController extends Controller
 
     $rules = [];
     $new_lamp_up=[];
-    if(in_array($status,['0','2'])){
+    if(in_array($status,['2'])){
       if($user_type!='subsidiary'){
         $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
@@ -421,7 +427,14 @@ class EditController extends Controller
       }
       $request->merge(['doc_lampiran' => $new_lamp]);
     }
-
+    else{
+      $rules['komentar']         = $required.'|max:250|min:2';
+    }
+    
+    if($type=='turnkey'){
+      $rules['doc_pr']         =  'sometimes|nullable|pr_exists';
+    }
+    
     $rules['doc_sow']          =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['hs_kode_item.*']   =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
     $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
@@ -549,11 +562,12 @@ class EditController extends Controller
         'errors' => $validator->getMessageBag()->toArray()
       ));
     }
-
+    DB::beginTransaction();
+    try {
     $doc = Documents::where('id',$id)->first();
 
-    if(in_array($status,['0','2'])){
-      if($status=='2'){
+    if(in_array($status,['0','2'])){ // Draft dan dokumen yg sedang diproses
+      if($status=='2'){ //Klo inputan berasal dari draft maka request2 dibawah ini dapat di save
             $doc->doc_title = $request->doc_title;
             $doc->doc_desc = $request->doc_desc;
             $doc->doc_template_id = $request->doc_template_id;
@@ -588,34 +602,64 @@ class EditController extends Controller
               $doc->doc_user_type = 'subsidiary';
               $doc->penomoran_otomatis = 'no';
             }
-            if($status=='2'){
+            if(count($request->divisi)>0 && $user_type!='subsidiary'){
               DocMeta::where([
                 ['documents_id','=',$doc->id],
                 ['meta_type','=','pemilik_kontrak'],
                 ])->delete();
-              if(count($request->divisi)>0 && $user_type!='subsidiary'){
-                $doc_meta2 = new DocMeta();
-                $doc_meta2->documents_id = $doc->id;
-                $doc_meta2->meta_type = 'pemilik_kontrak';
-                $doc_meta2->meta_name = $request->divisi;
-                $doc_meta2->meta_title =$request->unit_bisnis;
-                $doc_meta2->save();
+              $doc_meta2 = new DocMeta();
+              $doc_meta2->documents_id = $doc->id;
+              $doc_meta2->meta_type = 'pemilik_kontrak';
+              $doc_meta2->meta_name = $request->divisi;
+              $doc_meta2->meta_title =$request->unit_bisnis;
+              $doc_meta2->save();
+            }
+            if(count($new_lamp_up)>0){
+              DocMeta::where([
+                ['documents_id','=',$doc->id],
+                ['meta_type','=','lampiran_ttd']
+                ])->delete();
+              foreach($new_lamp_up as $key => $val){
+                if(!empty($val)){
+                  $doc_meta = new DocMeta();
+                  $doc_meta->documents_id = $doc->id;
+                  $doc_meta->meta_type = 'lampiran_ttd';
+                  $doc_meta->meta_name = $request['doc_lampiran_nama'][$key];
+                  if(is_object($val)){
+                    $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
+                    $file = $request['doc_lampiran'][$key];
+                    $file->storeAs('document/'.$request->type.'_lampiran_ttd', $fileName);
+                    $doc_meta->meta_file = $fileName;
+                  }
+                  else{
+                    $doc_meta->meta_file = $val;
+                  }
+                  $doc_meta->save();
+                }
               }
             }
       }
-      else{
-        $doc->doc_signing = '0';
-      }
-      $doc->doc_sow = $request->doc_sow;
-      $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
-      $doc->save();
     }else{
       //kalo dokumennya di return/ di approve dan di edit datanya (status = 3 & 1)
-      $doc->doc_signing = '0';
-      $doc->doc_sow = $request->doc_sow;
-      $doc->save();
+      $doc->doc_signing = ($statusButton=='2')?'2':'0';
+      
     }
-
+    $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
+    $doc->doc_sow = $request->doc_sow;
+    $doc->save();
+    
+    
+    if(count($request->doc_pr)>0){
+      DocMeta::where([
+        ['documents_id','=',$doc->id],
+        ['meta_type','=','eproposal_pr'],
+        ])->delete();
+      $doc_meta2 = new DocMeta();
+      $doc_meta2->documents_id = $doc->id;
+      $doc_meta2->meta_type = 'eproposal_pr';
+      $doc_meta2->meta_name = $request->doc_pr;
+      $doc_meta2->save();
+    }
     if(count($request->ps_judul)>0){
       DocMeta::where([
         ['documents_id','=',$doc->id],
@@ -632,31 +676,6 @@ class EditController extends Controller
           $doc_meta2->meta_title =$request['ps_judul_new'][$key];
           $doc_meta2->meta_desc = $request['ps_isi'][$key];
           $doc_meta2->save();
-        }
-      }
-    }
-
-    if(count($new_lamp_up)>0){
-      DocMeta::where([
-        ['documents_id','=',$doc->id],
-        ['meta_type','=','lampiran_ttd']
-        ])->delete();
-      foreach($new_lamp_up as $key => $val){
-        if(!empty($val)){
-          $doc_meta = new DocMeta();
-          $doc_meta->documents_id = $doc->id;
-          $doc_meta->meta_type = 'lampiran_ttd';
-          $doc_meta->meta_name = $request['doc_lampiran_nama'][$key];
-          if(is_object($val)){
-            $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));
-            $file = $request['doc_lampiran'][$key];
-            $file->storeAs('document/'.$request->type.'_lampiran_ttd', $fileName);
-            $doc_meta->meta_file = $fileName;
-          }
-          else{
-            $doc_meta->meta_file = $val;
-          }
-          $doc_meta->save();
         }
       }
     }
@@ -843,10 +862,18 @@ class EditController extends Controller
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     return redirect()->route('doc',['status'=>'tracking']);
     */
+    DB::commit();
     $r_status=($statusButton=='2')?'draft':'tracking';
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     return Response::json (array(
       'status' => $r_status
     ));
+  } catch (\Exception $e) {
+        DB::rollBack();
+        return Response::json (array(
+          'status' => 'error',
+          'msg' => $e->getMessage()
+        ));
+    }
   }
 }

@@ -152,7 +152,8 @@ public static function get_approver_by_id($id)
   $data = '';
   foreach ($cat as $key=>$dt) {
     // $data[] = $dt->v_short_posisi;
-    $data .= ($key+1).'. '.$dt->v_nama_karyawan.'/'.$dt->n_nik.' - '.$dt->v_short_posisi.'</br>';
+    $num = (count($cat)>1)?($key+1).'. ':'';
+    $data .= $num.$dt->v_nama_karyawan.' <i>('.$dt->n_nik.')</i> - '.$dt->v_short_posisi.'</br>';
   }
   if(count($cat)==0){
     return 'Tidak ada Approver di Divisi Anda';
@@ -174,7 +175,8 @@ public static function get_approver($pegawai=null)
   $cat = $cat->where('role_name','approver')->get();
   $data = '';
   foreach ($cat as $key=>$dt) {
-    $data .= ($key+1).'. '.$dt->v_nama_karyawan.'/'.$dt->n_nik.' - '.$dt->v_short_posisi.'</br>';
+    $num = (count($cat)>1)?($key+1).'. ':'';
+    $data .= $num.$dt->v_nama_karyawan.' <i>('.$dt->n_nik.')</i> - '.$dt->v_short_posisi.'</br>';
   }
   if(count($cat)==0){
     return 'Tidak ada Approver di Divisi Anda';

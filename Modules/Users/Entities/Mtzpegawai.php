@@ -3,6 +3,7 @@
 namespace Modules\Users\Entities;
 
 use Illuminate\Database\Eloquent\Model;
+use DB;
 
 class Mtzpegawai extends Model
 {
@@ -13,5 +14,9 @@ class Mtzpegawai extends Model
     public static function get_by_nik($nik){
       $data = self::where('n_nik',$nik)->first();
       return $data;
+    }
+    public static function get_rptom($select,$field,$value){
+      $data = DB::table('rptom')->select($select)->where($field,$value)->first();
+      return $data->{$select};
     }
 }

@@ -21,6 +21,7 @@ let mix = require('laravel-mix');
         .copy('node_modules/admin-lte/plugins/iCheck/square/blue.png','public/css/blue.png')
         .copy('node_modules/admin-lte/plugins/iCheck/square/blue@2x.png','public/css/blue@2x.png')
         .copy('resources/assets/images','public/images')
+        .copy('resources/assets/fonts','public/fonts')
         //.sass('app.scss')
         .styles([
             'public/css/app.css',
@@ -44,6 +45,8 @@ let mix = require('laravel-mix');
             'node_modules/admin-lte/dist/css/AdminLTE.css',
             'node_modules/admin-lte/dist/css/skins/skin-red-light.css',
             'node_modules/admin-lte/dist/css/skins/skin-red-light.css',
+            // 'resources/assets/fonts/Oswald-SemiBold/styles.css',
+            'resources/assets/css/fonts.css',
             'resources/assets/css/custom.css'
         ], 'public/css/all.css', './')
         .styles([
@@ -53,6 +56,7 @@ let mix = require('laravel-mix');
             'node_modules/ionicons/dist/css/ionicons.css',
             'node_modules/admin-lte/dist/css/AdminLTE.css',
             'node_modules/admin-lte/plugins/iCheck/square/blue.css',
+            'resources/assets/css/fonts.css',
             'resources/assets/css/login.css'
         ], 'public/css/login.css', './')
         .scripts([

@@ -53,7 +53,9 @@
           <div class="form-group" style="position:relative;margin-bottom: 34px;">
             <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;">{{$title_hs}}</div>
           </div>
-
+          @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey']))
+            @include('documents::doc-form.boq-eproposal')
+          @else
           <div class="form-group top20">
             <!-- <label for="prinsipal_st" class="col-sm-2 control-label"> {{$title_hs}}</label> -->
             <div class="col-sm-12">
@@ -200,6 +202,7 @@
                 @endif
             </table>
           </div>
+          @endif
         </div>
         @if($doc_type['title']=="SP")
           <div class="form-group formerror formerror-doc_lampiran_teknis">

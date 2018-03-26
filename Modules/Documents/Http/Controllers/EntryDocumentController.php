@@ -241,7 +241,10 @@ class EntryDocumentController extends Controller
         if($type!='khs'){
           $rules['doc_value']     =  $required.'|max:500|min:3|regex:/^[0-9 .]+$/i';
         }
-
+        if($type=='turnkey'){
+          $rules['doc_pr']         =  'sometimes|nullable|pr_exists';
+        }
+        
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']       =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
@@ -362,7 +365,8 @@ class EntryDocumentController extends Controller
             'errors' => $validator->getMessageBag()->toArray()
           ));
         }
-
+        DB::beginTransaction();
+        try {
       $doc = new Documents();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
@@ -411,7 +415,16 @@ class EntryDocumentController extends Controller
         $doc_meta2->meta_title =$request->unit_bisnis;
         $doc_meta2->save();
       }
-
+      
+      //eproposal PR
+      if(count($request->doc_pr)>0){
+        $doc_meta2 = new DocMeta();
+        $doc_meta2->documents_id = $doc->id;
+        $doc_meta2->meta_type = 'eproposal_pr';
+        $doc_meta2->meta_name = $request->doc_pr;
+        $doc_meta2->save();
+      }
+      
       /// pasal khusus
       if(count($request->ps_judul)>0){
         foreach($request->ps_judul as $key => $val){
@@ -611,6 +624,7 @@ class EntryDocumentController extends Controller
       }
 
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
+      DB::commit();
       if($request->statusButton == '0'){
         return Response::json (array(
           'status' => 'tracking'
@@ -619,6 +633,13 @@ class EntryDocumentController extends Controller
         return Response::json (array(
           'status' => 'draft'
         ));
+      }
+    } catch (\Exception $e) {
+          DB::rollBack();
+          return Response::json (array(
+            'status' => 'error',
+            'msg' => $e->getMessage()
+          ));
       }
     }
 

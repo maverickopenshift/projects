@@ -134,11 +134,11 @@
                 @permission('catalog-category')
                   <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Kategori</a></li>
                 @endpermission
-
+                {{--
                 <li class="{{Request::is('catalog/master_product') ?'active':''}}"><a href="{{route('catalog.master_product')}}">Master Katalog</a></li>
                 <li class="{{Request::is('catalog/master_product') ?'active':''}}"><a href="{{route('catalog.master_product')}}">Logistik</a></li>
 
-                {{--
+                
                 @permission('catalog-product')
                   <li class="{{Request::is('catalog/master_product') ?'active':''}}"><a href="{{route('catalog.master_product')}}">Master Katalog</a></li>
                 @endpermission

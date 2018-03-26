@@ -406,7 +406,7 @@ class EditController extends Controller
         $rules['doc_value']        =  $required.'|max:500|min:3|regex:/^[0-9 .]+$/i';
       }
 
-      if($user_type=='off'){
+      if($user_type=='subsidiary'){
         $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
       }
       else{

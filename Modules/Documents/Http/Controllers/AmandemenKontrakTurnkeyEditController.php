@@ -104,7 +104,7 @@ class AmandemenKontrakTurnkeyEditController extends Controller
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
 
-      if($user_type=='off'){
+      if($user_type=='subsidiary'){
         $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
       }
       else{
@@ -182,10 +182,16 @@ class AmandemenKontrakTurnkeyEditController extends Controller
 
 
     $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-    $validator->after(function ($validator) use ($request) {
+    $validator->after(function ($validator) use ($request,$auto_numb,$user_type) {
       // if($request->doc_enddate < $request->doc_startdate){
       //   $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
       // }
+      if($user_type!='subsidiary' && $auto_numb=='off' && !$validator->errors()->has('doc_no')){
+        $d = Documents::check_no_kontrak($request['doc_no'],date('Y',strtotime($request['doc_startdate'])));
+        if($d){
+          $validator->errors()->add('doc_no', 'No Kontrak yang Anda masukan sudah ada!');
+        }
+      }
     });
 
     if ($validator->fails ()){

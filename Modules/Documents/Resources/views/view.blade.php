@@ -157,15 +157,16 @@ $(function () {
 });
 
 $(document).on('click', '.disclaimer', function(event) {
-  if($('.disclaimer').is(':checked')) {
+  if($(this).is(':checked')) {
+    $('.disclaimer').prop('checked',true);
     $('.btn-setuju').prop('disabled', false);
     $('.btn-reject').prop('disabled', false);
   }else{
     $('.btn-setuju').prop('disabled', true);
     $('.btn-reject').prop('disabled', true);
+    $('.disclaimer').prop('checked',false);
   }
 });
-
 $(document).on('click', '.btn-reject', function(event) {
   event.preventDefault();
   var content = $('.content-view');

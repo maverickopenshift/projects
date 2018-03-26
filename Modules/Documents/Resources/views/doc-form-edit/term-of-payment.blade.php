@@ -77,7 +77,7 @@
                         <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                         </div>
-                        <input type="text" class="form-control datepicker" name="top_tanggal_mulai[]" autocomplete="off" placeholder="Tanggal Mulai.." value="{{date('d-m-Y', strtotime($dt->top_tanggal_mulai))}}">
+                        <input type="text" class="form-control datepicker" name="top_tanggal_mulai[]" autocomplete="off" placeholder="Tanggal Mulai.." value="{{$dt->top_tanggal_mulai}}">
                       </div>
                       <div class="error error-top_tanggal_mulai error-top_tanggal_mulai-{{$key}}"></div>
                     </td>
@@ -87,7 +87,7 @@
                         <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                         </div>
-                        <input type="text" class="form-control datepicker" name="top_tanggal_selesai[]" autocomplete="off" placeholder="Tanggal Selesai.." value="{{date('d-m-Y', strtotime($dt->top_tanggal_selesai))}}">
+                        <input type="text" class="form-control datepicker" name="top_tanggal_selesai[]" autocomplete="off" placeholder="Tanggal Selesai.." value="{{$dt->top_tanggal_selesai}}">
                       </div>
                       <div class="error error-top_tanggal_selesai error-top_tanggal_selesai-{{$key}}"></div>
                     </td>
@@ -107,7 +107,7 @@
                         <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                         </div>
-                        <input type="text" class="form-control datepicker" name="top_tanggal_bapp[]" autocomplete="off" placeholder="Tanggal BAPP.." value="{{date('d-m-Y', strtotime($dt->top_tanggal_bapp))}}">
+                        <input type="text" class="form-control datepicker" name="top_tanggal_bapp[]" autocomplete="off" placeholder="Tanggal BAPP.." value="{{$dt->top_tanggal_bapp}}">
                       </div>
                       <div class="error error-top_tanggal_bapp error-top_tanggal_bapp-{{$key}}"></div>
                     </td>

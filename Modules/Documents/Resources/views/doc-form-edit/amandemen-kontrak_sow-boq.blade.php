@@ -92,7 +92,7 @@
                       <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                       </div>
-                      <input type="text" name="f_tanggal1[]" value="{{date('d-m-Y', strtotime($f_tanggal1))}}" class="form-control f_tanggal1 datepicker">
+                      <input type="text" name="f_tanggal1[]" value="{{$f_tanggal1}}" class="form-control f_tanggal1 datepicker">
                   </div>
                 </div>
             </div>
@@ -104,7 +104,7 @@
                       <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                       </div>
-                      <input type="text" name="f_tanggal2[]" value="{{date('d-m-Y', strtotime($f_tanggal2))}}" class="form-control f_tanggal2 datepicker">
+                      <input type="text" name="f_tanggal2[]" value="{{$f_tanggal2}}" class="form-control f_tanggal2 datepicker">
                   </div>
                 </div>
             </div>

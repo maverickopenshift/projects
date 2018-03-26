@@ -9,7 +9,7 @@
         }elseif($doc_type->name=='mou'){
           $title_sow = 'RUANG LINGKUP';
         }
-      @endphp      
+      @endphp
       <ul class="nav nav-tabs">
         <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO </a></li>
 
@@ -43,12 +43,12 @@
           <li><a href="#tab_5" data-toggle="tab">JAMINAN DAN ASURANSI</a></li>
         @endif
 
-        @if(in_array($doc_type->name,['turnkey']))
+        @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey']))
           <li><a href="#tab_6" data-toggle="tab">TERM OF PAYMENT</a></li>
         @endif
       </ul>
 
-        <div class="tab-content">          
+        <div class="tab-content">
           <div class="tab-pane active" id="tab_1">
             @include('documents::partials.alert-errors')
             @if(in_array($doc_type->name,['turnkey','sp','khs','surat_pengikatan','mou']))
@@ -126,7 +126,7 @@
 
           <div class="tab-pane" id="tab_6">
             @include('documents::partials.alert-errors')
-            @if(in_array($doc_type->name,['turnkey']))
+            @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey']))
               @include('documents::doc-view.term-of-payment')
             @endif
             <div class="clearfix"></div>

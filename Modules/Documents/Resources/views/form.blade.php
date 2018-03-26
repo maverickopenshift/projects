@@ -46,7 +46,7 @@
         <li><a href="#tab_5" data-toggle="tab">JAMINAN DAN ASURANSI</a></li>
       @endif
 
-      @if(in_array($doc_type->name,['turnkey']))
+      @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey']))
         <li><a href="#tab_6" data-toggle="tab">TERM OF PAYMENT</a></li>
       @endif
     </ul>
@@ -138,7 +138,7 @@
 
       <div class="tab-pane" id="tab_6">
         @include('documents::partials.alert-errors')
-        @if(in_array($doc_type->name,['turnkey']))
+        @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey']))
           @include('documents::doc-form.term-of-payment')
         @endif
         <div class="clearfix"></div>

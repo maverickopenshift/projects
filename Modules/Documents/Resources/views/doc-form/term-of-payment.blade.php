@@ -29,7 +29,7 @@
         <div class="form-group formerror formerror-top_totalharga">
           <label for="lt_name" class="col-sm-2 control-label"> Total Harga Jasa MS</label>
           <div class="col-sm-4">
-            <input type="text" class="form-control" name="doc_top_totalharga" autocomplete="off" placeholder="Total Harga Jasa MS..">
+            <input type="text" class="form-control input-rupiah" name="doc_top_totalharga" autocomplete="off" placeholder="Total Harga Jasa MS..">
           </div>
           <div class="col-sm-10 col-sm-offset-2">
             <div class="error error-top_totalharga"></div>
@@ -85,12 +85,12 @@
     $(".top-matauang-set").html(matauang);
   });
 
-  $(document).on('click', '.add-top', function(event) {        
+  $(document).on('click', '.add-top', function(event) {
     var new_row = $(template_add()).clone(true).insertAfter(".tabel-top:last");
     var input_new_row = new_row.find('td');
     input_new_row.eq(1).find('.top-date').addClass("date");
     input_new_row.eq(1).find('.top-datepicker').addClass("datepicker");
-    
+
     fix_no_error();
 
     $('.date').datepicker({

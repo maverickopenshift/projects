@@ -7,9 +7,13 @@
     if($doc_top_matauang=="IDR"){
       $a="selected";
       $b="";
-    }else{
+    }
+    else if($doc_top_matauang=="USD"){
       $a="";
       $b="selected";
+    }else{
+      $a="";
+      $b="";
     }
   @endphp
 
@@ -26,7 +30,7 @@
         <div class="form-group formerror formerror-top_matauang">
           <label for="lt_name" class="col-sm-2 control-label"> Mata Uang</label>
           <div class="col-sm-4">
-            <select name="top_matauang" class="form-control top_matauang" style="width: 100%;">
+            <select name="doc_top_matauang" class="form-control top_matauang" style="width: 100%;">
               <option value="IDR" {{$a}}>IDR</option>
               <option value="USD" {{$b}}>USD</option>
             </select>
@@ -39,7 +43,7 @@
         <div class="form-group formerror formerror-top_totalharga">
           <label for="lt_name" class="col-sm-2 control-label"> Total Harga Jasa MS</label>
           <div class="col-sm-4">
-            <input type="text" class="form-control" name="top_totalharga" autocomplete="off" placeholder="Total Harga Jasa MS.." value="{{$doc_top_totalharga}}">
+            <input type="text" class="form-control input-rupiah" name="doc_top_totalharga" autocomplete="off" placeholder="Total Harga Jasa MS.." value="{{$doc_top_totalharga}}">
           </div>
           <div class="col-sm-10 col-sm-offset-2">
             <div class="error error-top_totalharga"></div>
@@ -73,7 +77,7 @@
                         <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                         </div>
-                        <input type="text" class="form-control datepicker" name="top_tanggal_selesai[]" autocomplete="off" placeholder="Tanggal Mulai.." value="{{date('d-m-Y', strtotime($dt->top_tanggal_mulai))}}">
+                        <input type="text" class="form-control datepicker" name="top_tanggal_mulai[]" autocomplete="off" placeholder="Tanggal Mulai.." value="{{date('d-m-Y', strtotime($dt->top_tanggal_mulai))}}">
                       </div>
                       <div class="error error-top_tanggal_mulai error-top_tanggal_mulai-{{$key}}"></div>
                     </td>
@@ -158,12 +162,12 @@
     $(".top-matauang-set").html(matauang);
   });
 
-  $(document).on('click', '.add-top', function(event) {        
+  $(document).on('click', '.add-top', function(event) {
     var new_row = $(template_add()).clone(true).insertAfter(".tabel-top:last");
     var input_new_row = new_row.find('td');
     input_new_row.eq(1).find('.top-date').addClass("date");
     input_new_row.eq(1).find('.top-datepicker').addClass("datepicker");
-    
+
     fix_no_error();
 
     $('.date').datepicker({

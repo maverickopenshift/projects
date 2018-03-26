@@ -35,7 +35,7 @@ class User extends Authenticatable
     }
     public static function get_user_telkom($key=null,$type=null,$posisi=null){
       $data = \DB::table('pegawai')
-                ->select('*');    
+                ->select('*');
       if(!empty($key)){
         $data->where(function($q) use ($key) {
             $q->orWhere('n_nik', 'like', '%'.$key.'%');
@@ -50,19 +50,19 @@ class User extends Authenticatable
     }
     public static function get_atasan_by_divisi($type,$posisi){
       $data = \DB::table('pegawai')
-                ->select('*');    
+                ->select('*');
       $data->where('objiddivisi',$type);
       $data->where('v_band_posisi','<',$posisi);
       return $data->orderBy('v_band_posisi','asc')->get();
     }
     public static function get_atasan(){
       $data = \DB::table('users_pegawai')
-                ->join('users_atasan','users_atasan.users_pegawai_id','=','users_pegawai.id');  
+                ->join('users_atasan','users_atasan.users_pegawai_id','=','users_pegawai.id');
       if(self::is_subsidiary(\Auth::user()->username)){
-        $data->select('pegawai_subsidiary.*')->join('pegawai_subsidiary','pegawai_subsidiary.n_nik','=','users_atasan.nik'); 
+        $data->select('pegawai_subsidiary.*')->join('pegawai_subsidiary','pegawai_subsidiary.n_nik','=','users_atasan.nik');
       }
       else{
-        $data->select('pegawai.*')->join('pegawai','pegawai.n_nik','=','users_atasan.nik'); 
+        $data->select('pegawai.*')->join('pegawai','pegawai.n_nik','=','users_atasan.nik');
       }
       $data->where('users_id',\Auth::id());
       return $data->get();
@@ -77,7 +77,7 @@ class User extends Authenticatable
       return $data->objiddivisi;
     }
     public static function get_pegawai_by_id($id){
-      $data = \DB::table('v_users_pegawai')->select('*');  
+      $data = \DB::table('v_users_pegawai')->select('*');
       $data->where('user_id',$id);
       $data = $data->first();
       return $data;
@@ -109,7 +109,7 @@ class User extends Authenticatable
         $data->where('v_short_unit', 'like', '%'.$key.'%');
       }
       return $data;
-    } 
+    }
     public static function get_posisi($key=false,$unit=false){
       $data = \DB::table('rptom')->selectRaw('objidposisi as id,v_short_posisi as title,count(objidposisi) as total_posisi');
       $data->orderBy('v_short_posisi','ASC');
@@ -122,16 +122,51 @@ class User extends Authenticatable
         $data->where('v_short_posisi', 'like', '%'.$key.'%');
       }
       return $data;
-    } 
+    }
     public static function get_posisi_by_unit($unit){
       $data = \DB::table('rptom')->selectRaw('objidposisi as id,v_short_posisi as title');
       $data->where('objidunit',$unit);
       return $data;
     }
     public static function get_unit_by_disivi2($divisi){
+      $divisi_long = \DB::table('rptom')->select('v_short_divisi')->where('objiddivisi',$divisi)->first()->v_short_divisi;
+      // dd($divisi_long);
       $data = \DB::table('rptom')->selectRaw('objidunit as id,v_short_unit as title,count(objidposisi) as total_posisi');
       $data->orderBy('v_short_unit','ASC');
-      $data->where('objiddivisi',$divisi)->groupBy(['objidunit','v_short_unit']);
+      $data->where('objiddivisi',$divisi)
+           // ->where('v_long_unit','like','%'.$divisi_long.'%')
+           ->groupBy(['objidunit']);
+      return $data;
+    }
+    public static function get_real_unit_by_disivi($divisi){
+      $divisi_long = \DB::table('rptom')->select('v_short_divisi')->where('objiddivisi',$divisi)->first()->v_short_divisi;
+      $data = \DB::table('rptom')->selectRaw('objidunit as id,v_short_unit as title,v_long_unit,count(objidposisi) as total_posisi');
+      $data->orderBy('v_short_unit','ASC');
+      $data
+           ->where('objiddivisi',$divisi)
+           // ->where('v_long_unit','like','%'.$divisi_long.'%')
+           ->groupBy(['objidunit']);
+      $data = $data->get();
+      $data->map(function ($item, $key) {
+          $ubis = $item->v_long_unit;
+          $exp  = @explode('/',$ubis);
+          $exp_1 = '';
+          $exp_2 = '';
+          if(isset($exp[2])){
+            $exp_1 = $exp[2];
+          }
+          if(isset($exp[3])){
+            $exp_2 = '/'.$exp[3];
+          }
+          $item->title = $exp_1.$exp_2;
+          // if(isset($exp[1])){
+          //   $item->title = $exp[1].'/'.$item->title;
+          // }
+          // if(isset($exp[3])){
+          //   $item->title = $exp[3];
+          // }
+          return $item;
+      });
       return $data;
     }
     public static function get_user_telkom_by_nik($nik){

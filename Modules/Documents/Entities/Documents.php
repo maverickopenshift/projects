@@ -337,7 +337,7 @@ class Documents extends Model
     public static function get_pr($pr_no,$validate=false){
       $client = new Client();
       $res = $client->request('GET', config('app.eproposal_pr'),[
-          'query' => ['pr_no' => $pr_no]
+          'query' => ['nopr' => $pr_no]
       ]);
       if($res->getStatusCode()==200){
         if($validate){

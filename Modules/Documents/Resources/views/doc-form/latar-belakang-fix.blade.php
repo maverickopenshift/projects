@@ -46,8 +46,8 @@
           <input type="text" class="form-control" name="lt_judul_rks" autocomplete="off" value="RKS" readonly>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
-        <div class="error error-lt_judul_rks"></div>
-      </div>
+          <div class="error error-lt_judul_rks"></div>
+        </div>
       </div>
 
 

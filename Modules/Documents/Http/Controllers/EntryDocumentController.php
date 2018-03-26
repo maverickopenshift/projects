@@ -12,6 +12,7 @@ use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocAsuransi;
+use Modules\Documents\Entities\DocTop;
 use Modules\Documents\Entities\DocPo;
 use Modules\Documents\Entities\DocActivity;
 use Modules\Config\Entities\Config;
@@ -245,6 +246,7 @@ class EntryDocumentController extends Controller
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']       =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
+
         $rules['doc_lampiran_nama.*']  =  $required.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
         $check_new_lampiran = false;
         foreach($request->doc_lampiran_old as $k => $v){
@@ -279,6 +281,16 @@ class EntryDocumentController extends Controller
         $rules['hs_harga_jasa.*']  =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
         $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
         $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
+
+        if(in_array($type,['turnkey'])){
+          $rules['top_matauang']            =  'sometimes|nullable';
+          $rules['top_totalharga']          =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
+          $rules['top_deskripsi.*']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
+          $rules['top_tanggal_mulai.*']     =  'sometimes|nullable|'.$date_format;
+          $rules['top_tanggal_selesai.*']   =  'sometimes|nullable|'.$date_format.'|after:top_tanggal_mulai.*';
+          $rules['top_harga.*']             =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
+          $rules['top_tanggal_bapp.*']      =  'sometimes|nullable|'.$date_format;
+        }
 
         if(in_array($type,['turnkey','sp'])){
           $rule_doc_jaminan = (count($request['doc_jaminan'])>1)?$required:'sometimes|nullable';
@@ -329,24 +341,13 @@ class EntryDocumentController extends Controller
             if (!isset($request['pic_nama'][0]) && $statusButton!='2') {
                 $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
             }
+            
             if($user_type!='subsidiary' && $auto_numb=='off' && !$validator->errors()->has('doc_no')){
               $d = Documents::check_no_kontrak($request['doc_no'],date('Y',strtotime($request['doc_startdate'])));
               if($d){
                 $validator->errors()->add('doc_no', 'No Kontrak yang Anda masukan sudah ada!');
               }
             }
-            // if($request->doc_enddate < $request->doc_startdate){
-            //   $validator->errors()->add('doc_enddate', 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
-            // }
-
-            // if(in_array($type,['turnkey','sp'])){
-            //   foreach($request->doc_jaminan_enddate as $k => $v){
-            //     if($request->doc_jaminan_enddate[$k] < $request->doc_jaminan_startdate[$k]){
-            //       $validator->errors()->add('doc_jaminan_enddate.'.$k, 'Tanggal Akhir tidak boleh lebih kecil dari Tanggal Mulai!');
-            //     }
-            //   }
-            // }
-
         });
 
         $request->merge(['doc_value' => $doc_value]);
@@ -379,6 +380,11 @@ class EntryDocumentController extends Controller
 
       if(in_array($type,['turnkey','sp'])){
         $doc->doc_po_no = $request->doc_po;
+      }
+
+      if(in_array($type,['turnkey'])){
+        $doc->doc_top_totalharga = $request->doc_top_totalharga;
+        $doc->doc_top_matauang = $request->doc_top_matauang;
       }
 
       $doc->doc_proc_process = $request->doc_proc_process;
@@ -485,6 +491,26 @@ class EntryDocumentController extends Controller
                 $file->storeAs('document/'.$request->type.'_asuransi', $fileName);
                 $asr->doc_jaminan_file = $fileName;
               }
+              $asr->save();
+            }
+          }
+        }
+      }
+
+      // term of payment
+      if(in_array($type,['turnkey'])){
+        if(count($request->top_deskripsi)>0){
+          foreach($request['top_deskripsi'] as $key => $val){
+            if(!empty($val)
+            ){
+              $asr = new DocTop();
+              $asr->documents_id = $doc->id;
+              $asr->top_deskripsi = $request['top_deskripsi'][$key];
+              $asr->top_matauang = $request['top_matauang'][$key];
+              $asr->top_tanggal_mulai = Helpers::date_set_db($request['top_tanggal_mulai'][$key]);
+              $asr->top_tanggal_selesai = Helpers::date_set_db($request['top_tanggal_selesai'][$key]);
+              $asr->top_harga = Helpers::input_rupiah($request['top_harga'][$key]);
+              $asr->top_tanggal_bapp = Helpers::date_set_db($request['top_tanggal_bapp'][$key]);
               $asr->save();
             }
           }

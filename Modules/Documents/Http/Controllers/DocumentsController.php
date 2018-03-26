@@ -11,6 +11,7 @@ use Modules\Documents\Entities\Documents;
 use Modules\Documents\Entities\DocBoq;
 use Modules\Documents\Entities\DocMeta;
 use Modules\Documents\Entities\DocPic;
+use Modules\Documents\Entities\DocTop;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocActivity;
 use Modules\Users\Entities\Mtzpegawai;
@@ -238,7 +239,7 @@ class DocumentsController extends Controller
       $user_type = \App\User::check_usertype(\Auth::user()->username);
       $id = $request->id;
       $doc_type = DocType::where('name','=',$request->type)->first();
-      $dt = $this->documents->where('id','=',$id)->with('pemilik_kontrak','jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po','sow_boq','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter','latar_belakang_optional','latar_belakang_ketetapan_pemenang','latar_belakang_kesanggupan_mitra','latar_belakang_rks')->first();
+      $dt = $this->documents->where('id','=',$id)->with('pemilik_kontrak','jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po','sow_boq','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter','latar_belakang_optional','latar_belakang_ketetapan_pemenang','latar_belakang_kesanggupan_mitra','latar_belakang_rks','doc_top')->first();
 
       if(!$doc_type || !$dt){
         abort(404);
@@ -261,6 +262,17 @@ class DocumentsController extends Controller
           $data['latar_belakang_mou']=$query_latar_belakang_mou;
         }
       }
+      /*
+      if(in_array($request->type,['turnkey'])){
+        if(count($dt->doc_top)>0){
+          foreach($dt->doc_top as $key => $val){
+            $query_latar_belakang_mou=$this->documents->selectRaw("id,doc_title,doc_no,doc_startdate,doc_enddate")->where('id','=',$val->meta_desc)->with('lampiran_ttd')->first();
+          }
+          $data['latar_belakang_mou']=$query_latar_belakang_mou;
+        }
+      }
+      */
+
       $data['doc_type'] = $doc_type;
       $data['page_title'] = 'View Kontrak - '.$doc_type['title'];
       $data['doc'] = $dt;
@@ -283,7 +295,7 @@ class DocumentsController extends Controller
         $data['unit_bisnis'] = $konseptor;
       }
       $data['user_type'] = $user_type;
-      // dd($data);
+      
       return view('documents::view')->with($data);
     }
 

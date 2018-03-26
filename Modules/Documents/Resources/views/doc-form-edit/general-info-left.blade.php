@@ -13,7 +13,7 @@
         </div>
       </div>
     @endif
-
+    
     <div class="form-group formerror formerror-doc_desc">
       <label for="deskripsi_kontrak" class="col-sm-2 control-label">Deskripsi {{$doc_type['title']}}</label>
       <div class="col-sm-10">

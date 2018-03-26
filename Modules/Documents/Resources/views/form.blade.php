@@ -45,6 +45,10 @@
       @if(in_array($doc_type->name,['turnkey','sp']))
         <li><a href="#tab_5" data-toggle="tab">JAMINAN DAN ASURANSI</a></li>
       @endif
+
+      @if(in_array($doc_type->name,['turnkey']))
+        <li><a href="#tab_6" data-toggle="tab">TERM OF PAYMENT</a></li>
+      @endif
     </ul>
 
     <div class="tab-content">
@@ -122,6 +126,20 @@
         @else
           {{-- @include('documents::doc-form.scope-perubahan-others') --}}
           @include('documents::doc-form.scope-perubahan-fix')
+        @endif
+        <div class="clearfix"></div>
+        <div class="row">
+          <div class="col-sm-12">
+            <a class="btn btn-info btnPrevious" ><i class="glyphicon glyphicon-arrow-left"></i> Kembali</a>
+            <a class="btn btn-info btnNext pull-right" >Selanjutnya <i class="glyphicon glyphicon-arrow-right"></i></a>
+          </div>
+        </div>  <!-- /.tab-content -->
+      </div>
+
+      <div class="tab-pane" id="tab_6">
+        @include('documents::partials.alert-errors')
+        @if(in_array($doc_type->name,['turnkey']))
+          @include('documents::doc-form.term-of-payment')
         @endif
         <div class="clearfix"></div>
         <div class="row">

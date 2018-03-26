@@ -11,7 +11,9 @@
     </textarea>
   </div>
 </div>
-<!-- <div class="form-group">
+
+{{--
+<div class="form-group">
   <label class="col-sm-2 control-label">Divisi </label>
   <div class="col-sm-6">
     <input type="text" class="form-control" name="divisi"  disabled="disabled" autocomplete="off" value="{{$pegawai->v_short_divisi}}">
@@ -28,7 +30,8 @@
   <div class="col-sm-6">
     <input type="text" class="form-control" name="jabatan"  disabled="disabled" autocomplete="off" value="{{$pegawai->v_short_posisi}}">
   </div>
-</div> -->
+</div>
+--}}
 <div class="form-group">
   <label class="col-sm-2 control-label">Approver</label>
   <div class="col-sm-6 text-me text-uppercase">{!!Helper::get_approver($pegawai)!!}

@@ -134,9 +134,18 @@
                 @permission('catalog-category')
                   <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Kategori</a></li>
                 @endpermission
+
+                <li class="{{Request::is('catalog/master_product') ?'active':''}}"><a href="{{route('catalog.master_product')}}">Master Katalog</a></li>
+                <li class="{{Request::is('catalog/master_product') ?'active':''}}"><a href="{{route('catalog.master_product')}}">Logistik</a></li>
+
+                {{--
                 @permission('catalog-product')
-                  <li class="{{Request::is('catalog/product') ?'active':''}}"><a href="{{route('catalog.product')}}">Item Katalog</a></li>
+                  <li class="{{Request::is('catalog/master_product') ?'active':''}}"><a href="{{route('catalog.master_product')}}">Master Katalog</a></li>
                 @endpermission
+                @permission('catalog-product')
+                  <li class="{{Request::is('catalog/item_product') ?'active':''}}"><a href="{{route('catalog.item_product')}}">Item Katalog</a></li>
+                @endpermission
+                --}}
                 @permission('lihat-catalog')
                   <li class="{{Request::is('catalog/catalog_list') ?'active':''}}"><a href="{{route('catalog.list')}}">List Kategori & Product</a></li>
                 @endpermission

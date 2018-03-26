@@ -6,32 +6,19 @@
 @endrole
 <div class="form-group">
   <label class="col-sm-2 control-label">Konseptor </label>
-  <div class="col-sm-6">
-    <textarea class="form-control" name="konseptor" disabled="disabled">{{$pegawai->v_nama_karyawan.'/'.$pegawai->n_nik.' - '.$pegawai->v_short_posisi.' '.$pegawai->v_short_unit.'/'.$pegawai->v_short_divisi}}
-    </textarea>
+  {{-- <div class="col-sm-6 text-me text-uppercase">{{$pegawai->v_nama_karyawan.'/'.$pegawai->n_nik.' - '.$pegawai->v_short_posisi.' '.$pegawai->v_short_unit.'/'.$pegawai->v_short_divisi}}
+  </div> --}}
+  <div class="col-sm-6 text-me text-uppercase">{{$pegawai->v_nama_karyawan}} <i>({{$pegawai->n_nik}})</i> - {{$pegawai->v_short_posisi}}
   </div>
 </div>
-
-{{--
 <div class="form-group">
   <label class="col-sm-2 control-label">Divisi </label>
-  <div class="col-sm-6">
-    <input type="text" class="form-control" name="divisi"  disabled="disabled" autocomplete="off" value="{{$pegawai->v_short_divisi}}">
-  </div>
+  <div class="col-sm-6 text-me text-uppercase">{{$pegawai->v_short_divisi}}</div>
 </div>
 <div class="form-group">
   <label class="col-sm-2 control-label">Loker</label>
-  <div class="col-sm-6">
-    <input type="text" class="form-control" name="loker"  disabled="disabled" autocomplete="off" value="{{$pegawai->v_short_unit}}">
-  </div>
+    <div class="col-sm-6 text-me text-uppercase">{{$pegawai->v_short_unit}}</div>
 </div>
-<div class="form-group">
-  <label class="col-sm-2 control-label">Jabatan</label>
-  <div class="col-sm-6">
-    <input type="text" class="form-control" name="jabatan"  disabled="disabled" autocomplete="off" value="{{$pegawai->v_short_posisi}}">
-  </div>
-</div>
---}}
 <div class="form-group">
   <label class="col-sm-2 control-label">Approver</label>
   <div class="col-sm-6 text-me text-uppercase">{!!Helper::get_approver($pegawai)!!}
@@ -42,7 +29,7 @@
   <div class="col-sm-6">
     <div class="form-group">
       <div class="col-sm-6">
-        {!!Helper::select_all_divisi('divisi',old('divisi',Helper::prop_exists($doc,'divisi')))!!}
+        {!!Helper::select_all_divisi('divisi',$pegawai->objiddivisi)!!}
         <div class="error error-divisi"></div>
       </div>
       <div class="col-sm-6">
@@ -106,4 +93,36 @@
     <div class="error error-doc_pihak2_nama"></div>
   </div>
 </div>
+@push('scripts')
+  <script>
+  $(document).on('change', '#divisi', function(event) {
+    event.preventDefault();
+    /* Act on the event */
+    var divisi = this.value;
+    var unit__ = '{!!$pegawai->objidunit!!}';
+    //if(unit!==""){
+    $('#unit_bisnis').find('option').not('option[value=""]').remove();
+      $.ajax({
+        url: '{!!route('doc.get-unit')!!}',
+        type: 'GET',
+        dataType: 'json',
+        data: {divisi: divisi}
+      })
+      .done(function(data) {
+        if(data.length>0){
+          $.each(data,function(index, el) {
+            $('#unit_bisnis').append('<option value="'+this.id+'" '+(unit__==this.id ? 'selected="selected"':'')+'>'+this.title+'</option>');
+          });
+        }
+      });
+    //}
+  });
+  $(function(e){
+    $('#unit_bisnis').find('option').not('option[value=""]').remove();
+    if($('#divisi').val()!==""){
+      $('#divisi').change();
+    }
+  });
+  </script>
+@endpush
 @endif

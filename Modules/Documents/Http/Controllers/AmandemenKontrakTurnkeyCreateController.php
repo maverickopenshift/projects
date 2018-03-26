@@ -32,6 +32,13 @@ class AmandemenKontrakTurnkeyCreateController
     $m_hs_harga=[];
     $m_hs_harga_jasa=[];
     $m_hs_qty=[];
+    
+    $statusButton = $request->statusButton;
+    $required = 'required';
+    $date_format = 'date_format:"d-m-Y"';
+    if($statusButton=='2'){
+      $required = 'sometimes|nullable';
+    }
     $user_type = Helpers::usertype();
     $auto_numb =Config::get_config('auto-numb');
     if(isset($request['hs_harga']) && count($request['hs_harga'])>0){
@@ -66,22 +73,20 @@ class AmandemenKontrakTurnkeyCreateController
     if(count($m_hs_qty)>0){
       $request->merge(['hs_qty'=>$m_hs_qty]);
     }
-
-    if($request->statusButton == '0'){
       $rules['parent_kontrak']   =  'required|kontrak_exists';
-      $rules['komentar']         = 'required|max:250|min:2';
+      $rules['komentar']         = $required.'|max:250|min:2';
       if($user_type!='subsidiary'){
         $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
       $rules['doc_title']        =  'required|min:2';
-      $rules['doc_startdate']    =  'required';
-      $rules['doc_enddate']      =  'required|after:doc_startdate';
+      $rules['doc_startdate']    =  $required.'|'.$date_format;
+      $rules['doc_enddate']      =  $required.'|'.$date_format.'|after:doc_startdate';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak2_nama']  =  'required|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-
+      $rules['doc_pihak2_nama']  =  $required.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pr']         =  'sometimes|nullable|pr_exists';
       if(\Laratrust::hasRole('admin')){
         $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
       }
@@ -95,16 +100,16 @@ class AmandemenKontrakTurnkeyCreateController
         }
       }
 
-      $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['doc_lampiran_nama.*']  =  $required.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $check_new_lampiran = false;
         foreach($request->doc_lampiran_old as $k => $v){
           if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
             $new_lamp[] = '';
             $new_lamp_up[] = $request->doc_lampiran[$k];
-            $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+            $rules['doc_lampiran.'.$k] = $required.'|mimes:pdf';
           }
           else if(empty($v)){
-            $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
+            $rules['doc_lampiran.'.$k] = $required.'|mimes:pdf';
             if(!isset($request->doc_lampiran[$k])){
               $new_lamp[] = $v;
               $new_lamp_up[] = $v;
@@ -121,9 +126,9 @@ class AmandemenKontrakTurnkeyCreateController
         }
         $request->merge(['doc_lampiran' => $new_lamp]);
 
-      $rule_scope_pasal = (count($request['f_scope_pasal'])>1)?'required':'sometimes|nullable';
-      $rule_scope_judul = (count($request['f_scope_judul'])>1)?'required':'sometimes|nullable';
-      $rule_scope_isi = (count($request['f_scope_isi'])>1)?'required':'sometimes|nullable';
+      $rule_scope_pasal = (count($request['f_scope_pasal'])>1)?$required:'sometimes|nullable';
+      $rule_scope_judul = (count($request['f_scope_judul'])>1)?$required:'sometimes|nullable';
+      $rule_scope_isi = (count($request['f_scope_isi'])>1)?$required:'sometimes|nullable';
       $rules['f_scope_file.*']  =  'sometimes|nullable|mimes:pdf';
       $rules['f_scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['f_scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
@@ -143,28 +148,14 @@ class AmandemenKontrakTurnkeyCreateController
           'errors' => $validator->getMessageBag()->toArray()
         ));
       }
-    }else{
-      $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['parent_kontrak']   =  'required|kontrak_exists';
-
-      if(\Laratrust::hasRole('admin')){
-        $rules['user_id'] = 'required|min:1|max:20|regex:/^[0-9]+$/i';
-      }
-      $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-
-      if ($validator->fails ()){
-        return Response::json (array(
-          'errors' => $validator->getMessageBag()->toArray()
-        ));
-      }
-    }
-
+      DB::beginTransaction();
+      try {
     $doc = new Documents();
     $doc->doc_title = $request->doc_title;
-    $doc->doc_date = date("Y-m-d", strtotime($request->doc_startdate));
-    $doc->doc_startdate = date("Y-m-d", strtotime($request->doc_startdate));
-    $doc->doc_enddate = date("Y-m-d", strtotime($request->doc_enddate));
+    $doc->doc_date = Helpers::date_set_db($request->doc_startdate);
+    $start_date = $request->doc_startdate;
+    $doc->doc_startdate = Helpers::date_set_db($start_date);
+    $doc->doc_enddate = Helpers::date_set_db($request->doc_enddate);
     $doc->doc_desc = $request->doc_desc;
     $template_id = DocTemplate::get_by_type($type)->id;
     $doc->doc_template_id = $template_id;
@@ -184,7 +175,7 @@ class AmandemenKontrakTurnkeyCreateController
       $doc->doc_no = $request->doc_no;
     }
     if($user_type!='subsidiary' && $auto_numb=='off'){
-      $doc->doc_no = Documents::create_manual_no_kontrak($request->doc_no,$request->doc_pihak1_nama,$template_id,$doc->doc_startdate,$request->type);
+      $doc->doc_no = Documents::create_manual_no_kontrak($request->doc_no,$request->doc_pihak1_nama,$template_id,$start_date,$request->type);
     }
     if($user_type=='subsidiary'){
       $doc->doc_user_type = 'subsidiary';
@@ -201,7 +192,16 @@ class AmandemenKontrakTurnkeyCreateController
       $doc_meta2->meta_title =$request->unit_bisnis;
       $doc_meta2->save();
     }
-
+    
+    //eproposal PR
+    if(count($request->doc_pr)>0){
+      $doc_meta2 = new DocMeta();
+      $doc_meta2->documents_id = $doc->id;
+      $doc_meta2->meta_type = 'eproposal_pr';
+      $doc_meta2->meta_name = $request->doc_pr;
+      $doc_meta2->save();
+    }
+    
     if(count($request->doc_lampiran)>0){
       foreach($request->doc_lampiran as $key => $val){
         if(!empty($val)
@@ -230,7 +230,7 @@ class AmandemenKontrakTurnkeyCreateController
           $doc_meta->documents_id = $doc->id;
           $doc_meta->meta_type = "latar_belakang_optional";
           $doc_meta->meta_name = $request['f_latar_belakang_judul'][$key];
-          $doc_meta->meta_title = date("Y-m-d", strtotime($request['f_latar_belakang_tanggal'][$key]));
+          $doc_meta->meta_title = Helpers::date_set_db($request['f_latar_belakang_tanggal'][$key]);
           $doc_meta->meta_desc = $request['f_latar_belakang_isi'][$key];
           if(isset($request['f_latar_belakang_file'][$key])){
             $fileName   = Helpers::set_filename('doc_',strtolower($val));
@@ -320,6 +320,7 @@ class AmandemenKontrakTurnkeyCreateController
     }
 
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
+    DB::commit();
     if($request->statusButton == '0'){
       return Response::json (array(
         'status' => 'tracking'
@@ -328,6 +329,13 @@ class AmandemenKontrakTurnkeyCreateController
       return Response::json (array(
         'status' => 'draft'
       ));
+    }
+  } catch (\Exception $e) {
+        DB::rollBack();
+        return Response::json (array(
+          'status' => 'error',
+          'msg' => $e->getMessage()
+        ));
     }
   }
 }

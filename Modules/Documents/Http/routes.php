@@ -144,5 +144,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
 
     Route::get('/download/pdf/{type}/{filename}', ['middleware' => ['permission:lihat-kontrak'],'uses' => 'PdfDocController@index'])
     ->name('doc.download');
-
+    
+    Route::get('/get-pr', ['middleware' => ['permission:lihat-kontrak'],'uses' => 'DocumentsController@getPrEproposal'])
+    ->name('doc.get-pr');
 });

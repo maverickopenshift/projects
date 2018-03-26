@@ -11,6 +11,9 @@ use Modules\Config\Entities\Config;
 
 use Modules\Documents\Entities\Sap;
 
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Client;
+
 class Documents extends Model
 {
     protected $fillable = [];
@@ -330,5 +333,22 @@ class Documents extends Model
         return ' - '.$dt->doc_title;
       }
       return '';
+    }
+    public static function get_pr($pr_no,$validate=false){
+      $client = new Client();
+      $res = $client->request('GET', config('app.eproposal_pr'),[
+          'query' => ['pr_no' => $pr_no]
+      ]);
+      if($res->getStatusCode()==200){
+        if($validate){
+          return true;
+        }
+        else{
+          return $res->getBody();
+        }
+      }
+      else{
+        return false;
+      }
     }
 }

@@ -25,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
             $count = Documents::check_kontrak($value);
             return $count;
         });
+        Validator::extend('pr_exists', function ($attribute, $value, $parameters, $validator) {
+            $status = Documents::get_pr($value,true);
+            return $status;
+        });
         \Carbon\Carbon::setlocale('id');
         \DB::statement("set session sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';");
         \DB::statement("set global sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';");

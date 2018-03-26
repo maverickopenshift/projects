@@ -275,6 +275,12 @@ class DocumentsController extends Controller
 
       $data['doc_type'] = $doc_type;
       $data['page_title'] = 'View Kontrak - '.$doc_type['title'];
+      
+      $pr = DocMeta::get_first($dt->id,'eproposal_pr');
+      if($pr){
+        $dt->doc_pr = $pr->meta_name;
+      }
+      
       $data['doc'] = $dt;
       $data['id'] = $id;
       
@@ -289,6 +295,8 @@ class DocumentsController extends Controller
         $objidunit=$dt->pemilik_kontrak->meta_title;
         $data['divisi'] = \DB::table('rptom')->where('objiddivisi',$objiddivisi)->first();
         $data['unit_bisnis'] = \DB::table('rptom')->where('objidunit',$objidunit)->first();
+        $data['doc']['divisi'] = $objiddivisi;
+        $data['doc']['unit_bisnis'] = $objidunit;
       }
       else{
         $data['divisi'] = $konseptor;
@@ -435,7 +443,7 @@ class DocumentsController extends Controller
           $doc = $this->documents->where('id',$request->id)->first();
         }
         if($doc){
-          $rules['reason'] = 'required|min:5|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+          $rules['reason'] = 'required|min:3|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
           $validator = Validator::make($request->all(), $rules,['reason.required'=>'Alasan harus diisi!','reason.regex'=>'Format penulisan tidak valid!','reason.min'=>'Inputan minimal 5 karakter']);
           if ($validator->fails ()){
             return Response::json(['status'=>false,'msg'=>$validator->errors()->first()]);
@@ -886,6 +894,11 @@ class DocumentsController extends Controller
   public function upload_boq(Request $request){
 
   }
-
+  
+  public function getPrEproposal(Request $request){
+    $client = Documents::get_pr($request->pr_no);
+    return $client;
+    exit;
+  }
 
 }

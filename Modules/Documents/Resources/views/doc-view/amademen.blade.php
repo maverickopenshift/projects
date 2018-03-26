@@ -48,7 +48,7 @@
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label">Pemilik Kontrak</label>
-          <div class="col-sm-10 text-me">Divisi: {{$divisi->v_short_divisi}} <br> Unit: {{$unit_bisnis->v_short_unit}}</div>
+          <div class="col-sm-10 text-me">Divisi: {{Modules\Users\Entities\Mtzpegawai::get_rptom('v_short_divisi','objiddivisi',$doc->divisi)}} <br> Unit: {{Modules\Users\Entities\Mtzpegawai::get_rptom('v_short_unit','objidunit',$doc->unit_bisnis)}}</div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label">Pihak I</label>

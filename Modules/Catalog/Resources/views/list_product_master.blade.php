@@ -173,14 +173,13 @@ function create_table(no_kategori){
         autoWidth : false,
         pageLength: 50,
         ajax: {
-            "url": "{!! route('catalog.list.product_master.datatables') !!}?parent_id="+ no_kategori,
+            "url": "{!! route('catalog.list.product_master.datatables') !!}?parent_id="+ no_kategori + "&type=1",
             "type": "POST",
             'headers': {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 }
         },
         columns: [
-            //{ data: 'DT_Row_Index',orderable:false,searchable:false},
             { data: 'kode_product'},
             { data: 'keterangan_product'},
             { data: 'satuan_product'},

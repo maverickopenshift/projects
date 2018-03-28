@@ -134,7 +134,6 @@ class ProductLogisticController extends Controller
 
     public function edit(Request $request){
         $rules = array();
-        $rules['f_kodeproduct']   ='required|max:100|min:1|regex:/^[a-z0-9 .\-]+$/i';
         $rules['f_lokasi']        ='required|max:100|min:1|regex:/^[a-z0-9 .\-]+$/i';
         $rules['f_hargabarang']   ='required|max:100|min:1|regex:/^[a-z0-9 .\-]+$/i';
         $rules['f_hargajasa']     ='required|max:100|min:1|regex:/^[a-z0-9 .\-]+$/i';
@@ -148,7 +147,6 @@ class ProductLogisticController extends Controller
             ));
         else{
             $proses = CatalogProductLogistic::where('id',$request->f_id)->first();
-            $proses->product_master_id      = $request->f_kodeproduct;
             $proses->lokasi_logistic        = $request->f_lokasi;
             $proses->harga_barang_logistic  = $request->f_hargabarang;
             $proses->harga_jasa_logistic    = $request->f_hargajasa;

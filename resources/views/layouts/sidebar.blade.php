@@ -136,7 +136,6 @@
                 @endpermission
                 <li class="{{Request::is('catalog/catalog_list/product_master') ?'active':''}}"><a href="{{route('catalog.list.product_master')}}">List Master Item</a></li>
                 <li class="{{Request::is('catalog/catalog_list/product_logistic') ?'active':''}}"><a href="{{route('catalog.list.product_logistic')}}">List Item Price</a></li>
-
                 
                 {{--
                 <li class="{{Request::is('catalog/product_master') ?'active':''}}"><a href="{{route('catalog.product.master')}}">Master Katalog</a></li>

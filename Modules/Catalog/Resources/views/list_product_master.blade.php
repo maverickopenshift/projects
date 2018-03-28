@@ -30,10 +30,10 @@
         <div class="box box-danger">
             <div class="box-header with-border">
                 <i class="fa fa-cogs"></i>
-                <h3 class="box-title f_parentname_product">Daftar Product</h3>
+                <h3 class="box-title f_parentname_product">Daftar Master Item</h3>
                 <div class="pull-right">
                     <div class="col-sm-12">
-                        <a class="btn btn-danger" href="{{route('catalog.product.master')}}" type="button"><i class="fa fa-plus"></i> Tambah Item Katalog</a>                       
+                        <a class="btn btn-danger" href="{{route('catalog.product.master')}}" type="button"><i class="fa fa-plus"></i> Tambah Master Item</a>                       
                     </div>
                 </div>
             </div>
@@ -45,7 +45,7 @@
                             <th>Kode</th>
                             <th>Keterangan</th>
                             <th>Satuan</th>
-                            <th width="20%" align="center">Aksi</th>
+                            <th width="25%">Aksi</th>
                         </tr>
                     </thead>
                 </table>

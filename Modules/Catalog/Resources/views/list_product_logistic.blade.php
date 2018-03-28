@@ -37,7 +37,7 @@ if(isset($data->id)){
         <div class="box box-danger">
             <div class="box-header with-border">
                 <i class="fa fa-cogs"></i>
-                <h3 class="box-title f_parentname_product">Daftar Product</h3>
+                <h3 class="box-title f_parentname_product">Daftar Item Price</h3>
             </div>
             <!-- /.box-header -->
             <div class="box-body">
@@ -71,14 +71,6 @@ if(isset($data->id)){
                 </div>
                 <div class="modal-body">
                     <input type="hidden" id="f_id" name="f_id">
-                    <input type="hidden" id="f_parentid" name="f_parentid">
-
-                    <div class="form-group formerror-f_kodeproduct">
-                        <label>Kode Produk</label>
-                        <select class="form-control" id="f_kodeproduct" name="f_kodeproduct" style="width: 100%;" required>
-                        </select>
-                        <div class="error-f_kodeproduct"></div>
-                    </div>
 
                     <div class="form-group formerror-f_lokasi">
                         <label>Lokasi Logistic</label>

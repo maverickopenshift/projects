@@ -28,7 +28,7 @@
         <div class="box box-danger">
             <div class="box-header with-border">
                 <i class="fa fa-cogs"></i>
-                <h3 class="box-title">Taxonomy</h3>
+                <h3 class="box-title">Kategori</h3>
             </div>
             <div class="box-body form-horizontal">
                 <div class="form-group">
@@ -73,7 +73,7 @@
                             <tr>
                                 <th>Kode</th>
                                 <th>Keterangan</th>
-                                <th>Unit</th>
+                                <th>Satuan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -246,7 +246,7 @@ $(function() {
                 <div class="error error-f_ketproduct error-f_ketproduct-0"></div>\
             </td>\
             <td class="formerror formerror-f_unitproduct-0">\
-                <input type="text" name="f_unitproduct[]" placeholder="Unit.." class="form-control">\
+                <input type="text" name="f_unitproduct[]" placeholder="Satuan.." class="form-control">\
                 <div class="error error-f_unitproduct error-f_unitproduct-0"></div>\
             </td>\
             <td width="100px">\

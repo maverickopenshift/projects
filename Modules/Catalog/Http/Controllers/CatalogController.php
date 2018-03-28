@@ -14,7 +14,8 @@ use Datatables;
 use DB;
 
 class CatalogController extends Controller
-{
+{   
+    /*
     public function index(Request $request){
         $data['category']=CatalogCategory::get();    
         $data['product']=\DB::table('catalog_product as a')
@@ -25,6 +26,7 @@ class CatalogController extends Controller
         $data['page_title'] = 'List Item Katalog';
         return view('catalog::catalog')->with($data);
     }
+    */
 
     public function index_product_master(Request $request){
         $data['category']=CatalogCategory::get();    
@@ -32,7 +34,7 @@ class CatalogController extends Controller
                         ->join('catalog_category as b','b.id','=','a.catalog_category_id')
                         ->selectRaw('a.*,b.display_name as category_name')
                         ->get();        
-        $data['page_title'] = 'List Item Katalog';
+        $data['page_title'] = 'List Master Item';
         return view('catalog::list_product_master')->with($data);
     }
 
@@ -71,7 +73,7 @@ class CatalogController extends Controller
                         ->join('catalog_product_master as b','b.id','=','a.product_master_id')
                         ->selectRaw('a.*')
                         ->get();        
-        $data['page_title'] = 'List Item Katalog';
+        $data['page_title'] = 'List Item Price';
         return view('catalog::list_product_logistic')->with($data);
     }
 

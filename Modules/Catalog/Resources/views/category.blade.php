@@ -32,7 +32,10 @@
                         </a>
                     </div>
                     <div class="col-md-6">
-                        <button class="btn btn-warning btn-block add-subkategori">Sub Kategori</button>
+                        <button class="btn btn-warning btn-block add-subkategori">
+                            <i class="glyphicon glyphicon-plus"></i>
+                            Sub Kategori
+                        </button>
                     </div>
                 </div>
                 <div class="form-group">
@@ -93,7 +96,7 @@
 
                     <div class="form-group">
                         <div class="col-sm-6 col-md-offset-3">
-                            <button class="btn btn-primary btn-edit">Ubah Simpan</button>
+                            <button class="btn btn-primary btn-edit">Simpan</button>
                             <a class="btn btn-danger btn-delete" data-toggle="modal" data-target="#modal-delete">Delete</a>
                             <input type="submit" class="btn btn-primary btn-simpan" value="Simpan">
                         </div>

@@ -15,7 +15,7 @@ use Validator;
 class CategoryController extends Controller
 {
     public function index(Request $request){
-        $data['page_title'] = 'Katalog';
+        $data['page_title'] = 'Taxonomy';
         return view('catalog::category')->with($data);
     }
 

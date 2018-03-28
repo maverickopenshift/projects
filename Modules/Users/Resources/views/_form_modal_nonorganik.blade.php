@@ -465,13 +465,17 @@
                   if(type=='divisi'){
                     datas.type = 'divisi';
                   }
-                  if(type=='unit'){
-                    datas.type = 'unit';
-                    datas.divisi = $(parent).val();
+                  if(type=='unit_bisnis'){
+                    datas.type = 'unit_bisnis';
+                    datas.divisi = encodeURI($(parent).val());
+                  }
+                  if(type=='unit_kerja'){
+                    datas.type = 'unit_kerja';
+                    datas.unit_bisnis = encodeURI($(parent).val());
                   }
                   if(type=='posisi'){
                     datas.type = 'posisi';
-                    datas.unit = $(parent).val();
+                    datas.unit_kerja = encodeURI($(parent).val());
                   }
                   return datas;
 

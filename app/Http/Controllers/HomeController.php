@@ -148,7 +148,10 @@ class HomeController extends Controller
              }
              $up->save();
            }
-           return response()->json(['status'=>true,'msg'=>'success']); 
+           Auth::logout();
+           if(Auth::loginUsingId($id)){
+             return response()->json(['status'=>true,'msg'=>'success']); 
+           }
          }
          return response()->json(['status'=>false,'msg'=>'Anda bukan User PGS']); 
          

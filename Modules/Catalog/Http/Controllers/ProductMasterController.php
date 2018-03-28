@@ -9,11 +9,12 @@ use Modules\Catalog\Entities\CatalogProductMaster as CatalogProductMaster;
 use Modules\Documents\Entities\DocBoq as DocBoq;
 use Modules\Catalog\Entities\CatalogCategory as CatalogCategory;
 use Modules\Supplier\Entities\Supplier as Supplier;
-use App\Permission as Auth;
+use App\Permission;
 //use App\User;
 use Response;
 use Validator;
 use Datatables;
+use Auth;
 use DB;
 
 class ProductMasterController extends Controller
@@ -61,9 +62,7 @@ class ProductMasterController extends Controller
                     ->join('supplier as c','c.id','=','a.supplier_id')
                     ->selectRaw("a.*,b.display_name as category_name, concat(c.bdn_usaha,' ',c.nm_vendor) as supplier_nama")
                     ->get();
-                    
         }else{
-            //$data=CatalogProduct::where('catalog_category_id',$request->parent_id)->get();
             $data=DB::table('catalog_product as a')
                     ->join('catalog_category as b','b.id','=','a.catalog_category_id')
                     ->join('supplier as c','c.id','=','a.supplier_id')
@@ -146,6 +145,7 @@ class ProductMasterController extends Controller
                 foreach($request->f_kodeproduct as $key => $val){
                     if(!empty($val)){
                         $proses = new CatalogProductMaster();
+                        $proses->user_id = Auth::id();
                         $proses->catalog_category_id = $request['f_parentid'];
                         $proses->kode_product = $request['f_kodeproduct'][$key];
                         $proses->keterangan_product =$request['f_ketproduct'][$key];
@@ -161,7 +161,7 @@ class ProductMasterController extends Controller
             ));
         }        
     }
-    /*
+    
     public function edit(Request $request){
         $rules = array (
             'f_kodeproduct' => 'required|max:20|min:1|regex:/^[a-z0-9 .\-]+$/i',
@@ -186,6 +186,7 @@ class ProductMasterController extends Controller
             ));
         else{
             $proses = CatalogProductMaster::where('id',$request->f_id)->first();
+            $proses->user_id = Auth::id();
             $proses->catalog_category_id = $request->f_produk_parent;
             $proses->kode_product = $request->f_kodeproduct;
             $proses->keterangan_product =$request->f_ketproduct;
@@ -197,6 +198,7 @@ class ProductMasterController extends Controller
             ));
         }
     }
+    /*
     
     public function edit_proses(Request $request){
         $proses = CatalogProduct::where('id',$request->f_id)->first();

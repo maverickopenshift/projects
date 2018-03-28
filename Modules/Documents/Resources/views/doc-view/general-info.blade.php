@@ -61,17 +61,22 @@
         <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
           <div class="form-group">
             <label class="col-sm-2 control-label">Konseptor</label>
-            <div class="col-sm-10 text-me">{{$pegawai_konseptor->v_nama_karyawan.'/'.$pegawai_konseptor->n_nik.' - '.$pegawai_konseptor->v_short_posisi.' '.$pegawai_konseptor->v_short_unit.'/'.$pegawai_konseptor->v_short_divisi}}</div>
+            <div class="col-sm-10 text-me text-uppercase">
+              <span class="span-oke">Nama</span> {{$pegawai_konseptor->v_nama_karyawan}} <i>({{$pegawai_konseptor->n_nik}})</i></br> 
+              <span class="span-oke">Divisi</span> {{$pegawai_konseptor->divisi}} </br>
+              <span class="span-oke">Unit Bisnis</span> {{$pegawai_konseptor->unit_bisnis}} </br>
+              <span class="span-oke">Unit Kerja</span> {{$pegawai_konseptor->unit_kerja}} </br>
+              <span class="span-oke">Jabatan</span> {{$pegawai_konseptor->v_short_posisi}} </br>
+            </div>
           </div>
           <div class="form-group">
             <label class="col-sm-2 control-label">Pemilik Kontrak</label>
-            <div class="col-sm-10 text-me">Divisi: {{Modules\Users\Entities\Mtzpegawai::get_rptom('v_short_divisi','objiddivisi',$doc->divisi)}} <br> Unit: {{Modules\Users\Entities\Mtzpegawai::get_rptom('v_short_unit','objidunit',$doc->unit_bisnis)}}</div>
+            <div class="col-sm-10 text-me">
+              <span class="span-oke">Divisi</span> {{$doc->divisi}} <br> 
+              <span class="span-oke">Unit Bisini</span> {{$doc->unit_bisnis}}<br> 
+              <span class="span-oke">Unit Kerja</span> {{$doc->unit_kerja}}</div>
           </div>
-          <!-- <div class="form-group">
-            <label class="col-sm-2 control-label">Divisi</label>
-            <div class="col-sm-10 text-me">{{$pegawai_konseptor->v_short_divisi}}</div>
-          </div>
-          @include('documents::doc-view.general-info-right') -->
+          @include('documents::doc-view.general-info-right')
           <div class="form-group">
             <label class="col-sm-2 control-label">Approver</label>
             <div class="col-sm-10 text-me">{!!Helper::get_approver_by_id($doc->user_id)!!}</div>
@@ -82,7 +87,13 @@
           </div>
           <div class="form-group">
             <label for="ttd_pihak1" class="col-sm-2 control-label">Penandatangan Pihak I</label>
-            <div class="col-sm-10 text-me">{{$pegawai_pihak1->n_nik}} - {{$pegawai_pihak1->v_nama_karyawan}} - {{$pegawai_pihak1->v_short_posisi}}</div>
+            <div class="col-sm-10 text-me text-uppercase">
+              <span class="span-oke">Nama</span> {{$pegawai_pihak1->v_nama_karyawan}} <i>({{$pegawai_pihak1->n_nik}})</i></br> 
+              <span class="span-oke">Divisi</span> {{$pegawai_pihak1->divisi}} </br>
+              <span class="span-oke">Unit Bisnis</span> {{$pegawai_pihak1->unit_bisnis}} </br>
+              <span class="span-oke">Unit Kerja</span> {{$pegawai_pihak1->unit_kerja}} </br>
+              <span class="span-oke">Jabatan</span> {{$pegawai_pihak1->v_short_posisi}} </br>
+            </div>
           </div>
           <div class="form-group">
             <label for="akte_awal_tg" class="col-sm-2 control-label">Pihak II</label>
@@ -263,15 +274,15 @@
 <!-- /.box-body -->
 </div>
 @push('scripts')
-  @if(config('app.env')=='production')
+  {{-- @if(config('app.env')=='production') --}}
     <script src="{{ mix('js/po_sap.js') }}"></script>
-  @else
+  {{-- @else
     <script src="{{ mix('js/po_dummy.js') }}"></script>
-  @endif
+  @endif --}}
 <script>
 $(function() {
   var view_po_val = $('#view_po_val').val();
-  if(view_po_val!=""){
+  if(view_po_val!="" || typeof view_po_val === 'undefined'){
     render_po(view_po_val);
   }
 });

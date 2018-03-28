@@ -12,7 +12,7 @@ class Sap extends Model
     
     public static function get_po($po){
       try {
-        $client = new SoapClient(config('app.soap_sap_po'), array('login' => config('app.sap.user'),'password' => config('app.sap.passwd')));
+        $client = new SoapClient(config('app.soap_sap_po'), array('login' => config('app.sap.user'),'password' => config('app.sap.passwd'),'cache_wsdl' => WSDL_CACHE_NONE));
         $get_po = $client->ZMmPrpo([
                   'Ebeln' => $po,
                   'Banfn' => false,
@@ -22,6 +22,7 @@ class Sap extends Model
                   'UsrInf'=>false,
                   'VendorInf'=>false
                 ]);
+        // dd($get_po);
           return ['status'=>true,'data'=>$get_po,'length'=>count($get_po->Poitem->item)];
       } catch(SoapFault $ex) {
           //$msg = 'Exception: ' . $ex->getMessage() . PHP_EOL;

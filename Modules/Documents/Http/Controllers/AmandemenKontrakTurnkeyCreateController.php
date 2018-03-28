@@ -77,8 +77,9 @@ class AmandemenKontrakTurnkeyCreateController
       $rules['parent_kontrak']   =  'required|kontrak_exists';
       $rules['komentar']         = $required.'|max:250|min:2';
       if($user_type!='subsidiary'){
-        $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-        $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+        $rules['divisi']      =  'required|min:1|exists:__mtz_pegawai,divisi';
+        $rules['unit_bisnis'] =  'required|min:1|exists:__mtz_pegawai,unit_bisnis';
+        $rules['unit_kerja']  =  'required|min:1|exists:__mtz_pegawai,unit_kerja';
       }
       $rules['doc_title']        =  'required|min:2';
       $rules['doc_startdate']    =  $required.'|'.$date_format;
@@ -136,8 +137,6 @@ class AmandemenKontrakTurnkeyCreateController
       $rules['f_scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
       if(in_array($type,['turnkey'])){
-        $rules['doc_top_matauang']            =  'sometimes|nullable';
-        $rules['doc_top_totalharga']          =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
         $rules['top_deskripsi.*']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
         $rules['top_tanggal_mulai.*']     =  'sometimes|nullable|'.$date_format;
         $rules['top_tanggal_selesai.*']   =  'sometimes|nullable|'.$date_format.'|after:top_tanggal_mulai.*';
@@ -192,23 +191,11 @@ class AmandemenKontrakTurnkeyCreateController
       $doc->doc_user_type = 'subsidiary';
       $doc->penomoran_otomatis = 'no';
     }
-
-    if(!empty($request->doc_top_totalharga)){
-      $doc->doc_top_totalharga = Helpers::input_rupiah($request->doc_top_totalharga);
-      $doc->doc_top_matauang = $request->doc_top_matauang;
-    }
-
+    $doc->divisi = $request->divisi;
+    $doc->unit_bisnis = $request->unit_bisnis;
+    $doc->unit_kerja = $request->unit_kerja;
     $doc->save();
 
-    //pemilik Kontrak
-    if(count($request->divisi)>0 && $user_type!='subsidiary'){
-      $doc_meta2 = new DocMeta();
-      $doc_meta2->documents_id = $doc->id;
-      $doc_meta2->meta_type = 'pemilik_kontrak';
-      $doc_meta2->meta_name = $request->divisi;
-      $doc_meta2->meta_title =$request->unit_bisnis;
-      $doc_meta2->save();
-    }
     if(count($request->top_deskripsi)>0){
       foreach($request['top_deskripsi'] as $key => $val){
         if(!empty($val)
@@ -216,7 +203,6 @@ class AmandemenKontrakTurnkeyCreateController
           $asr = new DocTop();
           $asr->documents_id = $doc->id;
           $asr->top_deskripsi = $request['top_deskripsi'][$key];
-          $asr->top_matauang = $request->doc_top_matauang;
           $asr->top_tanggal_mulai = Helpers::date_set_db($request['top_tanggal_mulai'][$key]);
           $asr->top_tanggal_selesai = Helpers::date_set_db($request['top_tanggal_selesai'][$key]);
           $asr->top_harga = Helpers::input_rupiah($request['top_harga'][$key]);
@@ -240,7 +226,6 @@ class AmandemenKontrakTurnkeyCreateController
           $asr = new DocTop();
           $asr->documents_id = $doc->id;
           $asr->top_deskripsi = $request['top_deskripsi'][$key];
-          $asr->top_matauang = $request->doc_top_matauang;
           $asr->top_tanggal_mulai = Helpers::date_set_db($request['top_tanggal_mulai'][$key]);
           $asr->top_tanggal_selesai = Helpers::date_set_db($request['top_tanggal_selesai'][$key]);
           $asr->top_harga = Helpers::input_rupiah($request['top_harga'][$key]);

@@ -12,17 +12,17 @@
 <!-- /.box-body -->
 </div>
 @push('scripts')
-  @if(config('app.env')=='production')
+  {{-- @if(config('app.env')=='production') --}}
     <script src="{{ mix('js/po_sap.js') }}"></script>
-  @else
+  {{-- @else
     <script src="{{ mix('js/po_dummy.js') }}"></script>
-  @endif
+  @endif --}}
 <script>
 $(function() {
   add_select('doc_lampiran');
   delete_select('doc_lampiran');
   var po = $('.no_po').val()
-  if(po!=="" || po!==undefined){
+  if(po!=="" || typeof po === 'undefined'){
     render_po(po);
   }
 

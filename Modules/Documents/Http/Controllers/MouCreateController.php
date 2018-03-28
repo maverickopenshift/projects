@@ -39,6 +39,13 @@ class MouCreateController extends Controller
 
       $user_type = Helpers::usertype();
       $auto_numb =Config::get_config('auto-numb');
+      $statusButton = $request->statusButton;
+      $required = 'required';
+      $date_format = 'date_format:"d-m-Y"';
+      
+      if($statusButton=='2'){
+        $required = 'sometimes|nullable';
+      }
 
       if(isset($request['hs_harga']) && count($request['hs_harga'])>0){
         foreach($request['hs_harga'] as $key => $val){
@@ -64,127 +71,115 @@ class MouCreateController extends Controller
 
 
       $rules = [];
-      if($request->statusButton == '0'){
-        $rules['komentar']         = 'required|max:250|min:2';
-        if(Helpers::usertype()!='subsidiary'){
-          $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-          $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-        }
-        $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-        $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-        $rules['doc_startdate']    =  'required';
-        $rules['doc_enddate']      =  'required|after:doc_startdate';
-        $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-        $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-        $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-        $rules['doc_pihak2_nama']  =  'required|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['komentar']         = $required.'|max:250|min:2';
+      if(Helpers::usertype()!='subsidiary'){
+        $rules['divisi']      =  'required|min:1|exists:__mtz_pegawai,divisi';
+        $rules['unit_bisnis'] =  'required|min:1|exists:__mtz_pegawai,unit_bisnis';
+        $rules['unit_kerja']  =  'required|min:1|exists:__mtz_pegawai,unit_kerja';
+      }
+      $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_startdate']    =  $required.'|'.$date_format;
+      $rules['doc_enddate']      =  $required.'|'.$date_format.'|after:doc_startdate';
+      $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      $rules['doc_pihak2_nama']  =  $required.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
-        if(\Laratrust::hasRole('admin')){
-          $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-        }
+      if(\Laratrust::hasRole('admin')){
+        $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      }
 
-        if($user_type=='subsidiary'){
-          $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
+      if($user_type=='subsidiary'){
+        $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
+      }
+      else{
+        if($auto_numb=='off'){
+          $rules['doc_no']  =  'required|digits_between:1,5';
         }
-        else{
-          if($auto_numb=='off'){
-            $rules['doc_no']  =  'required|digits_between:1,5';
-          }
-        }
+      }
 
-        $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-        $check_new_lampiran = false;
-        foreach($request->doc_lampiran_old as $k => $v){
-          if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
-            $new_lamp[] = '';
-            $new_lamp_up[] = $request->doc_lampiran[$k];
-            $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
-          }
-          else if(empty($v)){
-            $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
-            if(!isset($request->doc_lampiran[$k])){
-              $new_lamp[] = $v;
-              $new_lamp_up[] = $v;
-            }
-            else{
-              $new_lamp[] = '';
-              $new_lamp_up[] = $request->doc_lampiran[$k];
-            }
-          }
-          else{
+      $rules['doc_lampiran_nama.*']  =  $required.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+      $check_new_lampiran = false;
+      foreach($request->doc_lampiran_old as $k => $v){
+        if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
+          $new_lamp[] = '';
+          $new_lamp_up[] = $request->doc_lampiran[$k];
+          $rules['doc_lampiran.'.$k] = $required.'|mimes:pdf';
+        }
+        else if(empty($v)){
+          $rules['doc_lampiran.'.$k] = $required.'|mimes:pdf';
+          if(!isset($request->doc_lampiran[$k])){
             $new_lamp[] = $v;
             $new_lamp_up[] = $v;
           }
-        }
-
-        $request->merge(['doc_lampiran' => $new_lamp]);
-
-        $rule_ps_judul = (count($request['ps_judul'])>1)?'required':'sometimes|nullable';
-        $rule_ps_isi = (count($request['ps_isi'])>1)?'required':'sometimes|nullable';
-        $rules['ps_judul.*']      =  $rule_ps_judul.'|in:Jangka Waktu Penerbitan Surat Pesanan,Jangka Waktu Penyerahan Pekerjaan,Tata Cara Pembayaran,Tanggal Efektif dan Masa Laku Perjanjian,Jaminan Pelaksanaan,Jaminan Uang Muka,Jaminan Pemeliharaan,Masa Laku Jaminan,Harga Kontrak,Lainnya';
-        $rules['ps_isi.*']        =  $rule_ps_isi.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-
-        if(is_array($request->ps_judul)) {
-          foreach($request->ps_judul as $k => $v){
-            if(isset($request->ps_judul[$k]) && $request->ps_judul[$k]=="Lainnya" && !empty($v)){//jika ada file baru
-              $new_pasal[] = $request->ps_judul_new[$k];
-              $rules['ps_judul_new.'.$k] = 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-            }
-            else{
-              $new_pasal[] = $v;
-            }
+          else{
+            $new_lamp[] = '';
+            $new_lamp_up[] = $request->doc_lampiran[$k];
           }
-
-          $request->merge(['ps_judul_new' => $new_pasal]);
         }
-
-        $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-        $validator->after(function ($validator) use ($request,$auto_numb,$user_type) {
-          if($user_type!='subsidiary' && $auto_numb=='off' && !$validator->errors()->has('doc_no')){
-            $d = Documents::check_no_kontrak($request['doc_no'],date('Y',strtotime($request['doc_startdate'])));
-            if($d){
-              $validator->errors()->add('doc_no', 'No Kontrak yang Anda masukan sudah ada!');
-            }
-          }
-        });
-        $request->merge(['doc_value' => $doc_value]);
-        if(isset($hs_harga) && count($hs_harga)>0){
-          $request->merge(['hs_harga'=>$hs_harga]);
+        else{
+          $new_lamp[] = $v;
+          $new_lamp_up[] = $v;
         }
-        if(isset($hs_qty) && count($hs_qty)>0){
-          $request->merge(['hs_qty'=>$hs_qty]);
-        }
-
-
-        if ($validator->fails ()){
-          //return redirect()->back()->withInput($request->input())->withErrors($validator);
-          return Response::json (array(
-            'errors' => $validator->getMessageBag()->toArray()
-          ));
-        }
-      }else{
-          $rules['supplier_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-          $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-          $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-          if(\Laratrust::hasRole('admin')){
-            $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-          }
-          $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-          if ($validator->fails ()){
-            //return redirect()->back()->withInput($request->input())->withErrors($validator);
-            return Response::json (array(
-              'errors' => $validator->getMessageBag()->toArray()
-            ));
-          }
       }
 
+      $request->merge(['doc_lampiran' => $new_lamp]);
+
+      $rule_ps_judul = (count($request['ps_judul'])>1)?$required:'sometimes|nullable';
+      $rule_ps_isi = (count($request['ps_isi'])>1)?$required:'sometimes|nullable';
+      $rules['ps_judul.*']      =  $rule_ps_judul.'|in:Jangka Waktu Penerbitan Surat Pesanan,Jangka Waktu Penyerahan Pekerjaan,Tata Cara Pembayaran,Tanggal Efektif dan Masa Laku Perjanjian,Jaminan Pelaksanaan,Jaminan Uang Muka,Jaminan Pemeliharaan,Masa Laku Jaminan,Harga Kontrak,Lainnya';
+      $rules['ps_isi.*']        =  $rule_ps_isi.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+
+      if(is_array($request->ps_judul)) {
+        foreach($request->ps_judul as $k => $v){
+          if(isset($request->ps_judul[$k]) && $request->ps_judul[$k]=="Lainnya" && !empty($v)){//jika ada file baru
+            $new_pasal[] = $request->ps_judul_new[$k];
+            $rules['ps_judul_new.'.$k] = $required.'|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+          }
+          else{
+            $new_pasal[] = $v;
+          }
+        }
+
+        $request->merge(['ps_judul_new' => $new_pasal]);
+      }
+
+      $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
+      $validator->after(function ($validator) use ($request,$auto_numb,$user_type) {
+        if($user_type!='subsidiary' && $auto_numb=='off' && !$validator->errors()->has('doc_no')){
+          $d = Documents::check_no_kontrak($request['doc_no'],date('Y',strtotime($request['doc_startdate'])));
+          if($d){
+            $validator->errors()->add('doc_no', 'No Kontrak yang Anda masukan sudah ada!');
+          }
+        }
+      });
+      $request->merge(['doc_value' => $doc_value]);
+      if(isset($hs_harga) && count($hs_harga)>0){
+        $request->merge(['hs_harga'=>$hs_harga]);
+      }
+      if(isset($hs_qty) && count($hs_qty)>0){
+        $request->merge(['hs_qty'=>$hs_qty]);
+      }
+
+
+      if ($validator->fails ()){
+        //return redirect()->back()->withInput($request->input())->withErrors($validator);
+        return Response::json (array(
+          'errors' => $validator->getMessageBag()->toArray()
+        ));
+      }
+      DB::beginTransaction();
+      try {
       $doc = new Documents();
       $doc->doc_title = $request->doc_title;
       $doc->doc_desc = $request->doc_desc;
       $template_id = DocTemplate::get_by_type($type)->id;
       $doc->doc_template_id = $template_id;
-      $doc->doc_startdate = date("Y-m-d", strtotime($request->doc_startdate));
-      $doc->doc_enddate = date("Y-m-d", strtotime($request->doc_enddate));
+      $doc->doc_date = Helpers::date_set_db($request->doc_startdate);
+      $start_date = $request->doc_startdate;
+      $doc->doc_startdate = Helpers::date_set_db($start_date);
+      $doc->doc_enddate = Helpers::date_set_db($request->doc_enddate);
       $doc->doc_pihak1 = $request->doc_pihak1;
       $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
       $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
@@ -213,17 +208,10 @@ class MouCreateController extends Controller
         $doc->doc_user_type = 'subsidiary';
         $doc->penomoran_otomatis = 'no';
       }
+      $doc->divisi = $request->divisi;
+      $doc->unit_bisnis = $request->unit_bisnis;
+      $doc->unit_kerja = $request->unit_kerja;
       $doc->save();
-
-      //pemilik Kontrak
-      if(count($request->divisi)>0 && $user_type!='subsidiary'){
-        $doc_meta2 = new DocMeta();
-        $doc_meta2->documents_id = $doc->id;
-        $doc_meta2->meta_type = 'pemilik_kontrak';
-        $doc_meta2->meta_name = $request->divisi;
-        $doc_meta2->meta_title =$request->unit_bisnis;
-        $doc_meta2->save();
-      }
 
       if(count($request->ps_judul)>0){
         foreach($request->ps_judul as $key => $val){
@@ -297,6 +285,7 @@ class MouCreateController extends Controller
       */
 
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
+      DB::commit();
       if($request->statusButton == '0'){
         return Response::json (array(
           'status' => 'tracking'
@@ -305,6 +294,13 @@ class MouCreateController extends Controller
         return Response::json (array(
           'status' => 'draft'
         ));
+      }
+    } catch (\Exception $e) {
+          DB::rollBack();
+          return Response::json (array(
+            'status' => 'error',
+            'msg' => $e->getMessage()
+          ));
       }
     }
 

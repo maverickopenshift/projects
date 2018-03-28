@@ -102,9 +102,9 @@
                       </table>
                     </div>
                     <div class="form-group">
-                      <label>Pilih Atasan</label>
+                      <label>Pilih Penandatangan Kontrak</label>
                       <select class="form-control select-user-atasan" style="width: 100%;" name="non_user_atasan" id="non_user_atasan" data-action="non_atasan">
-                          <option value="">Pilih Atasan</option>
+                          <option value="">Pilih Penandatangan Kontrak</option>
                       </select>
                       <div class="error-non_user_atasan"></div>
                     </div>

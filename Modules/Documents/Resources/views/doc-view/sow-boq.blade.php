@@ -24,6 +24,7 @@
             </div>
           </div>
         @endif
+        @if($doc_type['title']!="Mou")
             @php
               $kode_item = Helper::old_prop_each($doc,'hs_kode_item');
               $item = Helper::old_prop_each($doc,'hs_item');
@@ -123,6 +124,7 @@
             </div>
           @endif
           @include('documents::partials.buttons-view')
+        @endif
       </div>
     </div>
 <!-- /.box-body -->

@@ -44,11 +44,20 @@
       <div class="form-horizontal" style="border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
         <div class="form-group">
           <label class="col-sm-2 control-label">Konseptor</label>
-          <div class="col-sm-10 text-me">{{$pegawai_konseptor->v_nama_karyawan.'/'.$pegawai_konseptor->n_nik.' - '.$pegawai_konseptor->v_short_posisi.' '.$pegawai_konseptor->v_short_unit.'/'.$pegawai_konseptor->v_short_divisi}}</div>
+          <div class="col-sm-10 text-me text-uppercase">
+            <span class="span-oke">Nama</span> {{$pegawai_konseptor->v_nama_karyawan}} <i>({{$pegawai_konseptor->n_nik}})</i></br> 
+            <span class="span-oke">Divisi</span> {{$pegawai_konseptor->divisi}} </br>
+            <span class="span-oke">Unit Bisnis</span> {{$pegawai_konseptor->unit_bisnis}} </br>
+            <span class="span-oke">Unit Kerja</span> {{$pegawai_konseptor->unit_kerja}} </br>
+            <span class="span-oke">Jabatan</span> {{$pegawai_konseptor->v_short_posisi}} </br>
+          </div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label">Pemilik Kontrak</label>
-          <div class="col-sm-10 text-me">Divisi: {{Modules\Users\Entities\Mtzpegawai::get_rptom('v_short_divisi','objiddivisi',$doc->divisi)}} <br> Unit: {{Modules\Users\Entities\Mtzpegawai::get_rptom('v_short_unit','objidunit',$doc->unit_bisnis)}}</div>
+          <div class="col-sm-10 text-me">
+            <span class="span-oke">Divisi</span> {{$doc->divisi}} <br> 
+            <span class="span-oke">Unit Bisini</span> {{$doc->unit_bisnis}}<br> 
+            <span class="span-oke">Unit Kerja</span> {{$doc->unit_kerja}}</div>
         </div>
         <div class="form-group">
           <label class="col-sm-2 control-label">Pihak I</label>
@@ -56,7 +65,13 @@
         </div>
         <div class="form-group">
           <label for="ttd_pihak1" class="col-sm-2 control-label">Penandatangan Pihak I</label>
-          <div class="col-sm-10 text-me">{{$pegawai_pihak1->n_nik}} - {{$pegawai_pihak1->v_nama_karyawan}} - {{$pegawai_pihak1->v_short_posisi}}</div>
+          <div class="col-sm-10 text-me text-uppercase">
+            <span class="span-oke">Nama</span> {{$pegawai_pihak1->v_nama_karyawan}} <i>({{$pegawai_pihak1->n_nik}})</i></br> 
+            <span class="span-oke">Divisi</span> {{$pegawai_pihak1->divisi}} </br>
+            <span class="span-oke">Unit Bisnis</span> {{$pegawai_pihak1->unit_bisnis}} </br>
+            <span class="span-oke">Unit Kerja</span> {{$pegawai_pihak1->unit_kerja}} </br>
+            <span class="span-oke">Jabatan</span> {{$pegawai_pihak1->v_short_posisi}} </br>
+          </div>
         </div>
         <div class="form-group">
           <label for="akte_awal_tg" class="col-sm-2 control-label">Pihak II</label>

@@ -72,8 +72,9 @@ class SuratPengikatanCreateController extends Controller
       $rules['komentar']         = $required.'|max:250|min:2';
 
       if($user_type!='subsidiary'){
-        $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-        $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+        $rules['divisi']      =  'required|min:1|exists:__mtz_pegawai,divisi';
+        $rules['unit_bisnis'] =  'required|min:1|exists:__mtz_pegawai,unit_bisnis';
+        $rules['unit_kerja']  =  'required|min:1|exists:__mtz_pegawai,unit_kerja';
       }
 
       $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
@@ -213,17 +214,10 @@ class SuratPengikatanCreateController extends Controller
         $doc->doc_sow = $request->doc_sow;
         $doc->doc_type = $request->type;
         $doc->doc_signing = $request->statusButton;
+        $doc->divisi = $request->divisi;
+        $doc->unit_bisnis = $request->unit_bisnis;
+        $doc->unit_kerja = $request->unit_kerja;
         $doc->save();
-
-        //pemilik Kontrak
-        if(count($request->divisi)>0 && $user_type!='subsidiary'){
-          $doc_meta2 = new DocMeta();
-          $doc_meta2->documents_id = $doc->id;
-          $doc_meta2->meta_type = 'pemilik_kontrak';
-          $doc_meta2->meta_name = $request->divisi;
-          $doc_meta2->meta_title =$request->unit_bisnis;
-          $doc_meta2->save();
-        }
 
         // pasal khusus
         if(count($request->ps_judul)>0){

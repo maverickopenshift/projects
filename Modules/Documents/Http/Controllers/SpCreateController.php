@@ -71,8 +71,9 @@ class SpCreateController
 
         $rules['komentar']         = $required.'|max:250|min:2';
         if($user_type!='subsidiary'){
-          $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-          $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+          $rules['divisi']      =  'required|min:1|exists:__mtz_pegawai,divisi';
+          $rules['unit_bisnis'] =  'required|min:1|exists:__mtz_pegawai,unit_bisnis';
+          $rules['unit_kerja']  =  'required|min:1|exists:__mtz_pegawai,unit_kerja';
         }
 
         $rules['parent_kontrak']   =  'required|kontrak_exists';
@@ -206,7 +207,10 @@ class SpCreateController
           $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
           $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
           $doc->user_id = (\Laratrust::hasRole('admin'))?$request->user_id:Auth::id();
-
+          
+          $doc->divisi = $request->divisi;
+          $doc->unit_bisnis = $request->unit_bisnis;
+          $doc->unit_kerja = $request->unit_kerja;
 
           if(isset($request->doc_lampiran_teknis)){
             $fileName   = Helpers::set_filename('doc_lampiran_teknis_',strtolower($request->doc_title));
@@ -248,16 +252,6 @@ class SpCreateController
             $doc->penomoran_otomatis = 'no';
           }
           $doc->save();
-
-          //pemilik Kontrak
-          if(count($request->divisi)>0 && $user_type!='subsidiary'){
-            $doc_meta2 = new DocMeta();
-            $doc_meta2->documents_id = $doc->id;
-            $doc_meta2->meta_type = 'pemilik_kontrak';
-            $doc_meta2->meta_name = $request->divisi;
-            $doc_meta2->meta_title =$request->unit_bisnis;
-            $doc_meta2->save();
-          }
 
           //save po
           if(isset($request->doc_po)){

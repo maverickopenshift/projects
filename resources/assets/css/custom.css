@@ -331,6 +331,22 @@ td > .btn{
 .direct-chat-text:before {
     border: 0px none;
 }
+.span-oke {
+    width: 70px;
+    display: inline-block;
+    position: relative;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform:none;
+}
+.span-oke::after {
+    content: ':';
+    right: 2px;
+    position: absolute;
+    font-weight: bold;
+    font-size: 14px;
+    text-transform:none;
+}
 /*.child-2:before {
 
     background-image: url(../images/02.png);

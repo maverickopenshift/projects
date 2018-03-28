@@ -79,8 +79,9 @@ class AmandemenKontrakKhsCreateController
     $rules['parent_kontrak']   =  'required|kontrak_exists';
     $rules['komentar']         = $required.'|max:250|min:2';
     if($user_type!='subsidiary'){
-      $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-      $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      $rules['divisi']      =  'required|min:1|exists:__mtz_pegawai,divisi';
+      $rules['unit_bisnis'] =  'required|min:1|exists:__mtz_pegawai,unit_bisnis';
+      $rules['unit_kerja']  =  'required|min:1|exists:__mtz_pegawai,unit_kerja';
     }
     $rules['doc_title']        =  'required|min:2';
     $rules['doc_startdate']    =  $required.'|'.$date_format;
@@ -191,17 +192,10 @@ class AmandemenKontrakKhsCreateController
       $doc->doc_user_type = 'subsidiary';
       $doc->penomoran_otomatis = 'no';
     }
+    $doc->divisi = $request->divisi;
+    $doc->unit_bisnis = $request->unit_bisnis;
+    $doc->unit_kerja = $request->unit_kerja;
     $doc->save();
-
-    //pemilik Kontrak
-    if(count($request->divisi)>0 && $user_type!='subsidiary'){
-      $doc_meta2 = new DocMeta();
-      $doc_meta2->documents_id = $doc->id;
-      $doc_meta2->meta_type = 'pemilik_kontrak';
-      $doc_meta2->meta_name = $request->divisi;
-      $doc_meta2->meta_title =$request->unit_bisnis;
-      $doc_meta2->save();
-    }
 
     if(count($request->doc_lampiran)>0){
       foreach($request->doc_lampiran as $key => $val){

@@ -26,28 +26,16 @@
         <div class="form-group" style="position:relative;margin-bottom: 34px;">
           <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;"></div>
         </div>
-
-        <div class="form-group formerror formerror-top_matauang">
-          <label for="lt_name" class="col-sm-2 control-label"> Mata Uang</label>
-          <div class="col-sm-4">
-            <select name="doc_top_matauang" class="form-control top_matauang" style="width: 100%;">
-              <option value="IDR" {{$a}}>IDR</option>
-              <option value="USD" {{$b}}>USD</option>
-            </select>
+        
+        @if($doc_type->name != 'amandemen_kontrak_turnkey')
+          <div class="form-group">
+            <label class="col-sm-2 control-label">Nilai Kontrak </label>
+            <div class="col-sm-6 text-me text-uppercase"><span class="mtu-set"></span> <span class="total-harga-kontrak"></span></div>
           </div>
-          <div class="col-sm-10 col-sm-offset-2">
-            <div class="error error-top_matauang"></div>
-          </div>
-        </div>
-
-        <div class="form-group formerror formerror-top_totalharga">
-          <label for="lt_name" class="col-sm-2 control-label"> Total Harga Jasa MS</label>
-          <div class="col-sm-4">
-            <input type="text" class="form-control input-rupiah" name="doc_top_totalharga" autocomplete="off" placeholder="Total Harga Jasa MS.." value="{{$doc_top_totalharga}}">
-          </div>
-          <div class="col-sm-10 col-sm-offset-2">
-            <div class="error error-top_totalharga"></div>
-          </div>
+        @endif
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Periode Kontrak </label>
+          <div class="col-sm-6 text-me text-uppercase__"><span class="periode-kontrak"></span></div>
         </div>
 
         <div class="table-responsive">
@@ -57,14 +45,14 @@
                 <th>Deskripsi</th>
                 <th>Tanggal Mulai</th>
                 <th>Tanggal Selesai</th>
-                <th>Harga per Periode</th>
+                <th>Harga</th>
                 <th>Target BAPP</th>
                 <th>Aksi</th>
               </tr>
             </thead>
             <tbody class="table-isi">
               @if(count($doc->doc_top)>0)
-                @foreach ($doc->doc_top as $key=>$dt)
+                @foreach ($doc->doc_top as $key => $dt)
                   <tr class="tabel-top">
 
                     <td class="formerror formerror-top_deskripsi-{{$key}}">
@@ -77,7 +65,7 @@
                         <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                         </div>
-                        <input type="text" class="form-control datepicker" name="top_tanggal_mulai[]" autocomplete="off" placeholder="Tanggal Mulai.." value="{{$dt->top_tanggal_mulai}}">
+                        <input type="text" class="form-control datepicker" name="top_tanggal_mulai[]" autocomplete="off" placeholder="Tanggal Mulai.." value="{{Helper::date_set($dt->top_tanggal_mulai)}}">
                       </div>
                       <div class="error error-top_tanggal_mulai error-top_tanggal_mulai-{{$key}}"></div>
                     </td>
@@ -87,15 +75,15 @@
                         <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                         </div>
-                        <input type="text" class="form-control datepicker" name="top_tanggal_selesai[]" autocomplete="off" placeholder="Tanggal Selesai.." value="{{$dt->top_tanggal_selesai}}">
+                        <input type="text" class="form-control datepicker" name="top_tanggal_selesai[]" autocomplete="off" placeholder="Tanggal Selesai.." value="{{Helper::date_set($dt->top_tanggal_selesai)}}">
                       </div>
                       <div class="error error-top_tanggal_selesai error-top_tanggal_selesai-{{$key}}"></div>
                     </td>
 
                     <td class="formerror formerror-top_harga-{{$key}}">
                       <div class="input-group">
-                        <div class="input-group-addon top-matauang-set">
-                          {{$dt->top_matauang}}
+                        <div class="input-group-addon top-matauang-set mtu-set">
+                          {{$dt->doc_mtu}}
                         </div>
                         <input type="text" class="form-control input-rupiah" name="top_harga[]" autocomplete="off" placeholder="Harga per Periode.." value="{{$dt->top_harga}}">
                       </div>
@@ -107,7 +95,7 @@
                         <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                         </div>
-                        <input type="text" class="form-control datepicker" name="top_tanggal_bapp[]" autocomplete="off" placeholder="Tanggal BAPP.." value="{{$dt->top_tanggal_bapp}}">
+                        <input type="text" class="form-control datepicker" name="top_tanggal_bapp[]" autocomplete="off" placeholder="Tanggal BAPP.." value="{{Helper::date_set($dt->top_tanggal_bapp)}}">
                       </div>
                       <div class="error error-top_tanggal_bapp error-top_tanggal_bapp-{{$key}}"></div>
                     </td>
@@ -138,6 +126,18 @@
 </div>
 @push('scripts')
 <script>
+$(document).ready(function(e){
+  $('.total-harga-kontrak').text($('input[name="doc_value"]').val());
+  $('.periode-kontrak').text($('input[name="doc_startdate"]').val()+' s.d '+$('input[name="doc_enddate"]').val());
+  $('input[name="doc_value"]').on('keyup', function(event) {
+    event.preventDefault();
+    /* Act on the event */
+    $('.total-harga-kontrak').text($(this).val());
+  });
+  $('input[name="doc_enddate"]').on('change', function(event) {
+    $('.periode-kontrak').text($('input[name="doc_startdate"]').val()+' s.d '+$(this).val());
+  });
+});
   normal();
 
   function normal(){
@@ -217,7 +217,7 @@
       </td>\
       <td class="formerror formerror-top_harga-0">\
         <div class="input-group">\
-          <div class="input-group-addon top-matauang-set">\
+          <div class="input-group-addon top-matauang-set mtu-set">{{$doc->doc_mtu}}\
           </div>\
           <input type="text" class="form-control input-rupiah" name="top_harga[]" autocomplete="off" placeholder="Harga per Periode..">\
         </div>\

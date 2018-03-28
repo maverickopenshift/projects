@@ -15,7 +15,7 @@
             @include('documents::doc-form.no-kontrak')
           @endif
 
-          <div class="form-group {{ $errors->has('doc_desc') ? ' has-error' : '' }}">
+          <div class="form-group  formerror formerror-doc_desc">
             <label for="deskripsi_kontrak" class="col-sm-2 control-label">Deskripsi {{$doc_type['title']}}</label>
             <div class="col-sm-10">
               <textarea class="form-control" rows="4" name="doc_desc" placeholder="Masukan Deskripsi Kontrak">{{old('doc_desc',Helper::prop_exists($doc,'doc_desc'))}}</textarea>
@@ -26,7 +26,7 @@
               @endif
             </div>
           </div>
-          <div class="form-group {{ $errors->has('doc_startdate') ? ' has-error' : '' }}">
+          <div class="form-group  formerror formerror-doc_startdate">
             <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Mulai {{$doc_type['title']}}</label>
             <div class="col-sm-6">
               <div class="input-group date" data-provide="datepicker">
@@ -40,7 +40,7 @@
               {!!Helper::error_help($errors,'doc_startdate')!!}
             </div>
           </div>
-          <div class="form-group {{ $errors->has('doc_enddate') ? ' has-error' : '' }}">
+          <div class="form-group  formerror formerror-doc_enddate">
             <label for="akte_awal_tg" class="col-sm-2 control-label"><span class="text-red">*</span> Tanggal Akhir {{$doc_type['title']}}</label>
             <div class="col-sm-6">
               <div class="input-group date" data-provide="datepicker">

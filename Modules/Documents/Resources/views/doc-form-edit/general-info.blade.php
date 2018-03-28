@@ -12,17 +12,17 @@
 <!-- /.box-body -->
 </div>
 @push('scripts')
-  @if(config('app.env')=='production')
+  {{-- @if(config('app.env')=='production') --}}
     <script src="{{ mix('js/po_sap.js') }}"></script>
-  @else
+  {{-- @else
     <script src="{{ mix('js/po_dummy.js') }}"></script>
-  @endif
+  @endif --}}
 <script>
 $(function() {
   // add_select('doc_lampiran');
   // delete_select('doc_lampiran');
   var po = $('.no_po').val()
-  if(po!=="" || po!==undefined){
+  if(po!=="" || typeof po === 'undefined'){
     render_po(po);
   }
 
@@ -290,41 +290,5 @@ function create_content(attr){
     </div>\
   </div>';
 }
-$(document).on('change', '#divisi', function(event) {
-  event.preventDefault();
-  /* Act on the event */
-  var divisi = this.value;
-  console.log('{!!$doc->unit_bisnis!!}');
-  //if(unit!==""){
-  $('#unit_bisnis').find('option').not('option[value=""]').remove();
-    $.ajax({
-      url: '{!!route('doc.get-unit')!!}',
-      type: 'GET',
-      dataType: 'json',
-      data: {divisi: divisi}
-    })
-    .done(function(data) {
-      if(data.length>0){
-        var __unit = '{!!$doc->unit_bisnis!!}';
-        var __selected = '';
-        $.each(data,function(index, el) {
-          if(this.id == __unit){
-            __selected = 'selected';
-          }
-          else{
-            __selected = '';
-          }
-          $('#unit_bisnis').append('<option value="'+this.id+'" '+(__selected)+'>'+this.title+'</option>');
-        });
-      }
-    });
-  //}
-});
-$(function(e){
-  $('#unit_bisnis').find('option').not('option[value=""]').remove();
-  if($('#divisi').val()!==""){
-    $('#divisi').change();
-  }
-});
 </script>
 @endpush

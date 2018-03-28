@@ -15,7 +15,9 @@ function render_po(po){
     .done(function(response) {
       if(response.status){
         if(response.length==0){
-          error_po.html(response.data);
+          console.log(response.data);
+          var __res = (response.data=='Unauthorized')?'No.PO tidak ditemukan!':response.data;
+          error_po.html('No.PO tidak ditemukan!');
         }
         else{
           var total = response.length;

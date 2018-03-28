@@ -71,8 +71,9 @@ class SpEditController extends Controller
       if(in_array($status,['2'])){
         $rules['parent_kontrak']   =  'required|kontrak_exists';
         if($user_type!='subsidiary'){
-          $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-          $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+          $rules['divisi']      =  'required|min:1|exists:__mtz_pegawai,divisi';
+          $rules['unit_bisnis'] =  'required|min:1|exists:__mtz_pegawai,unit_bisnis';
+          $rules['unit_kerja']  =  'required|min:1|exists:__mtz_pegawai,unit_kerja';
         }
         $rules['doc_title']        =  'required|min:2';
         $rules['doc_desc']         =  'sometimes|nullable|min:30|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -264,7 +265,11 @@ class SpEditController extends Controller
           $doc->doc_nilai_total_ppn = (($nilai_ppn/100)*$nilai_total)+$nilai_total;
 
           $doc->doc_po_no = $request->doc_po;
-
+          
+          $doc->divisi = $request->divisi;
+          $doc->unit_bisnis = $request->unit_bisnis;
+          $doc->unit_kerja = $request->unit_kerja;
+          
           $doc->doc_proc_process = $request->doc_proc_process;
           $doc->doc_mtu = $request->doc_mtu;
           $doc->doc_value = Helpers::input_rupiah($request->doc_value);
@@ -296,18 +301,6 @@ class SpEditController extends Controller
                 $doc_meta->save();
               }
             }
-          }
-          if(count($request->divisi)>0 && $user_type!='subsidiary'){
-            DocMeta::where([
-              ['documents_id','=',$doc->id],
-              ['meta_type','=','pemilik_kontrak'],
-              ])->delete();
-            $doc_meta2 = new DocMeta();
-            $doc_meta2->documents_id = $doc->id;
-            $doc_meta2->meta_type = 'pemilik_kontrak';
-            $doc_meta2->meta_name = $request->divisi;
-            $doc_meta2->meta_title =$request->unit_bisnis;
-            $doc_meta2->save();
           }
         }            
       }else{
@@ -487,7 +480,7 @@ class SpEditController extends Controller
         $comment->documents_id = $doc->id;
         $comment->users_id = \Auth::id();
         $comment->status = 1;
-        $comment->data = "Edited";
+        $comment->data = "Submitted";
         $comment->save();
       }
 

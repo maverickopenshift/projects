@@ -24,7 +24,9 @@ return [
         'sysnr'  => '00',
         'client' => '300',
         'user'   => 'abap1',
-        'passwd' => 'Telkom2017',
+        // 'user'   => 'R2P_ADM',
+        'passwd' => 'bandung123',
+        // 'passwd' => 'Initial.1',
     ],
     
     'eproposal_pr' => 'https://www.ajaora.com/eproposal.json',

@@ -88,15 +88,16 @@ class AmandemenKontrakTurnkeyEditController extends Controller
     if(in_array($status,['2'])){
       $rules['parent_kontrak']   =  'required|kontrak_exists';
       if($user_type!='subsidiary'){
-        $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-        $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+        $rules['divisi']      =  'required|min:1|exists:__mtz_pegawai,divisi';
+        $rules['unit_bisnis'] =  'required|min:1|exists:__mtz_pegawai,unit_bisnis';
+        $rules['unit_kerja']  =  'required|min:1|exists:__mtz_pegawai,unit_kerja';
       }
       $rules['doc_title']        =  'required|min:2';
       $rules['doc_startdate']    =  $required.'|'.$date_format;
       $rules['doc_enddate']      =  $required.'|'.$date_format.'|after:doc_startdate';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak1']       =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak1_nama']  =  'required|min:5|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+      $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['doc_pihak2_nama']  =  $required.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
       $rules['komentar']         = $required.'|max:250|min:2';
 
@@ -149,8 +150,6 @@ class AmandemenKontrakTurnkeyEditController extends Controller
     $rules['f_scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
     if(in_array($type,['turnkey'])){
-      $rules['doc_top_matauang']            =  'sometimes|nullable';
-      $rules['doc_top_totalharga']          =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
       $rules['top_deskripsi.*']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
       $rules['top_tanggal_mulai.*']     =  'sometimes|nullable|'.$date_format;
       $rules['top_tanggal_selesai.*']   =  'sometimes|nullable|'.$date_format.'|after:top_tanggal_mulai.*';
@@ -214,6 +213,9 @@ class AmandemenKontrakTurnkeyEditController extends Controller
           $doc->doc_pihak1 = $request->doc_pihak1;
           $doc->doc_pihak1_nama = $request->doc_pihak1_nama;
           $doc->doc_pihak2_nama = $request->doc_pihak2_nama;
+          $doc->divisi = $request->divisi;
+          $doc->unit_bisnis = $request->unit_bisnis;
+          $doc->unit_kerja = $request->unit_kerja;
           if((\Laratrust::hasRole('admin'))){
             $doc->user_id  = $request->user_id;
           }
@@ -235,18 +237,6 @@ class AmandemenKontrakTurnkeyEditController extends Controller
             $doc->penomoran_otomatis = 'no';
           }
 
-          if(count($request->divisi)>0 && $user_type!='subsidiary'){
-            DocMeta::where([
-              ['documents_id','=',$doc->id],
-              ['meta_type','=','pemilik_kontrak'],
-              ])->delete();
-            $doc_meta2 = new DocMeta();
-            $doc_meta2->documents_id = $doc->id;
-            $doc_meta2->meta_type = 'pemilik_kontrak';
-            $doc_meta2->meta_name = $request->divisi;
-            $doc_meta2->meta_title =$request->unit_bisnis;
-            $doc_meta2->save();
-          }
           if(count($new_lamp_up)>0){
             DocMeta::where([
               ['documents_id','=',$doc->id],
@@ -276,8 +266,6 @@ class AmandemenKontrakTurnkeyEditController extends Controller
       //kalo dokumennya di return/ di approve dan di edit datanya (status = 3 & 1)
       $doc->doc_signing = ($statusButton=='2')?'2':'0';
     }
-    $doc->doc_top_matauang= $request->doc_top_matauang;
-    $doc->doc_top_totalharga= Helpers::input_rupiah($request->doc_top_totalharga);
     $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
     $doc->doc_sow = $request->doc_sow;
     $doc->save();
@@ -293,7 +281,6 @@ class AmandemenKontrakTurnkeyEditController extends Controller
           $top = new DocTop();
           $top->documents_id = $doc->id;
           $top->top_deskripsi = $request['top_deskripsi'][$key];
-          $top->top_matauang = $request->doc_top_matauang;
           $top->top_tanggal_mulai = Helpers::date_set_db($request['top_tanggal_mulai'][$key]);
           $top->top_tanggal_selesai = Helpers::date_set_db($request['top_tanggal_selesai'][$key]);
           $top->top_harga = Helpers::input_rupiah($request['top_harga'][$key]);
@@ -463,7 +450,7 @@ class AmandemenKontrakTurnkeyEditController extends Controller
       $comment->documents_id = $doc->id;
       $comment->users_id = \Auth::id();
       $comment->status = 1;
-      $comment->data = "Edited";
+      $comment->data = "Submitted";
       $comment->save();
     }
     DB::commit();

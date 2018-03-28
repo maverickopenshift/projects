@@ -239,7 +239,7 @@ class DocumentsController extends Controller
       $user_type = \App\User::check_usertype(\Auth::user()->username);
       $id = $request->id;
       $doc_type = DocType::where('name','=',$request->type)->first();
-      $dt = $this->documents->where('id','=',$id)->with('pemilik_kontrak','jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po','sow_boq','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter','latar_belakang_optional','latar_belakang_ketetapan_pemenang','latar_belakang_kesanggupan_mitra','latar_belakang_rks','doc_top')->first();
+      $dt = $this->documents->where('id','=',$id)->with('jenis','supplier','pic','boq','lampiran_ttd','latar_belakang','pasal','asuransi','scope_perubahan','po','sow_boq','latar_belakang_surat_pengikatan','latar_belakang_mou','scope_perubahan_side_letter','latar_belakang_optional','latar_belakang_ketetapan_pemenang','latar_belakang_kesanggupan_mitra','latar_belakang_rks','doc_top')->first();
 
       if(!$doc_type || !$dt){
         abort(404);
@@ -291,12 +291,10 @@ class DocumentsController extends Controller
 
 
       if($user_type!='subsidiary'){
-        $objiddivisi=$dt->pemilik_kontrak->meta_name;
-        $objidunit=$dt->pemilik_kontrak->meta_title;
-        $data['divisi'] = \DB::table('rptom')->where('objiddivisi',$objiddivisi)->first();
-        $data['unit_bisnis'] = \DB::table('rptom')->where('objidunit',$objidunit)->first();
-        $data['doc']['divisi'] = $objiddivisi;
-        $data['doc']['unit_bisnis'] = $objidunit;
+        $data['divisi'] = $dt->divisi;
+        $data['unit_bisnis'] = $dt->unit_bisnis;
+        $data['doc']['divisi'] = $dt->divisi;
+        $data['doc']['unit_bisnis'] = $dt->unit_bisnis;
       }
       else{
         $data['divisi'] = $konseptor;
@@ -314,14 +312,14 @@ class DocumentsController extends Controller
       if (empty($search)) {
         return Response::json(['status'=>false]);
       }
-      if(config('app.env')=='production'){
+      // if(config('app.env')=='production'){
         $sap = Sap::get_po($search);
         return Response::json($sap);
-      }
-      else{
-        $sql = \DB::table('dummy_po')->where('no_po','=',$search)->get();
-        return Response::json(['status'=>true,'data'=>$sql,'length'=>count($sql)]);
-      }
+      // }
+      // else{
+      //   $sql = \DB::table('dummy_po')->where('no_po','=',$search)->get();
+      //   return Response::json(['status'=>true,'data'=>$sql,'length'=>count($sql)]);
+      // }
     }
 
     public function getPic(Request $request){
@@ -366,6 +364,13 @@ class DocumentsController extends Controller
     public function approve(Request $request)
     {
       if ($request->ajax()) {
+        $rules['komentar'] = 'required|min:2|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+        $validator = Validator::make($request->all(), $rules,['reason.required'=>'Alasan harus diisi!','reason.regex'=>'Format penulisan tidak valid!','reason.min'=>'Inputan minimal 5 karakter']);
+        
+        if ($validator->fails ()){
+          return Response::json(['status'=>false,'msg'=>$validator->errors()->first()]);
+        }
+        
         if($request->no_kontrak == null){
           $doc = $this->documents->where('id',$request->id)->whereNull('doc_no')->first();
 
@@ -385,7 +390,7 @@ class DocumentsController extends Controller
           $doc->save();
         }
         if($doc){
-
+          
           $comment = new Comments();
           $comment->content = $request->komentar;
           $comment->documents_id = $request->id;
@@ -443,7 +448,7 @@ class DocumentsController extends Controller
           $doc = $this->documents->where('id',$request->id)->first();
         }
         if($doc){
-          $rules['reason'] = 'required|min:3|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+          $rules['reason'] = 'required|min:2|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
           $validator = Validator::make($request->all(), $rules,['reason.required'=>'Alasan harus diisi!','reason.regex'=>'Format penulisan tidak valid!','reason.min'=>'Inputan minimal 5 karakter']);
           if ($validator->fails ()){
             return Response::json(['status'=>false,'msg'=>$validator->errors()->first()]);
@@ -901,5 +906,23 @@ class DocumentsController extends Controller
     return $client;
     exit;
   }
-
+  public function getUnitBisnis(Request $request){
+      $divisi = urldecode($request->divisi);
+      // dd($divisi);
+      if (empty($divisi)) {
+          return \Response::json([]);
+      }
+      // $data = \App\User::get_unit_by_disivi2($divisi)->get();
+      $data = \App\User::get_all_real_unit_bisnis(false,$divisi)->get();
+      return \Response::json($data);
+  }
+  public function getUnitKerja(Request $request){
+      $unit_bisnis = urldecode($request->unit_bisnis);
+      if (empty($unit_bisnis)) {
+          return \Response::json([]);
+      }
+      // $data = \App\User::get_unit_by_disivi2($divisi)->get();
+      $data = \App\User::get_all_real_unit_kerja(false,$unit_bisnis)->get();
+      return \Response::json($data);
+  }
 }

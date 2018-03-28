@@ -109,7 +109,7 @@ class EditController extends Controller
         $dt->lt_file_kesanggupan_mitra_old  = $dt->latar_belakang_kesanggupan_mitra[0]['meta_file'];
 
         $dt->lt_judul_ketetapan_pemenang    = $dt->latar_belakang_ketetapan_pemenang[0]['meta_name'];
-        $dt->lt_tanggal_ketetapan_pemenang  = $dt->latar_belakang_ketetapan_pemenang[0]['meta_desc'];
+        $dt->lt_tanggal_ketetapan_pemenang  =Helpers::date_set( $dt->latar_belakang_ketetapan_pemenang[0]['meta_desc']);
         $dt->lt_file_ketetapan_pemenang     = $dt->latar_belakang_ketetapan_pemenang[0]['meta_file'];
         $dt->lt_file_ketetapan_pemenang_old = $dt->latar_belakang_ketetapan_pemenang[0]['meta_file'];
       }
@@ -274,12 +274,12 @@ class EditController extends Controller
         //$dt->divisi=$dt->pemilik_kontrak->meta_name;
         //$dt->unit_bisnis=$dt->pemilik_kontrak->meta_title;
 
-        $objiddivisi=$dt->pemilik_kontrak->meta_name;
-        $objidunit=$dt->pemilik_kontrak->meta_title;
-        $dt->divisi = $objiddivisi;
-        $dt->unit_bisnis = $objidunit;
-        $data['divisi'] = \DB::table('rptom')->where('objiddivisi',$objiddivisi)->first();
-        $data['unit_bisnis'] = \DB::table('rptom')->where('objidunit',$objidunit)->first();
+        // $objiddivisi=$dt->pemilik_kontrak->meta_name;
+        // $objidunit=$dt->pemilik_kontrak->meta_title;
+        // $dt->divisi = $objiddivisi;
+        // $dt->unit_bisnis = $objidunit;
+        // $data['divisi'] = \DB::table('rptom')->where('objiddivisi',$objiddivisi)->first();
+        // $data['unit_bisnis'] = \DB::table('rptom')->where('objidunit',$objidunit)->first();
       }
     }
     else{
@@ -296,8 +296,6 @@ class EditController extends Controller
     }
     // dd($dt);
     $data['doc'] = $dt;
-
-    $konseptor = \App\User::get_user_pegawai($dt->user_id);
     $data['action_type'] = 'edit';
     $data['auto_numb']=Config::get_config('auto-numb');
     $data['action_url'] = route('doc.storeedit_ajax',['type'=>$dt->jenis->type->name,'id'=>$dt->id]);
@@ -386,8 +384,9 @@ class EditController extends Controller
     $new_lamp_up=[];
     if(in_array($status,['2'])){
       if($user_type!='subsidiary'){
-        $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-        $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+        $rules['divisi']      =  'required|min:1|exists:__mtz_pegawai,divisi';
+        $rules['unit_bisnis'] =  'required|min:1|exists:__mtz_pegawai,unit_bisnis';
+        $rules['unit_kerja']  =  'required|min:1|exists:__mtz_pegawai,unit_kerja';
       }
       $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
       $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -499,8 +498,6 @@ class EditController extends Controller
         $request->merge(['doc_jaminan_file' => $new_jfile]);
     }
     if(in_array($type,['turnkey'])){
-      $rules['doc_top_matauang']            =  'sometimes|nullable';
-      $rules['doc_top_totalharga']          =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
       $rules['top_deskripsi.*']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
       $rules['top_tanggal_mulai.*']     =  'sometimes|nullable|'.$date_format;
       $rules['top_tanggal_selesai.*']   =  'sometimes|nullable|'.$date_format.'|after:top_tanggal_mulai.*';
@@ -591,6 +588,9 @@ class EditController extends Controller
               $doc->doc_signing = ($statusButton=='2')?'2':'0';
               $doc->doc_mtu = $request->doc_mtu;
               $doc->doc_value = Helpers::input_rupiah($request->doc_value);
+              $doc->divisi = $request->divisi;
+              $doc->unit_bisnis = $request->unit_bisnis;
+              $doc->unit_kerja = $request->unit_kerja;
 
               if((\Laratrust::hasRole('admin'))){
                 $doc->user_id = $request->user_id;
@@ -614,18 +614,6 @@ class EditController extends Controller
               if($user_type=='subsidiary'){
                 $doc->doc_user_type = 'subsidiary';
                 $doc->penomoran_otomatis = 'no';
-              }
-              if(count($request->divisi)>0 && $user_type!='subsidiary'){
-                DocMeta::where([
-                  ['documents_id','=',$doc->id],
-                  ['meta_type','=','pemilik_kontrak'],
-                  ])->delete();
-                $doc_meta2 = new DocMeta();
-                $doc_meta2->documents_id = $doc->id;
-                $doc_meta2->meta_type = 'pemilik_kontrak';
-                $doc_meta2->meta_name = $request->divisi;
-                $doc_meta2->meta_title =$request->unit_bisnis;
-                $doc_meta2->save();
               }
               if(count($new_lamp_up)>0){
                 DocMeta::where([
@@ -658,10 +646,6 @@ class EditController extends Controller
 
       }
       if(in_array($type,['turnkey'])){
-        if(!empty($request->doc_top_totalharga)){
-          $doc->doc_top_matauang= $request->doc_top_matauang;
-          $doc->doc_top_totalharga= Helpers::input_rupiah($request->doc_top_totalharga);
-        }
         //turn of payment
         if(count($request->top_deskripsi)>0){
           DocTop::where([
@@ -673,7 +657,6 @@ class EditController extends Controller
               $top = new DocTop();
               $top->documents_id = $doc->id;
               $top->top_deskripsi = $request['top_deskripsi'][$key];
-              $top->top_matauang = $request->doc_top_matauang;
               $top->top_tanggal_mulai = Helpers::date_set_db($request['top_tanggal_mulai'][$key]);
               $top->top_tanggal_selesai = Helpers::date_set_db($request['top_tanggal_selesai'][$key]);
               $top->top_harga = Helpers::input_rupiah($request['top_harga'][$key]);
@@ -897,7 +880,7 @@ class EditController extends Controller
         $comment->documents_id = $doc->id;
         $comment->users_id = \Auth::id();
         $comment->status = 1;
-        $comment->data = "Edited";
+        $comment->data = "Submitted";
         $comment->save();
       }
 

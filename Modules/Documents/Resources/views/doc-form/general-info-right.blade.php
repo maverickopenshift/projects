@@ -8,35 +8,45 @@
   <label class="col-sm-2 control-label">Konseptor </label>
   {{-- <div class="col-sm-6 text-me text-uppercase">{{$pegawai->v_nama_karyawan.'/'.$pegawai->n_nik.' - '.$pegawai->v_short_posisi.' '.$pegawai->v_short_unit.'/'.$pegawai->v_short_divisi}}
   </div> --}}
-  <div class="col-sm-6 text-me text-uppercase">{{$pegawai->v_nama_karyawan}} <i>({{$pegawai->n_nik}})</i> - {{$pegawai->v_short_posisi}}
+  <div class="col-sm-6 text-me text-uppercase">
+    <span class="span-oke">Nama</span> {{$pegawai->v_nama_karyawan}} <i>({{$pegawai->n_nik}})</i></br> 
+    <span class="span-oke">Divisi</span> {{$pegawai->divisi}} </br>
+    <span class="span-oke">Unit Bisnis</span> {{$pegawai->unit_bisnis}} </br>
+    <span class="span-oke">Unit Kerja</span> {{$pegawai->unit_kerja}} </br>
+    <span class="span-oke">Jabatan</span> {{$pegawai->v_short_posisi}} </br>
   </div>
 </div>
 <div class="form-group">
-  <label class="col-sm-2 control-label">Divisi </label>
-  <div class="col-sm-6 text-me text-uppercase">{{$pegawai->v_short_divisi}}</div>
-</div>
-<div class="form-group">
-  <label class="col-sm-2 control-label">Loker</label>
-    <div class="col-sm-6 text-me text-uppercase">{{$pegawai->v_short_unit}}</div>
+  <label for="pemilik_kontrak" class="col-sm-2 control-label"><span class="text-red">*</span>Pemilik Kontrak</label>
+  <div class="col-sm-6">
+    <div class="col-sm-12">
+    <div class="form-group formerror formerror-divisi">
+        <div class="input-group" style="width:100%">
+          <span class="input-group-addon" style="font-weight:bold;width:90px;text-align:right;">Divisi :</span>
+          {!!Helper::select_all_divisi('divisi',$pegawai->divisi)!!}
+        </div>
+        <div class="error error-divisi" style="margin-bottom:10px"></div>
+    </div>
+    <div class="form-group formerror formerror-unit_bisnis">
+      <div class="input-group" style="width:100%">
+        <span class="input-group-addon text-right" style="font-weight:bold;width:90px;text-align:right;">Unit Bisnis :</span>
+        {!!Helper::select_unit_bisnis('unit_bisnis',$pegawai->unit_bisnis,$pegawai->divisi)!!}
+      </div>
+      <div class="error error-unit_bisnis" style="margin-bottom:10px"></div>
+    </div>
+    <div class="form-group formerror formerror-unit_kerja">
+      <div class="input-group" style="width:100%">
+        <span class="input-group-addon text-right" style="font-weight:bold;width:90px;text-align:right;">Unit Kerja :</span>
+        {!!Helper::select_unit_kerja('unit_kerja',$pegawai->unit_kerja,$pegawai->unit_bisnis)!!}
+      </div>
+      <div class="error error-unit_kerja" style="margin-bottom:10px"></div>
+    </div>
+    </div>
+  </div>
 </div>
 <div class="form-group">
   <label class="col-sm-2 control-label">Approver</label>
   <div class="col-sm-6 text-me text-uppercase">{!!Helper::get_approver($pegawai)!!}
-  </div>
-</div>
-<div class="form-group formerror formerror-divisi formerror-unit_bisnis">
-  <label for="pemilik_kontrak" class="col-sm-2 control-label"><span class="text-red">*</span>Pemilik Kontrak</label>
-  <div class="col-sm-6">
-    <div class="form-group">
-      <div class="col-sm-6">
-        {!!Helper::select_all_divisi('divisi',$pegawai->objiddivisi)!!}
-        <div class="error error-divisi"></div>
-      </div>
-      <div class="col-sm-6">
-          {!!Helper::select_unit('unit_bisnis',old('unit_bisnis',Helper::prop_exists($doc,'unit_bisnis')))!!}
-          <div class="error error-unit_bisnis"></div>
-      </div>
-    </div>
   </div>
 </div>
 <div class="form-group formerror formerror-doc_pihak1">
@@ -99,30 +109,63 @@
     event.preventDefault();
     /* Act on the event */
     var divisi = this.value;
-    var unit__ = '{!!$pegawai->objidunit!!}';
     //if(unit!==""){
     $('#unit_bisnis').find('option').not('option[value=""]').remove();
+    var t_awal = $('#unit_bisnis').find('option[value=""]').text();
+    $('#unit_bisnis').find('option[value=""]').text('Please wait.....');
+    $('#unit_kerja').find('option').not('option[value=""]').remove();
       $.ajax({
-        url: '{!!route('doc.get-unit')!!}',
+        url: '{!!route('doc.get-unit-bisnis')!!}',
         type: 'GET',
         dataType: 'json',
-        data: {divisi: divisi}
+        data: {divisi: encodeURIComponent(divisi)}
       })
       .done(function(data) {
         if(data.length>0){
           $.each(data,function(index, el) {
-            $('#unit_bisnis').append('<option value="'+this.id+'" '+(unit__==this.id ? 'selected="selected"':'')+'>'+this.title+'</option>');
+            $('#unit_bisnis').append('<option value="'+this.id+'">'+this.title+'</option>');
           });
+          $('#unit_bisnis').find('option[value=""]').text('Pilih Unit Bisnis');
+        }
+        else{
+          $('#unit_bisnis').find('option[value=""]').text('Tidak ada data');
         }
       });
     //}
   });
-  $(function(e){
-    $('#unit_bisnis').find('option').not('option[value=""]').remove();
-    if($('#divisi').val()!==""){
-      $('#divisi').change();
-    }
+  $(document).on('change', '#unit_bisnis', function(event) {
+    event.preventDefault();
+    /* Act on the event */
+    var unit_bisnis = this.value;
+    //if(unit!==""){
+    $('#unit_kerja').find('option').not('option[value=""]').remove();
+    var t_awal = $('#unit_kerja').find('option[value=""]').text();
+    $('#unit_kerja').find('option[value=""]').text('Please wait.....');
+      $.ajax({
+        url: '{!!route('doc.get-unit-kerja')!!}',
+        type: 'GET',
+        dataType: 'json',
+        data: {unit_bisnis: encodeURIComponent(unit_bisnis)}
+      })
+      .done(function(data) {
+        if(data.length>0){
+          $.each(data,function(index, el) {
+            $('#unit_kerja').append('<option value="'+this.id+'">'+this.title+'</option>');
+          });
+          $('#unit_kerja').find('option[value=""]').text('Pilih Unit Kerja');
+        }
+        else{
+          $('#unit_kerja').find('option[value=""]').text('Tidak ada data');
+        }
+      });
+    //}
   });
+  // $(function(e){
+  //   $('#unit_bisnis').find('option').not('option[value=""]').remove();
+  //   if($('#divisi').val()!==""){
+  //     $('#divisi').change();
+  //   }
+  // });
   </script>
 @endpush
 @endif

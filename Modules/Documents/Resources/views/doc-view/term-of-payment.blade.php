@@ -15,13 +15,13 @@
         </div>
 
         <div class="form-group ">
-          <label class="col-sm-2 control-label">Mata Uang </label>
-          <div class="col-sm-10 text-me">{{$doc_top_matauang}}</div>
+          <label class="col-sm-2 control-label">Nilai Kontrak </label>
+          <div class="col-sm-10 text-me">{{$doc->doc_mtu}} {{number_format($doc->doc_value)}}</div>
         </div>
 
         <div class="form-group ">
-          <label class="col-sm-2 control-label">Total Harga Jasa MS </label>
-          <div class="col-sm-10 text-me">{{number_format($doc_top_totalharga)}}</div>
+          <label class="col-sm-2 control-label">Periode Kontrak </label>
+          <div class="col-sm-10 text-me">{{Carbon\Carbon::parse($doc->doc_startdate)->format('d-m-Y')}} s.d {{Carbon\Carbon::parse($doc->doc_enddate)->format('d-m-Y')}}</div>
         </div>
 
         <div class="table-responsive">
@@ -31,7 +31,7 @@
                 <th>Deskripsi</th>
                 <th>Tanggal Mulai</th>
                 <th>Tanggal Selesai</th>
-                <th>Harga per Periode</th>
+                <th>Harga</th>
                 <th>Target BAPP</th>
               </tr>
             </thead>

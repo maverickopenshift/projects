@@ -215,8 +215,9 @@ class EntryDocumentController extends Controller
       $rules = [];
         $rules['komentar']         = $required.'|max:250|min:2';
         if($user_type!='subsidiary'){
-          $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-          $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+          $rules['divisi']      =  'required|min:1|exists:__mtz_pegawai,divisi';
+          $rules['unit_bisnis'] =  'required|min:1|exists:__mtz_pegawai,unit_bisnis';
+          $rules['unit_kerja']  =  'required|min:1|exists:__mtz_pegawai,unit_kerja';
         }
         $rules['doc_title']        =  'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
         $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
@@ -286,8 +287,6 @@ class EntryDocumentController extends Controller
         $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
         if(in_array($type,['turnkey'])){
-          $rules['doc_top_matauang']            =  'sometimes|nullable';
-          $rules['doc_top_totalharga']          =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
           $rules['top_deskripsi.*']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
           $rules['top_tanggal_mulai.*']     =  'sometimes|nullable|'.$date_format;
           $rules['top_tanggal_selesai.*']   =  'sometimes|nullable|'.$date_format.'|after:top_tanggal_mulai.*';
@@ -386,19 +385,15 @@ class EntryDocumentController extends Controller
         $doc->doc_po_no = $request->doc_po;
       }
 
-      if(in_array($type,['turnkey'])){
-        if(!empty($request->doc_top_totalharga)){
-          $doc->doc_top_totalharga = Helpers::input_rupiah($request->doc_top_totalharga);
-          $doc->doc_top_matauang = $request->doc_top_matauang;
-        }
-      }
-
       $doc->doc_proc_process = $request->doc_proc_process;
       $doc->doc_mtu = $request->doc_mtu;
       $doc->doc_value = Helpers::input_rupiah($request->doc_value);
       $doc->doc_sow = $request->doc_sow;
       $doc->doc_type = $request->type;
       $doc->doc_signing = $request->statusButton;
+      $doc->divisi = $request->divisi;
+      $doc->unit_bisnis = $request->unit_bisnis;
+      $doc->unit_kerja = $request->unit_kerja;
 
 
       $doc->penomoran_otomatis =  Config::get_penomoran_otomatis($request->penomoran_otomatis);
@@ -413,16 +408,6 @@ class EntryDocumentController extends Controller
         $doc->penomoran_otomatis = 'no';
       }
       $doc->save();
-
-      //pemilik Kontrak
-      if(count($request->divisi)>0 && $user_type!='subsidiary'){
-        $doc_meta2 = new DocMeta();
-        $doc_meta2->documents_id = $doc->id;
-        $doc_meta2->meta_type = 'pemilik_kontrak';
-        $doc_meta2->meta_name = $request->divisi;
-        $doc_meta2->meta_title =$request->unit_bisnis;
-        $doc_meta2->save();
-      }
 
       //eproposal PR
       if(count($request->doc_pr)>0){
@@ -518,15 +503,14 @@ class EntryDocumentController extends Controller
           foreach($request['top_deskripsi'] as $key => $val){
             if(!empty($val)
             ){
-              $top = new DocTop();
-              $top->documents_id      = $doc->id;
-              $top->top_deskripsi     = $request['top_deskripsi'][$key];
-              $top->top_matauang      = $request->doc_top_matauang;
-              $top->top_tanggal_mulai = Helpers::date_set_db($request['top_tanggal_mulai'][$key]);
-              $top->top_tanggal_selesai = Helpers::date_set_db($request['top_tanggal_selesai'][$key]);
-              $top->top_harga         = Helpers::input_rupiah($request['top_harga'][$key]);
-              $top->top_tanggal_bapp  = Helpers::date_set_db($request['top_tanggal_bapp'][$key]);
-              $top->save();
+              $asr = new DocTop();
+              $asr->documents_id = $doc->id;
+              $asr->top_deskripsi = $request['top_deskripsi'][$key];
+              $asr->top_tanggal_mulai = Helpers::date_set_db($request['top_tanggal_mulai'][$key]);
+              $asr->top_tanggal_selesai = Helpers::date_set_db($request['top_tanggal_selesai'][$key]);
+              $asr->top_harga = Helpers::input_rupiah($request['top_harga'][$key]);
+              $asr->top_tanggal_bapp = Helpers::date_set_db($request['top_tanggal_bapp'][$key]);
+              $asr->save();
             }
           }
         }

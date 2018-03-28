@@ -38,6 +38,38 @@ class Helpers
       $select .= '</select>';
       return $select;
     }
+    public static function select_unit_bisnis($name,$val=null,$divisi)
+    {
+      $unit = \App\User::get_all_real_unit_bisnis(false,$divisi)->get();
+      // dd($val);
+      $select  = '<select class="form-control" id="'.$name.'" name="'.$name.'">';
+      $select .= '<option value="">Pilih Unit Bisnis</option>';
+      foreach ($unit as $dt) {
+        $selected = '';
+        if($val==$dt->id){
+          $selected = 'selected="selected"';
+        }
+        $select .= '<option value="'.$dt->id.'" '.$selected.'>'.$dt->title.'</option>';
+      }
+      $select .= '</select>';
+      return $select;
+    }
+    public static function select_unit_kerja($name,$val=null,$divisi)
+    {
+      $unit = \App\User::get_all_real_unit_kerja(false,$divisi)->get();
+      // dd($val);
+      $select  = '<select class="form-control" id="'.$name.'" name="'.$name.'">';
+      $select .= '<option value="">Pilih Unit Kerja</option>';
+      foreach ($unit as $dt) {
+        $selected = '';
+        if($val==$dt->id){
+          $selected = 'selected="selected"';
+        }
+        $select .= '<option value="'.$dt->id.'" '.$selected.'>'.$dt->title.'</option>';
+      }
+      $select .= '</select>';
+      return $select;
+    }
     public static function select_divisi($name,$val=null)
     {
       $unit = \App\User::get_unit_by_disivi()->get();
@@ -55,7 +87,7 @@ class Helpers
     }
     public static function select_all_divisi($name,$val=null)
     {
-      $unit = \App\User::get_all_disivi()->get();
+      $unit = \App\User::get_all_real_disivi()->get();
       $select  = '<select class="form-control" id="'.$name.'" name="'.$name.'">';
       $select .= '<option value="">Pilih Divisi</option>';
       foreach ($unit as $dt) {

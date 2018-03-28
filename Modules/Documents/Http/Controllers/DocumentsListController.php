@@ -80,7 +80,12 @@ class DocumentsListController extends Controller
             $documents->where('v_users_pegawai.company_id',\App\User::get_subsidiary_user()->company_id);
           }
           else {
-            $documents->where('v_users_pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+            if($status=='draft'){
+              $documents->where('documents.user_id',\Auth::id());
+            }
+            else{
+              $documents->where('v_users_pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+            }
           }
           
         }

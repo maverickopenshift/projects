@@ -4,29 +4,170 @@ namespace Modules\Catalog\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Modules\Catalog\Entities\CatalogProduct as CatalogProduct;
-use Modules\Documents\Entities\DocBoq as DocBoq;
+use Modules\Catalog\Entities\CatalogProductMaster as CatalogProductMaster;
+use Modules\Catalog\Entities\CatalogProductLogistic as CatalogProductLogistic;
+use Modules\Documents\Entities\Documents as Documents;
 use Modules\Catalog\Entities\CatalogCategory as CatalogCategory;
-use Modules\Supplier\Entities\Supplier as Supplier;
 use App\Permission as Auth;
-//use App\User;
+
+use App\Helpers\Helpers;
 use Response;
 use Validator;
 use Datatables;
 use DB;
 
-class ProductController extends Controller
+class ProductLogisticController extends Controller
 {
     public function index(Request $request){
-        $data['category']=CatalogCategory::get();    
-        $data['product']=\DB::table('catalog_product as a')
+        $data['product']=\DB::table('catalog_product_master as a')
                         ->selectRaw('a.*,b.display_name as category_name')
                         ->join('catalog_category as b','b.id','=','a.catalog_category_id')
-                        ->get();          
-        $data['page_title'] = 'Item Katalog';
-        return view('catalog::product')->with($data);
+                        ->where('a.id',$request->id_product)
+                        ->first();          
+        $data['page_title'] = 'Item Price';
+        return view('catalog::product_logistic')->with($data);
+    }
+    /*
+    public function get_kode_product_master(Request $request){
+        $search = trim($request->q);
+        if($request->parent_id==""){
+            $data = CatalogProductMaster::selectRaw('id, kode_product as text');
+        }else{
+            $data = CatalogProductMaster::selectRaw('id, kode_product as text')
+            ->where('catalog_category_id',$request->parent_id);
+        }
+                    
+
+        if(!empty($search)){
+          $data->where(function($q) use ($search) {
+              $q->orWhere('kode_product', 'like', '%'.$search.'%');
+          });
+        }
+        $data = $data->paginate(30);
+        return \Response::json($data);
+    }
+    */
+
+    public function get_kontrak(Request $request){
+        $search = trim($request->q);
+        $data = Documents::selectRaw('id, doc_no as text')
+                ->where('doc_type','turnkey')
+                ->where('doc_type','sp')
+                ->where('doc_signing','1')
+        ;
+        if(!empty($search)){
+          $data->where(function($q) use ($search) {
+              $q->orWhere('doc_no', 'like', '%'.$search.'%');
+          });
+        }
+        $data = $data->paginate(30);
+        return \Response::json($data);
+    }
+    /*
+    public function get_kode_product_master_normal(Request $request){
+        $result=CatalogProductMaster::selectRaw('id, kode_product as text')->get();
+
+        $hasil=array();
+        for($i=0;$i<count($result);$i++){
+            $hasil[$i]['id']=$result[$i]->id;
+            $hasil[$i]['text']=$result[$i]->text;
+        }
+
+        return Response::json($hasil);
+    }
+    */
+
+    public function get_kontrak_normal(Request $request){
+        $result=Documents::selectRaw('id, doc_no as text')
+                ->where('doc_type','turnkey')
+                ->where('doc_type','sp')
+                ->where('doc_signing','1')->get();
+
+        $hasil=array();
+        for($i=0;$i<count($result);$i++){
+            $hasil[$i]['id']=$result[$i]->id;
+            $hasil[$i]['text']=$result[$i]->text;
+        }
+
+        return Response::json($hasil);
     }
 
+    public function add_ajax(Request $request){
+        $rules = array();
+        if(count($request->f_lokasi)>0){
+            foreach($request->f_lokasi as $key  => $val){
+                $rules['f_lokasi.'.$key]        ='required|max:100|min:1|regex:/^[a-z0-9 .\-]+$/i';
+                $rules['f_hargabarang.'.$key]   ='required|max:100|min:1|regex:/^[a-z0-9 .\-]+$/i';
+                $rules['f_hargajasa.'.$key]     ='required|max:100|min:1|regex:/^[a-z0-9 .\-]+$/i';
+                $rules['f_jenis.'.$key]         ='required|max:100|min:1|regex:/^[a-z0-9 .\-]+$/i';
+                $rules['f_referensi.'.$key]     ='required|max:100|min:1|regex:/^[a-z0-9 .\-]+$/i';
+            }
+        }
+
+        $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
+        
+        if ($validator->fails ()){
+            return Response::json (array(
+                'errors' => $validator->getMessageBag()->toArray()
+              ));
+        }else{            
+            if(count($request->f_lokasi)>0){
+                foreach($request->f_lokasi as $key => $val){
+                    if(!empty($val)){
+                        $proses = new CatalogProductLogistic();
+                        $proses->product_master_id      = $request->f_idproduct;
+                        $proses->lokasi_logistic        = $request['f_lokasi'][$key];
+                        $proses->harga_barang_logistic  = Helpers::input_rupiah($request['f_hargabarang'][$key]);
+                        $proses->harga_jasa_logistic    = Helpers::input_rupiah($request['f_hargajasa'][$key]);
+                        $proses->jenis_referensi        = $request['f_jenis'][$key];
+                        $proses->referensi_logistic     = $request['f_referensi'][$key];
+                        $proses->save();
+                    }
+                }
+            }
+            
+            return Response::json (array(
+                'status' => 'all'
+            ));
+        }        
+    }
+
+    public function edit(Request $request){
+        $rules = array();
+        $rules['f_kodeproduct']   ='required|max:100|min:1|regex:/^[a-z0-9 .\-]+$/i';
+        $rules['f_lokasi']        ='required|max:100|min:1|regex:/^[a-z0-9 .\-]+$/i';
+        $rules['f_hargabarang']   ='required|max:100|min:1|regex:/^[a-z0-9 .\-]+$/i';
+        $rules['f_hargajasa']     ='required|max:100|min:1|regex:/^[a-z0-9 .\-]+$/i';
+        $rules['f_jenis']         ='required|max:100|min:1|regex:/^[a-z0-9 .\-]+$/i';
+        $rules['f_referensi']     ='required|max:100|min:1|regex:/^[a-z0-9 .\-]+$/i';
+
+        $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
+        if ($validator->fails ())
+            return Response::json (array(
+                'errors' => $validator->getMessageBag()->toArray()
+            ));
+        else{
+            $proses = CatalogProductLogistic::where('id',$request->f_id)->first();
+            $proses->product_master_id      = $request->f_kodeproduct;
+            $proses->lokasi_logistic        = $request->f_lokasi;
+            $proses->harga_barang_logistic  = $request->f_hargabarang;
+            $proses->harga_jasa_logistic    = $request->f_hargajasa;
+            $proses->jenis_referensi        = $request->f_jenis;
+            $proses->referensi_logistic     = $request->f_referensi;
+            $proses->save();   
+
+            return Response::json (array(
+                'status' => 'all'
+            ));
+        }
+    }
+
+    public function delete(Request $request){
+        $proses=CatalogProductLogistic::where('id',$request->id)->delete();
+        return 1;
+    }
+
+    /*
     public function get_product_induk(Request $request){
         $result=CatalogCategory::selectRaw('id, code, display_name')->get();
 
@@ -50,7 +191,7 @@ class ProductController extends Controller
 
         return Response::json($hasil);
     }
-    /*
+
     public function datatables(Request $request){
         if($request->parent_id==0){
             
@@ -90,7 +231,6 @@ class ProductController extends Controller
                     })
                 ->make(true);
     }
-    */
 
     public function boq(Request $request){
 
@@ -110,7 +250,6 @@ class ProductController extends Controller
         return Response::json($data);
     }   
 
-    /*
     public function add(Request $request){
         $rules = array();
 
@@ -164,8 +303,7 @@ class ProductController extends Controller
 
             return redirect()->route('catalog.product');
         }        
-    }
-    */
+    }    
 
     public function add_ajax(Request $request){
         $rules = array();
@@ -310,4 +448,5 @@ class ProductController extends Controller
 
         return Response::json($data);
     }
+    */
 }

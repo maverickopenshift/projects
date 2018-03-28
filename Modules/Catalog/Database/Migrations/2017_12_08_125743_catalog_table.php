@@ -27,16 +27,19 @@ class CatalogTable extends Migration
         Schema::create('catalog_product', function (Blueprint $table) {
           $table->bigIncrements('id');
           $table->bigInteger('catalog_category_id')->unsigned();
+          $table->bigInteger('supplier_id')->unsigned();            
           $table->string('code',100);
           $table->string('name',100);
           $table->string('unit',100);
           $table->string('currency',100);
           $table->string('price',100);
+          $table->string('price_jasa')->unsigned();
           $table->string('desc',500);
           $table->string('keyword',500);
           $table->timestamps();
           $table->softDeletes();
-
+          
+          $table->foreign('supplier_id')->references('id')->on('supplier');
           $table->foreign('catalog_category_id')->references('id')->on('catalog_category');
         });
     }

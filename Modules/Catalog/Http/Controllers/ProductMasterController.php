@@ -4,7 +4,8 @@ namespace Modules\Catalog\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Modules\Catalog\Entities\CatalogProduct as CatalogProduct;
+//use Modules\Catalog\Entities\CatalogProduct as CatalogProduct;
+use Modules\Catalog\Entities\CatalogProductMaster as CatalogProductMaster;
 use Modules\Documents\Entities\DocBoq as DocBoq;
 use Modules\Catalog\Entities\CatalogCategory as CatalogCategory;
 use Modules\Supplier\Entities\Supplier as Supplier;
@@ -15,16 +16,16 @@ use Validator;
 use Datatables;
 use DB;
 
-class ProductController extends Controller
+class ProductMasterController extends Controller
 {
     public function index(Request $request){
         $data['category']=CatalogCategory::get();    
-        $data['product']=\DB::table('catalog_product as a')
+        $data['product']=\DB::table('catalog_product_master as a')
                         ->selectRaw('a.*,b.display_name as category_name')
                         ->join('catalog_category as b','b.id','=','a.catalog_category_id')
-                        ->get();          
-        $data['page_title'] = 'Item Katalog';
-        return view('catalog::product')->with($data);
+                        ->get();
+        $data['page_title'] = 'Master Item';
+        return view('catalog::product_master')->with($data);
     }
 
     public function get_product_induk(Request $request){
@@ -38,7 +39,7 @@ class ProductController extends Controller
 
         return Response::json($hasil);
     }
-
+    /*
     public function get_product_supplier(Request $request){
         $result=Supplier::selectRaw('id, bdn_usaha, nm_vendor')->get();
 
@@ -50,7 +51,7 @@ class ProductController extends Controller
 
         return Response::json($hasil);
     }
-    /*
+    */
     public function datatables(Request $request){
         if($request->parent_id==0){
             
@@ -90,8 +91,7 @@ class ProductController extends Controller
                     })
                 ->make(true);
     }
-    */
-
+    /*
     public function boq(Request $request){
 
         if($request->id==0){
@@ -108,62 +108,6 @@ class ProductController extends Controller
         }        
 
         return Response::json($data);
-    }   
-
-    /*
-    public function add(Request $request){
-        $rules = array();
-
-        foreach($request->f_kodeproduct as $key => $val){
-            $rules['f_kodeproduct.'.$key]   ='required|max:20|min:5|regex:/^[a-z0-9 .\-]+$/i';
-            $rules['f_namaproduct.'.$key]   ='required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-            $rules['f_unitproduct.'.$key]   ='required|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
-            $rules['f_mtuproduct.'.$key]    ='required';
-            $rules['f_hargaproduct.'.$key]  ='required|max:500|min:1|regex:/^[0-9 .]+$/i';
-            $rules['f_hargajasa.'.$key]  ='required|max:500|min:1|regex:/^[0-9 .]+$/i';
-            $rules['f_descproduct.'.$key]   ='required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-        }
-        
-        $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
-        $validator->after(function ($validator) use ($request) {
-            $count = array_count_values($request->f_kodeproduct);
-            foreach($request->f_kodeproduct as $key => $val)
-            {
-                if($count[$val]>1) {
-                    $validator->errors()->add("f_kodeproduct.$key", "Kode Tidak Boleh Sama!");
-                }else{
-                    $count_product=CatalogProduct::where('code',$val)->count();
-                    if($count_product!=0){
-                        $validator->errors()->add("f_kodeproduct.$key", "Kode Tidak Boleh Sama! Sudah ada di database");       
-                    }
-                }
-            }
-        });
-
-        if ($validator->fails ()){
-            return redirect()->back()->withInput($request->input())->withErrors($validator);
-        }else{
-            
-            if(count($request->f_kodeproduct)>0){
-                foreach($request->f_kodeproduct as $key => $val){
-                    if(!empty($val)){
-                        $proses = new CatalogProduct();
-                        $proses->catalog_category_id = $request['f_parentid'];
-                        $proses->code = $request['f_kodeproduct'][$key];
-                        $proses->name =$request['f_namaproduct'][$key];
-                        $proses->unit = $request['f_unitproduct'][$key];
-                        $proses->currency = $request['f_mtuproduct'][$key];
-                        $proses->price = $request['f_hargaproduct'][$key];
-                        $proses->price_jasa = $request['f_hargajasa'][$key];
-                        $proses->desc = $request['f_descproduct'][$key];
-                        $proses->keyword = "";
-                        $proses->save();
-                    }
-                }
-            }
-
-            return redirect()->route('catalog.product');
-        }        
     }
     */
 
@@ -171,14 +115,9 @@ class ProductController extends Controller
         $rules = array();
 
         foreach($request->f_kodeproduct as $key => $val){
-            $rules['f_nosupplier.'.$key]   ='required';
-            $rules['f_kodeproduct.'.$key]   ='required|max:20|min:5|regex:/^[a-z0-9 .\-]+$/i';
-            $rules['f_namaproduct.'.$key]   ='required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-            $rules['f_unitproduct.'.$key]   ='required|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
-            $rules['f_mtuproduct.'.$key]    ='required';
-            $rules['f_hargaproduct.'.$key]  ='required|max:500|min:1|regex:/^[0-9 .]+$/i';
-            $rules['f_hargajasa.'.$key]  ='required|max:500|min:1|regex:/^[0-9 .]+$/i';
-            $rules['f_descproduct.'.$key]   ='required|max:500|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_kodeproduct.'.$key]   ='required|max:20|min:1|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_ketproduct.'.$key]   ='required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_unitproduct.'.$key]   ='required|max:50|min:1|regex:/^[a-z0-9 .\-]+$/i';
         }
 
         $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
@@ -190,9 +129,9 @@ class ProductController extends Controller
                 if($count[$val]>1) {
                     $validator->errors()->add("f_kodeproduct.$key", "Kode Tidak Boleh Sama!");
                 }else{
-                    $count_product=CatalogProduct::where('code',$val)->count();
+                    $count_product=CatalogProductMaster::where('kode_product',$val)->count();
                     if($count_product!=0){
-                        $validator->errors()->add("f_kodeproduct.$key", "Kode Tidak Boleh Sama! Sudah ada di database");       
+                        $validator->errors()->add("f_kodeproduct.$key", "Kode Tidak Boleh Sama! Sudah ada di database");
                     }
                 }
             }                
@@ -206,17 +145,11 @@ class ProductController extends Controller
             if(count($request->f_kodeproduct)>0){
                 foreach($request->f_kodeproduct as $key => $val){
                     if(!empty($val)){
-                        $proses = new CatalogProduct();
+                        $proses = new CatalogProductMaster();
                         $proses->catalog_category_id = $request['f_parentid'];
-                        $proses->supplier_id = $request['f_nosupplier'][$key];
-                        $proses->code = $request['f_kodeproduct'][$key];
-                        $proses->name =$request['f_namaproduct'][$key];
-                        $proses->unit = $request['f_unitproduct'][$key];
-                        $proses->currency = $request['f_mtuproduct'][$key];
-                        $proses->price = $request['f_hargaproduct'][$key];
-                        $proses->price_jasa = $request['f_hargajasa'][$key];
-                        $proses->desc = $request['f_descproduct'][$key];
-                        $proses->keyword = "";
+                        $proses->kode_product = $request['f_kodeproduct'][$key];
+                        $proses->keterangan_product =$request['f_ketproduct'][$key];
+                        $proses->satuan_product = $request['f_unitproduct'][$key];
                         $proses->save();
                     }
                 }
@@ -228,24 +161,19 @@ class ProductController extends Controller
             ));
         }        
     }
-
+    /*
     public function edit(Request $request){
         $rules = array (
-            'f_nosupplier' => 'required',
-            'f_kodeproduct' => 'required|max:20|min:5|regex:/^[a-z0-9 .\-]+$/i',
-            'f_namaproduct' => 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i',
-            'f_unitproduct' => 'required|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i',
-            'f_mtuproduct' => 'required',
-            'f_hargaproduct' => 'required|max:500|min:1|regex:/^[0-9 .]+$/i',
-            'f_hargajasa' => 'required|max:500|min:1|regex:/^[0-9 .]+$/i',
-            'f_descproduct' => 'required|max:500|regex:/^[a-z0-9 .\-]+$/i',
+            'f_kodeproduct' => 'required|max:20|min:1|regex:/^[a-z0-9 .\-]+$/i',
+            'f_ketproduct' => 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i',
+            'f_unitproduct' => 'required|max:50|min:1i|regex:/^[a-z0-9 .\-]+$/i',
         );
         $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
         $validator->after(function ($validator) use ($request) {
 
-            $cek_kode=CatalogProduct::where('id',$request->f_id)->first();
-            if($cek_kode->code != $request->f_kodeproduct){
-                $count_product=CatalogProduct::where('code',$request->f_kodeproduct)->count();
+            $cek_kode=CatalogProductMaster::where('id',$request->f_id)->first();
+            if($cek_kode->kode_product != $request->f_kodeproduct){
+                $count_product=CatalogProductMaster::where('kode_product',$request->f_kodeproduct)->count();
                 if($count_product!=0){
                     $validator->errors()->add("f_kodeproduct", "Kode Tidak Boleh Sama! Sudah ada di database");       
                 }
@@ -257,17 +185,11 @@ class ProductController extends Controller
                 'errors' => $validator->getMessageBag()->toArray()
             ));
         else{
-            $proses = CatalogProduct::where('id',$request->f_id)->first();
+            $proses = CatalogProductMaster::where('id',$request->f_id)->first();
             $proses->catalog_category_id = $request->f_produk_parent;
-            $proses->supplier_id = $request->f_nosupplier;
-            $proses->code = $request->f_kodeproduct;
-            $proses->name =$request->f_namaproduct;
-            $proses->unit = $request->f_unitproduct;
-            $proses->currency = $request->f_mtuproduct;
-            $proses->price = $request->f_hargaproduct;
-            $proses->price_jasa = $request->f_hargajasa;
-            $proses->desc = $request->f_descproduct;
-            $proses->keyword = "";
+            $proses->kode_product = $request->f_kodeproduct;
+            $proses->keterangan_product =$request->f_ketproduct;
+            $proses->satuan_product = $request->f_unitproduct;
             $proses->save();   
 
             return Response::json (array(
@@ -275,7 +197,7 @@ class ProductController extends Controller
             ));
         }
     }
-
+    
     public function edit_proses(Request $request){
         $proses = CatalogProduct::where('id',$request->f_id)->first();
         $proses->catalog_category_id = $request->f_parentid;
@@ -290,12 +212,12 @@ class ProductController extends Controller
 
         return redirect()->route('catalog.product');
     }
-
+    */
     public function delete(Request $request){
-        $proses=CatalogProduct::where('id',$request->id)->delete();
+        $proses=CatalogProductMaster::where('id',$request->id)->delete();
         return 1;
     }
-
+    /*
     public function get_no_supplier(Request $request){
         $search = trim($request->q);
 
@@ -310,4 +232,5 @@ class ProductController extends Controller
 
         return Response::json($data);
     }
+    */
 }

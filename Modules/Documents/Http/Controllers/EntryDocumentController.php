@@ -516,15 +516,15 @@ class EntryDocumentController extends Controller
           foreach($request['top_deskripsi'] as $key => $val){
             if(!empty($val)
             ){
-              $asr = new DocTop();
-              $asr->documents_id = $doc->id;
-              $asr->top_deskripsi = $request['top_deskripsi'][$key];
-              $asr->top_matauang = $request['top_matauang'][$key];
-              $asr->top_tanggal_mulai = Helpers::date_set_db($request['top_tanggal_mulai'][$key]);
-              $asr->top_tanggal_selesai = Helpers::date_set_db($request['top_tanggal_selesai'][$key]);
-              $asr->top_harga = Helpers::input_rupiah($request['top_harga'][$key]);
-              $asr->top_tanggal_bapp = Helpers::date_set_db($request['top_tanggal_bapp'][$key]);
-              $asr->save();
+              $top = new DocTop();
+              $top->documents_id = $doc->id;
+              $top->top_deskripsi = $request['top_deskripsi'][$key];
+              $top->top_matauang = $request->doc_top_matauang;
+              $top->top_tanggal_mulai = Helpers::date_set_db($request['top_tanggal_mulai'][$key]);
+              $top->top_tanggal_selesai = Helpers::date_set_db($request['top_tanggal_selesai'][$key]);
+              $top->top_harga = Helpers::input_rupiah($request['top_harga'][$key]);
+              $top->top_tanggal_bapp = Helpers::date_set_db($request['top_tanggal_bapp'][$key]);
+              $top->save();
             }
           }
         }

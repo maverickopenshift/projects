@@ -319,7 +319,6 @@ $(function() {
         btnDelete.button('reset');
     });
 
-    /*
     $(document).on('click', '.btn-delete-modal', function(event) {
         event.preventDefault();
         var btnDelete = $(this)
@@ -368,7 +367,7 @@ $(function() {
             });
         }
     });
-    */
+    
 
     function get_produk_induk(parent){
         $("#f_produk_parent").empty().trigger('change');

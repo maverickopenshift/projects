@@ -132,22 +132,23 @@
                 <span>Manajemen Katalog</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 @permission('catalog-category')
-                  <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Kategori</a></li>
+                  <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Taxonomy</a></li>
                 @endpermission
-                {{--
-                <li class="{{Request::is('catalog/master_product') ?'active':''}}"><a href="{{route('catalog.master_product')}}">Master Katalog</a></li>
-                <li class="{{Request::is('catalog/master_product') ?'active':''}}"><a href="{{route('catalog.master_product')}}">Logistik</a></li>
+                <li class="{{Request::is('catalog/catalog_list/product_master') ?'active':''}}"><a href="{{route('catalog.list.product_master')}}">List Master Item</a></li>
+                <li class="{{Request::is('catalog/catalog_list/product_logistic') ?'active':''}}"><a href="{{route('catalog.list.product_logistic')}}">List Item Price</a></li>
 
                 
-                @permission('catalog-product')
-                  <li class="{{Request::is('catalog/master_product') ?'active':''}}"><a href="{{route('catalog.master_product')}}">Master Katalog</a></li>
-                @endpermission
-                @permission('catalog-product')
-                  <li class="{{Request::is('catalog/item_product') ?'active':''}}"><a href="{{route('catalog.item_product')}}">Item Katalog</a></li>
-                @endpermission
+                {{--
+                <li class="{{Request::is('catalog/product_master') ?'active':''}}"><a href="{{route('catalog.product.master')}}">Master Katalog</a></li>
+                <li class="{{Request::is('catalog/product_logistic') ?'active':''}}"><a href="{{route('catalog.product.logistic')}}">Logistik</a></li>
+                <li class="{{Request::is('catalog/master_product') ?'active':''}}"><a href="{{route('catalog.master_product')}}">Master Katalog</a></li>
+                <li class="{{Request::is('catalog/item_product') ?'active':''}}"><a href="{{route('catalog.product')}}">Item Katalog</a></li>
                 --}}
                 @permission('lihat-catalog')
-                  <li class="{{Request::is('catalog/catalog_list') ?'active':''}}"><a href="{{route('catalog.list')}}">List Kategori & Product</a></li>
+                  
+                  {{--
+                  <li class="{{Request::is('catalog/catalog_list') ?'active':''}}"><a href="{{route('catalog.list.product_Logistic')}}">List Product Logistic</a></li>
+                  --}}
                 @endpermission
               </ul>
             </li>

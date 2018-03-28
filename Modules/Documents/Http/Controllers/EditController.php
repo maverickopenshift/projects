@@ -276,6 +276,8 @@ class EditController extends Controller
 
         $objiddivisi=$dt->pemilik_kontrak->meta_name;
         $objidunit=$dt->pemilik_kontrak->meta_title;
+        $dt->divisi = $objiddivisi;
+        $dt->unit_bisnis = $objidunit;
         $data['divisi'] = \DB::table('rptom')->where('objiddivisi',$objiddivisi)->first();
         $data['unit_bisnis'] = \DB::table('rptom')->where('objidunit',$objidunit)->first();
       }
@@ -284,13 +286,15 @@ class EditController extends Controller
 
       $dt->divisi = $konseptor->objiddivisi;
       $dt->unit_bisnis = $konseptor->objidunit;
+      $data['divisi'] = \DB::table('rptom')->where('objiddivisi',$konseptor->objiddivisi)->first();
+      $data['unit_bisnis'] = \DB::table('rptom')->where('objidunit',$konseptor->objidunit)->first();
     }
-    
+
     $pr = DocMeta::get_first($dt->id,'eproposal_pr');
     if($pr){
       $dt->doc_pr = $pr->meta_name;
     }
-    
+    // dd($dt);
     $data['doc'] = $dt;
 
     $konseptor = \App\User::get_user_pegawai($dt->user_id);
@@ -303,7 +307,6 @@ class EditController extends Controller
     $data['pegawai_konseptor'] = $konseptor;
     $data['doc_parent'] = \DB::table('documents')->where('id',$dt->doc_parent_id)->first();
     $data['user_type'] = $user_type;
-    dd($data);
     return view('documents::form-edit')->with($data);
   }
 
@@ -403,7 +406,7 @@ class EditController extends Controller
         $rules['doc_value']        =  $required.'|max:500|min:3|regex:/^[0-9 .]+$/i';
       }
 
-      if($user_type=='off'){
+      if($user_type=='subsidiary'){
         $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no,'.$id;
       }
       else{
@@ -439,11 +442,11 @@ class EditController extends Controller
     else{
       $rules['komentar']         = $required.'|max:250|min:2';
     }
-    
+
     if($type=='turnkey'){
       $rules['doc_pr']         =  'sometimes|nullable|pr_exists';
     }
-    
+
     $rules['doc_sow']          =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
     $rules['hs_kode_item.*']   =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
     $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
@@ -495,10 +498,9 @@ class EditController extends Controller
         }
         $request->merge(['doc_jaminan_file' => $new_jfile]);
     }
-
     if(in_array($type,['turnkey'])){
-      $rules['top_matauang']            =  'sometimes|nullable';
-      $rules['top_totalharga']          =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['doc_top_matauang']            =  'sometimes|nullable';
+      $rules['doc_top_totalharga']          =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
       $rules['top_deskripsi.*']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
       $rules['top_tanggal_mulai.*']     =  'sometimes|nullable|'.$date_format;
       $rules['top_tanggal_selesai.*']   =  'sometimes|nullable|'.$date_format.'|after:top_tanggal_mulai.*';
@@ -600,8 +602,6 @@ class EditController extends Controller
 
               if(in_array($type,['turnkey'])){
                 $doc->doc_po_no = $request->doc_po;
-                $doc->doc_top_matauang= $request->doc_top_matauang;
-                $doc->doc_top_totalharga= $request->doc_top_totalharga;
               }
 
               $doc->penomoran_otomatis =  Config::get_penomoran_otomatis($request->penomoran_otomatis);
@@ -655,14 +655,14 @@ class EditController extends Controller
       }else{
         //kalo dokumennya di return/ di approve dan di edit datanya (status = 3 & 1)
         $doc->doc_signing = ($statusButton=='2')?'2':'0';
-        
+
       }
-      $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
-      $doc->doc_sow = $request->doc_sow;
-      $doc->save();
-      
-      // term of payment
       if(in_array($type,['turnkey'])){
+        if(!empty($request->doc_top_totalharga)){
+          $doc->doc_top_matauang= $request->doc_top_matauang;
+          $doc->doc_top_totalharga= Helpers::input_rupiah($request->doc_top_totalharga);
+        }
+        //turn of payment
         if(count($request->top_deskripsi)>0){
           DocTop::where([
           ['documents_id','=',$doc->id],
@@ -682,8 +682,13 @@ class EditController extends Controller
             }
           }
         }
+
       }
-    
+      $doc->doc_data = Helpers::json_input($doc->doc_data,['edited_by'=>\Auth::id()]);
+      $doc->doc_sow = $request->doc_sow;
+      $doc->save();
+
+
       if(count($request->doc_pr)>0){
         DocMeta::where([
           ['documents_id','=',$doc->id],

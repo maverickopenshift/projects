@@ -245,7 +245,7 @@ class EntryDocumentController extends Controller
         if($type=='turnkey'){
           $rules['doc_pr']         =  'sometimes|nullable|pr_exists';
         }
-        
+
         if(\Laratrust::hasRole('admin')){
           $rules['user_id']       =  'required|min:1|max:20|regex:/^[0-9]+$/i';
         }
@@ -286,8 +286,8 @@ class EntryDocumentController extends Controller
         $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
 
         if(in_array($type,['turnkey'])){
-          $rules['top_matauang']            =  'sometimes|nullable';
-          $rules['top_totalharga']          =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
+          $rules['doc_top_matauang']            =  'sometimes|nullable';
+          $rules['doc_top_totalharga']          =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
           $rules['top_deskripsi.*']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
           $rules['top_tanggal_mulai.*']     =  'sometimes|nullable|'.$date_format;
           $rules['top_tanggal_selesai.*']   =  'sometimes|nullable|'.$date_format.'|after:top_tanggal_mulai.*';
@@ -344,7 +344,7 @@ class EntryDocumentController extends Controller
             if (!isset($request['pic_nama'][0]) && $statusButton!='2') {
                 $validator->errors()->add('pic_nama_err', 'Unit Penanggung jawab harus dipilih!');
             }
-            
+
             if($user_type!='subsidiary' && $auto_numb=='off' && !$validator->errors()->has('doc_no')){
               $d = Documents::check_no_kontrak($request['doc_no'],date('Y',strtotime($request['doc_startdate'])));
               if($d){
@@ -387,8 +387,10 @@ class EntryDocumentController extends Controller
       }
 
       if(in_array($type,['turnkey'])){
-        $doc->doc_top_totalharga = $request->doc_top_totalharga;
-        $doc->doc_top_matauang = $request->doc_top_matauang;
+        if(!empty($request->doc_top_totalharga)){
+          $doc->doc_top_totalharga = Helpers::input_rupiah($request->doc_top_totalharga);
+          $doc->doc_top_matauang = $request->doc_top_matauang;
+        }
       }
 
       $doc->doc_proc_process = $request->doc_proc_process;
@@ -421,7 +423,7 @@ class EntryDocumentController extends Controller
         $doc_meta2->meta_title =$request->unit_bisnis;
         $doc_meta2->save();
       }
-      
+
       //eproposal PR
       if(count($request->doc_pr)>0){
         $doc_meta2 = new DocMeta();
@@ -430,7 +432,7 @@ class EntryDocumentController extends Controller
         $doc_meta2->meta_name = $request->doc_pr;
         $doc_meta2->save();
       }
-      
+
       /// pasal khusus
       if(count($request->ps_judul)>0){
         foreach($request->ps_judul as $key => $val){
@@ -517,13 +519,13 @@ class EntryDocumentController extends Controller
             if(!empty($val)
             ){
               $top = new DocTop();
-              $top->documents_id = $doc->id;
-              $top->top_deskripsi = $request['top_deskripsi'][$key];
-              $top->top_matauang = $request->doc_top_matauang;
+              $top->documents_id      = $doc->id;
+              $top->top_deskripsi     = $request['top_deskripsi'][$key];
+              $top->top_matauang      = $request->doc_top_matauang;
               $top->top_tanggal_mulai = Helpers::date_set_db($request['top_tanggal_mulai'][$key]);
               $top->top_tanggal_selesai = Helpers::date_set_db($request['top_tanggal_selesai'][$key]);
-              $top->top_harga = Helpers::input_rupiah($request['top_harga'][$key]);
-              $top->top_tanggal_bapp = Helpers::date_set_db($request['top_tanggal_bapp'][$key]);
+              $top->top_harga         = Helpers::input_rupiah($request['top_harga'][$key]);
+              $top->top_tanggal_bapp  = Helpers::date_set_db($request['top_tanggal_bapp'][$key]);
               $top->save();
             }
           }

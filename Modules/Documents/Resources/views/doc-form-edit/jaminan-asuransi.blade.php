@@ -74,7 +74,7 @@
                         <div class="input-group-addon">
                             <span class="fa fa-calendar"></span>
                         </div>
-                        <input type="text" class="form-control datepicker" name="doc_jaminan_startdate[]" autocomplete="off" value="{{date('d-m-Y', strtotime($doc_jaminan_startdate[$key]))}}">
+                        <input type="text" class="form-control datepicker" name="doc_jaminan_startdate[]" autocomplete="off" value="{{$doc_jaminan_startdate[$key]}}">
                     </div>
                   </div>
                   <div class="col-sm-10 col-sm-offset-2">
@@ -89,7 +89,7 @@
                       <div class="input-group-addon">
                           <span class="fa fa-calendar"></span>
                       </div>
-                      <input type="text" class="form-control datepicker" name="doc_jaminan_enddate[]" autocomplete="off" value="{{date('d-m-Y', strtotime($doc_jaminan_enddate[$key]))}}">
+                      <input type="text" class="form-control datepicker" name="doc_jaminan_enddate[]" autocomplete="off" value="{{$doc_jaminan_enddate[$key]}}">
                     </div>
                   </div>
                   <div class="col-sm-10 col-sm-offset-2">

@@ -58,7 +58,7 @@
               <div class="input-group-addon">
                   <span class="fa fa-calendar"></span>
               </div>
-              <input type="text" value="{{date('d-m-Y', strtotime($lt_tanggal_rks))}}" class="form-control datepicker" name="lt_tanggal_rks" autocomplete="off" placeholder="Tanggal..">
+              <input type="text" value="{{$lt_tanggal_rks}}" class="form-control datepicker" name="lt_tanggal_rks" autocomplete="off" placeholder="Tanggal..">
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
@@ -114,7 +114,7 @@
               <div class="input-group-addon">
                   <span class="fa fa-calendar"></span>
               </div>
-              <input type="text" value="{{date('d-m-Y', strtotime($lt_tanggal_ketetapan_pemenang))}}" class="form-control datepicker" name="lt_tanggal_ketetapan_pemenang" autocomplete="off" placeholder="Tanggal..">
+              <input type="text" value="{{$lt_tanggal_ketetapan_pemenang}}" class="form-control datepicker" name="lt_tanggal_ketetapan_pemenang" autocomplete="off" placeholder="Tanggal..">
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
@@ -167,7 +167,7 @@
               <div class="input-group-addon">
                   <span class="fa fa-calendar"></span>
               </div>
-              <input type="text" value="{{date('d-m-Y', strtotime($lt_tanggal_kesanggupan_mitra))}}" class="form-control datepicker" name="lt_tanggal_kesanggupan_mitra" autocomplete="off"  placeholder="Tanggal..">
+              <input type="text" value="{{$lt_tanggal_kesanggupan_mitra}}" class="form-control datepicker" name="lt_tanggal_kesanggupan_mitra" autocomplete="off"  placeholder="Tanggal..">
           </div>
         </div>
         <div class="col-sm-10 col-sm-offset-2">
@@ -227,7 +227,7 @@
                   <div class="input-group-addon">
                     <span class="fa fa-calendar"></span>
                   </div>
-                  <input type="text" name="f_latar_belakang_tanggal[]" class="form-control f_latar_belakang_tanggal datepicker" value="{{date('d-m-Y', strtotime($f_latar_belakang_tanggal[$key]))}}" placeholder="Tanggal..">
+                  <input type="text" name="f_latar_belakang_tanggal[]" class="form-control f_latar_belakang_tanggal datepicker" value="{{$f_latar_belakang_tanggal[$key]}}" placeholder="Tanggal..">
                 </div>
               </div>
             </div>

@@ -34,7 +34,7 @@ class DocumentsController extends Controller
     {
         $this->documents = $documents;
         $this->docList = $docList;
-        
+
     }
     /**
      * Display a listing of the resource.
@@ -42,7 +42,7 @@ class DocumentsController extends Controller
      */
     public function index(Request $request)
     {
-      
+
       $status = $request->status;
       $status_arr = ['proses','selesai','draft','tracking','tutup','close'];
       if(!in_array($status,$status_arr)){
@@ -77,7 +77,7 @@ class DocumentsController extends Controller
           $dari = $request->dari;
           $sampai = $request->sampai;
 
-          if(!empty($open)){            
+          if(!empty($open)){
             if($open==1){
               $status_no=1;
             }elseif($open==2){
@@ -275,15 +275,15 @@ class DocumentsController extends Controller
 
       $data['doc_type'] = $doc_type;
       $data['page_title'] = 'View Kontrak - '.$doc_type['title'];
-      
+
       $pr = DocMeta::get_first($dt->id,'eproposal_pr');
       if($pr){
         $dt->doc_pr = $pr->meta_name;
       }
-      
+
       $data['doc'] = $dt;
       $data['id'] = $id;
-      
+
       $konseptor = \App\User::get_user_pegawai($dt->user_id);
       $data['pegawai_pihak1'] = Mtzpegawai::where('n_nik',$dt->doc_pihak1_nama)->first();
       $data['pegawai_konseptor'] =$konseptor;
@@ -303,7 +303,7 @@ class DocumentsController extends Controller
         $data['unit_bisnis'] = $konseptor;
       }
       $data['user_type'] = $user_type;
-      
+
       return view('documents::view')->with($data);
     }
 
@@ -803,6 +803,7 @@ class DocumentsController extends Controller
             return \Response::json([]);
         }
         $data = \App\User::get_unit_by_disivi2($divisi)->get();
+        // $data = \App\User::get_real_unit_by_disivi($divisi);
         return \Response::json($data);
     }
 
@@ -894,7 +895,7 @@ class DocumentsController extends Controller
   public function upload_boq(Request $request){
 
   }
-  
+
   public function getPrEproposal(Request $request){
     $client = Documents::get_pr($request->pr_no);
     return $client;

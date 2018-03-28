@@ -45,7 +45,7 @@
             <li><a href="#tab_5" data-toggle="tab">JAMINAN DAN ASURANSI</a></li>
           @endif
 
-          @if(in_array($doc_type->name,['turnkey']))
+          @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey']))
             <li><a href="#tab_6" data-toggle="tab">TERM OF PAYMENT</a></li>
           @endif
         </ul>
@@ -65,7 +65,7 @@
               @else
                 @include('documents::doc-view.amademen')
               @endif
-              
+
             @endif
             <div class="clearfix"></div>
             <div class="row">
@@ -139,7 +139,7 @@
 
           <div class="tab-pane" id="tab_6">
             @include('documents::partials.alert-errors')
-            @if(in_array($doc_type->name,['turnkey']))
+            @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey']))
               @include('documents::doc-form-edit.term-of-payment')
             @endif
             <div class="clearfix"></div>
@@ -174,146 +174,176 @@ $(function () {
   $('.btnPrevious').click(function(){
    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
   });
-
+});
   $(document).on('click', '#btn-submit', function(event) {
     event.preventDefault();
-    var content = $('.content-view');
-    var loading = content.find('.loading2');
 
     var formMe = $('#form-kontrak');
+    formMe.css({'position':'relative'});
+    var loading = formMe.find('.loading2');
     $(".formerror").removeClass("has-error");
     $(".error").html('');
     $(".alert-error").hide();
 
-    bootbox.confirm({
-      title:"Konfirmasi",
-      message: "Apakah anda yakin untuk submit?",
-      buttons: {
-          confirm: {
-              label: 'Yakin',
-              className: 'btn-success'
-          },
-          cancel: {
-              label: 'Tidak',
-              className: 'btn-danger'
-          }
-      },
-      callback: function (result) {
-        if(result){
-          bootbox.prompt({
-            title: "Masukan Komentar",
-            inputType: 'textarea',
-            callback: function (komen) {
-              if(komen){
-                loading.show();
-                $('.komentar').val(komen);
-                //$('.btn_submit').click();
+    swal({
+      title: 'Konfirmasi',
+      text: "Apakah anda yakin untuk submit?",
+      type: 'warning',
+      showCancelButton: true,
+      // confirmButtonColor: '#3085d6',
+      // cancelButtonColor: '#d33',
+      confirmButtonText: 'Yakin!',
+      cancelButtonText: 'Tidak!',
+    }).then(function(result){
+      if (result) {
+        swal({
+          title: 'Masukan Komentar',
+          input: 'textarea',
+          showCancelButton: true,
+          confirmButtonText: 'Submit',
+          showLoaderOnConfirm: true
+        }).then(function(komen){
+          if (komen) {
+            loading.show();
+            $('.komentar').val(komen);
+            //$('.btn_submit').click();
 
-                $.ajax({
-                  url: formMe.attr('action'),
-                  type: 'post',
-                  processData: false,
-                  contentType: false,
-                  data: new FormData(document.getElementById("form-kontrak")),
-                  dataType: 'json',
-                  success: function(response){
-                    if(response.errors){
-                      $.each(response.errors, function(index, value){
-                          if (value.length !== 0){
-                            index = index.replace(".", "-");
-                            $(".formerror-"+ index).removeClass("has-error");
-                            $(".error-"+ index).html('');
+            $.ajax({
+              url: formMe.attr('action'),
+              type: 'post',
+              processData: false,
+              contentType: false,
+              data: new FormData(document.getElementById("form-kontrak")),
+              dataType: 'json',
+              success: function(response){
+                if(response.errors){
+                  $.each(response.errors, function(index, value){
+                      if (value.length !== 0){
+                        index = index.replace(".", "-");
+                        $(".formerror-"+ index).removeClass("has-error");
+                        $(".error-"+ index).html('');
 
-                            $(".formerror-"+ index).addClass("has-error");
-                            $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
-                          }
-                      });
-
-                      bootbox.alert({
-                        title:"Pemberitahuan",
-                        message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
-                      });
-
-                    }else{
-                      if(response.status=="tracking"){
-                        window.location.href = "{{route('doc',['status'=>'tracking'])}}";
-                      }else if(response.status=="draft"){
-                        window.location.href = "{{route('doc',['status'=>'draft'])}}";
+                        $(".formerror-"+ index).addClass("has-error");
+                        $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
                       }
-                    }
+                  });
+
+                  swal({
+                    title: 'Pemberitahuan',
+                    text: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
+                    type: 'warning'
+                  });
+                  loading.hide();
+
+                }else{
+                  if(response.status=="tracking"){
+                    window.location.href = "{{route('doc',['status'=>'tracking'])}}";
+                  }else if(response.status=="draft"){
+                    window.location.href = "{{route('doc',['status'=>'draft'])}}";
                   }
-                });
-                //// end ajax
+                  else{
+                    swal({
+                      title: 'Pemberitahuan',
+                      text: "Ada sesuatu yang salah, silahkan coba kembali!",
+                      type: 'error'
+                    })
+                  }
+                  loading.hide();
+                }
+              },
+              error : function () {
+                swal({
+                  title: 'Pemberitahuan',
+                  text: "Ada sesuatu yang salah, silahkan coba kembali!",
+                  type: 'error'
+                })
+                loading.hide();
               }
-            }
-          });
-        }
+            });
+            //// end ajax
+          }
+        }).catch(swal.noop);
       }
-    });
+      return false;
+    }).catch(swal.noop);
   });
   $(document).on('click', '#btn-draft', function(event) {
     $('#statusButton').val('2');
 
     event.preventDefault();
-    var content = $('.content-view');
-    var loading = content.find('.loading2');
 
     var formMe = $('#form-kontrak');
+    formMe.css({'position':'relative'});
+    var loading = formMe.find('.loading2');
     $(".formerror").removeClass("has-error");
     $(".error").html('');
+    
+    swal({
+      title: 'Konfirmasi',
+      text: "Apakah anda yakin ingin menyimpan di draft?",
+      type: 'warning',
+      showCancelButton: true,
+      // confirmButtonColor: '#3085d6',
+      // cancelButtonColor: '#d33',
+      confirmButtonText: 'Yakin!',
+      cancelButtonText: 'Tidak!',
+    }).then(function(result){
+      if (result) {
+        loading.show();
+        $.ajax({
+          url: formMe.attr('action'),
+          type: 'post',
+          processData: false,
+          contentType: false,
+          data: new FormData(document.getElementById("form-kontrak")),
+          dataType: 'json',
+          success: function(response){
+            if(response.errors){
+              $.each(response.errors, function(index, value){
+                  if (value.length !== 0){
+                    index = index.replace(".", "-");
+                    $(".formerror-"+ index).removeClass("has-error");
+                    $(".error-"+ index).html('');
 
-    bootbox.confirm({
-      title:"Konfirmasi",
-      message: "Apakah anda yakin untuk submit?",
-      buttons: {
-          confirm: {
-              label: 'Yakin',
-              className: 'btn-success'
-          },
-          cancel: {
-              label: 'Tidak',
-              className: 'btn-danger'
-          }
-      },
-      callback: function (result) {
-        if(result){
-          $.ajax({
-            url: formMe.attr('action'),
-            type: 'post',
-            processData: false,
-            contentType: false,
-            data: new FormData(document.getElementById("form-kontrak")),
-            dataType: 'json',
-            success: function(response){
-              if(response.errors){
-                $.each(response.errors, function(index, value){
-                    if (value.length !== 0){
-                      index = index.replace(".", "-");
-                      $(".formerror-"+ index).removeClass("has-error");
-                      $(".error-"+ index).html('');
+                    $(".formerror-"+ index).addClass("has-error");
+                    $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
+                  }
+              });
 
-                      $(".formerror-"+ index).addClass("has-error");
-                      $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
-                    }
-                });
-
-                bootbox.alert({
-                  title:"Pemberitahuan",
-                  message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
-                });
-              }else{
-                if(response.status=="tracking"){
-                  window.location.href = "{{route('doc',['status'=>'tracking'])}}";
-                }else if(response.status=="draft"){
-                  window.location.href = "{{route('doc',['status'=>'draft'])}}";
-                }
+              swal({
+                title: 'Pemberitahuan',
+                text: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
+                type: 'warning'
+              });
+              loading.hide();
+            }else{
+              if(response.status=="tracking"){
+                window.location.href = "{{route('doc',['status'=>'tracking'])}}";
+              }else if(response.status=="draft"){
+                window.location.href = "{{route('doc',['status'=>'draft'])}}";
               }
+              else{
+                swal({
+                  title: 'Pemberitahuan',
+                  text: "Ada sesuatu yang salah, silahkan coba kembali!",
+                  type: 'error'
+                })
+              }
+              loading.hide();
             }
-          });
-        }
+          },
+          error : function() {
+            swal({
+              title: 'Pemberitahuan',
+              text: "Ada sesuatu yang salah, silahkan coba kembali!",
+              type: 'error'
+            })
+            loading.hide();
+          }
+        });
       }
-    });
+      return false;
+    }).catch(swal.noop);;
   });
-});
 </script>
 @endpush

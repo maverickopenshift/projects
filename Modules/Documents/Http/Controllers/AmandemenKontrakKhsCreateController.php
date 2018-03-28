@@ -35,6 +35,14 @@ class AmandemenKontrakKhsCreateController
     $m_hs_qty=[];
     $user_type = Helpers::usertype();
     $auto_numb =Config::get_config('auto-numb');
+    
+    $statusButton = $request->statusButton;
+    $required = 'required';
+    $date_format = 'date_format:"d-m-Y"';
+    if($statusButton=='2'){
+      $required = 'sometimes|nullable';
+    }
+    
     if(isset($request['hs_harga']) && count($request['hs_harga'])>0){
       foreach($request['hs_harga'] as $key => $val){
         $hs_harga[] = $val;
@@ -68,110 +76,96 @@ class AmandemenKontrakKhsCreateController
       $request->merge(['hs_qty'=>$m_hs_qty]);
     }
 
-    if($request->statusButton == '0'){
-      $rules['parent_kontrak']   =  'required|kontrak_exists';
-      $rules['komentar']         = 'required|max:250|min:2';
-      if($user_type!='subsidiary'){
-        $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-        $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-      }
-      $rules['doc_title']        =  'required|min:2';
-      $rules['doc_startdate']    =  'required';
-      $rules['doc_enddate']      =  'required|after:doc_startdate';
-      $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak2_nama']  =  'required|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['parent_kontrak']   =  'required|kontrak_exists';
+    $rules['komentar']         = $required.'|max:250|min:2';
+    if($user_type!='subsidiary'){
+      $rules['divisi']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+      $rules['unit_bisnis']  =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+    }
+    $rules['doc_title']        =  'required|min:2';
+    $rules['doc_startdate']    =  $required.'|'.$date_format;
+    $rules['doc_enddate']      =  $required.'|'.$date_format.'|after:doc_startdate';
+    $rules['doc_desc']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['doc_pihak2_nama']  =  $required.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
-      if(\Laratrust::hasRole('admin')){
-        $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-      }
+    if(\Laratrust::hasRole('admin')){
+      $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
+    }
 
-      if($user_type=='subsidiary'){
-        $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
+    if($user_type=='subsidiary'){
+      $rules['doc_no']  =  'required|min:5|max:500|unique:documents,doc_no';
+    }
+    else{
+      if($auto_numb=='off'){
+        $rules['doc_no']  =  'required|digits_between:1,5';
       }
-      else{
-        if($auto_numb=='off'){
-          $rules['doc_no']  =  'required|digits_between:1,5';
-        }
+    }
+    $rules['doc_lampiran_nama.*']  =  $required.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    $check_new_lampiran = false;
+    foreach($request->doc_lampiran_old as $k => $v){
+      if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
+        $new_lamp[] = '';
+        $new_lamp_up[] = $request->doc_lampiran[$k];
+        $rules['doc_lampiran.'.$k] = $required.'|mimes:pdf';
       }
-      $rules['doc_lampiran_nama.*']  =  'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      $check_new_lampiran = false;
-      foreach($request->doc_lampiran_old as $k => $v){
-        if(isset($request->doc_lampiran[$k]) && is_object($request->doc_lampiran[$k]) && !empty($v)){//jika ada file baru
-          $new_lamp[] = '';
-          $new_lamp_up[] = $request->doc_lampiran[$k];
-          $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
-        }
-        else if(empty($v)){
-          $rules['doc_lampiran.'.$k] = 'required|mimes:pdf';
-          if(!isset($request->doc_lampiran[$k])){
-            $new_lamp[] = $v;
-            $new_lamp_up[] = $v;
-          }
-          else{
-            $new_lamp[] = '';
-            $new_lamp_up[] = $request->doc_lampiran[$k];
-          }
-        }
-        else{
+      else if(empty($v)){
+        $rules['doc_lampiran.'.$k] = $required.'|mimes:pdf';
+        if(!isset($request->doc_lampiran[$k])){
           $new_lamp[] = $v;
           $new_lamp_up[] = $v;
         }
-      }
-      $request->merge(['doc_lampiran' => $new_lamp]);
-
-      $rule_scope_pasal = (count($request['f_scope_pasal'])>1)?'required':'sometimes|nullable';
-      $rule_scope_judul = (count($request['f_scope_judul'])>1)?'required':'sometimes|nullable';
-      $rule_scope_isi = (count($request['f_scope_isi'])>1)?'required':'sometimes|nullable';
-      $rules['f_scope_file.*']  =  'sometimes|nullable|mimes:pdf';
-      $rules['f_scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['f_scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['f_scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['hs_kode_item.*']   =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['hs_satuan.*']      =  'sometimes|nullable|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['hs_mtu.*']         =  'sometimes|nullable|max:5|min:1|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['hs_harga.*']       =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
-      $rules['hs_harga_jasa.*']  =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
-      $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
-      $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
-
-      $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-      $validator->after(function ($validator) use ($request,$auto_numb,$user_type) {
-        if($user_type!='subsidiary' && $auto_numb=='off' && !$validator->errors()->has('doc_no')){
-          $d = Documents::check_no_kontrak($request['doc_no'],date('Y',strtotime($request['doc_startdate'])));
-          if($d){
-            $validator->errors()->add('doc_no', 'No Kontrak yang Anda masukan sudah ada!');
-          }
+        else{
+          $new_lamp[] = '';
+          $new_lamp_up[] = $request->doc_lampiran[$k];
         }
-      });
-      if ($validator->fails ()){
-        return Response::json (array(
-          'errors' => $validator->getMessageBag()->toArray()
-        ));
       }
-    }else{
-      $rules['doc_pihak1']       =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['doc_pihak1_nama']  =  'required|min:1|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
-      $rules['parent_kontrak']   =  'required|kontrak_exists';
-      if(\Laratrust::hasRole('admin')){
-        $rules['user_id']      =  'required|min:1|max:20|regex:/^[0-9]+$/i';
-      }
-      $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
-
-      if ($validator->fails ()){
-        return Response::json (array(
-          'errors' => $validator->getMessageBag()->toArray()
-        ));
+      else{
+        $new_lamp[] = $v;
+        $new_lamp_up[] = $v;
       }
     }
+    $request->merge(['doc_lampiran' => $new_lamp]);
 
+    $rule_scope_pasal = (count($request['f_scope_pasal'])>1)?$required:'sometimes|nullable';
+    $rule_scope_judul = (count($request['f_scope_judul'])>1)?$required:'sometimes|nullable';
+    $rule_scope_isi = (count($request['f_scope_isi'])>1)?$required:'sometimes|nullable';
+    $rules['f_scope_file.*']  =  'sometimes|nullable|mimes:pdf';
+    $rules['f_scope_pasal.*']  =  $rule_scope_pasal.'|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['f_scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['f_scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
+    $rules['hs_kode_item.*']   =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['hs_item.*']        =  'sometimes|nullable|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['hs_satuan.*']      =  'sometimes|nullable|max:50|min:2|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['hs_mtu.*']         =  'sometimes|nullable|max:5|min:1|regex:/^[a-z0-9 .\-]+$/i';
+    $rules['hs_harga.*']       =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
+    $rules['hs_harga_jasa.*']  =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
+    $rules['hs_qty.*']         =  'sometimes|nullable|max:500|min:1|regex:/^[0-9 .]+$/i';
+    $rules['hs_keterangan.*']  =  'sometimes|nullable|max:500|regex:/^[a-z0-9 .\-]+$/i';
+
+    $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
+    $validator->after(function ($validator) use ($request,$auto_numb,$user_type) {
+      if($user_type!='subsidiary' && $auto_numb=='off' && !$validator->errors()->has('doc_no')){
+        $d = Documents::check_no_kontrak($request['doc_no'],date('Y',strtotime($request['doc_startdate'])));
+        if($d){
+          $validator->errors()->add('doc_no', 'No Kontrak yang Anda masukan sudah ada!');
+        }
+      }
+    });
+    if ($validator->fails ()){
+      return Response::json (array(
+        'errors' => $validator->getMessageBag()->toArray()
+      ));
+    }
+    DB::beginTransaction();
+    try {
     $doc = new Documents();
     $doc->doc_title = $request->doc_title;
-    $doc->doc_date = date("Y-m-d", strtotime($request->doc_startdate));
-    $doc->doc_startdate = date("Y-m-d", strtotime($request->doc_startdate));
-    $doc->doc_enddate = date("Y-m-d", strtotime($request->doc_enddate));
+    $doc->doc_date = Helpers::date_set_db($request->doc_startdate);
+    $start_date = $request->doc_startdate;
+    $doc->doc_startdate = Helpers::date_set_db($start_date);
+    $doc->doc_enddate = Helpers::date_set_db($request->doc_enddate);
     $doc->doc_desc = $request->doc_desc;
     $template_id = DocTemplate::get_by_type($type)->id;
     $doc->doc_template_id = $template_id;
@@ -191,7 +185,7 @@ class AmandemenKontrakKhsCreateController
       $doc->doc_no = $request->doc_no;
     }
     if($user_type!='subsidiary' && $auto_numb=='off'){
-      $doc->doc_no = Documents::create_manual_no_kontrak($request->doc_no,$request->doc_pihak1_nama,$template_id,$doc->doc_startdate,$request->type);
+      $doc->doc_no = Documents::create_manual_no_kontrak($request->doc_no,$request->doc_pihak1_nama,$template_id,$start_date,$request->type);
     }
     if($user_type=='subsidiary'){
       $doc->doc_user_type = 'subsidiary';
@@ -324,7 +318,7 @@ class AmandemenKontrakKhsCreateController
       $comment->data = "Submitted";
       $comment->save();
     }
-
+    DB::commit();
     $request->session()->flash('alert-success', 'Data berhasil disimpan');
     if($request->statusButton == '0'){
       return Response::json (array(
@@ -334,6 +328,13 @@ class AmandemenKontrakKhsCreateController
       return Response::json (array(
         'status' => 'draft'
       ));
+    }
+  } catch (\Exception $e) {
+        DB::rollBack();
+        return Response::json (array(
+          'status' => 'error',
+          'msg' => $e->getMessage()
+        ));
     }
   }
 }

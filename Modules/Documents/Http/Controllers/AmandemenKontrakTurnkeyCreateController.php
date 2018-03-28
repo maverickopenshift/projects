@@ -10,6 +10,7 @@ use Modules\Documents\Entities\DocMetaSideLetter;
 use Modules\Documents\Entities\DocPic;
 use Modules\Documents\Entities\DocTemplate;
 use Modules\Documents\Entities\DocActivity;
+use Modules\Documents\Entities\DocTop;
 use Modules\Config\Entities\Config;
 use Modules\Documents\Entities\DocComment as Comments;
 use App\Helpers\Helpers;
@@ -32,7 +33,7 @@ class AmandemenKontrakTurnkeyCreateController
     $m_hs_harga=[];
     $m_hs_harga_jasa=[];
     $m_hs_qty=[];
-    
+
     $statusButton = $request->statusButton;
     $required = 'required';
     $date_format = 'date_format:"d-m-Y"';
@@ -134,6 +135,16 @@ class AmandemenKontrakTurnkeyCreateController
       $rules['f_scope_judul.*']  =  $rule_scope_judul.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['f_scope_isi.*']  =  $rule_scope_isi.'|max:500|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
 
+      if(in_array($type,['turnkey'])){
+        $rules['doc_top_matauang']            =  'sometimes|nullable';
+        $rules['doc_top_totalharga']          =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
+        $rules['top_deskripsi.*']         =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
+        $rules['top_tanggal_mulai.*']     =  'sometimes|nullable|'.$date_format;
+        $rules['top_tanggal_selesai.*']   =  'sometimes|nullable|'.$date_format.'|after:top_tanggal_mulai.*';
+        $rules['top_harga.*']             =  'sometimes|nullable|regex:/^[a-z0-9 .\-]+$/i';
+        $rules['top_tanggal_bapp.*']      =  'sometimes|nullable|'.$date_format;
+      }
+
       $validator = Validator::make($request->all(), $rules,\App\Helpers\CustomErrors::documents());
       $validator->after(function ($validator) use ($request,$auto_numb,$user_type) {
         if($user_type!='subsidiary' && $auto_numb=='off' && !$validator->errors()->has('doc_no')){
@@ -181,6 +192,12 @@ class AmandemenKontrakTurnkeyCreateController
       $doc->doc_user_type = 'subsidiary';
       $doc->penomoran_otomatis = 'no';
     }
+
+    if(!empty($request->doc_top_totalharga)){
+      $doc->doc_top_totalharga = Helpers::input_rupiah($request->doc_top_totalharga);
+      $doc->doc_top_matauang = $request->doc_top_matauang;
+    }
+
     $doc->save();
 
     //pemilik Kontrak
@@ -192,7 +209,22 @@ class AmandemenKontrakTurnkeyCreateController
       $doc_meta2->meta_title =$request->unit_bisnis;
       $doc_meta2->save();
     }
-    
+    if(count($request->top_deskripsi)>0){
+      foreach($request['top_deskripsi'] as $key => $val){
+        if(!empty($val)
+        ){
+          $asr = new DocTop();
+          $asr->documents_id = $doc->id;
+          $asr->top_deskripsi = $request['top_deskripsi'][$key];
+          $asr->top_matauang = $request->doc_top_matauang;
+          $asr->top_tanggal_mulai = Helpers::date_set_db($request['top_tanggal_mulai'][$key]);
+          $asr->top_tanggal_selesai = Helpers::date_set_db($request['top_tanggal_selesai'][$key]);
+          $asr->top_harga = Helpers::input_rupiah($request['top_harga'][$key]);
+          $asr->top_tanggal_bapp = Helpers::date_set_db($request['top_tanggal_bapp'][$key]);
+          $asr->save();
+        }
+      }
+    }
     //eproposal PR
     if(count($request->doc_pr)>0){
       $doc_meta2 = new DocMeta();
@@ -201,7 +233,22 @@ class AmandemenKontrakTurnkeyCreateController
       $doc_meta2->meta_name = $request->doc_pr;
       $doc_meta2->save();
     }
-    
+    if(count($request->top_deskripsi)>0){
+      foreach($request['top_deskripsi'] as $key => $val){
+        if(!empty($val)
+        ){
+          $asr = new DocTop();
+          $asr->documents_id = $doc->id;
+          $asr->top_deskripsi = $request['top_deskripsi'][$key];
+          $asr->top_matauang = $request->doc_top_matauang;
+          $asr->top_tanggal_mulai = Helpers::date_set_db($request['top_tanggal_mulai'][$key]);
+          $asr->top_tanggal_selesai = Helpers::date_set_db($request['top_tanggal_selesai'][$key]);
+          $asr->top_harga = Helpers::input_rupiah($request['top_harga'][$key]);
+          $asr->top_tanggal_bapp = Helpers::date_set_db($request['top_tanggal_bapp'][$key]);
+          $asr->save();
+        }
+      }
+    }
     if(count($request->doc_lampiran)>0){
       foreach($request->doc_lampiran as $key => $val){
         if(!empty($val)

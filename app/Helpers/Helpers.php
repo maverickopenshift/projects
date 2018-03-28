@@ -527,7 +527,7 @@ public static function select_atasan($pegawai,$val=null)
     public static function usertype(){
       return \App\User::check_usertype(\Auth::user()->username);
     }
-    public static function date_set($date,$format='d-m-Y'){
+    public static function date_set($date,$format='d-m-Y',$setnull='no'){
       if(!is_null($date) || !empty($date)){
         return date($format,strtotime($date));
       }

@@ -113,7 +113,7 @@
                     <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}">
                     <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran </a>
 
-                    <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}?nik={{$pegawai->n_nik}}&nama={{$pegawai->v_nama_karyawan}}">
+                    <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$doc->doc_lampiran_teknis,'type'=>$doc_type['name']])}}">
                     <i class="glyphicon glyphicon-download-alt"></i>  Download
                     </a>
                     @else

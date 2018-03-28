@@ -314,14 +314,14 @@ class DocumentsController extends Controller
       if (empty($search)) {
         return Response::json(['status'=>false]);
       }
-      if(config('app.env')=='production'){
+      // if(config('app.env')=='production'){
         $sap = Sap::get_po($search);
         return Response::json($sap);
-      }
-      else{
-        $sql = \DB::table('dummy_po')->where('no_po','=',$search)->get();
-        return Response::json(['status'=>true,'data'=>$sql,'length'=>count($sql)]);
-      }
+      // }
+      // else{
+      //   $sql = \DB::table('dummy_po')->where('no_po','=',$search)->get();
+      //   return Response::json(['status'=>true,'data'=>$sql,'length'=>count($sql)]);
+      // }
     }
 
     public function getPic(Request $request){
@@ -901,5 +901,23 @@ class DocumentsController extends Controller
     return $client;
     exit;
   }
-
+  public function getUnitBisnis(Request $request){
+      $divisi = urldecode($request->divisi);
+      // dd($divisi);
+      if (empty($divisi)) {
+          return \Response::json([]);
+      }
+      // $data = \App\User::get_unit_by_disivi2($divisi)->get();
+      $data = \App\User::get_all_real_unit_bisnis(false,$divisi)->get();
+      return \Response::json($data);
+  }
+  public function getUnitKerja(Request $request){
+      $unit_bisnis = urldecode($request->unit_bisnis);
+      if (empty($unit_bisnis)) {
+          return \Response::json([]);
+      }
+      // $data = \App\User::get_unit_by_disivi2($divisi)->get();
+      $data = \App\User::get_all_real_unit_kerja(false,$unit_bisnis)->get();
+      return \Response::json($data);
+  }
 }

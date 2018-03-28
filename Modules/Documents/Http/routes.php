@@ -30,6 +30,8 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'documents', 'namespac
     Route::get('/get-pic', 'DocumentsController@getPic')->name('doc.get-pic');
     Route::get('/get-posisi', 'DocumentsController@getPosisi')->name('doc.get-posisi');
     Route::get('/get-unit', 'DocumentsController@getUnit')->name('doc.get-unit');
+    Route::get('/get-unit-bisnis', 'DocumentsController@getUnitBisnis')->name('doc.get-unit-bisnis');
+    Route::get('/get-unit-kerja', 'DocumentsController@getUnitKerja')->name('doc.get-unit-kerja');
 
     /////////////
 

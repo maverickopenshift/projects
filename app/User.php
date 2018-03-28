@@ -97,6 +97,47 @@ class User extends Authenticatable
       }
       return $data;
     }
+    public static function get_all_real_disivi($key=false){
+      $data = \DB::table('__mtz_pegawai')->selectRaw('divisi as id,divisi as title,count(divisi) as total_divisi');
+      $data->orderBy('divisi','ASC');
+      $data->whereNotNull('divisi');
+      $data->where('divisi','!=',"");
+      $data->groupBy(['divisi']);
+      if(!empty($key)){
+        $data->where('divisi', 'like', '%'.$key.'%');
+      }
+      return $data;
+    }
+    public static function get_all_real_unit_bisnis($key=false,$divisi='dsfafas'){
+      $data = \DB::table('__mtz_pegawai')->selectRaw('unit_bisnis as id,unit_bisnis as title,count(unit_bisnis) as total_unit_bisnis');
+      $data->orderBy('unit_bisnis','ASC');
+      $data->whereNotNull('unit_bisnis');
+      $data->where('unit_bisnis','!=',"");
+      $data->groupBy(['unit_bisnis']);
+      if(empty($divisi) || is_null($divisi)){
+        $divisi = 'asdfsfaasdf';
+      }
+      $data->where('divisi',$divisi);
+      if(!empty($key)){
+        $data->where('unit_bisnis', 'like', '%'.$key.'%');
+      }
+      return $data;
+    }
+    public static function get_all_real_unit_kerja($key=false,$unit_bisnis='dsfafas'){
+      $data = \DB::table('__mtz_pegawai')->selectRaw('unit_kerja as id,unit_kerja as title,count(unit_kerja) as total_unit_kerja');
+      $data->orderBy('unit_kerja','ASC');
+      $data->whereNotNull('unit_kerja');
+      $data->where('unit_kerja','!=',"");
+      $data->groupBy(['unit_kerja']);
+      if(empty($unit_bisnis) || is_null($unit_bisnis)){
+        $unit_bisnis = 'asdfsfaasdf';
+      }
+      $data->where('unit_bisnis',$unit_bisnis);
+      if(!empty($key)){
+        $data->where('unit_kerja', 'like', '%'.$key.'%');
+      }
+      return $data;
+    }
     public static function get_unit($key=false,$divisi=false){
       $data = \DB::table('rptom')->selectRaw('objidunit as id,v_short_unit as title,count(objidunit) as total_unit');
       $data->orderBy('v_short_unit','ASC');

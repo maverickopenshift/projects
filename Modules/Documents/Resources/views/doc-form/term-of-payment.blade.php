@@ -13,29 +13,14 @@
           <div style="position: absolute;top: -36px;font-size: 19px;background-color: white;left: 22px;padding: 10px;"></div>
         </div>
 
-        <div class="form-group formerror formerror-top_matauang">
-          <label for="lt_name" class="col-sm-2 control-label"> Mata Uang</label>
-          <div class="col-sm-4">
-            <select name="doc_top_matauang" class="form-control top_matauang" style="width: 100%;">
-              <option value="IDR">IDR</option>
-              <option value="USD">USD</option>
-            </select>
-          </div>
-          <div class="col-sm-10 col-sm-offset-2">
-            <div class="error error-top_matauang"></div>
-          </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Nilai Kontrak </label>
+          <div class="col-sm-6 text-me text-uppercase"><span class="mtu-set"></span> <span class="total-harga-kontrak"></span></div>
         </div>
-
-        <div class="form-group formerror formerror-top_totalharga">
-          <label for="lt_name" class="col-sm-2 control-label"> Total Harga Jasa MS</label>
-          <div class="col-sm-4">
-            <input type="text" class="form-control input-rupiah" name="doc_top_totalharga" autocomplete="off" placeholder="Total Harga Jasa MS..">
-          </div>
-          <div class="col-sm-10 col-sm-offset-2">
-            <div class="error error-top_totalharga"></div>
-          </div>
+        <div class="form-group">
+          <label class="col-sm-2 control-label">Periode Kontrak </label>
+          <div class="col-sm-6 text-me text-uppercase__"><span class="periode-kontrak"></span></div>
         </div>
-
         <div class="table-responsive">
           <table class="table table-striped table-parent-top" width="100%">
             <thead>
@@ -61,6 +46,16 @@
 </div>
 @push('scripts')
 <script>
+$(document).ready(function(e){
+  $('input[name="doc_value"]').on('keyup', function(event) {
+    event.preventDefault();
+    /* Act on the event */
+    $('.total-harga-kontrak').text($(this).val());
+  });
+  $('input[name="doc_enddate"]').on('change', function(event) {
+    $('.periode-kontrak').text($('input[name="doc_startdate"]').val()+' s.d '+$(this).val());
+  });
+});
   normal();
 
   function normal(){

@@ -13,11 +13,15 @@
 </div>
 <div class="form-group">
   <label class="col-sm-2 control-label">Divisi </label>
-  <div class="col-sm-6 text-me text-uppercase">{{$pegawai->v_short_divisi}}</div>
+  <div class="col-sm-6 text-me text-uppercase">{{$pegawai->divisi}}</div>
 </div>
 <div class="form-group">
-  <label class="col-sm-2 control-label">Loker</label>
-    <div class="col-sm-6 text-me text-uppercase">{{$pegawai->v_short_unit}}</div>
+  <label class="col-sm-2 control-label">Unit Bisnis</label>
+    <div class="col-sm-6 text-me text-uppercase">{{$pegawai->unit_bisnis}}</div>
+</div>
+<div class="form-group">
+  <label class="col-sm-2 control-label">Unit Kerja</label>
+    <div class="col-sm-6 text-me text-uppercase">{{$pegawai->unit_kerja}}</div>
 </div>
 <div class="form-group">
   <label class="col-sm-2 control-label">Approver</label>
@@ -28,13 +32,16 @@
   <label for="pemilik_kontrak" class="col-sm-2 control-label"><span class="text-red">*</span>Pemilik Kontrak</label>
   <div class="col-sm-6">
     <div class="form-group">
-      <div class="col-sm-6">
-        {!!Helper::select_all_divisi('divisi',$pegawai->objiddivisi)!!}
-        <div class="error error-divisi"></div>
+      <div class="col-sm-8">
+        {!!Helper::select_all_divisi('divisi',$pegawai->divisi)!!}
+        <div class="error error-divisi" style="margin-bottom:10px"></div>
+        {!!Helper::select_unit_bisnis('unit_bisnis',$pegawai->unit_bisnis,$pegawai->divisi)!!}
+        <div class="error error-unit_bisnis" style="margin-bottom:10px"></div>
+        {!!Helper::select_unit_kerja('unit_kerja',$pegawai->unit_kerja,$pegawai->unit_bisnis)!!}
+        <div class="error error-unit_kerja" style="margin-bottom:10px"></div>
       </div>
       <div class="col-sm-6">
-          {!!Helper::select_unit('unit_bisnis',old('unit_bisnis',Helper::prop_exists($doc,'unit_bisnis')))!!}
-          <div class="error error-unit_bisnis"></div>
+          
       </div>
     </div>
   </div>
@@ -99,30 +106,63 @@
     event.preventDefault();
     /* Act on the event */
     var divisi = this.value;
-    var unit__ = '{!!$pegawai->objidunit!!}';
     //if(unit!==""){
     $('#unit_bisnis').find('option').not('option[value=""]').remove();
+    var t_awal = $('#unit_bisnis').find('option[value=""]').text();
+    $('#unit_bisnis').find('option[value=""]').text('Please wait.....');
+    $('#unit_kerja').find('option').not('option[value=""]').remove();
       $.ajax({
-        url: '{!!route('doc.get-unit')!!}',
+        url: '{!!route('doc.get-unit-bisnis')!!}',
         type: 'GET',
         dataType: 'json',
-        data: {divisi: divisi}
+        data: {divisi: encodeURIComponent(divisi)}
       })
       .done(function(data) {
         if(data.length>0){
           $.each(data,function(index, el) {
-            $('#unit_bisnis').append('<option value="'+this.id+'" '+(unit__==this.id ? 'selected="selected"':'')+'>'+this.title+'</option>');
+            $('#unit_bisnis').append('<option value="'+this.id+'">'+this.title+'</option>');
           });
+          $('#unit_bisnis').find('option[value=""]').text('Pilih Unit Bisnis');
+        }
+        else{
+          $('#unit_bisnis').find('option[value=""]').text('Tidak ada data');
         }
       });
     //}
   });
-  $(function(e){
-    $('#unit_bisnis').find('option').not('option[value=""]').remove();
-    if($('#divisi').val()!==""){
-      $('#divisi').change();
-    }
+  $(document).on('change', '#unit_bisnis', function(event) {
+    event.preventDefault();
+    /* Act on the event */
+    var unit_bisnis = this.value;
+    //if(unit!==""){
+    $('#unit_kerja').find('option').not('option[value=""]').remove();
+    var t_awal = $('#unit_kerja').find('option[value=""]').text();
+    $('#unit_kerja').find('option[value=""]').text('Please wait.....');
+      $.ajax({
+        url: '{!!route('doc.get-unit-kerja')!!}',
+        type: 'GET',
+        dataType: 'json',
+        data: {unit_bisnis: encodeURIComponent(unit_bisnis)}
+      })
+      .done(function(data) {
+        if(data.length>0){
+          $.each(data,function(index, el) {
+            $('#unit_kerja').append('<option value="'+this.id+'">'+this.title+'</option>');
+          });
+          $('#unit_kerja').find('option[value=""]').text('Pilih Unit Kerja');
+        }
+        else{
+          $('#unit_kerja').find('option[value=""]').text('Tidak ada data');
+        }
+      });
+    //}
   });
+  // $(function(e){
+  //   $('#unit_bisnis').find('option').not('option[value=""]').remove();
+  //   if($('#divisi').val()!==""){
+  //     $('#divisi').change();
+  //   }
+  // });
   </script>
 @endpush
 @endif

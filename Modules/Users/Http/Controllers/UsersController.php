@@ -197,7 +197,7 @@ class UsersController extends Controller
               $user_peg = UsersPegawai::get_by_userid($id);
               $user_peg->nik = $data->username;
               $user_peg->save();
-              
+
               if (count($request->atasan_id)>0 && $request->has(['atasan_id'])) {
                   Atasan::where('users_pegawai_id',$peg->ids)->delete();
                   foreach($request->atasan_id as $key=>$v){
@@ -219,32 +219,32 @@ class UsersController extends Controller
                 UsersPgs::where('users_id','=',$data->id)->delete();
                 $pgs = new UsersPgs();
                 $pgs->users_id = $data->id;
-              
+
                 $pgs->divisi = $request->pgs_divisi_or;
                 $pgs->unit_bisnis = $request->pgs_unit_bisnis_or;
                 $pgs->unit_kerja = $request->pgs_unit_kerja_or;
-              
+
                 $pgs_posisi = DB::table('rptom')->where('objidposisi',$request->pgs_jabatan_or)->first();
                 $pgs->objidposisi = $pgs_posisi->objidposisi;
                 $pgs->c_kode_posisi = $pgs_posisi->c_kode_posisi;
                 $pgs->v_short_posisi = $pgs_posisi->v_short_posisi;
-              
+
                 $pgs->role_id = $request->pgs_roles_or;
                 $pgs->role_id_first = $request->roles;
                 $pgs->pgs_status = 'inactive';
                 $pgs->save();
-                
+
                 $pgs = new UsersPgs();
                 $pgs->users_id = $data->id;
-                
+
                 $pgs->divisi = $peg->divisi;
                 $pgs->unit_bisnis = $peg->unit_bisnis;
                 $pgs->unit_kerja = $peg->unit_kerja;
-              
+
                 $pgs->objidposisi = $peg->objidposisi;
                 $pgs->c_kode_posisi = $peg->c_kode_posisi;
                 $pgs->v_short_posisi = $peg->v_short_posisi;
-              
+
                 $pgs->role_id = $request->roles;
                 $pgs->role_id_first = $request->roles;
                 $pgs->pgs_status = 'active';
@@ -259,17 +259,17 @@ class UsersController extends Controller
                 // $pgs->objiddivisi = $pgs_divisi->objiddivisi;
                 // $pgs->c_kode_divisi = $pgs_divisi->c_kode_divisi;
                 // $pgs->v_short_divisi = $pgs_divisi->v_short_divisi;
-                // 
+                //
                 // $pgs_unit =  DB::table('rptom')->where('objidunit',$request->pgs_unit_or)->first();
                 // $pgs->objidunit = $pgs_unit->objidunit;
                 // $pgs->c_kode_unit = $pgs_unit->c_kode_unit;
                 // $pgs->v_short_unit = $pgs_unit->v_short_unit;
-                // 
+                //
                 // $pgs_posisi = DB::table('rptom')->where('objidposisi',$request->pgs_jabatan_or)->first();
                 // $pgs->objidposisi = $pgs_posisi->objidposisi;
                 // $pgs->c_kode_posisi = $pgs_posisi->c_kode_posisi;
                 // $pgs->v_short_posisi = $pgs_posisi->v_short_posisi;
-                // 
+                //
                 // $pgs->role_id = $request->pgs_roles_or;
                 // $pgs->role_id_first = $request->roles;
                 // $pgs->save();
@@ -318,16 +318,17 @@ class UsersController extends Controller
             // 'select_posisi'    => 'required|exists:rptom,objidposisi',
         );
         if($request->user_type != 'subsidiary'){
-          $rules['select_divisi'] = 'required|exists:rptom,objiddivisi';
-          $rules['select_unit'] = 'required|exists:rptom,objidunit';
+          $rules['select_divisi'] = 'required|exists:__mtz_pegawai,divisi';
+          $rules['select_unit_bisnis'] = 'required|exists:__mtz_pegawai,unit_bisnis';
+          $rules['select_unit_kerja'] = 'required|exists:__mtz_pegawai,unit_kerja';
           // $rules['select_posisi'] = 'required|exists:rptom,objidposisi';
           $rules['jabatan'] = 'required|max:150|min:2';
         }
         if($request->user_pgs=='yes'){
-          $rules['pgs_divisi'] = 'required|exists:rptom,objiddivisi';
-          $rules['pgs_unit'] = 'required|exists:rptom,objidunit';
-          $rules['pgs_jabatan'] = 'required|exists:rptom,objidposisi';
-          $rules['pgs_roles'] = 'required|exists:roles,id';
+          // $rules['pgs_divisi'] = 'required|exists:rptom,objiddivisi';
+          // $rules['pgs_unit'] = 'required|exists:rptom,objidunit';
+          // $rules['pgs_jabatan'] = 'required|exists:rptom,objidposisi';
+          // $rules['pgs_roles'] = 'required|exists:roles,id';
         }
         $validator = Validator::make($request->all(), $rules);
         $validator->after(function ($validator) use ($request) {
@@ -341,6 +342,8 @@ class UsersController extends Controller
             ));
         else {
           //dd($request->all());
+          DB::beginTransaction();
+          try{
             $data = new User();
             $data->name = $request->name;
             $data->username = $request->username;
@@ -350,41 +353,57 @@ class UsersController extends Controller
             $data->user_type = $request->user_type;
             $data->save ();
             $data->attachRole($request->roles);
-            
+
             $peg_non = new PegawaiNonorganik();
             $peg_non->n_tahun = date('Y');
             $peg_non->n_bulan = date('m');
             $peg_non->n_nik = $request->username;
             $peg_non->v_nama_karyawan = $request->name;
             if($request->user_type != 'subsidiary'){
-              $divisi = DB::table('rptom')->where('objiddivisi',$request->select_divisi)->first();
-              $peg_non->objiddivisi = $divisi->objiddivisi;
-              $peg_non->c_kode_divisi = $divisi->c_kode_divisi;
-              $peg_non->v_short_divisi = $divisi->v_short_divisi;
+
+              $peg = new Mtzpegawai();
+              if(!empty($request->select_divisi)){
+                $peg = $peg->where('divisi',$request->select_divisi);
+              }
+              if(!empty($request->select_unit_bisnis)){
+                $peg = $peg->where('unit_bisnis',$request->select_unit_bisnis);
+              }
+              if(!empty($request->select_unit_kerja)){
+                $peg = $peg->where('unit_kerja',$request->select_unit_kerja);
+              }
+              $peg = $peg->first();
+              // dd($peg);
+              $peg_non->objiddivisi = $peg->objiddivisi;
+              $peg_non->c_kode_divisi = $peg->c_kode_divisi;
+              $peg_non->v_short_divisi = $peg->v_short_divisi;
               $peg_non->d_tgl_divisi = date('Y-m-d');
-              
-              $unit = DB::table('rptom')->where('objidunit',$request->select_unit)->first();
-              $peg_non->objidunit = $unit->objidunit;
-              $peg_non->c_kode_unit = $unit->c_kode_unit;
-              $peg_non->v_short_unit = $unit->v_short_unit;
-              $peg_non->v_long_unit = $unit->v_long_unit;
+
+              $peg_non->objidunit = $peg->objidunit;
+              $peg_non->c_kode_unit = $peg->c_kode_unit;
+              $peg_non->v_short_unit = $peg->v_short_unit;
+
+              $peg_non->v_long_unit = $request->select_divisi.'/'.$request->select_unit_bisnis.'/'.$request->select_unit_kerja;
               $peg_non->d_tgl_unit = date('Y-m-d');
-              
+
+              // $peg_non->divisi = $request->select_divisi;
+              // $peg_non->unit_bisnis = $request->select_unit_bisnis;
+              // $peg_non->unit_kerja = $request->select_unit_kerja;
+
               // $posisi = DB::table('rptom')->where('objidposisi',$request->select_posisi)->first();
               // $peg_non->objidposisi = $posisi->objidposisi;
               // $peg_non->c_kode_posisi = $posisi->c_kode_posisi;
               // $peg_non->v_short_posisi = $posisi->v_short_posisi;
               // $peg_non->v_long_posisi = $posisi->v_long_posisi;
               // $peg_non->d_tgl_posisi = date('Y-m-d');
-              
-              $peg_non->objidposisi = $unit->objidunit.'-'.str_random(5);
-              $peg_non->c_kode_posisi = $unit->c_kode_unit.'-'.str_random(5);
+
+              $peg_non->objidposisi =  $peg->objidunit.'-'.str_random(5);
+              $peg_non->c_kode_posisi = $peg->c_kode_unit.'-'.str_random(5);
               $peg_non->v_short_posisi = $request->jabatan;
               $peg_non->v_long_posisi = $request->jabatan;
               $peg_non->d_tgl_posisi = date('Y-m-d');
             }
             $peg_non->save();
-            
+
             $peg = new UsersPegawai();
             $peg->users_id = $data->id;
             $peg->nik = $data->username;
@@ -410,22 +429,22 @@ class UsersController extends Controller
             // if($request->user_pgs=='yes'){
             //   $pgs = new UsersPgs();
             //   $pgs->users_id = $data->id;
-            // 
+            //
             //   $pgs_divisi =  DB::table('rptom')->where('objiddivisi',$request->pgs_divisi)->first();
             //   $pgs->objiddivisi = $pgs_divisi->objiddivisi;
             //   $pgs->c_kode_divisi = $pgs_divisi->c_kode_divisi;
             //   $pgs->v_short_divisi = $pgs_divisi->v_short_divisi;
-            // 
+            //
             //   $pgs_unit =  DB::table('rptom')->where('objidunit',$request->pgs_unit)->first();
             //   $pgs->objidunit = $pgs_unit->objidunit;
             //   $pgs->c_kode_unit = $pgs_unit->c_kode_unit;
             //   $pgs->v_short_unit = $pgs_unit->v_short_unit;
-            // 
+            //
             //   $pgs_posisi = DB::table('rptom')->where('objidposisi',$request->pgs_jabatan)->first();
             //   $pgs->objidposisi = $pgs_posisi->objidposisi;
             //   $pgs->c_kode_posisi = $pgs_posisi->c_kode_posisi;
             //   $pgs->v_short_posisi = $pgs_posisi->v_short_posisi;
-            // 
+            //
             //   $pgs->role_id = $request->pgs_roles;
             //   $pgs->role_id_first = $request->roles;
             //   $pgs->save();
@@ -434,8 +453,15 @@ class UsersController extends Controller
             // Mail::to($sendTo)
             //     ->queue(new SendEmailUser($email_password, $email_username, $subject));
             // log::info('End');
-
+            DB::commit();
             return response()->json($data);
+        } catch (\Exception $e) {
+              DB::rollBack();
+              return Response::json (array(
+                'status' => 'error',
+                'msg' => $e->getMessage()
+              ));
+          }
         }
     }
     public function add(Request $request)
@@ -511,32 +537,32 @@ class UsersController extends Controller
             if($request->user_pgs=='yes'){
               $pgs = new UsersPgs();
               $pgs->users_id = $data->id;
-              
+
               $pgs->divisi = $request->pgs_divisi_or;
               $pgs->unit_bisnis = $request->pgs_unit_bisnis_or;
               $pgs->unit_kerja = $request->pgs_unit_kerja_or;
-            
+
               $pgs_posisi = DB::table('rptom')->where('objidposisi',$request->pgs_jabatan_or)->first();
               $pgs->objidposisi = $pgs_posisi->objidposisi;
               $pgs->c_kode_posisi = $pgs_posisi->c_kode_posisi;
               $pgs->v_short_posisi = $pgs_posisi->v_short_posisi;
-            
+
               $pgs->role_id = $request->pgs_roles_or;
               $pgs->role_id_first = $request->roles;
               $pgs->pgs_status = 'inactive';
               $pgs->save();
-              
+
               $pgs = new UsersPgs();
               $pgs->users_id = $data->id;
-              
+
               $pgs->divisi = $peg->divisi;
               $pgs->unit_bisnis = $peg->unit_bisnis;
               $pgs->unit_kerja = $peg->unit_kerja;
-            
+
               $pgs->objidposisi = $peg->objidposisi;
               $pgs->c_kode_posisi = $peg->c_kode_posisi;
               $pgs->v_short_posisi = $peg->v_short_posisi;
-            
+
               $pgs->role_id = $request->roles;
               $pgs->role_id_first = $request->roles;
               $pgs->pgs_status = 'active';
@@ -547,7 +573,7 @@ class UsersController extends Controller
             // $subject = 'User Registration - Do Not Reply';
             // $email_password= $request->password;
             // $email_username = $request->username;
-            // 
+            //
             // Log::info('Start');
             // Mail::to($sendTo)
             //     ->queue(new SendEmailUser($email_password, $email_username, $subject));
@@ -573,8 +599,9 @@ class UsersController extends Controller
             // 'select_posisi'    => 'required|exists:rptom,objidposisi',
         );
         if($request->user_type != 'subsidiary'){
-          $rules['select_divisi'] = 'required|exists:rptom,objiddivisi';
-          $rules['select_unit'] = 'required|exists:rptom,objidunit';
+          $rules['select_divisi'] = 'required|exists:__mtz_pegawai,divisi';
+          $rules['select_unit_bisnis'] = 'required|exists:__mtz_pegawai,unit_bisnis';
+          $rules['select_unit_kerja'] = 'required|exists:__mtz_pegawai,unit_kerja';
           // $rules['select_posisi'] = 'required|exists:rptom,objidposisi';
           $rules['jabatan'] = 'required|max:150|min:2';
         }
@@ -604,7 +631,7 @@ class UsersController extends Controller
             $data->user_type = $request->user_type;
             $data->save ();
             $data->syncRoles([$request->roles]);
-            
+
             $pegs = UsersPegawai::get_by_userid($id,'nonorganik');
             $peg = UsersPegawai::where('nik','=',$pegs->n_nik)->first();
             $peg_non = PegawaiNonorganik::where('n_nik',$pegs->n_nik)->first();
@@ -614,41 +641,44 @@ class UsersController extends Controller
             // }
             $peg->nik = $data->username;
             $peg->save();
-            
+
             $peg_non->n_tahun = date('Y');
             $peg_non->n_bulan = date('m');
             $peg_non->n_nik = $data->username;
             $peg_non->v_nama_karyawan = $data->name;
             if($request->user_type != 'subsidiary'){
-              $divisi = DB::table('rptom')->where('objiddivisi',$request->select_divisi)->first();
-              $peg_non->objiddivisi = $divisi->objiddivisi;
-              $peg_non->c_kode_divisi = $divisi->c_kode_divisi;
-              $peg_non->v_short_divisi = $divisi->v_short_divisi;
-              $peg_non->d_tgl_divisi = date('Y-m-d');
-              
-              $unit = DB::table('rptom')->where('objidunit',$request->select_unit)->first();
-              $peg_non->objidunit = $unit->objidunit;
-              $peg_non->c_kode_unit = $unit->c_kode_unit;
-              $peg_non->v_short_unit = $unit->v_short_unit;
-              $peg_non->v_long_unit = $unit->v_long_unit;
-              $peg_non->d_tgl_unit = date('Y-m-d');
-              
-              // $posisi = DB::table('rptom')->where('objidposisi',$request->select_posisi)->first();
-              // $peg_non->objidposisi = $posisi->objidposisi;
-              // $peg_non->c_kode_posisi = $posisi->c_kode_posisi;
-              // $peg_non->v_short_posisi = $posisi->v_short_posisi;
-              // $peg_non->v_long_posisi = $posisi->v_long_posisi;
-              // $peg_non->d_tgl_posisi = date('Y-m-d');
+              $peg = new Mtzpegawai();
+              if(!empty($request->select_divisi)){
+                $peg = $peg->where('divisi',$request->select_divisi);
+              }
+              if(!empty($request->select_unit_bisnis)){
+                $peg = $peg->where('unit_bisnis',$request->select_unit_bisnis);
+              }
+              if(!empty($request->select_unit_kerja)){
+                $peg = $peg->where('unit_kerja',$request->select_unit_kerja);
+              }
+              $peg = $peg->first();
+              // dd($peg);
+              $peg_non->objiddivisi = $peg->objiddivisi;
+              $peg_non->c_kode_divisi = $peg->c_kode_divisi;
+              $peg_non->v_short_divisi = $peg->v_short_divisi;
+              // $peg_non->d_tgl_divisi = date('Y-m-d');
+
+              $peg_non->objidunit = $peg->objidunit;
+              $peg_non->c_kode_unit = $peg->c_kode_unit;
+              $peg_non->v_short_unit = $peg->v_short_unit;
+
+              $peg_non->v_long_unit = $request->select_divisi.'/'.$request->select_unit_bisnis.'/'.$request->select_unit_kerja;
               if($peg_non->v_short_posisi!=$request->jabatan){
-                $peg_non->objidposisi = $unit->objidunit.'-'.str_random(5);
-                $peg_non->c_kode_posisi = $unit->c_kode_unit.'-'.str_random(5);
+                $peg_non->objidposisi = $peg->objidunit.'-'.str_random(5);
+                $peg_non->c_kode_posisi = $peg->c_kode_unit.'-'.str_random(5);
               }
               $peg_non->v_short_posisi = $request->jabatan;
               $peg_non->v_long_posisi = $request->jabatan;
               $peg_non->d_tgl_posisi = date('Y-m-d');
             }
             $peg_non->save();
-            
+
 
             if (count($request->atasan_id)>0 &&   $request->has(['atasan_id'])) {
                 Atasan::where('users_pegawai_id',$pegs->ids)->delete();
@@ -671,22 +701,22 @@ class UsersController extends Controller
             // if($request->user_pgs=='yes'){
             //   $pgs = new UsersPgs();
             //   $pgs->users_id = $data->id;
-            // 
+            //
             //   $pgs_divisi =  DB::table('rptom')->where('objiddivisi',$request->pgs_divisi)->first();
             //   $pgs->objiddivisi = $pgs_divisi->objiddivisi;
             //   $pgs->c_kode_divisi = $pgs_divisi->c_kode_divisi;
             //   $pgs->v_short_divisi = $pgs_divisi->v_short_divisi;
-            // 
+            //
             //   $pgs_unit =  DB::table('rptom')->where('objidunit',$request->pgs_unit)->first();
             //   $pgs->objidunit = $pgs_unit->objidunit;
             //   $pgs->c_kode_unit = $pgs_unit->c_kode_unit;
             //   $pgs->v_short_unit = $pgs_unit->v_short_unit;
-            // 
+            //
             //   $pgs_posisi = DB::table('rptom')->where('objidposisi',$request->pgs_jabatan)->first();
             //   $pgs->objidposisi = $pgs_posisi->objidposisi;
             //   $pgs->c_kode_posisi = $pgs_posisi->c_kode_posisi;
             //   $pgs->v_short_posisi = $pgs_posisi->v_short_posisi;
-            // 
+            //
             //   $pgs->role_id = $request->pgs_roles;
             //   $pgs->role_id_first = $request->roles;
             //   $pgs->save();
@@ -730,7 +760,7 @@ class UsersController extends Controller
                 }
                 UsersPegawai::where('users_id','=',$request->id)->delete();
                 User::where('id',$request->id)->delete();
-                
+
                 $status = true;
                 $msg = 'Data berhasil dihapus';
               }
@@ -759,7 +789,7 @@ class UsersController extends Controller
     public function getSelectUserSubsidiary(Request $request){
         $search = trim($request->q);
         $subsidiary_id = trim($request->subsidiary_id);
-        
+
         $data = SubsidiaryTelkom::get_user($search,$subsidiary_id)->paginate(30);
         return \Response::json($data);
     }
@@ -837,7 +867,7 @@ class UsersController extends Controller
         $unit_bisnis = trim(urldecode($request->unit_bisnis));
         $unit_kerja = trim(urldecode($request->unit_kerja));
         $q = trim($request->q);
-        
+
         if($type=='divisi'){
           $data = User::get_all_real_disivi($q);
           $data = $data->paginate(30);

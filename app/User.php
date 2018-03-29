@@ -226,7 +226,7 @@ class User extends Authenticatable
       return $data;
     }
     public static function get_user_telkom_by_nik($nik){
-      $data = \DB::table('__mtz_pegawai')->select('*')->where('n_nik','=',$nik);
+      $data = \DB::table('__mtz_pegawai')->select('*')->where('pegawai_type','organik')->where('n_nik','=',$nik);
       return $data;
     }
     public static function get_user_vendor($key=null){

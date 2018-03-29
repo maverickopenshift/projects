@@ -351,7 +351,7 @@ $(document).on('click', '.simpan-product', function(event) {
                 });
               }else{
                 if(response.status=="all"){
-                  window.location.href = "{{route('catalog.list.product_master')}}";
+                  window.location.href = "{{route('catalog.list.product_logistic')}}";
                 }
               }
             }

@@ -30,7 +30,7 @@
         <div class="box box-danger">
             <div class="box-header with-border">
                 <i class="fa fa-cogs"></i>
-                <h3 class="box-title f_parentname_product">Daftar Item Price</h3>
+                <h3 class="box-title f_parentname_product">Daftar Master Item</h3>
             </div>
             <div class="box-body">
                 <div id="alertBS_2"></div>
@@ -47,7 +47,7 @@
             </div>
         </div>
 
-        <div class="box box-danger">
+        <div class="box box-danger parent_product_price">
             <div class="box box-danger">
                 <div class="box-header with-border">
                     <i class="fa fa-cogs"></i>
@@ -447,12 +447,14 @@ $(document).on('click', '.detail_price', function(event) {
     event.preventDefault();
     var id=$(this).attr('data-id');
     refresh_product_price(id);
+    $(".parent_product_price").show();
     
 });
 
 $(function() {
     create_table_master(0);
     create_table_price(0);
+    $(".parent_product_price").hide();
 });
 </script>
 @endpush

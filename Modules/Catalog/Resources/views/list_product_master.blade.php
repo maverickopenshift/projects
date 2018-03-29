@@ -33,7 +33,7 @@
                 <h3 class="box-title f_parentname_product">Daftar Master Item</h3>
                 <div class="pull-right">
                     <div class="col-sm-12">
-                        <a class="btn btn-danger" href="{{route('catalog.product.master')}}" type="button"><i class="fa fa-plus"></i> Tambah Master Item</a>                       
+                        <a class="btn btn-danger btn-additem" href="{{route('catalog.product.master')}}?id_kategori=0" type="button"><i class="fa fa-plus"></i> Tambah Master Item</a>
                     </div>
                 </div>
             </div>
@@ -135,12 +135,14 @@ $('#jstree')
             $(".f_parentid").val(data.instance.get_node(data.selected[0]).id);
             $(".btn-edit").attr('data-id',data.instance.get_node(data.selected[0]).id)
             $(".btn-delete").attr('data-id',data.instance.get_node(data.selected[0]).id)
+            //$(".btn-additem").attr("href",{!! route('catalog.product.master') !!} + "?id_kateogri=" + data.instance.get_node(data.selected[0]).id)
+            $(".btn-additem").attr("href","{{ route('catalog.product.master') }}?id_kategori=" + data.instance.get_node(data.selected[0]).id )
 
             refresh_product(data.instance.get_node(data.selected[0]).id);
         }
     })
     .jstree({
-        "plugins" : [ "search" ],
+        "plugins" : ["search"],
         'core' : {
             'data' : {
                 "url" : "{{route('catalog.category.get_category_all',['parent_id' => 0])}}",
@@ -322,7 +324,6 @@ $(document).on('click', '.btn-delete-modal', function(event) {
         }
     });
 });
-
 
 $(function() {
     create_table(0);

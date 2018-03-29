@@ -18,12 +18,7 @@ class CatalogController extends Controller
 {   
     public function index_product_master(Request $request){
         $data['category']=CatalogCategory::get();    
-        $data['product_master']=\DB::table('catalog_product_master as a')
-                        ->join('catalog_category as b','b.id','=','a.catalog_category_id')
-                        ->selectRaw('a.*,b.display_name as category_name')
-                        ->get();        
         $data['page_title'] = 'List Master Item';
-        //dd($this->get_category(9,0));
         return view('catalog::list_product_master')->with($data);
     }
 
@@ -91,7 +86,7 @@ class CatalogController extends Controller
                     $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
                     $act= '<div class="btn-group">';
                         $act .='<a href="'. route('catalog.product.logistic') .'?id_product='.$data->id.'" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-plus"></i> Price</a>';
-                        $act .='<a data-id="'. $data->id .'" class="btn btn-primary btn-xs detail_price"><i class="glyphicon glyphicon-edit"></i> Detail Price</a>';
+                        $act .='<a data-id="'. $data->id .'" class="btn btn-primary btn-xs detail_price"><i class="glyphicon glyphicon-edit"></i> Detail</a>';
                     $act .='</div>';
                     return $act;
                 })

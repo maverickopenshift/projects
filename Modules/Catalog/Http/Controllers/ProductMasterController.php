@@ -20,11 +20,10 @@ use DB;
 class ProductMasterController extends Controller
 {
     public function index(Request $request){
-        $data['category']=CatalogCategory::get();    
-        $data['product']=\DB::table('catalog_product_master as a')
-                        ->selectRaw('a.*,b.display_name as category_name')
-                        ->join('catalog_category as b','b.id','=','a.catalog_category_id')
-                        ->get();
+        if($request->id_kategori!=0){
+            $data['kategori']=CatalogCategory::where('id',$request->id_kategori)->first();    
+        }
+        
         $data['page_title'] = 'Master Item';
         return view('catalog::product_master')->with($data);
     }

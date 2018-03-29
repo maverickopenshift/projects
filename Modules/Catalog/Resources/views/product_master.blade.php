@@ -22,7 +22,15 @@
         max-width:1200px;
     }
 </style>
-
+@php
+if(isset($kategori->id)){
+    $title="- ". $kategori->code ." - ". $kategori->display_name;
+    $idkategori=$kategori->id;
+}else{
+    $title="";
+    $idkategori=0;
+}
+@endphp
 <div class="row">
     <div class="col-md-3">
         <div class="box box-danger">
@@ -45,7 +53,7 @@
         <div class="box box-danger test-product">
             <div class="box-header with-border">
                 <i class="fa fa-cogs"></i>
-                <h3 class="box-title f_parentname">Tambah Master Item</h3>
+                <h3 class="box-title f_parentname">Tambah Master Item {{$title}}</h3>
                 <div class="pull-right">
                     <div class="col-sm-12">
                         <input type="file" name="upload-boq" class="upload-boq hide"/>
@@ -57,7 +65,7 @@
                 </div>
             </div>    
             <form method="post" action="{{ route('catalog.product_master.add_ajax') }}" id="form-produk">
-                <input type="hidden" class="f_parentid" name="f_parentid">
+                <input type="hidden" class="f_parentid" name="f_parentid" value="{{$idkategori}}">
                 {{ csrf_field() }}
                 <div class="box-body form-horizontal">
                     <div class="flash-message" id="alertBS">
@@ -97,29 +105,7 @@
 @endsection
 @push('scripts')
 <script>
-$(function() {
-    normal();
-    
     $('#daftar1').DataTable();
-
-    function normal(){
-        $(".add-product").prop("disabled", true);
-        $(".test-product").addClass("disabledbutton");
-        $(".upload-boq-btn").prop("disabled", true);
-        $(".simpan-product").prop( "disabled", true );
-
-        var new_row = $(template_add()).clone(true);
-        $(".table-test").append(new_row);
-        var input_new_row = new_row.find('td');
-        
-        input_new_row.eq(4).find('select').select2({
-            placeholder:"Silahkan Pilih"
-        });
-
-        $("#alertBS").fadeTo(2000, 500).slideUp(500, function(){
-            $("#alertBS").slideUp(500);
-        });
-    }
 
     $('.upload-boq-btn').on('click', function(event) {
         event.stopPropagation();
@@ -132,51 +118,6 @@ $(function() {
         event.preventDefault();
         //BoqFile(this.files[0]);
     });
-
-    /*
-    function BoqFile(file) {
-        console.log("upload start");
-        Papa.parse(file, {
-            header: true,
-            dynamicTyping: true,
-            complete: function(results) {
-                
-                var fields = results.meta.fields;
-                @php
-                    echo "var fields_dec = ['KODE_ITEM','ITEM','SATUAN','MTU','HARGA','KETERANGAN'];";
-                    echo "var fields_length_set = 6;";
-                @endphp
-
-                if(fields.length!==fields_length_set || JSON.stringify(fields_dec)!==JSON.stringify(fields)){
-                    alertBS("Format file tidak valid");
-                    return false;
-                }
-
-                if(results.data.length==0){
-                    alertBS("Format file tidak valid");
-                    return false;
-                }                
-                $.each(results.data,function(index, el) {
-                    if(results.data[index].KODE_ITEM!=""){
-                        var new_row = $('.tabel-product:last').clone(true).insertAfter(".tabel-product:last");
-                        var input_new_row = new_row.find('td');
-
-                        input_new_row.eq(0).find('input').val(results.data[index].KODE_ITEM);
-                        input_new_row.eq(0).find('.error').remove();
-                        input_new_row.eq(0).removeClass("has-error");
-                        input_new_row.eq(1).find('input').val(results.data[index].ITEM);
-                        input_new_row.eq(1).find('.error').remove();
-                        input_new_row.eq(1).removeClass("has-error");
-                        input_new_row.eq(2).find('input').val(results.data[index].SATUAN);
-                        input_new_row.eq(2).find('.error').remove();
-                        input_new_row.eq(2).removeClass("has-error");
-
-                    }
-                });
-            }
-        });
-    }
-    */
 
     $('#jstree')
         .on("changed.jstree", function (e, data) {
@@ -200,7 +141,6 @@ $(function() {
         .bind("ready.jstree", function (event, data) {
              $(this).jstree("open_all");
              var parent=$(".f_parentid").val();
-             console.log(parent);
 
              if(parent!=""){
                 $('#jstree').jstree('select_node', parent);
@@ -342,15 +282,8 @@ $(function() {
                       message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
                     });
                   }else{
-                    /*
-                    bootbox.success({
-                      title:"Pemberitahuan",
-                      message: "Data Product berhasil di masukin!",
-                    });
-                    */
-
                     if(response.status=="all"){
-                      window.location.href = "{{route('catalog.product.master')}}";
+                      window.location.href = "{{route('catalog.product.master')}}?id_kategori=" + $(".f_parentid").val();
                     }
                   }
                 }
@@ -359,6 +292,24 @@ $(function() {
           }
         });
       });
+
+$(function(){
+    $(".add-product").prop("disabled", true);
+    //$(".test-product").addClass("disabledbutton");
+    $(".upload-boq-btn").prop("disabled", true);
+    $(".simpan-product").prop( "disabled", true );
+
+    var new_row = $(template_add()).clone(true);
+    $(".table-test").append(new_row);
+    var input_new_row = new_row.find('td');
+    
+    input_new_row.eq(4).find('select').select2({
+        placeholder:"Silahkan Pilih"
+    });
+
+    $("#alertBS").fadeTo(2000, 500).slideUp(500, function(){
+        $("#alertBS").slideUp(500);
+    });
 });
 </script>
 @endpush

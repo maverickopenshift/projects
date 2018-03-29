@@ -9,65 +9,44 @@
                     <h4 class="modal-title">Edit User</h4>
                 </div>
                 <div class="modal-body">
-                  <div class="form-group">
+                  <div class="form-group formerror formerror-user_search">
                       <div class="error-global"></div>
                       <label>Pilih Pegawai</label>
                       <select class="form-control select-user-telkom" style="width: 100%;" name="user_search" id="user_search">
                           <option value="">Pilih Pegawai</option>
                       </select>
-                      <div class="error-user_search"></div>
+                      <div class="error error-user_search"></div>
                     </div>
-                    <div class="form-group">
-                        <label>Divisi</label>
-                        <input type="text" id="divisi" name="divisi" class="form-control" disabled="disabled">
+                    <div class="form-group ready-select" style="display:none;">
+                      <span class="span-oke">Nama</span> <span id="name"></span></br>
+                      <span class="span-oke">Username</span> <span id="username"></span></br>
+                      <span class="span-oke">Email</span> <span id="email"></span></br>
+                      <span class="span-oke">Divisi</span> <span id="divisi"></span></br>
+                      <span class="span-oke">Unit Bisnis</span> <span id="unit_bisnis"></span> </br>
+                      <span class="span-oke">Unit Kerja</span> <span id="unit_kerja"></span> </br>
+                      <span class="span-oke">Jabatan</span> <span id="jabatan"></span> </br>
+                      <input type="hidden" id="id_edit" name="id" />
                     </div>
-                    <div class="form-group">
-                        <label>Loker</label>
-                        <input type="text" id="loker" name="loker" class="form-control" disabled="disabled">
-                    </div>
-                    <div class="form-group">
-                        <label>Jabatan</label>
-                        <input type="text" id="jabatan" name="jabatan" class="form-control" disabled="disabled">
-                    </div>
-                    <div class="form-group">
-                        <div class="error-global"></div>
-                        <input type="hidden" id="id" name="id" />
-                        <label>Name</label>
-                        <input type="text" id="name" name="name" value="" class="form-control" placeholder="Enter ..." required autocomplete="off"  disabled="disabled">
-                        <div class="error-name"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="error-global"></div>
-                        <label>Username</label>
-                        <input type="text" id="username" name="username" value="" class="form-control" placeholder="Enter ..." required autocomplete="off" readonly="readonly">
-                        <div class="error-username"></div>
-                    </div>
-                    <div class="form-group">
-                        <div class="error-global"></div>
-                        <label>Email</label>
-                        <input type="email" id="email" name="email" value="" class="form-control" placeholder="Enter ..." required autocomplete="off" readonly="readonly">
-                        <div class="error-email"></div>
-                    </div>
-                    <div class="form-group">
+                    <div class="form-group  formerror formerror-phone">
                         <div class="error-global"></div>
                         <label>Phone</label>
                         <input type="text" id="phone" name="phone" value="" class="form-control" placeholder="Enter ..." autocomplete="off">
-                        <div class="error-phone"></div>
+                        <div class="error error-phone"></div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group formerror formerror-user_type">
                       <label>User Type</label>
                       <select class="form-control" style="width: 100%;" name="user_type" id="user_type">
                         <option value="ubis">Ubis</option>
                         <option value="witel">Witel</option>
                       </select>
-                      <div class="error-user_type"></div>
+                      <div class="error error-user_type"></div>
                     </div>
-                    <div class="form-group hide">
+                    <div class="form-group formerror formerror-or_user_approver hide">
                       <label>Pilih Approver</label>
                       <select class="form-control select-user-approver" style="width: 100%;" name="or_user_approver" id="or_user_approver" data-action="or_approver">
                           <option value="">Pilih Approver</option>
                       </select>
-                      <div class="error-or_user_approver"></div>
+                      <div class="error error-or_user_approver"></div>
                     </div>
                     <div class="table-or_approver table-responsive" style="display:none;">
                       <table class="table table-bordered">
@@ -85,12 +64,12 @@
                           </tbody>
                       </table>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group formerror formerror-or_user_atasan">
                       <label>Pilih Penandatangan Kontrak</label>
                       <select class="form-control select-user-atasan" style="width: 100%;" name="or_user_atasan" id="or_user_atasan" data-action="or_atasan">
                           <option value="">Pilih Penandatangan Kontrak</option>
                       </select>
-                      <div class="error-or_user_atasan"></div>
+                      <div class="error error-or_user_atasan"></div>
                     </div>
                     <div class="table-or_atasan table-responsive" style="display:none;">
                       <table class="table table-bordered">
@@ -108,7 +87,7 @@
                           </tbody>
                       </table>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group formerror formerror-roles">
                       <label>Roles</label>
                       <select class="form-control" style="width: 100%;" name="roles" id="roles">
                         <option value="">Pilih Roles</option>
@@ -116,7 +95,7 @@
                           <option value="{{$role->id}}">{{$role->display_name}}</option>
                         @endforeach
                       </select>
-                      <div class="error-roles"></div>
+                      <div class="error error-roles"></div>
                     </div>
                     <div class="form-group">
                       <label>User PGS</label>
@@ -126,28 +105,35 @@
                       </select>
                     </div>
                     <div class="table-pgs" style="display:none;border: 1px solid #d2d6de;padding: 10px;position: relative;margin-top: 15px;margin-bottom: 33px;">
-                      <div class="form-group">
+                      <div class="form-group formerror formerror-pgs_divisi_or">
                         <label>PGS Divisi</label>
                           <select class="form-control" style="width: 100%;" name="pgs_divisi_or" id="pgs_divisi_or">
                               <option value="">Pilih Divisi</option>
                           </select>
-                          <div class="error-pgs_divisi_or"></div>
+                          <div class="error error-pgs_divisi_or"></div>
                       </div>
-                      <div class="form-group">
-                        <label>PGS Unit</label>
-                          <select class="form-control" style="width: 100%;" name="pgs_unit_or" id="pgs_unit_or">
-                              <option value="">Pilih Unit</option>
+                      <div class="form-group formerror formerror-pgs_unit_bisnis_or">
+                        <label>PGS Unit Bisnis</label>
+                          <select class="form-control" style="width: 100%;" name="pgs_unit_bisnis_or" id="pgs_unit_bisnis_or">
+                              <option value="">Pilih Unit Bisnis</option>
                           </select>
-                          <div class="error-pgs_unit_or"></div>
+                          <div class="error error-pgs_unit_bisnis_or"></div>
                       </div>
-                      <div class="form-group">
+                      <div class="form-group formerror formerror-pgs_unit_kerja_or">
+                        <label>PGS Unit Kerja</label>
+                          <select class="form-control" style="width: 100%;" name="pgs_unit_kerja_or" id="pgs_unit_kerja_or">
+                              <option value="">Pilih Unit Kerja</option>
+                          </select>
+                          <div class="error error-pgs_unit_kerja_or"></div>
+                      </div>
+                      <div class="form-group formerror formerror-pgs_jabatan_or">
                         <label>PGS Jabatan</label>
                           <select class="form-control" style="width: 100%;" name="pgs_jabatan_or" id="pgs_jabatan_or">
                               <option value="">Pilih Jabatan</option>
                           </select>
-                          <div class="error-pgs_jabatan_or"></div>
+                          <div class="error error-pgs_jabatan_or"></div>
                       </div>
-                      <div class="form-group">
+                      <div class="form-group formerror formerror-pgs_roles_or">
                         <label>PGS Roles</label>
                           <select class="form-control" style="width: 100%;" name="pgs_roles_or" id="pgs_roles_or">
                             <option value="">Pilih Roles</option>
@@ -155,7 +141,7 @@
                               <option value="{{$role->id}}">{{$role->display_name}}</option>
                             @endforeach
                           </select>
-                          <div class="error-pgs_roles_or"></div>
+                          <div class="error error-pgs_roles_or"></div>
                       </div>
                     </div>
                 </div>
@@ -250,8 +236,9 @@
             $('#select2-pic_search-container').html('');
             selectUser("#or_user_approver")
             selectMe__('#pgs_divisi_or','divisi')
-            selectMe__('#pgs_unit_or','unit','#pgs_divisi_or')
-            selectMe__('#pgs_jabatan_or','posisi','#pgs_unit_or')
+            selectMe__('#pgs_unit_bisnis_or','unit_bisnis','#pgs_divisi_or')
+            selectMe__('#pgs_unit_kerja_or','unit_kerja','#pgs_unit_bisnis_or')
+            selectMe__('#pgs_jabatan_or','posisi','#pgs_unit_kerja_or')
             selectUser("#user_search")
             if(title=='Edit'){
                 var data = button.data('data');
@@ -267,26 +254,34 @@
                 user_search.append(newOption);
                 user_search.val(data_other_pegawai.id).change();
                 
-                modal.find('.modal-body input#id').val(data.id)
-                modal.find('.modal-body input#name').val(data.name)
-                modal.find('.modal-body input#username').val(data.username)
-                modal.find('.modal-body input#email').val(data.email)
+                modal.find('.modal-body input#id_edit').val(data.id)
+                modal.find('.modal-body #name').text(data.name)
+                modal.find('.modal-body #username').text(data.username)
+                modal.find('.modal-body #email').text(data.email)
+                modal.find('.modal-body #divisi').text(data_other_pegawai.divisi)
+                modal.find('.modal-body #unit_bisnis').text(data_other_pegawai.unit_bisnis)
+                modal.find('.modal-body #unit_kerja').text(data_other_pegawai.unit_kerja)
+                modal.find('.modal-body #jabatan').text(data_other_pegawai.v_short_posisi)
                 modal.find('.modal-body input#phone').val(data.phone)
                 modal.find('.modal-body select#roles').val(role[0].id)
                 modal.find('.modal-body select#user_type').val(data.user_type)
                 reset_select2('pgs_divisi_or')
                 reset_select2('pgs_jabatan_or')
-                reset_select2('pgs_unit_or')
+                reset_select2('pgs_unit_bisnis_or')
+                reset_select2('pgs_unit_kerja_or')
                 if(data_other.is_pgs){
                   var data_pgs = data_other.pgs;
                   var data_pgs2 = data_other.pgs_2;
                   modal.find('.modal-body select#roles').val(data_pgs2.role_id)
                   modal.find('.modal-body select#user_pgs').val('yes');
                   modal.find('.modal-body select#user_pgs').change();
-                  set_select2(modal.find('.modal-body select#pgs_divisi_or'),{id:data_pgs.objiddivisi,text:data_pgs.v_short_divisi});
+                  set_select2(modal.find('.modal-body select#pgs_divisi_or'),{id:data_pgs.divisi,text:data_pgs.divisi});
                   set_select2(modal.find('.modal-body select#pgs_jabatan_or'),{id:data_pgs.objidposisi,text:data_pgs.v_short_posisi});
-                  set_select2(modal.find('.modal-body select#pgs_unit_or'),{id:data_pgs.objidunit,text:data_pgs.v_short_unit});
+                  set_select2(modal.find('.modal-body select#pgs_unit_bisnis_or'),{id:data_pgs.unit_bisnis,text:data_pgs.unit_bisnis});
+                  set_select2(modal.find('.modal-body select#pgs_unit_kerja_or'),{id:data_pgs.unit_kerja,text:data_pgs.unit_kerja});
                   modal.find('.modal-body select#pgs_roles_or').val(data_pgs.role_id)
+                  
+                  
                   
                 }
                 else{
@@ -311,18 +306,21 @@
                 // else{
                 //   modal.find('.table-approver').hide().find('table>tbody').html('')
                 // }
+                modal.find('.modal-body .ready-select').show()
                 modal.find('form').attr('action','{!! route('users.update') !!}')
             }
             else{
                 selectUser("#or_user_atasan")
                 modal.find('.modal-body input#id').val('')
-                modal.find('.modal-body input#name').val('')
-                modal.find('.modal-body input#username').val('')
-                modal.find('.modal-body input#email').val('')
-                modal.find('.modal-body input#phone').val('')
-                modal.find('.modal-body input#divisi').val('')
-                modal.find('.modal-body input#loker').val('')
-                modal.find('.modal-body input#jabatan').val('')
+                modal.find('.modal-body #name').text('')
+                modal.find('.modal-body #username').text('')
+                modal.find('.modal-body #email').text('')
+                modal.find('.modal-body input#phone').text('')
+                modal.find('.modal-body #divisi').text('')
+                modal.find('.modal-body #unit_bisnis').text('')
+                modal.find('.modal-body #unit_kerja').text('')
+                modal.find('.modal-body #jabatan').text('')
+                modal.find('.modal-body .ready-select').hide()
                 
                 modal.find('.modal-body select#roles').val('')
                 modal.find('.modal-body select#user_pgs').val('no')
@@ -332,7 +330,8 @@
                 modal.find('.table-atasan').hide().find('table>tbody').html('')
                 reset_select2('pgs_divisi_or')
                 reset_select2('pgs_jabatan_or')
-                reset_select2('pgs_unit_or')
+                reset_select2('pgs_unit_bisnis_or')
+                reset_select2('pgs_unit_kerja_or')
                 reset_select2('user_search')
                 modal.find('.modal-body select#pgs_roles_or').val('')
                 modal.find('form').attr('action','{!! route('users.add') !!}')
@@ -346,50 +345,9 @@
             var loading = modal.find('.loading-modal');
             loading.show();
             var formMe = $(this)
-            var attError = {
-                    name     : formMe.find('.error-display_name'),
-                    username : formMe.find('.error-username'),
-                    phone    : formMe.find('.error-phone'),
-                    email    : formMe.find('.error-email'),
-                    password : formMe.find('.error-password'),
-                    roles : formMe.find('.error-roles'),
-                    user_type    : formMe.find('.error-user_type'),
-                    non_user_approver    : formMe.find('.error-or_user_approver'),
-                    non_user_atasan    : formMe.find('.error-or_user_atasan'),
-                    pgs_divisi    : formMe.find('.error-pgs_divisi_or'),
-                    pgs_unit    : formMe.find('.error-pgs_unit_or'),
-                    pgs_jabatan    : formMe.find('.error-pgs_jabatan_or'),
-                    pgs_roles    : formMe.find('.error-pgs_roles_or'),
-                    user_search    : formMe.find('.error-user_search'),
-              };
-            attError.name.html('')
-            attError.name.parent().removeClass('has-error')
-            attError.username.html('')
-            attError.username.parent().removeClass('has-error')
-            attError.phone.html('')
-            attError.phone.parent().removeClass('has-error')
-            attError.email.html('')
-            attError.email.parent().removeClass('has-error')
-            attError.password.html('')
-            attError.password.parent().removeClass('has-error')
-            attError.roles.html('')
-            attError.roles.parent().removeClass('has-error')
-            attError.user_type.html('')
-            attError.user_type.parent().removeClass('has-error')
-            attError.user_search.html('')
-            attError.user_search.parent().removeClass('has-error')
-            attError.non_user_approver.html('')
-            attError.non_user_approver.parent().removeClass('has-error')
-            attError.non_user_atasan.html('')
-            attError.non_user_atasan.parent().removeClass('has-error')
-            attError.pgs_divisi.html('')
-            attError.pgs_divisi.parent().removeClass('has-error')
-            attError.pgs_unit.html('')
-            attError.pgs_unit.parent().removeClass('has-error')
-            attError.pgs_jabatan.html('')
-            attError.pgs_jabatan.parent().removeClass('has-error')
-            attError.pgs_roles.html('')
-            attError.pgs_roles.parent().removeClass('has-error')
+            var formError = formMe.find(".formerror")
+            formError.removeClass("has-error")
+            formMe.find(".error").html('')
             var btnSave = formMe.find('.btn-save')
             btnSave.button('loading')
             $.ajax({
@@ -401,62 +359,16 @@
                     // Handle your response..
                     console.log(_response)
                     if(_response.errors){
-                        if(_response.errors.name){
-                            attError.name.html('<span class="text-danger">'+_response.errors.name+'</span>');
-                            attError.name.parent().addClass('has-error')
-                        }
-                        if(_response.errors.username){
-                            attError.user_search.html('<span class="text-danger">'+_response.errors.username+'</span>');
-                            attError.user_search.parent().addClass('has-error')
-                        }
-                        if(_response.errors.email){
-                            attError.user_search.html('<span class="text-danger">'+_response.errors.email+'</span>');
-                            attError.user_search.parent().addClass('has-error')
-                        }
-                        if(_response.errors.phone){
-                            attError.phone.html('<span class="text-danger">'+_response.errors.phone+'</span>');
-                            attError.phone.parent().addClass('has-error')
-                        }
-                        if(_response.errors.password){
-                            attError.password.html('<span class="text-danger">'+_response.errors.password+'</span>');
-                            attError.password.parent().addClass('has-error')
-                        }
-                        if(_response.errors.roles){
-                            attError.roles.html('<span class="text-danger">'+_response.errors.roles+'</span>');
-                            //attError.roles.parent().addClass('has-error')
-                        }
-                        if(_response.errors.user_type){
-                            attError.user_type.html('<span class="text-danger">'+_response.errors.user_type+'</span>');
-                            attError.user_type.parent().addClass('has-error')
-                        }
-                        if(_response.errors.non_user_approver){
-                            attError.non_user_approver.html('<span class="text-danger">'+_response.errors.non_user_approver+'</span>');
-                            attError.non_user_approver.parent().addClass('has-error')
-                        }
-                        if(_response.errors.non_user_atasan){
-                            attError.non_user_atasan.html('<span class="text-danger">'+_response.errors.non_user_atasan+'</span>');
-                            attError.non_user_atasan.parent().addClass('has-error')
-                        }
-                        if(_response.errors.user_search){
-                            attError.user_search.html('<span class="text-danger">'+_response.errors.user_search+'</span>');
-                            attError.user_search.parent().addClass('has-error')
-                        }
-                        if(_response.errors.pgs_divisi){
-                            attError.pgs_divisi.html('<span class="text-danger">'+_response.errors.pgs_divisi+'</span>');
-                            attError.pgs_divisi.parent().addClass('has-error')
-                        }
-                        if(_response.errors.pgs_unit){
-                            attError.pgs_unit.html('<span class="text-danger">'+_response.errors.pgs_unit+'</span>');
-                            attError.pgs_unit.parent().addClass('has-error')
-                        }
-                        if(_response.errors.pgs_jabatan){
-                            attError.pgs_jabatan.html('<span class="text-danger">'+_response.errors.pgs_jabatan+'</span>');
-                            attError.pgs_jabatan.parent().addClass('has-error')
-                        }
-                        if(_response.errors.pgs_roles){
-                            attError.pgs_roles.html('<span class="text-danger">'+_response.errors.pgs_roles+'</span>');
-                            attError.pgs_roles.parent().addClass('has-error')
-                        }
+                      $.each(_response.errors, function(index, value){
+                          if (value.length !== 0){
+                            index = index.replace(".", "-");
+                            formMe.find(".formerror-"+ index).removeClass("has-error");
+                            formMe.find(".error-"+ index).html('');
+
+                            formMe.find(".formerror-"+ index).addClass("has-error");
+                            formMe.find(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
+                          }
+                      });
                         modal.scrollTop(0);
                     }
                     else{
@@ -585,21 +497,23 @@
           /* Act on the event */
           var data = event.params.data;
           // console.log(data);
-          formModal.find('#name').val(data.v_nama_karyawan);
-          formModal.find('#username').val(data.n_nik);
-          formModal.find('#divisi').val(data.v_short_divisi);
-          formModal.find('#loker').val(data.v_short_unit);
-          formModal.find('#jabatan').val(data.v_short_posisi);
+          formModal.find('#name').text(data.v_nama_karyawan);
+          formModal.find('#username').text(data.n_nik);
+          formModal.find('#divisi').text(data.divisi);
+          formModal.find('#unit_kerja').text(data.unit_kerja);
+          formModal.find('#unit_bisnis').text(data.unit_bisnis);
+          formModal.find('#jabatan').text(data.v_short_posisi);
           formModal.find('#password').val('{!!config('app.password_default')!!}').parent().find('.info-default').remove();
           formModal.find('#password').after('<span class="text-info info-default">Default password {!!config('app.password_default')!!}')
           formModal.find('#password_confirmation').val('{!!config('app.password_default')!!}');
-          formModal.find('#email').val(data.n_nik+'@telkom.co.id');
+          formModal.find('#email').text(data.n_nik+'@telkom.co.id');
           formModal.find('.table-or_atasan').find('table>tbody').html('');
           formModal.find('.table-or_atasan').hide();
           formModal.find('.content-atasan').show();
           // formModal.find('.table-approver').find('table>tbody').html('');
           // formModal.find('.table-approver').hide();
           formModal.find('.content-approver').show();
+          formModal.find('.ready-select').show();
           selectUser("#or_user_atasan",data.objiddivisi,data.v_band_posisi)
           selectUser("#or_user_approver")
         });

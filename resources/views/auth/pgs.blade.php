@@ -45,7 +45,7 @@
   </script>
 </head>
 <body class="hold-transition login-page">
-<div class="login-box">
+<div class="login-box" style="min-width:500px;">
   <!-- /.login-logo -->
     <div class="login-box-body" style="border-radius: 10px;position:relative;">
       <div class="loading-login"></div>
@@ -60,7 +60,7 @@
         <label style="width:100%">
           <table style="width:100%">
             <tr valign="top">
-              <td width="50">Nama</td>
+              <td width="70">Nama</td>
               <td width="10">:</td>
               <td>{{$user->name}}</td>
             </tr>  
@@ -86,14 +86,19 @@
             <input type="radio" name="pgs" value="{{$pgs->id}}" {{($pgs->pgs_status=='active')?'checked':''}} autocomplete="off"> 
             <table style="width:100%">
               <tr valign="top">
-                <td width="50">Divisi</td>
+                <td width="70">Divisi</td>
                 <td width="10">:</td>
-                <td>{{$pgs->v_short_divisi}}</td>
+                <td>{{$pgs->divisi}}</td>
               </tr>  
               <tr valign="top">
-                <td>Unit</td>
+                <td>Unit Bisnis</td>
                 <td>:</td>
-                <td>{{$pgs->v_short_unit}}</td>
+                <td>{{$pgs->unit_bisnis}}</td>
+              </tr>   
+              <tr valign="top">
+                <td>Unit Kerja</td>
+                <td>:</td>
+                <td>{{$pgs->unit_kerja}}</td>
               </tr>  
               <tr valign="top">
                 <td>Jabatan</td>

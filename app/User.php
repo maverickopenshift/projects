@@ -34,7 +34,7 @@ class User extends Authenticatable
         return $this->hasOne('Modules\Supplier\Entities\Supplier','id_user');
     }
     public static function get_user_telkom($key=null,$type=null,$posisi=null){
-      $data = \DB::table('pegawai')
+      $data = \DB::table('__mtz_pegawai')
                 ->select('*');
       if(!empty($key)){
         $data->where(function($q) use ($key) {
@@ -138,6 +138,21 @@ class User extends Authenticatable
       }
       return $data;
     }
+    public static function get_all_real_posisi($key=false,$unit_kerja='dsfafas'){
+      $data = \DB::table('__mtz_pegawai')->selectRaw('objidposisi as id,v_short_posisi as title,count(objidposisi) as total_posisi');
+      $data->orderBy('v_short_posisi','ASC');
+      $data->whereNotNull('v_short_posisi');
+      $data->where('v_short_posisi','!=',"");
+      $data->groupBy(['v_short_posisi']);
+      if(empty($unit_kerja) || is_null($unit_kerja)){
+        $unit_bisnis = 'asdfsfaasdf';
+      }
+      $data->where('unit_kerja',$unit_kerja);
+      if(!empty($key)){
+        $data->where('v_short_posisi', 'like', '%'.$key.'%');
+      }
+      return $data;
+    }
     public static function get_unit($key=false,$divisi=false){
       $data = \DB::table('rptom')->selectRaw('objidunit as id,v_short_unit as title,count(objidunit) as total_unit');
       $data->orderBy('v_short_unit','ASC');
@@ -211,7 +226,7 @@ class User extends Authenticatable
       return $data;
     }
     public static function get_user_telkom_by_nik($nik){
-      $data = \DB::table('pegawai')->select('*')->where('n_nik','=',$nik);
+      $data = \DB::table('__mtz_pegawai')->select('*')->where('n_nik','=',$nik);
       return $data;
     }
     public static function get_user_vendor($key=null){

@@ -11,6 +11,7 @@ use Modules\Users\Entities\UsersAtasan as Atasan;
 use Modules\Users\Entities\UsersApprover as Approver;
 use Modules\Users\Entities\UsersPegawai;
 use Modules\Users\Entities\Pegawai;
+use Modules\Users\Entities\Mtzpegawai;
 use Modules\Users\Entities\UsersPgs;
 use Modules\Users\Entities\SubsidiaryTelkom;
 use Modules\Users\Entities\PegawaiNonorganik;
@@ -46,10 +47,10 @@ class UsersController extends Controller
             ->addColumn('action', function ($data) {
               $user_type = User::check_usertype($data->username);
               $other = '';
+              $peg = Mtzpegawai::where('n_nik',$data->username)->first();
               if($user_type=='organik'){
                 $is_pgs = false;
                 $modal = '#form-modal';
-                $peg = Pegawai::where('n_nik',$data->username)->first();
                 $pgs = UsersPgs::where('users_id','=',$data->id)->first();
                 $pgs_2 = UsersPgs::where('users_id','=',$data->id)->orderBy('id', 'desc')->first();
                 if($pgs){
@@ -69,7 +70,6 @@ class UsersController extends Controller
               }
               else if($user_type=='nonorganik'){
                 $modal = '#form-modal-nonorganik';
-                $peg = PegawaiNonorganik::where('n_nik',$data->username)->first();
                 $atasan = Atasan::get_by_userid($data->id);
                 $other_ar = [
                   'pegawai'  => $peg,
@@ -79,7 +79,6 @@ class UsersController extends Controller
               }
               else if($user_type=='subsidiary'){
                 $modal = '#form-modal-subsidiary';
-                $peg = PegawaiSubsidiary::where('n_nik',$data->username)->first();
                 $subs = SubsidiaryTelkom::where('id',$peg->subsidiary_id)->first();
                 $atasan = Atasan::get_by_userid($data->id,'subsidiary');
                 $other_ar = [
@@ -145,36 +144,47 @@ class UsersController extends Controller
         if (!$request->ajax()) {abort(404);};
         $id = $request->id;
           $rules = array (
-              'user_search' => 'required|exists:pegawai,id',
-              'username' => 'required|unique:users,username,'.$request->id.'|max:250|min:3',
-              'email' => 'required|email|unique:users,email,'.$request->id.'|max:250|min:5',
+              'user_search' => 'required|exists:__mtz_pegawai,id',
+              // 'username' => 'required|unique:users,username,'.$request->id.'|max:250|min:3',
+              // 'email' => 'required|email|unique:users,email,'.$request->id.'|max:250|min:5',
               'phone' => 'sometimes|nullable|max:15|min:5',
               'roles' => 'required|exists:roles,id',
               'user_type'    => 'required|in:ubis,witel|max:5|min:4',
               // 'password' => 'required|confirmed|max:50|min:5',
           );
           if($request->user_pgs=='yes'){
-            $rules['pgs_divisi_or'] = 'required|exists:rptom,objiddivisi';
-            $rules['pgs_unit_or'] = 'required|exists:rptom,objidunit';
-            $rules['pgs_jabatan_or'] = 'required|exists:rptom,objidposisi';
+            $rules['pgs_divisi_or'] = 'required|exists:__mtz_pegawai,divisi';
+            $rules['pgs_unit_bisnis_or'] = 'required|exists:__mtz_pegawai,unit_bisnis';
+            $rules['pgs_unit_kerja_or'] = 'required|exists:__mtz_pegawai,unit_kerja';
+            $rules['pgs_jabatan_or'] = 'required|exists:__mtz_pegawai,objidposisi';
             $rules['pgs_roles_or'] = 'required|exists:roles,id';
           }
           $msg = [
-            'username.unique' => 'Pegawai yang Anda pilih sudah Ada',
-            'email.unique' => 'Pegawai yang Anda pilih sudah Ada',
+            'roles.required' => 'Roles harus dipilih!'
           ];
           $validator = Validator::make($request->all(), $rules,$msg);
           $validator->after(function ($validator) use ($request) {
-              // if (!isset($request->roles_edit)) {
-              //     $validator->errors()->add('roles_edit', 'Roles harus dipilih');
-              // }
+            if(!$validator->errors()->has('user_search')){
+              $pgw = Mtzpegawai::where('id',$request->user_search)->first();
+              $usr = User::where('id',$request->id)->first();
+              if($usr->username!=$pgw->n_nik){
+                $usr1 = User::where('id',$pgw->n_nik)->count();
+                if($usr1>0){
+                  $validator->errors()->add('user_search', 'Pegawai yang Anda pilih sudah Ada');
+                }
+                $usr2 = User::where('email',$pgw->n_nik.'@telkom.co.id')->count();
+                if($usr2>0){
+                  $validator->errors()->add('user_search', 'Pegawai yang Anda pilih sudah Ada');
+                }
+              }
+            }
           });
           if ($validator->fails ())
               return Response::json (array(
                   'errors' => $validator->getMessageBag()->toArray()
               ));
           else {
-              $peg = Pegawai::where('id',$request->user_search)->first();
+              $peg = Mtzpegawai::where('id',$request->user_search)->first();
               $data = User::where('id','=',$request->id)->first();
               $data->name = $peg->v_nama_karyawan;
               $data->username = $peg->n_nik;
@@ -184,15 +194,15 @@ class UsersController extends Controller
               $data->save();
               $data->syncRoles([$request->roles]);
               // $data->roles()->sync($roles);
-              $peg = UsersPegawai::get_by_userid($id);
-              $peg->nik = $data->username;
-              $peg->save();
+              $user_peg = UsersPegawai::get_by_userid($id);
+              $user_peg->nik = $data->username;
+              $user_peg->save();
               
               if (count($request->atasan_id)>0 && $request->has(['atasan_id'])) {
                   Atasan::where('users_pegawai_id',$peg->ids)->delete();
                   foreach($request->atasan_id as $key=>$v){
                     $atasan = new Atasan();
-                    $atasan->users_pegawai_id = $peg->ids;
+                    $atasan->users_pegawai_id = $user_peg->ids;
                     $atasan->nik = $v;
                     $atasan->save();
                   }
@@ -210,15 +220,9 @@ class UsersController extends Controller
                 $pgs = new UsersPgs();
                 $pgs->users_id = $data->id;
               
-                $pgs_divisi =  DB::table('rptom')->where('objiddivisi',$request->pgs_divisi_or)->first();
-                $pgs->objiddivisi = $pgs_divisi->objiddivisi;
-                $pgs->c_kode_divisi = $pgs_divisi->c_kode_divisi;
-                $pgs->v_short_divisi = $pgs_divisi->v_short_divisi;
-              
-                $pgs_unit =  DB::table('rptom')->where('objidunit',$request->pgs_unit_or)->first();
-                $pgs->objidunit = $pgs_unit->objidunit;
-                $pgs->c_kode_unit = $pgs_unit->c_kode_unit;
-                $pgs->v_short_unit = $pgs_unit->v_short_unit;
+                $pgs->divisi = $request->pgs_divisi_or;
+                $pgs->unit_bisnis = $request->pgs_unit_bisnis_or;
+                $pgs->unit_kerja = $request->pgs_unit_kerja_or;
               
                 $pgs_posisi = DB::table('rptom')->where('objidposisi',$request->pgs_jabatan_or)->first();
                 $pgs->objidposisi = $pgs_posisi->objidposisi;
@@ -230,17 +234,12 @@ class UsersController extends Controller
                 $pgs->pgs_status = 'inactive';
                 $pgs->save();
                 
-                $peg = Pegawai::where('n_nik',$data->username)->first();
                 $pgs = new UsersPgs();
                 $pgs->users_id = $data->id;
                 
-                $pgs->objiddivisi = $peg->objiddivisi;
-                $pgs->c_kode_divisi = $peg->c_kode_divisi;
-                $pgs->v_short_divisi = $peg->v_short_divisi;
-              
-                $pgs->objidunit = $peg->objidunit;
-                $pgs->c_kode_unit = $peg->c_kode_unit;
-                $pgs->v_short_unit = $peg->v_short_unit;
+                $pgs->divisi = $peg->divisi;
+                $pgs->unit_bisnis = $peg->unit_bisnis;
+                $pgs->unit_kerja = $peg->unit_kerja;
               
                 $pgs->objidposisi = $peg->objidposisi;
                 $pgs->c_kode_posisi = $peg->c_kode_posisi;
@@ -443,35 +442,41 @@ class UsersController extends Controller
     {
       if (!$request->ajax()) {abort(404);};
         $rules = array (
-            'user_search' => 'required|exists:pegawai,id',
-            'username' => 'required|unique:users,username|max:250|min:3',
-            'email'    => 'required|email|unique:users,email|max:250|min:5',
+            'user_search' => 'required|exists:__mtz_pegawai,id',
             'phone'    => 'sometimes|nullable|max:15|min:5',
             'roles' => 'required|exists:roles,id',
             'user_type'    => 'required|in:ubis,witel|max:5|min:4',
         );
         if($request->user_pgs=='yes'){
-          $rules['pgs_divisi_or'] = 'required|exists:rptom,objiddivisi';
-          $rules['pgs_unit_or'] = 'required|exists:rptom,objidunit';
-          $rules['pgs_jabatan_or'] = 'required|exists:rptom,objidposisi';
+          $rules['pgs_divisi_or'] = 'required|exists:__mtz_pegawai,divisi';
+          $rules['pgs_unit_bisnis_or'] = 'required|exists:__mtz_pegawai,unit_bisnis';
+          $rules['pgs_unit_kerja_or'] = 'required|exists:__mtz_pegawai,unit_kerja';
+          $rules['pgs_jabatan_or'] = 'required|exists:__mtz_pegawai,objidposisi';
           $rules['pgs_roles_or'] = 'required|exists:roles,id';
         }
         $msg = [
-          'username.unique' => 'Pegawai yang Anda pilih sudah Ada',
-          'email.unique' => 'Pegawai yang Anda pilih sudah Ada',
+          'roles.required' => 'Roles harus dipilih!'
         ];
         $validator = Validator::make($request->all(), $rules,$msg);
         $validator->after(function ($validator) use ($request) {
-            // if (!isset($request->roles)) {
-            //     $validator->errors()->add('roles', 'Roles harus dipilih');
-            // }
+          if(!$validator->errors()->has('user_search')){
+            $pgw = Mtzpegawai::where('id',$request->user_search)->first();
+            $usr1 = User::where('username',$pgw->n_nik)->count();
+            if($usr1>0){
+              $validator->errors()->add('user_search', 'Pegawai yang Anda pilih sudah Ada');
+            }
+            $usr2 = User::where('email',$pgw->n_nik.'@telkom.co.id')->count();
+            if($usr2>0){
+              $validator->errors()->add('user_search', 'Pegawai yang Anda pilih sudah Ada');
+            }
+          }
         });
         if ($validator->fails ())
             return Response::json (array(
                 'errors' => $validator->getMessageBag()->toArray()
             ));
         else {
-            $peg = Pegawai::where('id',$request->user_search)->first();
+            $peg = Mtzpegawai::where('id',$request->user_search)->first();
             $data = new User();
             $data->name = $peg->v_nama_karyawan;
             $data->username = $peg->n_nik;
@@ -482,15 +487,15 @@ class UsersController extends Controller
             $data->save ();
             $data->attachRole($request->roles);
 
-            $peg = new UsersPegawai();
-            $peg->users_id = $data->id;
-            $peg->nik = $data->username;
-            $peg->save();
+            $user_peg = new UsersPegawai();
+            $user_peg->users_id = $data->id;
+            $user_peg->nik = $data->username;
+            $user_peg->save();
 
             if (count($request->atasan_id)>0 &&  $request->has(['atasan_id'])) {
                 foreach($request->atasan_id as $key=>$v){
                   $atasan = new Atasan();
-                  $atasan->users_pegawai_id = $peg->id;
+                  $atasan->users_pegawai_id = $user_peg->id;
                   $atasan->nik = $v;
                   $atasan->save();
                 }
@@ -506,16 +511,10 @@ class UsersController extends Controller
             if($request->user_pgs=='yes'){
               $pgs = new UsersPgs();
               $pgs->users_id = $data->id;
-            
-              $pgs_divisi =  DB::table('rptom')->where('objiddivisi',$request->pgs_divisi_or)->first();
-              $pgs->objiddivisi = $pgs_divisi->objiddivisi;
-              $pgs->c_kode_divisi = $pgs_divisi->c_kode_divisi;
-              $pgs->v_short_divisi = $pgs_divisi->v_short_divisi;
-            
-              $pgs_unit =  DB::table('rptom')->where('objidunit',$request->pgs_unit_or)->first();
-              $pgs->objidunit = $pgs_unit->objidunit;
-              $pgs->c_kode_unit = $pgs_unit->c_kode_unit;
-              $pgs->v_short_unit = $pgs_unit->v_short_unit;
+              
+              $pgs->divisi = $request->pgs_divisi_or;
+              $pgs->unit_bisnis = $request->pgs_unit_bisnis_or;
+              $pgs->unit_kerja = $request->pgs_unit_kerja_or;
             
               $pgs_posisi = DB::table('rptom')->where('objidposisi',$request->pgs_jabatan_or)->first();
               $pgs->objidposisi = $pgs_posisi->objidposisi;
@@ -527,17 +526,12 @@ class UsersController extends Controller
               $pgs->pgs_status = 'inactive';
               $pgs->save();
               
-              $peg = Pegawai::where('n_nik',$request->username)->first();
               $pgs = new UsersPgs();
               $pgs->users_id = $data->id;
               
-              $pgs->objiddivisi = $peg->objiddivisi;
-              $pgs->c_kode_divisi = $peg->c_kode_divisi;
-              $pgs->v_short_divisi = $peg->v_short_divisi;
-            
-              $pgs->objidunit = $peg->objidunit;
-              $pgs->c_kode_unit = $peg->c_kode_unit;
-              $pgs->v_short_unit = $peg->v_short_unit;
+              $pgs->divisi = $peg->divisi;
+              $pgs->unit_bisnis = $peg->unit_bisnis;
+              $pgs->unit_kerja = $peg->unit_kerja;
             
               $pgs->objidposisi = $peg->objidposisi;
               $pgs->c_kode_posisi = $peg->c_kode_posisi;
@@ -548,7 +542,7 @@ class UsersController extends Controller
               $pgs->pgs_status = 'active';
               $pgs->save();
             }
-            Pegawai::callProc($data->username,'organik');
+            Pegawai::callProc($peg->n_nik,'organik');
             // $sendTo = $request->email;
             // $subject = 'User Registration - Do Not Reply';
             // $email_password= $request->password;
@@ -839,22 +833,28 @@ class UsersController extends Controller
   }
   public function getSelect(Request $request){
         $type = trim($request->type);
-        $divisi = trim($request->divisi);
-        $unit = trim($request->unit);
+        $divisi = trim(urldecode($request->divisi));
+        $unit_bisnis = trim(urldecode($request->unit_bisnis));
+        $unit_kerja = trim(urldecode($request->unit_kerja));
         $q = trim($request->q);
         
         if($type=='divisi'){
-          $data = User::get_all_disivi($q);
+          $data = User::get_all_real_disivi($q);
           $data = $data->paginate(30);
           return \Response::json($data);
         }
-        if($type=='unit'){
-          $data = User::get_unit($q,$divisi);
+        if($type=='unit_bisnis'){
+          $data = User::get_all_real_unit_bisnis($q,$divisi);
+          $data = $data->paginate(30);
+          return \Response::json($data);
+        }
+        if($type=='unit_kerja'){
+          $data = User::get_all_real_unit_kerja($q,$unit_bisnis);
           $data = $data->paginate(30);
           return \Response::json($data);
         }
         if($type=='posisi'){
-          $data = User::get_posisi($q,$unit);
+          $data = User::get_all_real_posisi($q,$unit_kerja);
           $data = $data->paginate(30);
           return \Response::json($data);
         }

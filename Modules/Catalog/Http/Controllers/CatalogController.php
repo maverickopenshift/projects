@@ -76,7 +76,6 @@ class CatalogController extends Controller
                 ->addColumn('action', function ($data) {
                     $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
                     $act= '<div class="btn-group">';
-                        $act .='<a href="'. route('catalog.product.logistic') .'?id_product='.$data->id.'" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-plus"></i> Price</a>';
                         if($data->user_id==Auth::id()){
                             $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal-product"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-type="product" ><i class="glyphicon glyphicon-edit"></i> Ubah</button>';
                             $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-type="product" data-toggle="modal" data-target="#modal-delete"><i class="glyphicon glyphicon-trash"></i> Hapus</button>';
@@ -91,7 +90,8 @@ class CatalogController extends Controller
                 ->addColumn('action', function ($data) {
                     $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
                     $act= '<div class="btn-group">';
-                        $act .='<a data-id="'. $data->id .'" class="btn btn-success btn-xs detail_price"><i class="glyphicon glyphicon-edit"></i> Detail Price</a>';
+                        $act .='<a href="'. route('catalog.product.logistic') .'?id_product='.$data->id.'" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-plus"></i> Price</a>';
+                        $act .='<a data-id="'. $data->id .'" class="btn btn-primary btn-xs detail_price"><i class="glyphicon glyphicon-edit"></i> Detail Price</a>';
                     $act .='</div>';
                     return $act;
                 })

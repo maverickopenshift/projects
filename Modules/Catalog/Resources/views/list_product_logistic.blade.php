@@ -30,7 +30,7 @@
         <div class="box box-danger">
             <div class="box-header with-border">
                 <i class="fa fa-cogs"></i>
-                <h3 class="box-title f_parentname_product">Daftar Master Item</h3>
+                <h3 class="box-title f_parentname_product">Daftar Item Price</h3>
             </div>
             <div class="box-body">
                 <div id="alertBS_2"></div>
@@ -40,7 +40,7 @@
                             <th>Kode</th>
                             <th>Keterangan</th>
                             <th>Satuan</th>
-                            <th width="10%">Aksi</th>
+                            <th width="20%">Aksi</th>
                         </tr>
                     </thead>
                 </table>

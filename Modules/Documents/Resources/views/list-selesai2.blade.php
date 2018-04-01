@@ -13,89 +13,114 @@
       <div class="flash-message">
         @foreach (['danger', 'warning', 'success', 'info'] as $msg)
           @if(Session::has('alert-' . $msg))
-
           <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></p>
           @endif
         @endforeach
       </div> <!-- end .flash-message -->
       <div class="table-kontrak">
-        <div class="form-inline bottom25">
+        <form method="get" action="#" class="form-search form-inline bottom25">
+          <input type="hidden" name="page" class="page" value="{{$form['page']}}">
+          <input type="hidden" name="limit" class="limit" value="{{$form['limit']}}">
           <div class="form-group top10">
-            <input style="width:290px;" type="text" class="form-control cari-judul" placeholder="Judul/Nomor Kontrak">
+            <input style="width:290px;" name="q" type="text" class="form-control cari-judul" placeholder="Judul/Nomor Kontrak" value="{{$form['q']}}">
+          </div>    
+          <div class="form-group top10">
+            {!!Helper::select_all_divisi('divisi',$user->divisi)!!}
           </div>
-          {{-- @if($user_type!='subsidiary')
-            @role('admin')
-            <div class="form-group top10">
-              {!!Helper::select_all_divisi('divisi')!!}
-            </div>
-            @endrole
-            <div class="form-group top10">
-              {!!Helper::select_unit('unit_bisnis')!!}
-            </div> --}}
-            <div class="form-group top10">
-              {!! Helper::select_type2('doc_type') !!}
-            </div>
+          <div class="form-group top10">
+            @if(!empty($form['unit_bisnis']))
+              {!!Helper::select_unit_bisnis('unit_bisnis',$form['unit_bisnis'],$user->divisi)!!}
+            @else
+              <select class="form-control" name="unit_bisnis" id="unit_bisnis">
+                <option value="">Pilih Unit Bisnis</option>
+              </select>
+            @endif
+          </div>
+          <div class="form-group top10">
+          @if(!empty($form['unit_kerja']))
+            {!!Helper::select_unit_kerja('unit_kerja',$form['unit_kerja'],$form['unit_bisnis'])!!}
+          @else
+            <select class="form-control" name="unit_kerja" id="unit_kerja">
+              <option value="">Pilih Unit Kerja</option>
+            </select>
           @endif
-          <button type="button" class="btn btn-success search top10">Cari</button>
+          </div>
+          <div class="form-group top10">
+            {!! Helper::select_type2('jenis',$form['jenis']) !!}
+          </div>
+          <div class="form-group top10">
+            <select class="form-control" id="doc_signing" name="open">
+              <option value="">Pilih Status</option>
+              <option value="1" {!!$form['open']=='1'?'selected':''!!}>Open</option>
+              <option value="2" {!!$form['open']=='2'?'selected':''!!}>Close</option>
+            </select>
+          </div>
+          <div class="form-group top10">
+            <select class="form-control" id="doc_range" name="range">
+              <option value="">Pilih Range</option>
+              <option value="1" {!!$form['range']=='1'?'selected':''!!}>Bulan Ini</option>
+              <option value="3" {!!$form['range']=='3'?'selected':''!!}>3 Bulan</option>
+              <option value="6" {!!$form['range']=='6'?'selected':''!!}>6 Bulan</option>
+            </select>
+          </div>
+          <div class="form-group top10">
+            <div class="input-group date" data-provide="datepicker">
+              <div class="input-group-addon">
+                <span class="fa fa-calendar"></span>
+              </div>
+              <input type="text" class="form-control" id="doc_daritanggal" name="dari" placeholder="Dari Tanggal.." autocomplete="off" value="{{$form['dari']}}">
+            </div>
+          </div>
+
+          <div class="form-group top10">
+            <div class="input-group date" data-provide="datepicker">
+              <div class="input-group-addon">
+                <span class="fa fa-calendar"></span>
+              </div>
+              <input type="text" class="form-control" id="doc_sampaitanggal" name="sampai" placeholder="Sampai Tanggal.." autocomplete="off" value="{{$form['sampai']}}">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-success search top10">Cari</button>
           <button type="button" class="btn btn-danger reset top10">Reset</button>
-        </div>
+        </form>
       </div>
     </div>
 <!-- /.box-body -->
-</div>
-
-<div class="modal modal-danger fade" id="modal-delete">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">×</span></button>
-                <h4 class="modal-title">Confirm Delete</h4>
-            </div>
-            <div class="modal-body">
-                <p>Are you sure you want to delete this data</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-outline btn-delete" data-loading-text="Please wait..."><i class="glyphicon glyphicon-trash"></i> Delete</button>
-            </div>
-        </div>
-        <!-- /.modal-content -->
-    </div>
-    <!-- /.modal-dialog -->
 </div>
 @endsection
 @push('scripts')
 <script>
 if(is_admin()){
-  $(document).on('change', '#divisi', function(event) {
-    event.preventDefault();
-    /* Act on the event */
-    var divisi = this.value;
-    //if(unit!==""){
-    $('#unit_bisnis').find('option').not('option[value=""]').remove();
-      $.ajax({
-        url: '{!!route('doc.get-unit')!!}',
-        type: 'GET',
-        dataType: 'json',
-        data: {divisi: divisi}
-      })
-      .done(function(data) {
-        if(data.length>0){
-          $.each(data,function(index, el) {
-            $('#unit_bisnis').append('<option value="'+this.id+'">'+this.title+'</option>');
-          });
-        }
-      });
-    //}
-  });
-  $(function(e){
-    $('#unit_bisnis').find('option').not('option[value=""]').remove();
-    if($('#divisi').val()!==""){
-      $('#divisi').change();
-    }
-  });
+  // $(document).on('change', '#divisi', function(event) {
+  //   event.preventDefault();
+  //   /* Act on the event */
+  //   var divisi = this.value;
+  //   //if(unit!==""){
+  //   $('#unit_bisnis').find('option').not('option[value=""]').remove();
+  //     $.ajax({
+  //       url: '{!!route('doc.get-unit')!!}',
+  //       type: 'GET',
+  //       dataType: 'json',
+  //       data: {divisi: divisi}
+  //     })
+  //     .done(function(data) {
+  //       if(data.length>0){
+  //         $.each(data,function(index, el) {
+  //           $('#unit_bisnis').append('<option value="'+this.id+'">'+this.title+'</option>');
+  //         });
+  //       }
+  //     });
+  //   //}
+  // });
+  // $(function(e){
+  //   $('#unit_bisnis').find('option').not('option[value=""]').remove();
+  //   if($('#divisi').val()!==""){
+  //     $('#divisi').change();
+  //   }
+  // });
 }
+
 $.fn.tableOke = function(options) {
     options.tableAttr = this;
     options.tableClass = 'table table-condensed table-striped';
@@ -104,13 +129,7 @@ $.fn.tableOke = function(options) {
     options.emptyMessage = 'No data available!';
     options.loadingImg = '/images/loader.gif';
     options.trLoadingClass='row-loading';
-    options.qAttr = options.tableAttr.find('.cari-judul');
-    options.unitAttr = options.tableAttr.find('#unit_bisnis');
-    options.divisiAttr = options.tableAttr.find('#divisi');
-    options.jenisAttr = options.tableAttr.find('#doc_type');
-    options.q = options.qAttr.val();
-    options.divisi = options.divisiAttr.val();
-    options.unit = options.unitAttr.val();
+    options.searchUrl = '';
     options.cssLoading='background-color: rgba(255,255,255,0.5);position: absolute;width: 100%;height: 100%;background-image: url('+options.loadingImg+');background-position: center center;background-repeat: no-repeat;z-index:1000;';
     options.loading = 'loading-me';
     options.loadingHtml = '<div class="'+options.loading+'" style="'+options.cssLoading+'"></div>';
@@ -264,12 +283,11 @@ $.fn.tableOke = function(options) {
     }
     options.pagination = function(data){
       var render_pg='';
-      var url = '&limit='+options.limit+'&q='+options.q+'&divisi='+options.divisi+'&unit='+options.unit+'&jenis='+options.jenis;
       if(data.last_page>1){
         render_pg += '<ul class="pagination">';
           if(data.current_page != 1 && data.last_page >=5){
             render_pg += '<li>';
-            render_pg += '<a href='+options.url+'?page=1'+url+'>&laquo;</a>';
+            render_pg += '<a href="#" data-page="1">&laquo;</a>';
             render_pg += '</li>';
           }
           else{
@@ -279,7 +297,7 @@ $.fn.tableOke = function(options) {
           }
           if(data.current_page != 1){
             render_pg += '<li>';
-            render_pg += '<a href='+options.url+'?page='+(data.current_page-1)+url+'>Prev</a>';
+            render_pg += '<a href="#" data-page='+(data.current_page-1)+'>Prev</a>';
             render_pg += '</li>';
           }          
           else{
@@ -289,12 +307,12 @@ $.fn.tableOke = function(options) {
           }
           for (var i = Math.max((data.current_page-2), 1); i <= Math.min(Math.max((data.current_page-2), 1)+4,data.last_page); i++) {
             render_pg += '<li class="'+((data.current_page==i)?' active':' ')+'">';
-            render_pg += '<a class="'+((data.current_page==i)?'disabled':' ')+'" href='+options.url+'?page='+(i)+url+'>'+i+'</a>';
+            render_pg += '<a class="'+((data.current_page==i)?'disabled':' ')+'" href="#" data-page='+(i)+'>'+i+'</a>';
             render_pg += '</li>';
           }
           if(data.current_page != data.last_page){
             render_pg += '<li>';
-            render_pg += '<a href='+options.url+'?page='+(data.current_page+1)+url+'>Next</a>';
+            render_pg += '<a href="#" data-page='+(data.current_page+1)+'>Next</a>';
             render_pg += '</li>';
           }
           else{
@@ -304,7 +322,7 @@ $.fn.tableOke = function(options) {
           }
           if(data.current_page != data.last_page && data.last_page>=5){
             render_pg += '<li>';
-            render_pg += '<a href='+options.url+'?page='+(data.last_page)+url+'>&raquo;</a>';
+            render_pg += '<a href="#" data-page='+(data.last_page)+'>&raquo;</a>';
             render_pg += '</li>';
           }
           else{
@@ -325,29 +343,13 @@ $.fn.tableOke = function(options) {
         if (!results[2]) return (def__==undefined)?'':def__;
         return decodeURIComponent(results[2].replace(/\+/g, " "));
     }
-    options.page = options.getParams('page',options.page);
-    options.limit = options.getParams('limit',options.limit);
-    options.q = options.getParams('q',options.q);
-    options.unit = options.getParams('unit',options.unit);
-    options.divisi = options.getParams('divisi',options.divisi);
-    options.jenis = options.getParams('jenis',options.jenis);
     options.ajaxPro = function(){
       $.ajax({
-        url: options.url,
+        url: options.url+"?"+options.searchUrl,
         type: 'GET',
-        dataType: 'json',
-        data : {
-          page  : options.page,
-          q : (options.q!==undefined)?options.q:'',
-          divisi : (options.divisi!==undefined)?options.divisi:'',
-          unit : (options.unit!==undefined)?options.unit:'',
-          jenis : (options.jenis!==undefined)?options.jenis:'',
-          limit : options.limit
-        }
+        dataType: 'json'
       })
       .done(function(data) {
-        options.unitAttr.val(options.unit);
-        options.jenisAttr.val(options.jenis);
         if(data.data.length>0){
           options.tableAttr.find('.empty-data').remove();
           var render;
@@ -380,7 +382,6 @@ $.fn.tableOke = function(options) {
           options.tableAttr.find('tbody').append(options.renderEmpty);
           options.tableAttr.find('.pagination').remove();
         }
-        options.qAttr.val(options.q);
         options.tableAttr.find('.'+options.loading).remove();
       });
     }
@@ -390,16 +391,12 @@ $.fn.tableOke = function(options) {
       attr.after(options.renderLoading(tr_id));
       attr.find('td.td-expand').removeClass('minus').addClass('plus');
       $.ajax({
-        url: options.url,
+        url: options.url+"?"+options.searchUrl,
         type: 'GET',
         dataType: 'json',
         data : {
           child     : child,
-          parent_id : parent_id,
-          q : (options.q!==undefined)?options.q:'',
-          divisi : (options.divisi!==undefined)?options.divisi:'',
-          unit : (options.unit!==undefined)?options.unit:'',
-          jenis : (options.jenis!==undefined)?options.jenis:'',
+          parent_id : parent_id
         }
       })
       .done(function(data) {
@@ -430,52 +427,38 @@ $.fn.tableOke = function(options) {
           attr.parent().find('.'+options.trLoadingClass+'.row-'+tr_id).remove();
       });
     }
-    options.ajaxPro();
     $(options.tableAttr).on('click','.pagination>li>a', function(event) {
       event.preventDefault();
       /* Act on the event */
       if(!$(this).hasClass('disabled')){
-        var urls = $(this).attr('href');
-        options.page = options.getParams('page',options.page,urls);
-        options.limit = options.getParams('limit',options.limit,urls);
-        options.q = options.getParams('q',options.q,urls);
-        window.history.pushState("", "", urls);
+        var page = $(this).data('page');
+        $(options.tableAttr).find('.form-search').find('.page').val(page);
+        options.searchUrl = $(options.tableAttr).find('.form-search').serialize();
+        window.history.pushState("", "", "?"+options.searchUrl);
         options.tableAttr.prepend(options.loadingHtml);
         options.ajaxPro();
       }
     });
-    $(options.tableAttr).on('click','.search', function(event) {
+    $(options.tableAttr).on('submit','.form-search', function(event) {
       event.preventDefault();
       /* Act on the event */
-        options.page = 1;
-        options.limit = options.getParams('limit',options.limit,urls);
-        // options.q = options.getParams('q',options.q,urls);
-        // options.divisi = options.getParams('divisi',options.divisi,urls);
-        // options.unit = options.getParams('unit',options.unit,urls);
+        $(this).find('.page').val('1');
+        $(this).find('.limit').val(options.limit);
+        options.searchUrl = $(this).serialize();
         options.tableAttr.prepend(options.loadingHtml);
-        options.q = options.qAttr.val();
-        options.divisi = options.divisiAttr.val();
-        options.unit = options.unitAttr.val();
-        options.jenis = options.jenisAttr.val();
-        var urls = options.url+'?page='+options.page+'&limit='+options.limit+'&q='+options.q+'&divisi='+options.divisi+'&unit='+options.unit+'&jenis='+options.jenis;
-        window.history.pushState({}, "", urls);
+        window.history.pushState({}, "", "?"+$(this).serialize());
         options.ajaxPro();
     });
     $(options.tableAttr).on('click','.reset', function(event) {
-      event.preventDefault();
+      // event.preventDefault();
+      // $(this).find('input,select').val('');
       /* Act on the event */
-        options.page = 1;
+        $(options.tableAttr).find('.form-search').find('input:enabled,select:enabled').val('');
+        window.history.pushState({}, "", "?");
+        $(options.tableAttr).find('.form-search').find('.page').val('1');
+        $(options.tableAttr).find('.form-search').find('.limit').val(options.limit);
         options.tableAttr.prepend(options.loadingHtml);
-        options.q = "";
-        options.divisi = "";
-        options.unit = "";
-        options.jenis = "";
-        $('#unit_bisnis').find('option').not('option[value=""]').remove();
-        options.qAttr.val('');
-        options.divisiAttr.val('');
-        options.unitAttr.val('');
-        options.jenisAttr.val('');
-        window.history.pushState({}, "", options.url);
+        options.searchUrl = "page=1&limit="+options.limit;
         options.ajaxPro();
     });
     $(options.tableAttr).on('click','.td-expand.plus', function(event) {
@@ -526,6 +509,7 @@ $.fn.tableOke = function(options) {
         });
       }
     });
+    $(options.tableAttr).find('.form-search').trigger('submit');
     $(options.tableAttr).on('click','.td-expand.minus', function(event) {
       event.preventDefault();
       /* Act on the event */
@@ -553,40 +537,32 @@ $.fn.tableOke = function(options) {
     });
     return this;
 }
+
 $(function () {
-  var doc_type = '{!!$doc_status!!}';
-  if(doc_type!=='draft'){
-    var opt_data = [
-      { name : 'title' , title  : 'Judul - No Kontrak',orderable:true},
-      { name : 'sup_name' , title  : 'Vendor',orderable:true},
-      { name : 'status' , title  : 'Status',orderable:true},
-      { name : 'jenis.type.title' , title  : 'Type',orderable:true},
-      { name : 'link' , title  : 'Action'},
-    ];
-  }
-  else{
-    var opt_data = [
-      { name : 'title' , title  : 'Judul - No Kontrak',orderable:true},
-      { name : 'sup_name' , title  : 'Vendor',orderable:true},
-      { name : 'jenis.type.title' , title  : 'Type',orderable:true},
-      { name : 'link' , title  : 'Action'},
-    ];
-  }
   var options = {
     url : '{!!route('doc',['status'=>$doc_status])!!}',
     with_number : true,
-    data : opt_data,
+    data : [
+      { name : 'title' , title  : 'Judul - No Kontrak',orderable:true},
+      { name : 'sup_name' , title  : 'Vendor',orderable:true},
+      { name : 'doc_enddate' , title  : 'Tanggal Akhir',orderable:true},
+      // { name : 'status' , title  : 'Status',orderable:true},
+      { name : 'jenis.type.title' , title  : 'Type',orderable:true},
+      { name : 'link' , title  : 'Action'},
+    ],
     page : 1,
     limit : 25,
     q : '',
   };
   var tbl = $('.table-kontrak').tableOke(options);
 });
+
 $.expr[":"].contains = $.expr.createPseudo(function(arg) {
     return function( elem ) {
         return $(elem).text().toUpperCase().indexOf(arg.toUpperCase()) >= 0;
     };
 });
+
 function yellowBro(string){
   if(string!=""){
     $('.table-kontrak').find(':contains('+string+')').each(function(){
@@ -603,6 +579,7 @@ function yellowBro(string){
     });
   }
 }
+
 $(document).on('click', '.btn-reject', function(event) {
   event.preventDefault();
   /* Act on the event */
@@ -612,36 +589,77 @@ $(document).on('click', '.btn-reject', function(event) {
     'error'
   );
 });
-
-var modalDelete = $('#modal-delete');
-modalDelete.on('show.bs.modal', function (event) {
-    var button = $(event.relatedTarget) // Button that triggered the modal
-    var id = button.data('id')
-    var modal = $(this)
-    var btnDelete = modal.find('.btn-delete')
-    btnDelete.attr('data-id',button.data('id'))
-    btnDelete.attr('data-type',button.data('type'))
-    btnDelete.button('reset')
-})
-
-$(document).on('click','.btn-delete',function (event) {
-    event.preventDefault();
-    var btnDelete = $(this)
-    btnDelete.button('loading')
-    
+</script>
+<script>
+var user_role = '{{$user->role_name}}';
+if(user_role!='admin' || user_role!='konseptor'){
+  $('#divisi').prop('disabled', 'disabled');
+}
+$(document).on('change', '#divisi', function(event) {
+  event.preventDefault();
+  /* Act on the event */
+  var divisi = this.value;
+  //if(unit!==""){
+  $('#unit_bisnis').find('option').not('option[value=""]').remove();
+  var t_awal = $('#unit_bisnis').find('option[value=""]').text();
+  $('#unit_bisnis').find('option[value=""]').text('Please wait.....');
+  $('#unit_kerja').find('option').not('option[value=""]').remove();
     $.ajax({
-        url: '{!! route('doc.hapus') !!}',
-        type: 'post',
-        dataType: 'JSON',
-        data: {_token:'{!! csrf_token() !!}',id:$(this).attr('data-id')},
-        success: function( _response ){
-            location.reload(); 
-            modalDelete.modal('hide')
-        },
-        error: function( _response ){
-            modalDelete.modal('hide')
-        }
+      url: '{!!route('doc.get-unit-bisnis')!!}',
+      type: 'GET',
+      dataType: 'json',
+      data: {divisi: encodeURIComponent(divisi)}
+    })
+    .done(function(data) {
+      if(data.length>0){
+        $.each(data,function(index, el) {
+          $('#unit_bisnis').append('<option value="'+this.id+'">'+this.title+'</option>');
+        });
+        $('#unit_bisnis').find('option[value=""]').text('Pilih Unit Bisnis');
+      }
+      else{
+        $('#unit_bisnis').find('option[value=""]').text('Tidak ada data');
+      }
     });
-})
+  //}
+});
+$(document).on('change', '#unit_bisnis', function(event) {
+  event.preventDefault();
+  /* Act on the event */
+  var unit_bisnis = this.value;
+  //if(unit!==""){
+  $('#unit_kerja').find('option').not('option[value=""]').remove();
+  var t_awal = $('#unit_kerja').find('option[value=""]').text();
+  $('#unit_kerja').find('option[value=""]').text('Please wait.....');
+    $.ajax({
+      url: '{!!route('doc.get-unit-kerja')!!}',
+      type: 'GET',
+      dataType: 'json',
+      data: {unit_bisnis: encodeURIComponent(unit_bisnis)}
+    })
+    .done(function(data) {
+      if(data.length>0){
+        $.each(data,function(index, el) {
+          $('#unit_kerja').append('<option value="'+this.id+'">'+this.title+'</option>');
+        });
+        $('#unit_kerja').find('option[value=""]').text('Pilih Unit Kerja');
+      }
+      else{
+        $('#unit_kerja').find('option[value=""]').text('Tidak ada data');
+      }
+    });
+  //}
+});
+$(function(e){
+    var unit_bisnis = '{{$form['unit_bisnis']}}';
+    var unit_kerja = '{{$form['unit_kerja']}}';
+    if(unit_bisnis!="" && $('#unit_bisnis').val()!="" && unit_kerja==""){
+      $('#unit_bisnis').change();
+    }
+    if($('#divisi').val()!=="" && unit_bisnis==""){
+      $('#unit_bisnis').find('option').not('option[value=""]').remove();
+      $('#divisi').change();
+    }
+});
 </script>
 @endpush

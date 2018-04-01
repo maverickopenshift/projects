@@ -297,7 +297,7 @@ class Documents extends Model
           $doc->where('v_users_pegawai.company_id',\App\User::get_subsidiary_user()->company_id)
           ->where('v_users_pegawai.pegawai_type','subsidiary');
         }else{
-          $documents->where(function($q) use ($user) {
+          $doc->where(function($q) use ($user) {
             $q->orwhere('documents.unit_bisnis',$user->unit_bisnis);
             $q->orwhere('documents.user_id',\Auth::id());
           });

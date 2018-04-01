@@ -46,7 +46,7 @@ class DocumentsListController extends Controller
       }
     }
 
-    if ($request->ajax() || $request->ajax=="1") {
+    if ($request->ajax()) {
         if(!empty($request->limit)){
           $limit = $request->limit;
         }

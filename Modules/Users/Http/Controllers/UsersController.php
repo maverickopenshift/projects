@@ -36,7 +36,7 @@ class UsersController extends Controller
     {
 
         $data['page_title'] = 'Users';
-        $data['roles'] = Role::all();
+        $data['roles'] = Role::whereNotIn('name',['vendor'])->get();
         return view('users::index')->with($data);
     }
     public function data()

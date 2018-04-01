@@ -289,6 +289,7 @@ class Documents extends Model
     }
     public static function check_permission_doc($doc_id,$type){
       $user_type = \App\User::check_usertype(\Auth::user()->username);
+      $user = \App\User::get_user_pegawai();
       $doc = self::selectRaw('documents.id,documents.user_id');
       $doc->join('v_users_pegawai','v_users_pegawai.user_id','=','documents.user_id');
       if(!\Laratrust::hasRole('admin')){
@@ -296,7 +297,10 @@ class Documents extends Model
           $doc->where('v_users_pegawai.company_id',\App\User::get_subsidiary_user()->company_id)
           ->where('v_users_pegawai.pegawai_type','subsidiary');
         }else{
-          $doc->where('v_users_pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+          $documents->where(function($q) use ($user) {
+            $q->orwhere('documents.unit_bisnis',$user->unit_bisnis);
+            $q->orwhere('documents.user_id',\Auth::id());
+          });
         }
 
       }

@@ -335,6 +335,7 @@ $.fn.tableOke = function(options) {
       $.ajax({
         url: options.url+"?"+options.searchUrl,
         type: 'GET',
+        cache: false,
         dataType: 'json'
       })
       .done(function(data) {
@@ -381,6 +382,7 @@ $.fn.tableOke = function(options) {
       $.ajax({
         url: options.url+"?"+options.searchUrl,
         type: 'GET',
+        cache: false,
         dataType: 'json',
         data : {
           child     : child,
@@ -603,6 +605,7 @@ $(document).on('click','.btn-delete',function (event) {
     $.ajax({
         url: '{!! route('doc.hapus') !!}',
         type: 'post',
+        cache: false,
         dataType: 'JSON',
         data: {_token:'{!! csrf_token() !!}',id:$(this).attr('data-id')},
         success: function( _response ){
@@ -632,6 +635,7 @@ $(document).on('change', '#divisi', function(event) {
     $.ajax({
       url: '{!!route('doc.get-unit-bisnis')!!}',
       type: 'GET',
+      cache: false,
       dataType: 'json',
       data: {divisi: encodeURIComponent(divisi)}
     })
@@ -659,6 +663,7 @@ $(document).on('change', '#unit_bisnis', function(event) {
     $.ajax({
       url: '{!!route('doc.get-unit-kerja')!!}',
       type: 'GET',
+      cache: false,
       dataType: 'json',
       data: {unit_bisnis: encodeURIComponent(unit_bisnis)}
     })

@@ -22,6 +22,7 @@ use App\Helpers\Helpers;
 use Excel;
 use Validator;
 use Auth;
+use App\User;
 
 use Modules\Documents\Entities\Sap;
 
@@ -49,6 +50,30 @@ class DocumentsController extends Controller
         abort(404);
       }
       $user_type = \App\User::check_usertype(\Auth::user()->username);
+      $user = User::get_user_pegawai();
+      $unit = $request->unit_bisnis;
+      $unit_kerja = $request->unit_kerja;
+      $limit = 25;
+      $page = (!empty($request->page))?$request->page:1;
+      $search = $request->q;
+      $posisi = $request->posisi;
+      $divisi = $request->divisi;
+      $jenis = $request->jenis;
+      $open = $request->open;
+      $range = $request->range;
+      $dari = $request->dari;
+      $sampai = $request->sampai;
+      if(!empty($open)){
+        if($open==1){
+          $status_no=1;
+        }elseif($open==2){
+          $status_no=4;
+        }
+      }
+
+      if(!empty($request->limit)){
+        $limit = $request->limit;
+      }
       foreach ($status_arr as $key => $st){
         if($status==$st){
           $status_no = $key;
@@ -66,28 +91,6 @@ class DocumentsController extends Controller
       }
 
       if ($request->ajax()) {
-          $limit = 25;
-          $search = $request->q;
-          $unit = $request->unit;
-          $posisi = $request->posisi;
-          $divisi = $request->divisi;
-          $jenis = $request->jenis;
-          $open = $request->open;
-          $range = $request->range;
-          $dari = $request->dari;
-          $sampai = $request->sampai;
-
-          if(!empty($open)){
-            if($open==1){
-              $status_no=1;
-            }elseif($open==2){
-              $status_no=4;
-            }
-          }
-
-          if(!empty($request->limit)){
-            $limit = $request->limit;
-          }
 
           if(in_array($request->child,[1,2,3])){
             $documents = $this->documents->oldest('documents.created_at');
@@ -100,15 +103,15 @@ class DocumentsController extends Controller
             $documents->selectRaw('DISTINCT (documents.id) , documents.*');
           }
           else{
-            $documents = $this->documents->latest('documents.updated_at');
+            // $documents = $this->documents;
 
-            $documents->leftJoin('documents as child','child.doc_parent_id','=','documents.id');
-            $documents->leftJoin('documents as child2','child2.doc_parent_id','=','child.id');
-            $documents->leftJoin('documents as child3','child3.doc_parent_id','=','child2.id');
-            $documents->selectRaw('DISTINCT (documents.id) , documents.*');
-            $documents->where('documents.doc_parent',1);
-
-            $documents->whereRaw('(child.`doc_signing`='.$status_no.' OR child2.`doc_signing`='.$status_no.' OR child3.`doc_signing`='.$status_no.' OR documents.`doc_signing`='.$status_no.')');
+            $documents = $this->documents
+                  ->leftJoin('documents as child','child.doc_parent_id','=','documents.id')
+                  ->leftJoin('documents as child2','child2.doc_parent_id','=','child.id')
+                  ->leftJoin('documents as child3','child3.doc_parent_id','=','child2.id')
+                  ->selectRaw('DISTINCT (documents.id) , documents.*')
+                  ->where('documents.doc_parent',1)
+                  ->whereRaw('(child.`doc_signing`='.$status_no.' OR child2.`doc_signing`='.$status_no.' OR child3.`doc_signing`='.$status_no.' OR documents.`doc_signing`='.$status_no.')');
             if(!empty($request->q)){
               $documents->where(function($q) use ($search) {
                   $q->orWhere('documents.doc_no', 'like', '%'.$search.'%');
@@ -154,6 +157,33 @@ class DocumentsController extends Controller
                 $q->orwhere('child3.doc_enddate','<=',"$sampai");
               });
             }
+            if(!in_array($user->role_name,['admin','monitor'])){
+              $divisi = $user->divisi;
+            }
+            if(!empty($unit)){
+              $documents->where(function($q) use ($divisi) {
+                $q->orwhere('documents.divisi','=',$divisi);
+                $q->orwhere('child.divisi','=',$divisi);
+                $q->orwhere('child2.divisi','=',$divisi);
+                $q->orwhere('child3.divisi','=',$divisi);
+              });
+              $documents->where(function($q) use ($unit) {
+                $q->orwhere('documents.unit_bisnis','=',$unit);
+                $q->orwhere('child.unit_bisnis','=',$unit);
+                $q->orwhere('child2.unit_bisnis','=',$unit);
+                $q->orwhere('child3.unit_bisnis','=',$unit);
+              });
+              if(!empty($unit_kerja)){
+                $documents->where(function($q) use ($unit_kerja) {
+                  $q->orwhere('documents.unit_kerja','=',$unit_kerja);
+                  $q->orwhere('child.unit_kerja','=',$unit_kerja);
+                  $q->orwhere('child2.unit_kerja','=',$unit_kerja);
+                  $q->orwhere('child3.unit_kerja','=',$unit_kerja);
+                });
+              }
+            }
+            $documents->orderByRaw('created_at DESC');
+            $documents->groupBy('documents.id');
           }
 
           if(!empty($divisi) && \Auth::user()->hasRole('admin')){
@@ -161,13 +191,13 @@ class DocumentsController extends Controller
             $documents->join('pegawai as g','g.n_nik','=','up.nik');
             $documents->where('g.objiddivisi',$divisi);
           }
-
-          if(!empty($unit) && !empty($divisi)){
-            if(!empty($posisi)){
-              $documents->where('g.objidposisi',$posisi);
-            }
-            $documents->where('g.objidunit',$unit);
-          }
+          
+          // if(!empty($unit) && !empty($divisi)){
+          //   if(!empty($posisi)){
+          //     $documents->where('g.objidposisi',$posisi);
+          //   }
+          //   $documents->where('g.objidunit',$unit);
+          // }
 
           if(!\Auth::user()->hasRole('admin')){
             $documents->join('v_users_pegawai','v_users_pegawai.user_id','=','documents.user_id');
@@ -175,7 +205,12 @@ class DocumentsController extends Controller
               $documents->where('v_users_pegawai.company_id',\App\User::get_subsidiary_user()->company_id);
             }
             else {
-              $documents->where('v_users_pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
+              $documents->where(function($q) use ($user) {
+                $q->orwhere('documents.unit_bisnis',$user->unit_bisnis);
+                $q->orwhere('documents.user_id',\Auth::id());
+              });
+
+              // $documents->where('v_users_pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
             }
           }
 
@@ -230,8 +265,21 @@ class DocumentsController extends Controller
      }
       $data['page_title'] = 'Data Dokumen '.ucfirst($status);
       $data['doc_status'] = $status;
+      $data['user'] = $user;
+      $data['form'] = [
+        'unit_bisnis' => $unit,
+        'unit_kerja' => $unit_kerja,
+        'open' => $open,
+        'range' => $range,
+        'page' => $page,
+        'limit' => $limit,
+        'jenis' => $jenis,
+        'dari' => $dari,
+        'sampai' => $sampai,
+        'q'=>$search
+      ];
       $data['user_type'] = $user_type;
-      return view('documents::list-selesai')->with($data);
+      return view('documents::list-selesai2')->with($data);
     }
 
     public function view(Request $request)
@@ -366,11 +414,11 @@ class DocumentsController extends Controller
       if ($request->ajax()) {
         $rules['komentar'] = 'required|min:2|regex:/^[a-z0-9 .\-\,\_\'\&\%\!\?\"\:\+\(\)\@\#\/]+$/i';
         $validator = Validator::make($request->all(), $rules,['reason.required'=>'Alasan harus diisi!','reason.regex'=>'Format penulisan tidak valid!','reason.min'=>'Inputan minimal 5 karakter']);
-        
+
         if ($validator->fails ()){
           return Response::json(['status'=>false,'msg'=>$validator->errors()->first()]);
         }
-        
+
         if($request->no_kontrak == null){
           $doc = $this->documents->where('id',$request->id)->whereNull('doc_no')->first();
 
@@ -390,7 +438,7 @@ class DocumentsController extends Controller
           $doc->save();
         }
         if($doc){
-          
+
           $comment = new Comments();
           $comment->content = $request->komentar;
           $comment->documents_id = $request->id;

@@ -36,7 +36,7 @@ class UsersController extends Controller
     {
 
         $data['page_title'] = 'Users';
-        $data['roles'] = Role::all();
+        $data['roles'] = Role::whereNotIn('name',['vendor'])->get();
         return view('users::index')->with($data);
     }
     public function data()
@@ -79,7 +79,7 @@ class UsersController extends Controller
               }
               else if($user_type=='subsidiary'){
                 $modal = '#form-modal-subsidiary';
-                $subs = SubsidiaryTelkom::where('id',$peg->subsidiary_id)->first();
+                $subs = SubsidiaryTelkom::where('id',$peg->company_id)->first();
                 $atasan = Atasan::get_by_userid($data->id,'subsidiary');
                 $other_ar = [
                   'pegawai'  => $peg,

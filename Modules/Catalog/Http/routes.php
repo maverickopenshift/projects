@@ -14,23 +14,65 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'catalog', 'namespace'
 
     //////////////
     //Route::get('/product', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductController@index'])->name('catalog.product');
-    Route::get('/product_master', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductMasterController@index'])->name('catalog.product.master');
-    Route::post('/product_master/add_ajax', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductMasterController@add_ajax'])->name('catalog.product_master.add_ajax');
-    Route::post('/product_master/edit', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductMasterController@edit'])->name('catalog.product_master.edit');
-    Route::get('/product_master/get_product_induk', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductMasterController@get_product_induk'])->name('catalog.product_master.get_product_induk');
-    Route::delete('/product_master/delete', ['middleware' => ['permission:hapus-catalog-product'],'uses' => 'ProductMasterController@delete'])->name('catalog.product_master.delete');
+    Route::get('/product_master', 
+        ['middleware' => ['permission:catalog-product'],'uses' => 'ProductMasterController@index'])
+    ->name('catalog.product.master');
 
-    Route::get('/product_logistic', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductLogisticController@index'])->name('catalog.product.logistic');
-    Route::post('/product_logistic/add_ajax', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductLogisticController@add_ajax'])->name('catalog.product_logistic.add_ajax');
-    Route::post('/product_logistic/edit', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductLogisticController@edit'])->name('catalog.product_logistic.edit');
-    Route::get('/product_logistic/get_kode', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductLogisticController@get_kode_product_master'])->name('catalog.product_logistic.get_kode_product_master');   
-    Route::get('/product_logistic/get_kontrak', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductLogisticController@get_kontrak'])->name('catalog.product_logistic.get_kontrak');
+    Route::get('/product_master/get_product_induk', 
+        ['middleware' => ['permission:catalog-product'],'uses' => 'ProductMasterController@get_product_induk'])
+    ->name('catalog.product_master.get_product_induk');
 
-    Route::get('/product_logistic/get_kode_normal', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductLogisticController@get_kode_product_master_normal'])->name('catalog.product_logistic.get_kode_product_master_normal');
-    Route::get('/product_logistic/get_kontrak_normal', ['middleware' => ['permission:catalog-product'],'uses' => 'ProductLogisticController@get_kontrak_normal'])->name('catalog.product_logistic.get_kontrak_normal');
+    Route::post('/product-master-upload', 
+        ['middleware' => ['permission:catalog-product'],'uses' => 'ProductMasterController@upload'])
+    ->name('catalog.product_master.upload');
 
+    Route::post('/product_master/add_ajax', 
+        ['middleware' => ['permission:catalog-product'],'uses' => 'ProductMasterController@add_ajax'])
+    ->name('catalog.product_master.add_ajax');
 
-    Route::delete('/product_logistic/delete', ['middleware' => ['permission:hapus-catalog-product'],'uses' => 'ProductLogisticController@delete'])->name('catalog.product_logistic.delete');
+    Route::post('/product_master/edit', 
+        ['middleware' => ['permission:catalog-product'],'uses' => 'ProductMasterController@edit'])
+    ->name('catalog.product_master.edit');    
+
+    Route::delete('/product_master/delete', 
+        ['middleware' => ['permission:hapus-catalog-product'],'uses' => 'ProductMasterController@delete'])
+    ->name('catalog.product_master.delete');
+
+    Route::get('/product_logistic', 
+        ['middleware' => ['permission:catalog-product'],'uses' => 'ProductLogisticController@index'])
+    ->name('catalog.product.logistic');
+
+    Route::post('/product-logistic-upload', 
+        ['middleware' => ['permission:catalog-product'],'uses' => 'ProductLogisticController@upload'])
+    ->name('catalog.product_logistic.upload');
+
+    Route::post('/product_logistic/add_ajax', 
+        ['middleware' => ['permission:catalog-product'],'uses' => 'ProductLogisticController@add_ajax'])
+    ->name('catalog.product_logistic.add_ajax');
+
+    Route::post('/product_logistic/edit', 
+        ['middleware' => ['permission:catalog-product'],'uses' => 'ProductLogisticController@edit'])
+    ->name('catalog.product_logistic.edit');
+
+    Route::get('/product_logistic/get_kode', 
+        ['middleware' => ['permission:catalog-product'],'uses' => 'ProductLogisticController@get_kode_product_master'])
+    ->name('catalog.product_logistic.get_kode_product_master');
+
+    Route::get('/product_logistic/get_kontrak', 
+        ['middleware' => ['permission:catalog-product'],'uses' => 'ProductLogisticController@get_kontrak'])
+    ->name('catalog.product_logistic.get_kontrak');
+
+    Route::get('/product_logistic/get_kode_normal', 
+        ['middleware' => ['permission:catalog-product'],'uses' => 'ProductLogisticController@get_kode_product_master_normal'])
+    ->name('catalog.product_logistic.get_kode_product_master_normal');
+
+    Route::get('/product_logistic/get_kontrak_normal', 
+        ['middleware' => ['permission:catalog-product'],'uses' => 'ProductLogisticController@get_kontrak_normal'])
+    ->name('catalog.product_logistic.get_kontrak_normal');
+
+    Route::delete('/product_logistic/delete', 
+        ['middleware' => ['permission:hapus-catalog-product'],'uses' => 'ProductLogisticController@delete'])
+    ->name('catalog.product_logistic.delete');
     ////////////
     /*
     Route::post('/product/datatables', ['middleware' => ['permission:lihat-catalog'],'uses' => 'ProductController@datatables'])->name('catalog.product.datatables');

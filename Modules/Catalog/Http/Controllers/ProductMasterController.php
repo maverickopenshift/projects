@@ -4,18 +4,17 @@ namespace Modules\Catalog\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-//use Modules\Catalog\Entities\CatalogProduct as CatalogProduct;
 use Modules\Catalog\Entities\CatalogProductMaster as CatalogProductMaster;
-use Modules\Documents\Entities\DocBoq as DocBoq;
 use Modules\Catalog\Entities\CatalogCategory as CatalogCategory;
 use Modules\Supplier\Entities\Supplier as Supplier;
+use Modules\Documents\Entities\DocBoq as DocBoq;
 use App\Permission;
-//use App\User;
 use Response;
 use Validator;
 use Datatables;
 use Auth;
 use DB;
+use Excel;
 
 class ProductMasterController extends Controller
 {
@@ -39,75 +38,6 @@ class ProductMasterController extends Controller
 
         return Response::json($hasil);
     }
-    /*
-    public function get_product_supplier(Request $request){
-        $result=Supplier::selectRaw('id, bdn_usaha, nm_vendor')->get();
-
-        $hasil=array();
-        for($i=0;$i<count($result);$i++){
-            $hasil[$i]['id']=$result[$i]->id;
-            $hasil[$i]['text']=$result[$i]->bdn_usaha ." - ". $result[$i]->nm_vendor;
-        }
-
-        return Response::json($hasil);
-    }
-    */
-    public function datatables(Request $request){
-        if($request->parent_id==0){
-            
-            //$data=CatalogProduct::get();
-            $data=DB::table('catalog_product as a')
-                    ->join('catalog_category as b','b.id','=','a.catalog_category_id')
-                    ->join('supplier as c','c.id','=','a.supplier_id')
-                    ->selectRaw("a.*,b.display_name as category_name, concat(c.bdn_usaha,' ',c.nm_vendor) as supplier_nama")
-                    ->get();
-        }else{
-            $data=DB::table('catalog_product as a')
-                    ->join('catalog_category as b','b.id','=','a.catalog_category_id')
-                    ->join('supplier as c','c.id','=','a.supplier_id')
-                    ->selectRaw("a.*,b.display_name as category_name, concat(c.bdn_usaha,' ',c.nm_vendor) as supplier_nama")
-                    ->where('a.catalog_category_id',$request->parent_id)
-                    ->get();
-        }
-
-        return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('action', function ($data) {
-                    $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
-                    $act= '<div class="btn-group">';
-
-                    if(\Auth::user()->hasPermission('ubah-catalog-product')){
-                        $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal-product"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-type="product" ><i class="glyphicon glyphicon-edit"></i> Edit</button>';
-                    }
-
-                    if(\Auth::user()->hasPermission('hapus-catalog-product')){
-                        $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-type="product" data-toggle="modal" data-target="#modal-delete"><i class="glyphicon glyphicon-trash"></i> Delete</button>';
-                    }
-
-                    $act .='</div>';
-                    return $act;
-                    })
-                ->make(true);
-    }
-    /*
-    public function boq(Request $request){
-
-        if($request->id==0){
-            $data=DocBoq::get();
-        }else{
-            //$data=DocBoq::where('id',$request->id)->get();
-            $data=DB::connection('mysql')
-                ->table('documents as a')
-                ->join('doc_boq as b','a.id','=','b.documents_id')
-                ->join('supplier as c','a.supplier_id','=','c.id')
-                ->selectRaw("b.*, a.supplier_id, c.bdn_usaha, c.nm_vendor")
-                ->where('b.id',$request->id)
-                ->get();
-        }        
-
-        return Response::json($data);
-    }
-    */
 
     public function add_ajax(Request $request){
         $rules = array();
@@ -197,41 +127,28 @@ class ProductMasterController extends Controller
             ));
         }
     }
-    /*
-    
-    public function edit_proses(Request $request){
-        $proses = CatalogProduct::where('id',$request->f_id)->first();
-        $proses->catalog_category_id = $request->f_parentid;
-        $proses->code = $request->f_kodeproduct;
-        $proses->name =$request->f_namaproduct;
-        $proses->unit = $request->f_unitproduct;
-        $proses->currency = $request->f_matauang;
-        $proses->price = $request->f_hargaproduct;
-        $proses->price_jasa = $request->f_hargajasa;
-        $proses->desc = $request->f_descproduct;
-        $proses->keyword = "";   
 
-        return redirect()->route('catalog.product');
-    }
-    */
     public function delete(Request $request){
         $proses=CatalogProductMaster::where('id',$request->id)->delete();
         return 1;
     }
-    /*
-    public function get_no_supplier(Request $request){
-        $search = trim($request->q);
+    
+    public function upload(Request $request)
+    {
+        if ($request->ajax()) {
+            $data = Excel::load($request->file('upload-product-master')->getRealPath(), function ($reader) {})->get();
+            $header = ['kode','keterangan','satuan'];
+            $jml_header = '3';
 
-        $data=Supplier::selectRaw("id, concat(bdn_usaha,' ',nm_vendor) as text");
-        if(!empty($search)){
-            $data->where(function($q) use ($search) {
-                $q->orWhere('bdn_usaha', 'like', '%'.$search.'%');
-                $q->orWhere('nm_vendor', 'like', '%'.$search.'%');
-            });
+            $colomn = $data->first()->keys()->toArray();
+
+            if(!empty($data) && count($colomn) == $jml_header && $colomn == $header){
+                return Response::json(['status'=>true,'csrf_token'=>csrf_token(),'data'=>$data]);
+            }else{
+                return Response::json(['status'=>false]);
+            }
+        }else{
+            return Response::json(['status'=>false]);
         }
-        $data = $data->paginate(30);
-
-        return Response::json($data);
     }
-    */
 }

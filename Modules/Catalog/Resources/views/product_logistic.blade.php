@@ -32,12 +32,12 @@
                 <i class="fa fa-cogs"></i>
                 <h3 class="box-title f_parentname">Tambah Item Price</h3>
                 <div class="pull-right">
-                    <div class="col-sm-12">
-                        <input type="file" name="upload-boq" class="upload-boq hide"/>
-                        <a class="btn btn-primary upload-boq-btn" type="button"><i class="fa fa-upload"></i> Upload</a>
-                        <a href="{{route('doc.tmp.download',['filename'=>'harga_satuan'])}}" class="btn btn-info">
+                    <div class="col-sm-12">                        
+                        <a class="btn btn-primary upload-product-price-btn" type="button"><i class="fa fa-upload"></i> Upload</a>
+                        <a href="{{route('doc.tmp.download',['filename'=>'product_price'])}}" class="btn btn-info">
                             <i class="glyphicon glyphicon-download-alt"></i> Download Template
                         </a>
+                        <span class="error error-product-price text-danger"></span>
                     </div>
                 </div>
             </div>    
@@ -97,6 +97,11 @@
                     </div>
                 </div>
             </form>
+
+            <form id="form_me_upload_price" method="post" enctype="multipart/form-data">
+                {{ csrf_field() }}
+                <input type="file" name="upload-product-price" class="upload-product-price hide" accept=".csv,.xls,.xlsx"/>
+            </form>
         </div>
     </div>
 </div>
@@ -105,17 +110,53 @@
 @push('scripts')
 <script>
 $('#daftar1').DataTable();
-$('.upload-boq-btn').on('click', function(event) {
+
+$('.upload-product-price-btn').on('click', function(event) {
     event.stopPropagation();
     event.preventDefault();
-    var $file = $('.upload-boq').click();
+    var $file = $('.upload-product-price').click();
 });
 
-$('.upload-boq').on('change', function(event) {
+$('.upload-product-price').on('change', function(event) {
     event.stopPropagation();
     event.preventDefault();
-    //BoqFile(this.files[0]);
+
+    $.ajax({
+        url: "{{ route('catalog.product_logistic.upload') }}",
+        type: 'post',
+        processData: false,
+        contentType: false,
+        data: new FormData(document.getElementById("form_me_upload_price")),
+        dataType: 'json',
+    })
+    .done(function(data) {
+        if(data.status){
+            handleFile(data);
+        }else{
+            $('.error-product-price').html('Format File tidak valid!');
+            return false;
+        }
+    });
 });
+
+function handleFile(data) {
+    $.each(data.data,function(index, el) {
+        var dt = data.data[index];
+        console.log(dt);
+        var new_row = $(template_add(dt.lokasi, dt.harga_barang, dt.harga_jasa)).clone(true).insertAfter(".tabel-product:last");
+        var input_new_row = new_row.find('td');
+
+        select_referensi(input_new_row.eq(3).find('.select-jenis'), input_new_row.eq(4));
+
+        var new_referensi = $(template_referensi_kontrak()).clone(true);
+        input_new_row.eq(4).html('');
+        input_new_row.eq(4).append(new_referensi);
+        select_kontrak_referensi(input_new_row.eq(4).find('.select_kontrak'));
+        
+    });
+
+    fix_no_error();
+}
 
 $('.table-parent-product').on('click', '.btn-delete', function(e){
     var rowCount = $('.table-parent-product tr:last').index() + 1;
@@ -127,7 +168,7 @@ $('.table-parent-product').on('click', '.btn-delete', function(e){
 });
 
 $(document).on('click', '.add-product', function(event) {        
-    var new_row = $(template_add()).clone(true).insertAfter(".tabel-product:last");
+    var new_row = $(template_add('','','')).clone(true).insertAfter(".tabel-product:last");
     var input_new_row = new_row.find('td');
 
     select_referensi(input_new_row.eq(3).find('.select-jenis'), input_new_row.eq(4));
@@ -209,19 +250,19 @@ function select_referensi(input, isi){
     });
 }
 
-function template_add(){
+function template_add(lokasi, harga_barang, harga_jasa){
     return '\
     <tr class="tabel-product">\
         <td class="formerror formerror-f_lokasi-0">\
-            <input type="text" name="f_lokasi[]" placeholder="Lokasi .." class="form-control">\
+            <input type="text" name="f_lokasi[]" placeholder="Lokasi .." value="'+ lokasi +'" class="form-control">\
             <div class="error error-f_lokasi error-f_lokasi-0"></div>\
         </td>\
         <td class="formerror formerror-f_hargabarang-0">\
-            <input type="text" name="f_hargabarang[]" placeholder="Harga Barang.." class="form-control input-rupiah">\
+            <input type="text" name="f_hargabarang[]" placeholder="Harga Barang.." value="'+ harga_barang +'" class="form-control input-rupiah">\
             <div class="error error-f_hargabarang error-f_hargabarang-0"></div>\
         </td>\
         <td class="formerror formerror-f_hargajasa-0">\
-            <input type="text" name="f_hargajasa[]" placeholder="Harga Jasa.." class="form-control input-rupiah">\
+            <input type="text" name="f_hargajasa[]" placeholder="Harga Jasa.."  value="'+ harga_jasa +'"  class="form-control input-rupiah">\
             <div class="error error-f_hargajasa error-f_hargajasa-0"></div>\
         </td>\
         <td class="formerror formerror-f_jenis-0">\
@@ -360,9 +401,10 @@ $(document).on('click', '.simpan-product', function(event) {
       }
     });
   });
+
 $(function() {
 
-    var new_row = $(template_add()).clone(true);
+    var new_row = $(template_add('','','')).clone(true);
     $(".table-test").append(new_row);
     var input_new_row = new_row.find('td');
     

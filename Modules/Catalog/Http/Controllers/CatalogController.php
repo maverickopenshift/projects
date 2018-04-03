@@ -55,6 +55,7 @@ class CatalogController extends Controller
             $data=DB::table('catalog_product_master as a')
                     ->join('catalog_category as b','b.id','=','a.catalog_category_id')
                     ->selectRaw("a.*,b.display_name as category_name")
+                    ->where('a.user_id',Auth::id())
                     ->get();
                     
         }else{
@@ -62,6 +63,7 @@ class CatalogController extends Controller
                     ->join('catalog_category as b','b.id','=','a.catalog_category_id')
                     ->selectRaw("a.*,b.display_name as category_name")
                     ->whereIn('b.id', $this->get_category($request->parent_id,0))
+                    ->where('a.user_id',Auth::id())
                     ->get();
         }
 

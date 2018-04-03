@@ -55,15 +55,16 @@ if(isset($kategori->id)){
                 <i class="fa fa-cogs"></i>
                 <h3 class="box-title f_parentname">Tambah Master Item {{$title}}</h3>
                 <div class="pull-right">
-                    <div class="col-sm-12">
-                        <input type="file" name="upload-boq" class="upload-boq hide"/>
-                        <a class="btn btn-primary upload-boq-btn" type="button"><i class="fa fa-upload"></i> Upload</a>
+                    <div class="col-sm-12">                        
+                        <a class="btn btn-primary upload-product-master-btn" type="button"><i class="fa fa-upload"></i> Upload</a>
                         <a href="{{route('doc.tmp.download',['filename'=>'harga_satuan'])}}" class="btn btn-info">
                             <i class="glyphicon glyphicon-download-alt"></i> Download Template
                         </a>
+                        <span class="error error-product-master text-danger"></span>
                     </div>
                 </div>
-            </div>    
+            </div>
+
             <form method="post" action="{{ route('catalog.product_master.add_ajax') }}" id="form-produk">
                 <input type="hidden" class="f_parentid" name="f_parentid" value="{{$idkategori}}">
                 {{ csrf_field() }}
@@ -98,6 +99,11 @@ if(isset($kategori->id)){
                     </div>
                 </div>
             </form>
+
+            <form id="form_me_upload_master" method="post" enctype="multipart/form-data">
+                {{ csrf_field() }}
+                <input type="file" name="upload-product-master" class="upload-product-master hide" accept=".csv,.xls,.xlsx"/>
+            </form>
         </div>
     </div>
 </div>
@@ -107,17 +113,42 @@ if(isset($kategori->id)){
 <script>
     $('#daftar1').DataTable();
 
-    $('.upload-boq-btn').on('click', function(event) {
+    $('.upload-product-master-btn').on('click', function(event) {
         event.stopPropagation();
         event.preventDefault();
-        var $file = $('.upload-boq').click();
+        var $file = $('.upload-product-master').click();
     });
 
-    $('.upload-boq').on('change', function(event) {
+    $('.upload-product-master').on('change', function(event) {
         event.stopPropagation();
         event.preventDefault();
-        //BoqFile(this.files[0]);
+
+        $.ajax({
+            url: "{{ route('catalog.product_master.upload') }}",
+            type: 'post',
+            processData: false,
+            contentType: false,
+            data: new FormData(document.getElementById("form_me_upload_master")),
+            dataType: 'json',
+        })
+        .done(function(data) {
+            if(data.status){
+                handleFile(data);
+            }else{
+                $('.error-product-master').html('Format File tidak valid!');
+                return false;
+            }
+        });
     });
+
+    function handleFile(data) {
+        $.each(data.data,function(index, el) {
+            var dt = data.data[index];
+            var new_row = $(template_add(dt.kode, dt.keterangan, dt.satuan)).clone(true).insertAfter(".tabel-product:last");
+        });
+
+        fix_no_error();
+    }
 
     $('#jstree')
         .on("changed.jstree", function (e, data) {
@@ -168,25 +199,25 @@ if(isset($kategori->id)){
     });
 
     $(document).on('click', '.add-product', function(event) {        
-        var new_row = $(template_add()).clone(true).insertAfter(".tabel-product:last");
+        var new_row = $(template_add('','','')).clone(true).insertAfter(".tabel-product:last");
         var input_new_row = new_row.find('td');
         
         fix_no_error();
     });
 
-    function template_add(){
+    function template_add(kode, keterangan, satuan){
         return '\
         <tr class="tabel-product">\
             <td class="formerror formerror-f_kodeproduct-0">\
-                <input type="text" name="f_kodeproduct[]" placeholder="Kode.." class="form-control">\
+                <input type="text" name="f_kodeproduct[]" placeholder="Kode.." value="'+ kode +'" class="form-control">\
                 <div class="error error-f_kodeproduct error-f_kodeproduct-0"></div>\
             </td>\
             <td class="formerror formerror-f_ketproduct-0">\
-                <input type="text" name="f_ketproduct[]" placeholder="Keterangan .." class="form-control">\
+                <input type="text" name="f_ketproduct[]" placeholder="Keterangan .." value="'+ keterangan +'" class="form-control">\
                 <div class="error error-f_ketproduct error-f_ketproduct-0"></div>\
             </td>\
             <td class="formerror formerror-f_unitproduct-0">\
-                <input type="text" name="f_unitproduct[]" placeholder="Satuan.." class="form-control">\
+                <input type="text" name="f_unitproduct[]" placeholder="Satuan.." value="'+ satuan +'" class="form-control">\
                 <div class="error error-f_unitproduct error-f_unitproduct-0"></div>\
             </td>\
             <td width="100px">\
@@ -295,11 +326,10 @@ if(isset($kategori->id)){
 
 $(function(){
     $(".add-product").prop("disabled", true);
-    //$(".test-product").addClass("disabledbutton");
     $(".upload-boq-btn").prop("disabled", true);
     $(".simpan-product").prop( "disabled", true );
 
-    var new_row = $(template_add()).clone(true);
+    var new_row = $(template_add('','','')).clone(true);
     $(".table-test").append(new_row);
     var input_new_row = new_row.find('td');
     

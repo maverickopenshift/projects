@@ -165,6 +165,7 @@ $('#jstree')
             $(".btn-delete").attr('data-id',data.instance.get_node(data.selected[0]).id)
 
             refresh_product_master(data.instance.get_node(data.selected[0]).id);
+            $(".parent_product_price").hide();
         }
     })
     .jstree({

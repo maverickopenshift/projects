@@ -83,7 +83,7 @@
                                 <div class="form-group formerror formerror-divisi">
                                     <div class="input-group" style="width:100%">
                                         <span class="input-group-addon" style="font-weight:bold;width:90px;text-align:left;">Divisi :</span>
-                                        {!!Helper::select_all_divisi('divisi',$pegawai->divisi)!!}
+                                        {!!Helper::select_all_divisi('divisi')!!}
                                     </div>
                                     <div class="error error-divisi" style="margin-bottom:10px"></div>
                                 </div>
@@ -91,7 +91,9 @@
                                 <div class="form-group formerror formerror-unit_bisnis">
                                     <div class="input-group" style="width:100%">
                                         <span class="input-group-addon text-right" style="font-weight:bold;width:90px;text-align:left;">Unit Bisnis :</span>
-                                        {!!Helper::select_unit_bisnis('unit_bisnis',$pegawai->unit_bisnis,$pegawai->divisi)!!}
+                                        <select class="form-control" name="unit_bisnis" id="unit_bisnis">
+                                            <option value="">Pilih Unit Bisnis</option>
+                                        </select>
                                     </div>
                                     <div class="error error-unit_bisnis" style="margin-bottom:10px"></div>
                                 </div>
@@ -99,7 +101,9 @@
                                 <div class="form-group formerror formerror-unit_kerja">
                                     <div class="input-group" style="width:100%">
                                         <span class="input-group-addon text-right" style="font-weight:bold;width:90px;text-align:left;">Unit Kerja :</span>
-                                        {!!Helper::select_unit_kerja('unit_kerja',$pegawai->unit_kerja,$pegawai->unit_bisnis)!!}
+                                        <select class="form-control" name="unit_kerja" id="unit_kerja">
+                                            <option value="">Pilih Unit Kerja</option>
+                                        </select>
                                     </div>
                                     <div class="error error-unit_kerja" style="margin-bottom:10px"></div>
                                 </div>

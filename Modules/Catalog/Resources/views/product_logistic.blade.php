@@ -41,8 +41,7 @@
                     </div>
                 </div>
             </div>    
-            <form method="post" action="{{ route('catalog.product_logistic.add_ajax') }}" id="form-produk">
-                <input type="hidden" name="f_idproduct" value="{{$product->id}}">
+            
                 {{ csrf_field() }}
                 <div class="box-body form-horizontal">
                     <div class="flash-message" id="alertBS">
@@ -73,6 +72,41 @@
                         <div class="col-sm-10 text-me">{{$product->satuan_product}}</div>
                     </div>
 
+                <form method="post" action="{{ route('catalog.product_logistic.add_ajax') }}" id="form-produk">
+                    {{ csrf_field() }}
+                    <input type="hidden" name="f_idproduct" value="{{$product->id}}">
+
+                    <div class="form-group">
+                        <label for="pemilik_kontrak" class="col-sm-2 control-label"><span class="text-red">*</span>Pemilik Kontrak</label>
+                        <div class="col-sm-6">
+                            <div class="col-sm-12">
+                                <div class="form-group formerror formerror-divisi">
+                                    <div class="input-group" style="width:100%">
+                                        <span class="input-group-addon" style="font-weight:bold;width:90px;text-align:left;">Divisi :</span>
+                                        {!!Helper::select_all_divisi('divisi',$pegawai->divisi)!!}
+                                    </div>
+                                    <div class="error error-divisi" style="margin-bottom:10px"></div>
+                                </div>
+
+                                <div class="form-group formerror formerror-unit_bisnis">
+                                    <div class="input-group" style="width:100%">
+                                        <span class="input-group-addon text-right" style="font-weight:bold;width:90px;text-align:left;">Unit Bisnis :</span>
+                                        {!!Helper::select_unit_bisnis('unit_bisnis',$pegawai->unit_bisnis,$pegawai->divisi)!!}
+                                    </div>
+                                    <div class="error error-unit_bisnis" style="margin-bottom:10px"></div>
+                                </div>
+
+                                <div class="form-group formerror formerror-unit_kerja">
+                                    <div class="input-group" style="width:100%">
+                                        <span class="input-group-addon text-right" style="font-weight:bold;width:90px;text-align:left;">Unit Kerja :</span>
+                                        {!!Helper::select_unit_kerja('unit_kerja',$pegawai->unit_kerja,$pegawai->unit_bisnis)!!}
+                                    </div>
+                                    <div class="error error-unit_kerja" style="margin-bottom:10px"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
                     <table class="table table-striped table-parent-product" width="100%">
                         <thead>
                             <tr>
@@ -343,6 +377,60 @@ function fix_no_error(){
 
     });        
 }
+
+$(document).on('change', '#divisi', function(event) {
+    event.preventDefault();
+    var divisi = this.value;
+
+    $('#unit_bisnis').find('option').not('option[value=""]').remove();
+    var t_awal = $('#unit_bisnis').find('option[value=""]').text();
+    $('#unit_bisnis').find('option[value=""]').text('Please wait.....');
+    $('#unit_kerja').find('option').not('option[value=""]').remove();
+
+    $.ajax({
+        url: '{!!route('doc.get-unit-bisnis')!!}',
+        type: 'GET',
+        cache: false,
+        dataType: 'json',
+        data: {divisi: encodeURIComponent(divisi)}
+    })
+    .done(function(data) {
+        console.log("test");
+        if(data.length>0){
+            $.each(data,function(index, el) {
+                $('#unit_bisnis').append('<option value="'+this.id+'">'+this.title+'</option>');
+            });
+            $('#unit_bisnis').find('option[value=""]').text('Pilih Unit Bisnis');
+        }else{
+            $('#unit_bisnis').find('option[value=""]').text('Tidak ada data');
+        }
+    });
+});
+
+$(document).on('change', '#unit_bisnis', function(event) {
+    event.preventDefault();
+    var unit_bisnis = this.value;
+    $('#unit_kerja').find('option').not('option[value=""]').remove();
+    var t_awal = $('#unit_kerja').find('option[value=""]').text();
+    $('#unit_kerja').find('option[value=""]').text('Please wait.....');
+        $.ajax({
+            url: '{!!route('doc.get-unit-kerja')!!}',
+            type: 'GET',
+            cache: false,
+            dataType: 'json',
+            data: {unit_bisnis: encodeURIComponent(unit_bisnis)}
+        })
+        .done(function(data) {
+            if(data.length>0){
+                $.each(data,function(index, el) {
+                    $('#unit_kerja').append('<option value="'+this.id+'">'+this.title+'</option>');
+                });
+                $('#unit_kerja').find('option[value=""]').text('Pilih Unit Kerja');
+            }else{
+                $('#unit_kerja').find('option[value=""]').text('Tidak ada data');
+            }
+        });
+});
 
 $(document).on('click', '.simpan-product', function(event) {
     event.preventDefault();

@@ -26,6 +26,7 @@ class ProductLogisticController extends Controller
                         ->where('a.id',$request->id_product)
                         ->first();          
         $data['page_title'] = 'Item Price';
+        $data['pegawai'] = \App\User::get_user_pegawai();
         return view('catalog::product_logistic')->with($data);
     }
 
@@ -89,6 +90,15 @@ class ProductLogisticController extends Controller
                         $proses->harga_jasa_logistic    = Helpers::input_rupiah($request['f_hargajasa'][$key]);
                         $proses->jenis_referensi        = $request['f_jenis'][$key];
                         $proses->referensi_logistic     = $request['f_referensi'][$key];
+
+                        $proses->referensi_logistic     = $request['f_referensi'][$key];
+                        $proses->referensi_logistic     = $request['f_referensi'][$key];
+                        $proses->referensi_logistic     = $request['f_referensi'][$key];
+
+                        $proses->divisi                 = $request->divisi;
+                        $proses->unit_bisnis            = $request->unit_bisnis;
+                        $proses->unit_kerja             = $request->unit_kerja;
+
                         $proses->save();
                     }
                 }

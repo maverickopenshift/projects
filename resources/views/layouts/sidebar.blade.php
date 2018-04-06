@@ -126,6 +126,7 @@
             </li>
             @endrole
 
+            {{--
             @permission('lihat-catalog')
             <li class="treeview {{Request::is('catalog/*') ?'active':''}}">
               <a href="#"><img src="{{asset('/images/menu_katalog.png')}}" title="Catalog" />
@@ -136,22 +137,20 @@
                 @endpermission
                 <li class="{{Request::is('catalog/catalog_list/product_master') ?'active':''}}"><a href="{{route('catalog.list.product_master')}}">List Master Item</a></li>
                 <li class="{{Request::is('catalog/catalog_list/product_logistic') ?'active':''}}"><a href="{{route('catalog.list.product_logistic')}}">List Item Price</a></li>
-                
-                {{--
-                <li class="{{Request::is('catalog/product_master') ?'active':''}}"><a href="{{route('catalog.product.master')}}">Master Katalog</a></li>
-                <li class="{{Request::is('catalog/product_logistic') ?'active':''}}"><a href="{{route('catalog.product.logistic')}}">Logistik</a></li>
-                <li class="{{Request::is('catalog/master_product') ?'active':''}}"><a href="{{route('catalog.master_product')}}">Master Katalog</a></li>
-                <li class="{{Request::is('catalog/item_product') ?'active':''}}"><a href="{{route('catalog.product')}}">Item Katalog</a></li>
-                --}}
-                @permission('lihat-catalog')
-                  
-                  {{--
-                  <li class="{{Request::is('catalog/catalog_list') ?'active':''}}"><a href="{{route('catalog.list.product_Logistic')}}">List Product Logistic</a></li>
-                  --}}
-                @endpermission
               </ul>
             </li>
             @endpermission
+            --}}
+
+            <li class="treeview {{Request::is('catalog/*') ?'active':''}}">
+              <a href="#"><img src="{{asset('/images/menu_katalog.png')}}" title="Catalog" />
+                <span>Manajemen Katalog</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <ul class="treeview-menu">
+                  <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Taxonomy</a></li>
+                <li class="{{Request::is('catalog/catalog_list/product_master') ?'active':''}}"><a href="{{route('catalog.list.product_master')}}">List Master Item</a></li>
+                <li class="{{Request::is('catalog/catalog_list/product_logistic') ?'active':''}}"><a href="{{route('catalog.list.product_logistic')}}">List Item Price</a></li>
+              </ul>
+            </li>
 
             @permission('lihat-config')
             <li class="treeview {{Request::is('config') ?'active':''}}">

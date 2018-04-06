@@ -9,13 +9,14 @@ use Modules\Catalog\Entities\CatalogProductLogistic as CatalogProductLogistic;
 use Modules\Documents\Entities\DocBoq as DocBoq;
 use Modules\Catalog\Entities\CatalogCategory as CatalogCategory;
 use Modules\Documents\Entities\Documents as Documents;
+use App\User;
 use Auth;
 use Response;
 use Datatables;
 use DB;
 
 class CatalogController extends Controller
-{   
+{
     public function index_product_master(Request $request){
         $data['category']=CatalogCategory::get();    
         $data['page_title'] = 'List Master Item';
@@ -99,22 +100,42 @@ class CatalogController extends Controller
     public function index_product_logistic(Request $request){
         $data['category']=CatalogCategory::get();
         $data['page_title'] = 'List Item Price';
+        $data['user'] = User::get_user_pegawai();
+
         return view('catalog::list_product_logistic')->with($data);
     }
     
     public function index_product_logistic_datatables(Request $request){
+        
+        /*
         if($request->id==0){
             $data=DB::table('catalog_product_logistic as a')
                     ->join('catalog_product_master as b','b.id','=','a.product_master_id')
                     ->selectRaw("a.*, b.kode_product as kode_product, b.user_id")
                     ->get();                    
         }else{
-            $data=DB::table('catalog_product_logistic as a')
-                    ->join('catalog_product_master as b','b.id','=','a.product_master_id')
-                    ->selectRaw("a.*, b.kode_product as kode_product, b.user_id")
-                    ->where('a.product_master_id',$request->id)
-                    ->get();
+        */
+        $data=DB::table('catalog_product_logistic as a')
+                ->join('catalog_product_master as b','b.id','=','a.product_master_id')
+                ->selectRaw("a.*, b.kode_product as kode_product, b.user_id")
+                ->where('a.product_master_id',$request->id);
+                //->get();
+        //}
+
+        if($request->divisi!=""){
+            $data->where('a.divisi',$request->divisi);
         }
+
+        if($request->unit_bisnis!=""){
+            $data->where('a.unit_bisnis',$request->unit_bisnis);
+        }
+
+        if($request->unit_kerja!=""){
+            $data->where('a.unit_kerja',$request->unit_kerja);
+        }
+
+        $data->get();
+        
 
         return Datatables::of($data)
                 ->addIndexColumn()

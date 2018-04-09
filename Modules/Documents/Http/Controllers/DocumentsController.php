@@ -85,7 +85,9 @@ class DocumentsController extends Controller
       }else if($status=="close"){
         $status_no='4';
       }
-
+      if(!in_array($status,['selesai','close']) && \Laratrust::hasRole('monitor')){
+        abort(403);
+      }
       if($status!=='selesai' && $status!=='tutup' && $status!=='close'){
         return $this->docList->list($request,$status_no);
       }

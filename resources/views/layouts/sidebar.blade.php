@@ -49,20 +49,25 @@
                 @endpermission
 
                 @permission('lihat-kontrak')
-                  @if(Laratrust::hasRole('approver')==false && Laratrust::hasRole('admin')==false)
+                  @if(Laratrust::hasRole('konseptor'))
                     <li class="{{Request::is("documents/status/draft")?'active':''}}" ><a href="{{route('doc',['status'=>'draft'])}}">Draft </a></li>
                   @endif
+                  @if(!Laratrust::hasRole('monitor'))
                   <li class="{{Request::is("documents/status/proses")?'active':''}}" ><a href="{{route('doc',['status'=>'proses'])}}">Perlu Diproses</a></li>
+                  @endif
                 @endpermission
                 @permission('lihat-kontrak')
+                  @if(!Laratrust::hasRole('monitor'))
                   <li class="{{Request::is("documents/status/tracking")?'active':''}}" ><a href="{{route('doc',['status'=>'tracking'])}}">Tracking Proses</a></li>
+                  @endif
                   <li class="{{Request::is("documents/status/selesai")?'active':''}}" ><a href="{{route('doc',['status'=>'selesai'])}}">Selesai</a></li>
                 @endpermission
                 @permission('tutup-kontrak')
                   <li class="{{Request::is("documents/status/tutup") || Request::is("documents/closing/*")?'active':''}}" ><a href="{{route('doc',['status'=>'tutup'])}}">Proses Closing</a></li>
+                @endpermission
+                @permission('lihat-kontrak')
                   <li class="{{Request::is("documents/status/close") ?'active':''}}" ><a href="{{route('doc',['status'=>'close'])}}"> Close</a></li>
                 @endpermission
-
 
                 @permission('lihat-template-pasal-pasal')
                   <li class="{{Request::is("documents/doc-template") || Request::is("documents/doc-template/create") || Request::is("documents/doc-template/*/edit")?'active':''}}" ><a href="{{route('doc.template')}}">Template Kontrak</a></li>

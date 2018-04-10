@@ -32,19 +32,19 @@
       @if(in_array($doc_type->name,['sp','turnkey']))
         <div class="form-group ">
           <label class="col-sm-2 control-label">No PO</label>
-          <div class="col-sm-10 text-me">Disini No PO</div>
+          <div class="col-sm-10 text-me">-</div>
         </div>
         <div class="form-group ">
           <label class="col-sm-2 control-label">Nilai PO</label>
-          <div class="col-sm-10 text-me">Disini Nilai PO</div>
+          <div class="col-sm-10 text-me">-</div>
         </div>
         <div class="form-group ">
           <label class="col-sm-2 control-label">No PR</label>
-          <div class="col-sm-10 text-me">Disini No PR</div>
+          <div class="col-sm-10 text-me">-</div>
         </div>
         <div class="form-group ">
           <label class="col-sm-2 control-label">Nilai PR</label>
-          <div class="col-sm-10 text-me">Disini Nilai PR</div>
+          <div class="col-sm-10 text-me">-</div>
         </div>
       @endif
     </div>

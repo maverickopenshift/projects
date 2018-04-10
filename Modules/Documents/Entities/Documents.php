@@ -59,6 +59,22 @@ class Documents extends Model
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','lampiran_ttd');
     }
+    public function lampiran_baut()
+    {
+        return $this->hasOne('Modules\Documents\Entities\DocMeta')->where('meta_type','Lampiran_Baut');
+    }
+    public function lampiran_bast()
+    {
+        return $this->hasOne('Modules\Documents\Entities\DocMeta')->where('meta_type','Lampiran_Bast');
+    }
+    public function lampiran_lain()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','Lampiran_Lain');
+    }
+    public function gr()
+    {
+        return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','GR');
+    }
     public function latar_belakang()
     {
         return $this->hasMany('Modules\Documents\Entities\DocMeta')->where('meta_type','latar_belakang');

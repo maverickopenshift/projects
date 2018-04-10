@@ -46,6 +46,9 @@
         @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey']))
           <li><a href="#tab_6" data-toggle="tab">TERM OF PAYMENT</a></li>
         @endif
+        @if($doc->doc_signing=="4")
+          <li><a href="#tab_7" data-toggle="tab">DATA CLOSING</a></li>
+        @endif
       </ul>
 
         <div class="tab-content">
@@ -63,7 +66,9 @@
               </div>
             </div>
           </div>
-
+          <div class="tab-pane" id="tab_7">
+            @include('documents::doc-view.data-closing')
+          </div>
           <div class="tab-pane" id="tab_2">
             @include('documents::partials.alert-errors')
             @if(in_array($doc_type->name,['turnkey','sp','khs','mou']))

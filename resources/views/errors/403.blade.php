@@ -10,40 +10,28 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 
-    <link href="{{ mix('css/all.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ mix("css/login.css") }}" rel="stylesheet" type="text/css" />
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-    <script>
-        window.Laravel = <?php echo json_encode([
-            'csrfToken' => csrf_token(),
-        ]); ?>;
-    </script>
 </head>
-<body class="skin-red-light">
-<div class="wrapper">
-
-    <!-- Header -->
-    @include('layouts.header')
-
-    <!-- Sidebar -->
-    @include('layouts.sidebar')
-
-    <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
-        <h1>Unauthorized action.</h1>
-    </div><!-- /.content-wrapper -->
-
-    <!-- Footer -->
-    @include('layouts.footer')
-</div><!-- ./wrapper -->
+<body class="hold-transition login-page">
+  <div class="error-box">
+    <!-- /.login-logo -->
+    <div class="login-box-body" style="border-radius: 10px;position:relative;">
+        <div class="error-text">403</div>
+        <div class="error-text-2">Unauthorized action.</div>
+        <div class="text-center" style="margin-top:20px;"><a href="{{url('/')}}">Kembali ke Beranda</a></div>
+    </div>
+    <!-- /.login-box-body -->
+  </div>
 
 
-<script src="{{ mix('js/all.js') }}"></script>
+<script src="{{ mix('js/login.js') }}"></script>
 @stack('scripts')
 </body>
 </html>

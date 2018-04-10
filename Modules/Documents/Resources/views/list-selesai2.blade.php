@@ -24,8 +24,9 @@
           <div class="form-group top10">
             <input style="width:290px;" name="q" type="text" class="form-control cari-judul" placeholder="Judul/Nomor Kontrak" value="{{$form['q']}}">
           </div>    
+          @if($user->pegawai_type!='subsidiary')
           <div class="form-group top10">
-            {!!Helper::select_all_divisi('divisi',$user->divisi)!!}
+            {!!Helper::select_all_divisi('divisi',Laratrust::hasRole('monitor')?null:$user->divisi)!!}
           </div>
           <div class="form-group top10">
             @if(!empty($form['unit_bisnis']))
@@ -45,6 +46,11 @@
             </select>
           @endif
           </div>
+          @else
+            <input type="hidden" name="divisi">
+            <input type="hidden" name="unit_bisnis">
+            <input type="hidden" name="unit_kerja">
+          @endif
           <div class="form-group top10">
             {!! Helper::select_type2('jenis',$form['jenis']) !!}
           </div>
@@ -594,7 +600,7 @@ $(document).on('click', '.btn-reject', function(event) {
 </script>
 <script>
 var user_role = '{{$user->role_name}}';
-if(user_role!='admin' || user_role!='konseptor'){
+if(user_role!='monitor'){
   $('#divisi').prop('disabled', 'disabled');
 }
 $(document).on('change', '#divisi', function(event) {
@@ -662,7 +668,9 @@ $(function(e){
     }
     if($('#divisi').val()!=="" && unit_bisnis==""){
       $('#unit_bisnis').find('option').not('option[value=""]').remove();
-      $('#divisi').change();
+      if(user_role!='monitor'){
+        $('#divisi').change();
+      }
     }
 });
 </script>

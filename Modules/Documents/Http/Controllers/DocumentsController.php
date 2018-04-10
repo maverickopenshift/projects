@@ -85,7 +85,9 @@ class DocumentsController extends Controller
       }else if($status=="close"){
         $status_no='4';
       }
-
+      if(!in_array($status,['selesai','close']) && \Laratrust::hasRole('monitor')){
+        abort(403);
+      }
       if($status!=='selesai' && $status!=='tutup' && $status!=='close'){
         return $this->docList->list($request,$status_no);
       }
@@ -160,27 +162,29 @@ class DocumentsController extends Controller
             if(!in_array($user->role_name,['admin','monitor'])){
               $divisi = $user->divisi;
             }
-            if(!empty($unit)){
-              $documents->where(function($q) use ($divisi) {
-                $q->orwhere('documents.divisi','=',$divisi);
-                $q->orwhere('child.divisi','=',$divisi);
-                $q->orwhere('child2.divisi','=',$divisi);
-                $q->orwhere('child3.divisi','=',$divisi);
-              });
+            if(!empty($divisi)){
+                $documents->where(function($q) use ($divisi) {
+                  $q->orwhere('documents.divisi','=',$divisi);
+                  $q->orwhere('child.divisi','=',$divisi);
+                  $q->orwhere('child2.divisi','=',$divisi);
+                  $q->orwhere('child3.divisi','=',$divisi);
+                });
+            }
+            if(!empty($unit) && !empty($divisi)){
               $documents->where(function($q) use ($unit) {
                 $q->orwhere('documents.unit_bisnis','=',$unit);
                 $q->orwhere('child.unit_bisnis','=',$unit);
                 $q->orwhere('child2.unit_bisnis','=',$unit);
                 $q->orwhere('child3.unit_bisnis','=',$unit);
               });
-              if(!empty($unit_kerja)){
-                $documents->where(function($q) use ($unit_kerja) {
-                  $q->orwhere('documents.unit_kerja','=',$unit_kerja);
-                  $q->orwhere('child.unit_kerja','=',$unit_kerja);
-                  $q->orwhere('child2.unit_kerja','=',$unit_kerja);
-                  $q->orwhere('child3.unit_kerja','=',$unit_kerja);
-                });
-              }
+            }
+            if(!empty($unit_kerja) && !empty($unit) && !empty($divisi)){
+              $documents->where(function($q) use ($unit_kerja) {
+                $q->orwhere('documents.unit_kerja','=',$unit_kerja);
+                $q->orwhere('child.unit_kerja','=',$unit_kerja);
+                $q->orwhere('child2.unit_kerja','=',$unit_kerja);
+                $q->orwhere('child3.unit_kerja','=',$unit_kerja);
+              });
             }
             $documents->orderByRaw('created_at DESC');
             $documents->groupBy('documents.id');
@@ -205,10 +209,15 @@ class DocumentsController extends Controller
               $documents->where('v_users_pegawai.company_id',\App\User::get_subsidiary_user()->company_id);
             }
             else {
-              $documents->where(function($q) use ($user) {
-                $q->orwhere('documents.unit_bisnis',$user->unit_bisnis);
-                $q->orwhere('documents.user_id',\Auth::id());
-              });
+              if(\Auth::user()->hasRole('monitor')){
+                $documents->where('documents.doc_user_type','telkom');
+              }
+              else{
+                $documents->where(function($q) use ($user) {
+                  $q->orwhere('documents.unit_bisnis',$user->unit_bisnis);
+                  $q->orwhere('documents.user_id',\Auth::id());
+                });
+              }
 
               // $documents->where('v_users_pegawai.objiddivisi',\App\User::get_divisi_by_user_id());
             }

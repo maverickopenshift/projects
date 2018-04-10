@@ -69,12 +69,14 @@ class DocumentsListController extends Controller
         if(!in_array($user->role_name,['admin','monitor'])){
           $divisi = $user->divisi;
         }
-        if(!empty($unit)){
+        if(!empty($divisi)){
           $documents->where('documents.divisi','=',$divisi);
+        }
+        if(!empty($unit) && !empty($divisi)){
           $documents->where('documents.unit_bisnis','=',$unit);
-          if(!empty($unit_kerja)){
-            $documents->where('documents.unit_kerja','=',$unit_kerja);
-          }
+        }
+        if(!empty($unit_kerja) && !empty($unit) && !empty($divisi)){
+          $documents->where('documents.unit_kerja','=',$unit_kerja);
         }
         if(!empty($jenis)){
           $documents->where('documents.doc_type',$jenis);
@@ -90,10 +92,15 @@ class DocumentsListController extends Controller
               $documents->where('documents.user_id',\Auth::id());
             }
             else{
-              $documents->where(function($q) use ($user) {
-                $q->orwhere('documents.unit_bisnis',$user->unit_bisnis);
-                $q->orwhere('documents.user_id',\Auth::id());
-              });
+              if(\Auth::user()->hasRole('monitor')){
+                $documents->where('documents.doc_user_type','telkom');
+              }
+              else{
+                $documents->where(function($q) use ($user) {
+                  $q->orwhere('documents.unit_bisnis',$user->unit_bisnis);
+                  $q->orwhere('documents.user_id',\Auth::id());
+                });
+              }
             }
           }
 

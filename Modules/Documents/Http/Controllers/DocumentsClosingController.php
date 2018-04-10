@@ -168,21 +168,22 @@ class DocumentsClosingController extends Controller
       $id = $request->id;
       $rules = [];
       
+      $date_format = 'date_format:"d-m-Y"';
       $rules['gr_nomer.*']   = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['gr_nilai.*']   = 'required|max:500';
 
       $rules['bast_judul']   = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['bast_tgl']     = 'required|date_format:"Y-m-d"';
+      $rules['bast_tgl']     = 'required|'.$date_format;
       $rules['bast_file']    = 'required|mimes:pdf';
 
       $rules['baut_judul']   = 'required|max:500|regex:/^[a-z0-9 .\-]+$/i';
-      $rules['baut_tgl']     = 'required|date_format:"Y-m-d"';
+      $rules['baut_tgl']     = 'required|'.$date_format;
       $rules['baut_file']    = 'required|mimes:pdf';      
 
       foreach($request->lain_judul as $k => $v){
         if($v!=null){
           $rules['lain_judul.*']   = 'max:500|regex:/^[a-z0-9 .\-]+$/i';
-          $rules['lain_tanggal.*'] = 'required|date_format:"Y-m-d"';  
+          $rules['lain_tanggal.*'] = 'required|'.$date_format;  
           $rules['lain_file.'.$k] = 'required|mimes:pdf';  
         }        
       }
@@ -221,7 +222,7 @@ class DocumentsClosingController extends Controller
           $doc_meta->documents_id = $id;
           $doc_meta->meta_type = "Lampiran_Bast";
           $doc_meta->meta_name = $request->bast_judul;
-          $doc_meta->meta_desc = $request->bast_tgl;
+          $doc_meta->meta_desc = Helpers::date_set_db($request->bast_tgl);
 
           if(isset($request->bast_file)){
             $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($request->bast_judul));
@@ -238,7 +239,7 @@ class DocumentsClosingController extends Controller
           $doc_meta->documents_id = $id;
           $doc_meta->meta_type = "Lampiran_Baut";
           $doc_meta->meta_name = $request->baut_judul;
-          $doc_meta->meta_desc = $request->baut_tgl;
+          $doc_meta->meta_desc = Helpers::date_set_db($request->baut_tgl);
 
           if(isset($request->baut_file)){
             $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($request->baut_judul));
@@ -258,7 +259,7 @@ class DocumentsClosingController extends Controller
               $doc_meta->documents_id = $id;
               $doc_meta->meta_type = "Lampiran_Lain";
               $doc_meta->meta_name = $request['lain_judul'][$key];
-              $doc_meta->meta_desc = $request['lain_tanggal'][$key];
+              $doc_meta->meta_desc = Helpers::date_set_db($request['lain_tanggal'][$key]);
 
               if(isset($request['lain_file'][$key])){
                 $fileName   = Helpers::set_filename('doc_lampiran_',strtolower($val));

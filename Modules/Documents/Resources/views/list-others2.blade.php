@@ -25,6 +25,7 @@
           <div class="form-group top10">
             <input style="width:290px;" type="text" name="q" class="form-control cari-judul" placeholder="Judul/Nomor Kontrak" value="{{$form['q']}}">
           </div>
+          @if($user->pegawai_type!='subsidiary')
           <div class="form-group top10">
             {!!Helper::select_all_divisi('divisi',$user->divisi)!!}
           </div>
@@ -46,6 +47,11 @@
               </select>
             @endif
           </div>
+          @else
+            <input type="hidden" name="divisi">
+            <input type="hidden" name="unit_bisnis">
+            <input type="hidden" name="unit_kerja">
+          @endif
           <div class="form-group top10">
             {!! Helper::select_type2('jenis',$form['jenis']) !!}
           </div>

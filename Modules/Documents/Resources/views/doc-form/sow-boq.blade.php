@@ -175,7 +175,7 @@ $(function() {
     event.preventDefault();
 
     var loading = $('.loading2');
-    var form_user =  $('#c');
+    var form_user =  $('#form_me_boq');
     loading.show();
     $.ajax({
       url: form_user.attr('action'),

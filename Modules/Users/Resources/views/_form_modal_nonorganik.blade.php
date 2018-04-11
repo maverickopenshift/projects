@@ -64,6 +64,13 @@
                         </select>
                         <div class="error error-select_unit_kerja"></div>
                     </div>
+                    <div class="form-group formerror formerror-select_loker">
+                      <label>Pilih Loker</label>
+                        <select class="form-control" style="width: 100%;" name="select_loker" id="select_loker">
+                            <option value="">Pilih Loker</option>
+                        </select>
+                        <div class="error error-select_loker"></div>
+                    </div>
                     <div class="form-group subsidiary_oke formerror formerror-jabatan">
                         <label>Jabatan</label>
                         <input type="text" id="jabatan" name="jabatan" value="" class="form-control" placeholder="Enter Jabatan..." autocomplete="off">
@@ -148,6 +155,7 @@
             selectMe__('#select_divisi','divisi')
             selectMe__('#select_unit_bisnis','unit_bisnis','#select_divisi')
             selectMe__('#select_unit_kerja','unit_kerja','#select_unit_bisnis')
+            selectMe__('#select_loker','loker','#select_unit_kerja')
             selectMe__('#select_posisi','posisi','#select_unit_kerja')
             $('#select2-pic_search-container').html('');
             if(title=='Edit'){
@@ -171,11 +179,13 @@
                 reset_select2('select_posisi')
                 reset_select2('select_unit_kerja')
                 reset_select2('select_unit_bisnis')
+                reset_select2('select_loker')
                 if(data.user_type !== 'subsidiary'){
                   set_select2(modal.find('.modal-body select#select_divisi'),{id:data_other_pegawai.divisi,text:data_other_pegawai.divisi});
                   set_select2(modal.find('.modal-body select#select_posisi'),{id:data_other_pegawai.objidposisi,text:data_other_pegawai.v_short_posisi});
                   set_select2(modal.find('.modal-body select#select_unit_bisnis'),{id:data_other_pegawai.unit_bisnis,text:data_other_pegawai.unit_bisnis});
                   set_select2(modal.find('.modal-body select#select_unit_kerja'),{id:data_other_pegawai.unit_kerja,text:data_other_pegawai.unit_kerja});
+                  set_select2(modal.find('.modal-body select#select_loker'),{id:data_other_pegawai.objidunit,text:data_other_pegawai.v_short_unit});
                   modal.find('.modal-body input#jabatan').val(data_other_pegawai.v_short_posisi)
                 }
                 else{
@@ -210,6 +220,7 @@
                 reset_select2('select_posisi')
                 reset_select2('select_unit_bisnis')
                 reset_select2('select_unit_kerja')
+                reset_select2('select_loker')
                 reset_select2('pgs_divisi')
                 reset_select2('pgs_jabatan')
                 reset_select2('pgs_unit')
@@ -299,26 +310,38 @@
                     reset_select2('pgs_unit_bisnis_or');
                     reset_select2('pgs_unit_kerja_or');
                     reset_select2('pgs_jabatan_or');
+                    reset_select2('pgs_loker_or');
                     reset_select2('select_unit_bisnis');
                     reset_select2('select_unit_kerja');
                     reset_select2('select_jabatan');
+                    reset_select2('select_loker');
                   }
                   if(type=='unit_bisnis'){
                     datas.type = 'unit_bisnis';
                     reset_select2('pgs_unit_kerja_or');
                     reset_select2('pgs_jabatan_or');
+                    reset_select2('pgs_loker_or');
                     reset_select2('select_unit_kerja');
                     reset_select2('select_jabatan');
+                    reset_select2('select_loker');
                     datas.divisi = encodeURI($(parent).val());
                   }
                   if(type=='unit_kerja'){
                     datas.type = 'unit_kerja';
                     reset_select2('pgs_jabatan_or');
                     reset_select2('select_jabatan');
+                    reset_select2('pgs_loker_or');
+                    reset_select2('select_loker');
                     datas.unit_bisnis = encodeURI($(parent).val());
                   }
                   if(type=='posisi'){
                     datas.type = 'posisi';
+                    reset_select2('pgs_loker_or');
+                    reset_select2('select_loker');
+                    datas.unit_kerja = encodeURI($(parent).val());
+                  }
+                  if(type=='loker'){
+                    datas.type = 'loker';
                     datas.unit_kerja = encodeURI($(parent).val());
                   }
                   return datas;

@@ -57,7 +57,7 @@ if(isset($kategori->id)){
                 <div class="pull-right">
                     <div class="col-sm-12">                        
                         <a class="btn btn-primary upload-product-master-btn" type="button"><i class="fa fa-upload"></i> Upload</a>
-                        <a href="{{route('doc.tmp.download',['filename'=>'harga_satuan'])}}" class="btn btn-info">
+                        <a href="{{route('doc.tmp.download',['filename'=>'product_master'])}}" class="btn btn-info">
                             <i class="glyphicon glyphicon-download-alt"></i> Download Template
                         </a>
                         <span class="error error-product-master text-danger"></span>

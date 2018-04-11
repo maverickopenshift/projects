@@ -9,6 +9,7 @@ use Modules\Catalog\Entities\CatalogProductLogistic as CatalogProductLogistic;
 use Modules\Documents\Entities\Documents as Documents;
 use Modules\Catalog\Entities\CatalogCategory as CatalogCategory;
 use App\Permission;
+use App\User;
 use App\Helpers\Helpers;
 use Auth;
 use Response;
@@ -26,36 +27,47 @@ class ProductLogisticController extends Controller
                         ->where('a.id',$request->id_product)
                         ->first();          
         $data['page_title'] = 'Item Price';
-        $data['pegawai'] = \App\User::get_user_pegawai();
+        $data['pegawai'] = User::get_user_pegawai();
+        //dd($data);
+
         return view('catalog::product_logistic')->with($data);
     }
 
     public function get_kontrak(Request $request){
         $search = trim($request->q);
         $data = Documents::selectRaw('id, doc_no as text')
-                ->where('doc_type','turnkey')
-                ->where('doc_type','sp')
-                ->where('doc_signing','1')
-        ;
+                ->where('doc_signing','1');
+
+        $data->where(function($q){
+            $q->orWhere('doc_type', 'turnkey');
+            $q->orWhere('doc_type', 'sp');
+        });
+
         if(!empty($search)){
           $data->where(function($q) use ($search) {
               $q->orWhere('doc_no', 'like', '%'.$search.'%');
           });
         }
+        
         $data = $data->paginate(30);
         return \Response::json($data);
     }
 
-    public function get_kontrak_normal(Request $request){
-        $result=Documents::selectRaw('id, doc_no as text')
-                ->where('doc_type','turnkey')
-                ->where('doc_type','sp')
-                ->where('doc_signing','1')->get();
+    public function get_kontrak_normal(Request $request){        
+        $data = Documents::selectRaw('id, doc_no as text')
+                ->where('doc_signing','1');
+
+        $data->where(function($q){
+            $q->orWhere('doc_type', 'turnkey');
+            $q->orWhere('doc_type', 'sp');
+        });
+                
+        $data = $data->get();
 
         $hasil=array();
-        for($i=0;$i<count($result);$i++){
-            $hasil[$i]['id']=$result[$i]->id;
-            $hasil[$i]['text']=$result[$i]->text;
+        for($i=0;$i<count($data);$i++){
+            $hasil[$i]['id']=$data[$i]->id;
+            $hasil[$i]['text']=$data[$i]->text;
         }
 
         return Response::json($hasil);
@@ -84,20 +96,28 @@ class ProductLogisticController extends Controller
                 foreach($request->f_lokasi as $key => $val){
                     if(!empty($val)){
                         $proses = new CatalogProductLogistic();
+                        $pegawai = User::get_user_pegawai();
                         $proses->product_master_id      = $request->f_idproduct;
                         $proses->lokasi_logistic        = $request['f_lokasi'][$key];
                         $proses->harga_barang_logistic  = Helpers::input_rupiah($request['f_hargabarang'][$key]);
                         $proses->harga_jasa_logistic    = Helpers::input_rupiah($request['f_hargajasa'][$key]);
                         $proses->jenis_referensi        = $request['f_jenis'][$key];
-                        $proses->referensi_logistic     = $request['f_referensi'][$key];
 
-                        $proses->referensi_logistic     = $request['f_referensi'][$key];
-                        $proses->referensi_logistic     = $request['f_referensi'][$key];
-                        $proses->referensi_logistic     = $request['f_referensi'][$key];
+                        if($request['f_jenis'][$key]==1){
+                            $doc_cari=Documents::select('doc_no')
+                                ->where('id',$request['f_referensi'][$key])
+                                ->first();
 
-                        $proses->divisi                 = $request->divisi;
-                        $proses->unit_bisnis            = $request->unit_bisnis;
-                        $proses->unit_kerja             = $request->unit_kerja;
+                            $ref=$doc_cari->doc_no;
+                        }else{
+                            $ref=$request['f_referensi'][$key];
+                        }
+                        
+                        $proses->referensi_logistic     = $ref;
+
+                        $proses->divisi                 = $pegawai->divisi;
+                        $proses->unit_bisnis            = $pegawai->unit_bisnis;
+                        $proses->unit_kerja             = $pegawai->unit_kerja;
 
                         $proses->save();
                     }

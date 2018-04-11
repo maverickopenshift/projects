@@ -9,7 +9,7 @@
       <label for="nm_vendor" class="col-sm-2 control-label"><span class="text-red">*</span> Judul {{$doc_type['title']}}</label>
       <div class="col-sm-10">
         <input type="text" class="form-control" name="doc_title"  value="{{old('doc_title',Helper::prop_exists($doc,'doc_title'))}}"  placeholder="Masukan Judul Kontrak" autocomplete="off">
-        <div class="error error-doc_title"></div>
+        <div class="error error-doc_title"></div> 
       </div>
     </div>
     @endif

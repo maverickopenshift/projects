@@ -101,7 +101,7 @@ class CatalogController extends Controller
         $data['category']=CatalogCategory::get();
         $data['page_title'] = 'List Item Price';
         $data['user'] = User::get_user_pegawai();
-
+        
         return view('catalog::list_product_logistic')->with($data);
     }
     

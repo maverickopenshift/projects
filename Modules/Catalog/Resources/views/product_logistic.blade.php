@@ -40,7 +40,7 @@
                         <span class="error error-product-price text-danger"></span>
                     </div>
                 </div>
-            </div>    
+            </div>
             
                 {{ csrf_field() }}
                 <div class="box-body form-horizontal">
@@ -72,10 +72,8 @@
                         <div class="col-sm-10 text-me">{{$product->satuan_product}}</div>
                     </div>
 
-                <form method="post" action="{{ route('catalog.product_logistic.add_ajax') }}" id="form-produk">
-                    {{ csrf_field() }}
-                    <input type="hidden" name="f_idproduct" value="{{$product->id}}">
-
+                
+                    {{--
                     <div class="form-group">
                         <label for="pemilik_kontrak" class="col-sm-2 control-label"><span class="text-red">*</span>Pemilik Kontrak</label>
                         <div class="col-sm-6">
@@ -110,7 +108,21 @@
                             </div>
                         </div>
                     </div>
-                
+                    --}}
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Pemilik Katalog </label>
+                        <div class="col-sm-6 text-me text-uppercase">
+                            <span class="span-oke">Nama</span> {{$pegawai->v_nama_karyawan}} <i>({{$pegawai->n_nik}})</i></br> 
+                            <span class="span-oke">Divisi</span> {{$pegawai->divisi}} </br>
+                            <span class="span-oke">Unit Bisnis</span> {{$pegawai->unit_bisnis}} </br>
+                            <span class="span-oke">Unit Kerja</span> {{$pegawai->unit_kerja}} </br>
+                            <span class="span-oke">Jabatan</span> {{$pegawai->v_short_posisi}} </br>
+                        </div>
+                    </div>
+                <form method="post" action="{{ route('catalog.product_logistic.add_ajax') }}" id="form-produk">
+                    {{ csrf_field() }}
+                    <input type="hidden" name="f_idproduct" value="{{$product->id}}">
+
                     <table class="table table-striped table-parent-product" width="100%">
                         <thead>
                             <tr>
@@ -381,7 +393,7 @@ function fix_no_error(){
 
     });        
 }
-
+/*
 $(document).on('change', '#divisi', function(event) {
     event.preventDefault();
     var divisi = this.value;
@@ -435,7 +447,7 @@ $(document).on('change', '#unit_bisnis', function(event) {
             }
         });
 });
-
+*/
 $(document).on('click', '.simpan-product', function(event) {
     event.preventDefault();
     

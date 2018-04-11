@@ -253,10 +253,6 @@ class SupplierEditController extends Controller
     });
     
     if ($validator->fails ()){
-      /*
-      return redirect()->back()->withInput($request->input())->withErrors($validator);
-      */
-
       return Response::json (array(
         'errors' => $validator->getMessageBag()->toArray()
       ));
@@ -449,7 +445,9 @@ class SupplierEditController extends Controller
       $log_activity->date = new \DateTime();
       $log_activity->komentar = $request->komentar;
       $log_activity->save();
-
+      
+      $request->session()->flash('alert-success', 'Data berhasil disimpan');
+      
       return Response::json (array(
         'status' => 'all'
       ));

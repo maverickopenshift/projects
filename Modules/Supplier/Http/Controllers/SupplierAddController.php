@@ -321,14 +321,12 @@ class SupplierAddController extends Controller
       $log_activity->date = new \DateTime();
       $log_activity->komentar = $request->komentar;
       $log_activity->save();
-      //return redirect()->route('supplier', ['status' => 'all'])->with('message', 'Data supplier berhasil ditambahkan!');
+      
+      $request->session()->flash('alert-success', 'Data berhasil disimpan');
       
       return Response::json (array(
         'status' => 'all'
-      ));
-      
-      //echo "done";
-     
+      ));     
     }
   }
 
@@ -344,3 +342,18 @@ class SupplierAddController extends Controller
     }
   }
 }
+
+function aa(){
+  $array['hasil1']="123";
+  $array['hasil2']="456";
+
+  return $array;
+}
+
+$test = aa();
+
+
+echo $test['hasil1'];
+echo $test['hasil2'];
+
+

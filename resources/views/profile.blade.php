@@ -27,13 +27,13 @@
                   <div class="col-sm-8">
                     <input type="hidden" class="form-control" id="tipe"  name="tipe" value="prof">
                     <input type="hidden" class="form-control" id="id"  name="id" value="{{$data['id']}}">
-                    <input type="text" class="form-control" id="user_id" disabled="true" name="user_id" value="{{$data['username']}}">
+                    <input type="text" class="form-control" id="user_id" readonly name="user_id" value="{{$data['username']}}">
                   </div>
                 </div>
                 <div class="form-group {{ $errors->has('nama_user') ? ' has-error' : '' }}">
                   <label for="nama_user" class="col-sm-4 control-label">Nama</label>
                   <div class="col-sm-8">
-                    <input type="text" class="form-control" id="nama_user" name="nama_user" disabled="true" value="{{ old('nama_user',Helper::prop_exists($data,'name')) }}">
+                    <input type="text" class="form-control" id="nama_user" name="nama_user" readonly value="{{ old('nama_user',Helper::prop_exists($data,'name')) }}">
                     @if ($errors->has('nama_user'))
                         <span class="help-block">
                             <strong>{{ $errors->first('nama_user') }}</strong>

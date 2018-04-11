@@ -56,6 +56,14 @@
       <div class="loading2"></div>
         @include('supplier::partials.alert-message')
 
+        <div class="flash-message">
+          @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+            @if(Session::has('alert-' . $msg))
+            <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></p>
+            @endif
+          @endforeach
+        </div> <!-- end .flash-message -->
+
         <div id="alertBS"></div>
         <table class="table table-striped table-condensed" id="datatables" style="width:100%">
             <thead>

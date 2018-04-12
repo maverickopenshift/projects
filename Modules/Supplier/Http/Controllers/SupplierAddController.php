@@ -163,7 +163,7 @@ class SupplierAddController extends Controller
       ));
     }
     else {
-      /*
+      
       $kd_vendor = $this->generate_id();
       $user = new User();
       $user->name = $request->nm_vendor;

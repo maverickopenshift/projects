@@ -253,7 +253,8 @@ $(function () {
                 });
               }else{
                 if(response.status=="all"){
-                  window.location.href = "{{route('supplier',['status'=>'all'])}}";
+                  console.log("clear");
+                  //window.location.href = "{{route('supplier',['status'=>'all'])}}";
                 }
               }
             }

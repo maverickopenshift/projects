@@ -31,7 +31,7 @@ class SupplierAddController extends Controller
   {
     $asset = $request->asset;
     $request->merge(['asset' => Helpers::input_rupiah($request->asset)]);
-
+    /*
     $rules = array (
         'komentar'          => 'required|max:250|min:2',
         'bdn_usaha'         => 'required|max:250|min:2',
@@ -148,19 +148,22 @@ class SupplierAddController extends Controller
       }
       $request->merge(['legal_dokumen' => $new_dokumen]);
     }
-
+    */
     $validator = Validator::make($request->all(), $rules,CustomErrors::supplier());
+    /*
     $validator->after(function ($validator) use ($request) {
         if (!isset($request['klasifikasi_kode'][0])) {
             $validator->errors()->add('klasifikasi_err', 'Klasifikasi Usaha harus dipilih!');
         }
     });
+    */
     if ($validator->fails ()){
       return Response::json (array(
         'errors' => $validator->getMessageBag()->toArray()
       ));
     }
     else {
+      /*
       $kd_vendor = $this->generate_id();
       $user = new User();
       $user->name = $request->nm_vendor;
@@ -321,7 +324,7 @@ class SupplierAddController extends Controller
       $log_activity->save();
       
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
-      
+      */
       return Response::json (array(
         'status' => 'all'
       ));

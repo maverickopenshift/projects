@@ -166,7 +166,7 @@ class SupplierAddController extends Controller
       
       $kd_vendor = $this->generate_id();
       $user = new User();
-      dd();
+      
       
       $user->name = $request->nm_vendor;
       $user->username = $kd_vendor;

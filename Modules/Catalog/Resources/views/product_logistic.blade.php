@@ -187,6 +187,8 @@ $('.upload-product-price').on('change', function(event) {
             return false;
         }
     });
+
+    $(this).val('');
 });
 
 function handleFile(data) {

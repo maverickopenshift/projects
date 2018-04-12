@@ -139,6 +139,8 @@ if(isset($kategori->id)){
                 return false;
             }
         });
+
+        $(this).val('');
     });
 
     function handleFile(data) {

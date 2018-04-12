@@ -21,7 +21,6 @@ class SupplierAddController extends Controller
 {
   public function index()
   {
-      //dd(Supplier::gen_userid());
       $supplier = [];
       $page_title = 'Add Supplier';
       $action_type = 'add';
@@ -227,7 +226,6 @@ class SupplierAddController extends Controller
       $data->kd_vendor            = $kd_vendor;
       $data->save();
 
-            
       foreach($request->klasifikasi_kode as $key=>$v){
         $mt_data = new SupplierMetadata();
         $mt_data->id_object    = $data->id;
@@ -342,18 +340,4 @@ class SupplierAddController extends Controller
     }
   }
 }
-
-function aa(){
-  $array['hasil1']="123";
-  $array['hasil2']="456";
-
-  return $array;
-}
-
-$test = aa();
-
-
-echo $test['hasil1'];
-echo $test['hasil2'];
-
 

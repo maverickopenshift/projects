@@ -21,7 +21,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
     //////
     Route::post('/store', ['middleware' => ['permission:tambah-supplier'],'uses' => 'SupplierAddController@store'])->name('supplier.store');
     Route::post('/store_ajax', ['middleware' => ['permission:tambah-supplier'],'uses' => 'SupplierAddController@store_ajax'])->name('supplier.store_ajax');
-    /////
+    //////
 
     Route::get('/create', ['middleware' => ['permission:tambah-supplier'],'uses' => 'SupplierAddController@index'])->name('supplier.create');
     // Route::get('/{id}/{status}', ['middleware' => ['permission:ubah-supplier'],'uses' => 'SupplierEditController@index'])->name('supplier.edit');

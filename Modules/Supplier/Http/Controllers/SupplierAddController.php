@@ -324,7 +324,7 @@ class SupplierAddController extends Controller
       
       return Response::json (array(
         'status' => 'all'
-      ));     
+      ));
     }
   }
 

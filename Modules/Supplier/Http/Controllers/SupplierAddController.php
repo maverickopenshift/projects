@@ -166,6 +166,7 @@ class SupplierAddController extends Controller
       
       $kd_vendor = $this->generate_id();
       $user = new User();
+      /*
       $user->name = $request->nm_vendor;
       $user->username = $kd_vendor;
       $user->phone = $request->telepon;
@@ -179,7 +180,7 @@ class SupplierAddController extends Controller
       $user->password = bcrypt($request->password);
       $user->save();
       $user->attachRole('vendor');
-      /*
+
       $data = new Supplier();
       $data->bdn_usaha            = $request->bdn_usaha;
       $data->id_user              = $user->id;
@@ -228,7 +229,7 @@ class SupplierAddController extends Controller
       $data->created_by           = \Auth::user()->username;
       $data->kd_vendor            = $kd_vendor;
       $data->save();
-      
+
       foreach($request->klasifikasi_kode as $key=>$v){
         $mt_data = new SupplierMetadata();
         $mt_data->id_object    = $data->id;

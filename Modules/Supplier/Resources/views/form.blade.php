@@ -235,8 +235,6 @@ $(function () {
             data: new FormData(document.getElementById("form-kontrak")),
             dataType: 'json',
             success: function(response){
-              window.location.href = "{{route('supplier',['status'=>'all'])}}";
-              /*
               if(response.errors){
                 $.each(response.errors, function(index, value){
                     if (value.length !== 0){
@@ -258,7 +256,6 @@ $(function () {
                   window.location.href = "{{route('supplier',['status'=>'all'])}}";
                 }
               }
-              */
             }
           });
         }

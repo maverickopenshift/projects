@@ -143,7 +143,15 @@
         </label>
       </div> --}}
       <div class="form-group">
-        <button type="submit" class="btn btn-danger btn-block btn-flat">SUBMIT</button>
+        <div class="row">
+          <div class="col-md-6">
+            <a href="{{ route('logout') }}" class="btn btn-block btn-danger">
+                SIGN OUT
+            </a>
+          </div>
+          <div class="col-md-6">
+            <button type="submit" class="btn btn-success btn-block btn-flat">SUBMIT</button>
+          </div>
       </div>
         <!-- /.col -->
     </form>

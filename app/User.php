@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laratrust\Traits\LaratrustUserTrait;
+use Modules\Users\Entities\UsersPgs;
 
 class User extends Authenticatable
 {
@@ -145,11 +146,26 @@ class User extends Authenticatable
       $data->where('v_short_posisi','!=',"");
       $data->groupBy(['v_short_posisi']);
       if(empty($unit_kerja) || is_null($unit_kerja)){
-        $unit_bisnis = 'asdfsfaasdf';
+        $unit_kerja = 'asdfsfaasdf';
       }
       $data->where('unit_kerja',$unit_kerja);
       if(!empty($key)){
         $data->where('v_short_posisi', 'like', '%'.$key.'%');
+      }
+      return $data;
+    }
+    public static function get_all_real_loker($key=false,$unit_kerja='asfsfasfsf'){
+      $data = \DB::table('__mtz_pegawai')->selectRaw('objidunit as id,v_short_unit as title,count(objidunit) as total_loker');
+      $data->orderBy('v_short_unit','ASC');
+      $data->whereNotNull('v_short_unit');
+      $data->where('v_short_unit','!=',"");
+      $data->groupBy(['v_short_unit']);
+      if(empty($unit_kerja) || is_null($unit_kerja)){
+        $unit_bisnis = 'asdfsfaasdf';
+      }
+      $data->where('unit_kerja',$unit_kerja);
+      if(!empty($key)){
+        $data->where('v_short_unit', 'like', '%'.$key.'%');
       }
       return $data;
     }
@@ -250,6 +266,10 @@ class User extends Authenticatable
       }
       $data = \DB::table('v_users_pegawai');
       $data =  $data->where('v_users_pegawai.user_id',$id)->first();
+      
+      if(UsersPgs::is_pgs($id)){
+        $data = UsersPgs::user_pgs($data,$id);
+      }
       // dd($data);
       return $data;
     }

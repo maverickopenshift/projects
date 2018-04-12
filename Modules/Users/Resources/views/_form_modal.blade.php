@@ -133,6 +133,13 @@
                           </select>
                           <div class="error error-pgs_jabatan_or"></div>
                       </div>
+                      <div class="form-group formerror formerror-pgs_loker_or hide">
+                        <label>PGS Loker</label>
+                          <select class="form-control" style="width: 100%;" name="pgs_loker_or" id="pgs_loker_or">
+                              <option value="">Pilih Loker</option>
+                          </select>
+                          <div class="error error-pgs_loker_or"></div>
+                      </div>
                       <div class="form-group formerror formerror-pgs_roles_or">
                         <label>PGS Roles</label>
                           <select class="form-control" style="width: 100%;" name="pgs_roles_or" id="pgs_roles_or">
@@ -239,6 +246,7 @@
             selectMe__('#pgs_unit_bisnis_or','unit_bisnis','#pgs_divisi_or')
             selectMe__('#pgs_unit_kerja_or','unit_kerja','#pgs_unit_bisnis_or')
             selectMe__('#pgs_jabatan_or','posisi','#pgs_unit_kerja_or')
+            selectMe__('#pgs_loker_or','loker',['#pgs_divisi_or','#pgs_unit_bisnis_or','#pgs_unit_kerja_or','#pgs_jabatan_or'])
             selectUser("#user_search")
             if(title=='Edit'){
                 var data = button.data('data');
@@ -269,6 +277,7 @@
                 reset_select2('pgs_jabatan_or')
                 reset_select2('pgs_unit_bisnis_or')
                 reset_select2('pgs_unit_kerja_or')
+                reset_select2('pgs_loker_or')
                 if(data_other.is_pgs){
                   var data_pgs = data_other.pgs;
                   var data_pgs2 = data_other.pgs_2;
@@ -279,6 +288,7 @@
                   set_select2(modal.find('.modal-body select#pgs_jabatan_or'),{id:data_pgs.objidposisi,text:data_pgs.v_short_posisi});
                   set_select2(modal.find('.modal-body select#pgs_unit_bisnis_or'),{id:data_pgs.unit_bisnis,text:data_pgs.unit_bisnis});
                   set_select2(modal.find('.modal-body select#pgs_unit_kerja_or'),{id:data_pgs.unit_kerja,text:data_pgs.unit_kerja});
+                  set_select2(modal.find('.modal-body select#pgs_loker_or'),{id:data_pgs.objidunit,text:data_pgs.v_short_unit});
                   modal.find('.modal-body select#pgs_roles_or').val(data_pgs.role_id)
                   
                   
@@ -332,6 +342,7 @@
                 reset_select2('pgs_jabatan_or')
                 reset_select2('pgs_unit_bisnis_or')
                 reset_select2('pgs_unit_kerja_or')
+                reset_select2('pgs_loker_or')
                 reset_select2('user_search')
                 modal.find('.modal-body select#pgs_roles_or').val('')
                 modal.find('form').attr('action','{!! route('users.add') !!}')

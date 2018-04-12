@@ -16,6 +16,16 @@
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
                 <!-- User Account Menu -->
+                @if(Modules\Users\Entities\UsersPgs::is_pgs())
+                  <li class="user user-menu">
+                      <!-- Menu Toggle Button -->
+                      <a href="{{ route('pgs') }}" class="btn btn-block btn-danger">
+                          <i class="fa fa-users"></i>
+                          PGS
+                      </a>
+                  </li>
+                @endif
+                <!-- User Account Menu -->
                 <li class="dropdown user user-menu">
                     <!-- Menu Toggle Button -->
                     <a href="{{ route('home.profile') }}" class="btn btn-block btn-danger">

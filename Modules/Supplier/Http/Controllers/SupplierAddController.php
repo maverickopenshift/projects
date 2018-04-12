@@ -31,6 +31,7 @@ class SupplierAddController extends Controller
   {
     $asset = $request->asset;
     $request->merge(['asset' => Helpers::input_rupiah($request->asset)]);
+    $rules=[];
     /*
     $rules = array (
         'komentar'          => 'required|max:250|min:2',

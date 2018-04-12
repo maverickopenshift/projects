@@ -228,7 +228,7 @@ class SupplierAddController extends Controller
       $data->created_by           = \Auth::user()->username;
       $data->kd_vendor            = $kd_vendor;
       $data->save();
-
+      /*
       foreach($request->klasifikasi_kode as $key=>$v){
         $mt_data = new SupplierMetadata();
         $mt_data->id_object    = $data->id;

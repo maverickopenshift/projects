@@ -166,7 +166,8 @@ class SupplierAddController extends Controller
       
       $kd_vendor = $this->generate_id();
       $user = new User();
-      /*
+      dd();
+      
       $user->name = $request->nm_vendor;
       $user->username = $kd_vendor;
       $user->phone = $request->telepon;
@@ -180,7 +181,7 @@ class SupplierAddController extends Controller
       $user->password = bcrypt($request->password);
       $user->save();
       $user->attachRole('vendor');
-
+      
       $data = new Supplier();
       $data->bdn_usaha            = $request->bdn_usaha;
       $data->id_user              = $user->id;
@@ -325,7 +326,7 @@ class SupplierAddController extends Controller
       $log_activity->save();
       
       $request->session()->flash('alert-success', 'Data berhasil disimpan');
-      */
+      
       return Response::json (array(
         'status' => 'all'
       ));

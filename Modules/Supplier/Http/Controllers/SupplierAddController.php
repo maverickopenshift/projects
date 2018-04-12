@@ -8,6 +8,7 @@ use Illuminate\Routing\Controller;
 use App\Helpers\Helpers;
 use App\Helpers\CustomErrors;
 use App\User;
+use App\Role;
 use Modules\Supplier\Entities\Supplier;
 use Modules\Supplier\Entities\SupplierMetadata;
 use Modules\Supplier\Entities\SupplierActivity;
@@ -166,8 +167,7 @@ class SupplierAddController extends Controller
       
       $kd_vendor = $this->generate_id();
       $user = new User();
-      
-      
+            
       $user->name = $request->nm_vendor;
       $user->username = $kd_vendor;
       $user->phone = $request->telepon;

@@ -56,7 +56,7 @@ class CatalogController extends Controller
             $data=DB::table('catalog_product_master as a')
                     ->join('catalog_category as b','b.id','=','a.catalog_category_id')
                     ->selectRaw("a.*,b.display_name as category_name")
-                    ->where('a.user_id',Auth::id())
+                    //->where('a.user_id',Auth::id())
                     ->get();
                     
         }else{
@@ -64,7 +64,7 @@ class CatalogController extends Controller
                     ->join('catalog_category as b','b.id','=','a.catalog_category_id')
                     ->selectRaw("a.*,b.display_name as category_name")
                     ->whereIn('b.id', $this->get_category($request->parent_id,0))
-                    ->where('a.user_id',Auth::id())
+                    //->where('a.user_id',Auth::id())
                     ->get();
         }
 
@@ -88,7 +88,9 @@ class CatalogController extends Controller
                 ->addColumn('action', function ($data) {
                     $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
                     $act= '<div class="btn-group">';
+                        if(!\Auth::user()->hasRole('katalog-user')){
                         $act .='<a href="'. route('catalog.product.logistic') .'?id_product='.$data->id.'" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-plus"></i> Price</a>';
+                        }
                         $act .='<a data-id="'. $data->id .'" class="btn btn-primary btn-xs detail_price"><i class="glyphicon glyphicon-edit"></i> Detail</a>';
                     $act .='</div>';
                     return $act;
@@ -117,8 +119,9 @@ class CatalogController extends Controller
         */
         $data=DB::table('catalog_product_logistic as a')
                 ->join('catalog_product_master as b','b.id','=','a.product_master_id')
-                ->selectRaw("a.*, b.kode_product as kode_product, b.user_id")
-                ->where('a.product_master_id',$request->id);
+                ->selectRaw("a.*, b.kode_product as kode_product")
+                ->where('a.product_master_id',$request->id)
+                ->orderby('a.user_id');
                 //->get();
         //}
 

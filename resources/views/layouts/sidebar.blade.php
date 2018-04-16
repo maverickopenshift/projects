@@ -131,31 +131,25 @@
             </li>
             @endrole
 
-            {{--
-            @permission('lihat-catalog')
+            @role('katalog-master|katalog-user-manager|katalog-user')
             <li class="treeview {{Request::is('catalog/*') ?'active':''}}">
               <a href="#"><img src="{{asset('/images/menu_katalog.png')}}" title="Catalog" />
                 <span>Manajemen Katalog</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
-                @permission('catalog-category')
-                  <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Taxonomy</a></li>
-                @endpermission
-                <li class="{{Request::is('catalog/catalog_list/product_master') ?'active':''}}"><a href="{{route('catalog.list.product_master')}}">List Master Item</a></li>
-                <li class="{{Request::is('catalog/catalog_list/product_logistic') ?'active':''}}"><a href="{{route('catalog.list.product_logistic')}}">List Item Price</a></li>
-              </ul>
-            </li>
-            @endpermission
-            --}}
+                @role('katalog-master')
+                <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Taxonomy</a></li>
+                @endrole
 
-            <li class="treeview {{Request::is('catalog/*') ?'active':''}}">
-              <a href="#"><img src="{{asset('/images/menu_katalog.png')}}" title="Catalog" />
-                <span>Manajemen Katalog</span> <i class="fa fa-angle-left pull-right"></i></a>
-              <ul class="treeview-menu">
-                  <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Taxonomy</a></li>
+                @role('katalog-master')
                 <li class="{{Request::is('catalog/catalog_list/product_master') ?'active':''}}"><a href="{{route('catalog.list.product_master')}}">List Master Item</a></li>
+                @endrole
+
+                @role('katalog-user|katalog-user-manager')
                 <li class="{{Request::is('catalog/catalog_list/product_logistic') ?'active':''}}"><a href="{{route('catalog.list.product_logistic')}}">List Item Price</a></li>
+                @endrole
               </ul>
             </li>
+            @endrole
 
             @permission('lihat-config')
             <li class="treeview {{Request::is('config') ?'active':''}}">

@@ -97,6 +97,7 @@ class ProductLogisticController extends Controller
                     if(!empty($val)){
                         $proses = new CatalogProductLogistic();
                         $pegawai = User::get_user_pegawai();
+                        $proses->user_id = Auth::id();
                         $proses->product_master_id      = $request->f_idproduct;
                         $proses->lokasi_logistic        = $request['f_lokasi'][$key];
                         $proses->harga_barang_logistic  = Helpers::input_rupiah($request['f_hargabarang'][$key]);

@@ -18,15 +18,11 @@
         <div class="direct-chat-messages" style="Display:none">
         </div><!--/.direct-chat-messages-->
       </div><!-- /.box-body -->
-      <div class="box-footer relative komentar {{ $errors->has('komentar') ? ' has-error' : '' }}">
+      <div class="box-footer relative komentar  formerror formerror-komentar">
           <div class="loading-ao"></div>
           <div id="alertBS"></div>
           <textarea class="form-control comment" rows="4" placeholder="Masukan Komentar" name="komentar">{{ old('komentar') }}</textarea>
-          @if ($errors->has('komentar'))
-              <span class="help-block">
-                  <strong>{{ $errors->first('komentar') }}</strong>
-              </span>
-          @endif
+          <div class="error error-komentar"></div>
       </div><!-- /.box-footer-->
     </div><!--/.direct-chat -->
   </div>

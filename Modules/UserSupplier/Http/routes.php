@@ -9,11 +9,7 @@ Route::group(['middleware' => 'web', 'prefix' => 'usersupplier', 'namespace' => 
   ->name('usersupplier.notifemail');
   Route::get('/forget-password', 'RegisterController@forgetpwd')->name('usersupplier.forgetpwd');
   Route::post('/check-email', 'RegisterController@checking')  ->name('usersupplier.forgetpwd.check');
-
-
-
-
-
+  
   Route::get('/profileVendor', ['middleware' => ['role:vendor'],'uses' => 'ProfileController@index'])
   ->name('profile');
   Route::post('/update', ['middleware' => ['role:vendor'],'uses' => 'ProfileController@update'])
@@ -26,11 +22,19 @@ Route::group(['middleware' => 'web', 'prefix' => 'usersupplier', 'namespace' => 
   ->name('supplier.isi');
   Route::get('/kelengkapanData', ['middleware' => ['role:vendor'],'uses' => 'DataSupplierController@tambah'])
   ->name('supplier.tambah');
+  /*
   Route::post('/tambah', ['middleware' => ['role:vendor'],'uses' => 'DataSupplierController@add'])
   ->name('supplier.insert');
-
   Route::post('/updatedata', ['middleware' => ['role:vendor'],'uses' => 'DataSupplierController@update'])
   ->name('usersupplier.update');
+  */
+  Route::post('/tambah', ['middleware' => ['role:vendor'],'uses' => 'DataSupplierController@add_ajax'])
+  ->name('supplier.insert_ajax');
+  Route::post('/updatedata', ['middleware' => ['role:vendor'],'uses' => 'DataSupplierController@update_ajax'])
+  ->name('usersupplier.update_ajax');
+  ////////////////
+
+  
 
   Route::get('/comments', ['middleware' => ['role:vendor'],'uses' => 'UserSupplierCommentController@comments'])->name('usr.comments');
 

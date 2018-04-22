@@ -1,16 +1,16 @@
-<div class="form-group {{ $errors->has('klasifikasi_err') ? ' has-error' : '' }}">
+<div class="form-group formerror formerror-klasifikasi_err">
   <label class="col-sm-2 control-label"><span class="text-red">*</span> Klasifikasi Usaha</label>
   <div class="col-sm-10">
     <select class="form-control select-klasifikasi-usaha" style="width: 100%;" name="klasifikasi_usaha" id="klasifikasi_usaha" data-action="klasifikasi_usaha">
         <option value="">Pilih Klasifikasi Usaha</option>
     </select>
     <div class="col-sm-10">
-      {!!Helper::error_help($errors,'klasifikasi_err')!!}
+      <div class="error error-klasifikasi_err"></div>
     </div>
   </div>
 </div>
 @php
-    $klasifikasi_kode        = Helper::old_prop_each($data,'klasifikasi_kode');
+    $klasifikasi_kode    = Helper::old_prop_each($data,'klasifikasi_kode');
     $klasifikasi_text    = Helper::old_prop_each($data,'klasifikasi_text');
 @endphp
 <div class="table-klasifikasi_usaha table-responsive">
@@ -53,21 +53,14 @@ $('.select-klasifikasi-usaha').select2({
         delay: 350,
         data: function (params) {
             var datas =  {
-                q: params.term, // search term
+                q: params.term,
                 page: params.page
             };
             return datas;
 
         },
-        //id: function(data){ return data.store_id; },
         processResults: function (data, params) {
-            // parse the results into the format expected by Select2
-            // since we are using custom formatting functions we do not need to
-            // alter the remote JSON data, except to indicate that infinite
-            // scrolling can be used
-
             var results = [];
-
             $.each(data.data, function (i, v) {
                 var o = {};
                 o.id = v.id;
@@ -98,8 +91,9 @@ function aoTempResult(state) {
     );
     return $state;
 }
+
 function aoTempSelect(data){
-    if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
+    if (data.id === undefined || data.id === "") {
         return;
     }
     if(data.kode === undefined || data.text === undefined){
@@ -119,10 +113,8 @@ function templateAtasan(){
 }
 $(document).on('select2:select', '#klasifikasi_usaha', function(event) {
   event.preventDefault();
-  /* Act on the event */
+  
   var data = event.params.data;
-  // console.log(data);
-  // exit();
   $(this).val('');
   $('#select2-klasifikasi_usaha-container').html('');
   console.log(data);
@@ -145,7 +137,6 @@ $(document).on('click', '.delete-atasan', function(event) {
   var $this = tbl_t.clone();
   var row = $this.find('table>tbody>tr');
   if(row.length==0){
-    //mdf.html('');
     tbl_t.hide();
   }
 });

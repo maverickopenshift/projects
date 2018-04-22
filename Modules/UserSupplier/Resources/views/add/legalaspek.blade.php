@@ -9,22 +9,18 @@
       <div class="row">
         <div class="col-sm-5">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('akte_awal_no') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-akte_awal_no">
               <label for="akte_awal_no" class="col-sm-5 control-label"><span class="text-red">*</span> No Akte Pendirian</label>
               <div class="col-sm-7">
                 <input type="text" class="form-control" name="akte_awal_no" value="{{ old('akte_awal_no',Helper::prop_exists($data,'akte_awal_no')) }}" autocomplete="off">
-                @if ($errors->has('akte_awal_no'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('akte_awal_no') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-akte_awal_no"></div>
               </div>
             </div>
           </div>
         </div>
         <div class="col-sm-3">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('akte_awal_tg') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-akte_awal_tg">
               <label for="akte_awal_tg" class="col-sm-4 control-label"><span class="text-red">*</span> Tgl Terbit</label>
               <div class="col-sm-8">
                 <div class="input-group date" data-provide="datepicker">
@@ -33,26 +29,18 @@
                     </div>
                     <input type="text" class="form-control" name="akte_awal_tg" value="{{ old('akte_awal_tg',Helper::prop_exists($data,'akte_awal_tg')) }}" autocomplete="off">
                 </div>
-                @if ($errors->has('akte_awal_tg'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('akte_awal_tg') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-akte_awal_tg"></div>
               </div>
             </div>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('akte_awal_notaris') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-akte_awal_notaris">
               <label for="akte_awal_notaris" class="col-sm-4 control-label"><span class="text-red">*</span> Notaris</label>
               <div class="col-sm-8">
                 <input type="text" class="form-control" name="akte_awal_notaris" value="{{ old('akte_awal_notaris',Helper::prop_exists($data,'akte_awal_notaris')) }}" autocomplete="off">
-                @if ($errors->has('akte_awal_notaris'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('akte_awal_notaris') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-akte_awal_notaris"></div>
               </div>
             </div>
           </div>
@@ -62,22 +50,18 @@
       <div class="row">
         <div class="col-sm-5">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('akte_akhir_no') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-akte_akhir_no">
               <label for="akte_akhir_no" class="col-sm-5 control-label">No Akte Perubahan</label>
               <div class="col-sm-7">
                 <input type="text" class="form-control" name="akte_akhir_no" value="{{ old('akte_akhir_no',Helper::prop_exists($data,'akte_akhir_no')) }}" autocomplete="off">
-                @if ($errors->has('akte_akhir_no'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('akte_akhir_no') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-akte_akhir_no"></div>
               </div>
             </div>
           </div>
         </div>
         <div class="col-sm-3">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('akte_akhir_tg') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-akte_akhir_tg">
               <label for="akte_akhir_tg" class="col-sm-4 control-label">Tgl Terbit</label>
               <div class="col-sm-8">
                 <div class="input-group date" data-provide="datepicker">
@@ -86,26 +70,18 @@
                     </div>
                     <input type="text" class="form-control" name="akte_akhir_tg" value="{{ old('akte_akhir_tg',Helper::prop_exists($data,'akte_akhir_tg')) }}" autocomplete="off">
                 </div>
-                @if ($errors->has('akte_akhir_tg'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('akte_akhir_tg') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-akte_akhir_tg"></div>
               </div>
             </div>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('akte_akhir_notaris') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-akte_akhir_notaris">
               <label for="akte_akhir_notaris" class="col-sm-4 control-label">Notaris</label>
               <div class="col-sm-8">
                 <input type="text" class="form-control" name="akte_akhir_notaris" value="{{ old('akte_akhir_notaris',Helper::prop_exists($data,'akte_akhir_notaris')) }}" autocomplete="off">
-                @if ($errors->has('akte_akhir_notaris'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('akte_akhir_notaris') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-akte_akhir_notaris"></div>
               </div>
             </div>
           </div>
@@ -115,22 +91,18 @@
       <div class="row">
         <div class="col-sm-5">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('siup_no') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-siup_no">
               <label for="siup_no" class="col-sm-5 control-label"><span class="text-red">*</span> No SIUP</label>
               <div class="col-sm-7">
                 <input type="text" class="form-control" name="siup_no" value="{{ old('siup_tg_terbit',Helper::prop_exists($data,'siup_no')) }}" autocomplete="off">
-                @if ($errors->has('siup_no'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('siup_no') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-siup_no"></div>
               </div>
             </div>
           </div>
         </div>
         <div class="col-sm-3">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('siup_tg_terbit') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-siup_tg_terbit">
               <label for="siup_tg_terbit" class="col-sm-4 control-label"><span class="text-red">*</span> Tgl Terbit</label>
               <div class="col-sm-8">
                 <div class="input-group date" data-provide="datepicker">
@@ -139,18 +111,14 @@
                     </div>
                     <input type="text" class="form-control" name="siup_tg_terbit" value="{{ old('siup_tg_expired',Helper::prop_exists($data,'siup_tg_terbit')) }}" autocomplete="off">
                 </div>
-                @if ($errors->has('siup_tg_terbit'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('siup_tg_terbit') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-siup_tg_terbit"></div>
               </div>
             </div>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('siup_tg_expired') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-siup_tg_expired">
               <label for="siup_tg_expired" class="col-sm-4 control-label"><span class="text-red">*</span> Tgl Expired</label>
               <div class="col-sm-8">
                 <div class="input-group date" data-provide="datepicker">
@@ -159,11 +127,7 @@
                     </div>
                     <input type="text" class="form-control" name="siup_tg_expired" value="{{ old('siup_tg_expired',Helper::prop_exists($data,'siup_tg_expired')) }}" autocomplete="off">
                 </div>
-                @if ($errors->has('siup_tg_expired'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('siup_tg_expired') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-siup_tg_expired"></div>
               </div>
             </div>
           </div>
@@ -173,7 +137,7 @@
       <div class="row">
         <div class="col-sm-12">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('siup_kualifikasi') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-siup_kualifikasi">
               <label for="siup_kualifikasi" class="col-sm-2 control-label"><span class="text-red">*</span> Kualifikasi SIUP</label>
               <div class="col-sm-10">
                 <label class="radio-inline" style="padding-left:7px">
@@ -185,11 +149,7 @@
                 <label class="radio-inline">
                   <input class="check-me" type="radio" value="3" name="siup_kualifikasi" {{old('siup_kualifikasi',Helper::prop_exists($data,'siup_kualifikasi'))=='3'?'checked':''}}> Kecil
                 </label>
-                @if ($errors->has('siup_kualifikasi'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('siup_kualifikasi') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-siup_kualifikasi"></div>
               </div>
             </div>
           </div>
@@ -199,18 +159,14 @@
       <div class="row">
         <div class="col-sm-5">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('pkp') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-pkp">
               <label for="pkp" class="col-sm-5 control-label"><span class="text-red">*</span> Perusahaan Kena Pajak</label>
               <div class="col-sm-7">
                 <select class="form-control" name="pkp" id="pkp">
                   <option value="0" {{ old('pkp',Helper::prop_exists($data,'pkp'))=='0'?"selected='selected'":"" }}>Ya</option>
                   <option value="1" {{ old('pkp',Helper::prop_exists($data,'pkp'))=='1'?"selected='selected'":"" }}>Tidak</option>
                 </select>
-                @if ($errors->has('pkp'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('pkp') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-pkp"></div>
               </div>
             </div>
           </div>
@@ -224,22 +180,18 @@
       <div class="row" id="nonpwp">
         <div class="col-sm-5">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('npwp_no') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-npwp_no">
               <label for="npwp_no" class="col-sm-5 control-label"><span class="text-red">*</span> No NPWP</label>
               <div class="col-sm-7">
                 <input type="text" class="form-control" name="npwp_no" value="{{ old('npwp_no',Helper::prop_exists($data,'npwp_no')) }}" autocomplete="off">
-                @if ($errors->has('npwp_no'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('npwp_no') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-npwp_no"></div>
               </div>
             </div>
           </div>
         </div>
         <div class="col-sm-3">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('npwp_tg') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-npwp_tg">
               <label for="npwp_tg" class="col-sm-4 control-label"><span class="text-red">*</span> Tgl Terbit</label>
               <div class="col-sm-8">
                 <div class="input-group date" data-provide="datepicker">
@@ -248,11 +200,7 @@
                     </div>
                     <input type="text" class="form-control" name="npwp_tg" value="{{ old('npwp_tg',Helper::prop_exists($data,'npwp_tg')) }}" autocomplete="off">
                 </div>
-                @if ($errors->has('npwp_tg'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('npwp_tg') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-npwp_tg"></div>
               </div>
             </div>
           </div>
@@ -263,22 +211,18 @@
       <div class="row">
         <div class="col-sm-5">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('tdp_no') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-tdp_no">
               <label for="tdp_no" class="col-sm-5 control-label"><span class="text-red">*</span> No TDP (Pemda)</label>
               <div class="col-sm-7">
                 <input type="text" class="form-control" name="tdp_no" value="{{ old('tdp_no',Helper::prop_exists($data,'tdp_no')) }}" autocomplete="off">
-                @if ($errors->has('tdp_no'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('tdp_no') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-tdp_no"></div>
               </div>
             </div>
           </div>
         </div>
         <div class="col-sm-3">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('tdp_tg_terbit') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-tdp_tg_terbit">
               <label for="tdp_tg_terbit" class="col-sm-4 control-label"><span class="text-red">*</span> Tgl Terbit</label>
               <div class="col-sm-8">
                 <div class="input-group date" data-provide="datepicker">
@@ -287,18 +231,14 @@
                     </div>
                     <input type="text" class="form-control" name="tdp_tg_terbit" value="{{ old('tdp_tg_terbit',Helper::prop_exists($data,'tdp_tg_terbit')) }}" autocomplete="off">
                 </div>
-                @if ($errors->has('tdp_tg_terbit'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('tdp_tg_terbit') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-tdp_tg_terbit"></div>
               </div>
             </div>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="form-horizontal">
-              <div class="form-group {{ $errors->has('tdp_tg_expired') ? ' has-error' : '' }}">
+              <div class="form-group formerror formerror-tdp_tg_expired">
                 <label for="tdp_tg_expired" class="col-sm-4 control-label"><span class="text-red">*</span> Tgl Expired</label>
                 <div class="col-sm-8">
                   <div class="input-group date" data-provide="datepicker">
@@ -307,11 +247,7 @@
                       </div>
                       <input type="text" class="form-control" name="tdp_tg_expired" value="{{ old('tdp_tg_expired',Helper::prop_exists($data,'tdp_tg_expired')) }}" autocomplete="off">
                   </div>
-                  @if ($errors->has('tdp_tg_expired'))
-                      <span class="help-block">
-                          <strong>{{ $errors->first('tdp_tg_expired') }}</strong>
-                      </span>
-                  @endif
+                  <div class="error error-tdp_tg_expired"></div>
                 </div>
               </div>
           </div>
@@ -321,22 +257,18 @@
       <div class="row">
         <div class="col-sm-5">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('idp_no') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-idp_no">
               <label for="idp_no" class="col-sm-5 control-label"><span class="text-red">*</span> No IDP/SITU (Pemda)</label>
               <div class="col-sm-7">
                 <input type="text" class="form-control" name="idp_no" value="{{ old('idp_no',Helper::prop_exists($data,'idp_no')) }}" autocomplete="off">
-                @if ($errors->has('idp_no'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('idp_no') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-idp_no"></div>
               </div>
             </div>
           </div>
         </div>
         <div class="col-sm-3">
           <div class="form-horizontal">
-            <div class="form-group {{ $errors->has('idp_tg_terbit') ? ' has-error' : '' }}">
+            <div class="form-group formerror formerror-idp_tg_terbit">
               <label for="idp_tg_terbit" class="col-sm-4 control-label"><span class="text-red">*</span> Tgl Terbit</label>
               <div class="col-sm-8">
                 <div class="input-group date" data-provide="datepicker">
@@ -345,18 +277,14 @@
                     </div>
                     <input type="text" class="form-control" name="idp_tg_terbit" value="{{ old('idp_tg_terbit',Helper::prop_exists($data,'idp_tg_terbit')) }}" autocomplete="off">
                 </div>
-                @if ($errors->has('idp_tg_terbit'))
-                    <span class="help-block">
-                        <strong>{{ $errors->first('idp_tg_terbit') }}</strong>
-                    </span>
-                @endif
+                <div class="error error-idp_tg_terbit"></div>
               </div>
             </div>
           </div>
         </div>
         <div class="col-sm-4">
           <div class="form-horizontal">
-              <div class="form-group {{ $errors->has('idp_tg_expired') ? ' has-error' : '' }}">
+              <div class="form-group formerror formerror-idp_tg_expired">
                 <label for="idp_tg_expired" class="col-sm-4 control-label"><span class="text-red">*</span> Tgl Expired</label>
                 <div class="col-sm-8">
                   <div class="input-group date" data-provide="datepicker">
@@ -365,11 +293,7 @@
                       </div>
                       <input type="text" class="form-control" name="idp_tg_expired" value="{{ old('idp_tg_expired',Helper::prop_exists($data,'idp_tg_expired')) }}" autocomplete="off">
                   </div>
-                  @if ($errors->has('idp_tg_expired'))
-                      <span class="help-block">
-                          <strong>{{ $errors->first('idp_tg_expired') }}</strong>
-                      </span>
-                  @endif
+                  <div class="error error-idp_tg_expired"></div>
                 </div>
               </div>
           </div>
@@ -407,12 +331,14 @@ $(function(){
     radioClass: 'iradio_square-blue',
     increaseArea: '20%' // optional
   });
+  /*
   add_field_x('legal-dokumen');
   delete_field_x('legal-dokumen');
   add_field_x('sertifikat-dokumen');
   delete_field_x('sertifikat-dokumen');
+  */
 });
-
+/*
 function delete_field_x(attr) {
   $(document).on('click', '.delete-'+attr, function(event) {
     var $parent = $(this).parent().parent();
@@ -457,22 +383,23 @@ function add_field_x(attr) {
     }
   });
 }
+*/
 
 var isi=$("#pkp").val();
-    if(isi == "0"){
-      $("#nonpwp").show();
-    }else{
-      $("#nonpwp").hide();
-    }
+if(isi == "0"){
+  $("#nonpwp").show();
+}else{
+  $("#nonpwp").hide();
+}
 
 $("#pkp").change(function () {
-       var pkp = this.value;
-       if(pkp == "0"){
-         $("#nonpwp").show();
-       }else{
-         $("#nonpwp").hide();
-       }
-   });
+  var pkp = this.value;
+  if(pkp == "0"){
+    $("#nonpwp").show();
+  }else{
+    $("#nonpwp").hide();
+  }
+});
 
 
 </script>

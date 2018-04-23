@@ -68,6 +68,7 @@ class DocumentsListController extends Controller
         // }
         if(!in_array($user->role_name,['admin','monitor'])){
           $divisi = $user->divisi;
+          $unit = $user->unit_bisnis;
         }
         if(!empty($divisi)){
           $documents->where('documents.divisi','=',$divisi);

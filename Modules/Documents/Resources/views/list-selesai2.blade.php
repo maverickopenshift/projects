@@ -26,20 +26,20 @@
           </div>    
           @if($user->pegawai_type!='subsidiary')
           <div class="form-group top10">
-            {!!Helper::select_all_divisi('divisi',Laratrust::hasRole('monitor')?null:$user->divisi)!!}
+            {!!Helper::select_all_divisi('divisi',Laratrust::hasRole('monitor')?$form['divisi']:$user->divisi)!!}
           </div>
           <div class="form-group top10">
-            @if(!empty($form['unit_bisnis']))
-              {!!Helper::select_unit_bisnis('unit_bisnis',$form['unit_bisnis'],$user->divisi)!!}
-            @else
+            {{-- @if(!empty($form['unit_bisnis'])) --}}
+              {!!Helper::select_unit_bisnis('unit_bisnis',Laratrust::hasRole('monitor')?$form['unit_bisnis']:$user->unit_bisnis,Laratrust::hasRole('monitor')?$form['divisi']:$user->divisi)!!}
+            {{-- @else
               <select class="form-control" name="unit_bisnis" id="unit_bisnis">
                 <option value="">Pilih Unit Bisnis</option>
               </select>
-            @endif
+            @endif --}}
           </div>
           <div class="form-group top10">
           @if(!empty($form['unit_kerja']))
-            {!!Helper::select_unit_kerja('unit_kerja',$form['unit_kerja'],$form['unit_bisnis'])!!}
+            {!!Helper::select_unit_kerja('unit_kerja',$form['unit_kerja'],Laratrust::hasRole('monitor')?$form['unit_bisnis']:$user->unit_bisnis)!!}
           @else
             <select class="form-control" name="unit_kerja" id="unit_kerja">
               <option value="">Pilih Unit Kerja</option>
@@ -602,6 +602,7 @@ $(document).on('click', '.btn-reject', function(event) {
 var user_role = '{{$user->role_name}}';
 if(user_role!='monitor'){
   $('#divisi').prop('disabled', 'disabled');
+  $('#unit_bisnis').prop('disabled', 'disabled');
 }
 $(document).on('change', '#divisi', function(event) {
   event.preventDefault();
@@ -663,15 +664,18 @@ $(document).on('change', '#unit_bisnis', function(event) {
 $(function(e){
     var unit_bisnis = '{{$form['unit_bisnis']}}';
     var unit_kerja = '{{$form['unit_kerja']}}';
-    if(unit_bisnis!="" && $('#unit_bisnis').val()!="" && unit_kerja==""){
+    // if(user_role=='monitor'){
+    //   if($('#divisi').val()!=="" && unit_bisnis==""){
+    //     $('#unit_bisnis').find('option').not('option[value=""]').remove();
+    //     if(user_role!='monitor'){
+    //       $('#divisi').change();
+    //     }
+    //   }
+    // }
+    if( $('#unit_bisnis').val()!="" && unit_kerja==""){
       $('#unit_bisnis').change();
     }
-    if($('#divisi').val()!=="" && unit_bisnis==""){
-      $('#unit_bisnis').find('option').not('option[value=""]').remove();
-      if(user_role!='monitor'){
-        $('#divisi').change();
-      }
-    }
+
 });
 </script>
 @endpush

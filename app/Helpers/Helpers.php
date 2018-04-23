@@ -178,7 +178,8 @@ public static function get_approver_by_id($id)
     $cat->where('company_id',$subs->company_id);
   }
   else{
-    $cat->where('objiddivisi',\App\User::get_divisi_by_user_id($id));
+    $user = \App\User::get_user_pegawai($id);
+    $cat->where('unit_bisnis',$user->unit_bisnis);
   }
   $cat = $cat->where('role_name','approver')->get();
   $data = '';
@@ -202,7 +203,8 @@ public static function get_approver($pegawai=null)
     $cat->where('company_id',$subs->company_id);
   }
   else{
-    $cat->where('objiddivisi',\App\User::get_divisi_by_user_id());
+    $user = \App\User::get_user_pegawai();
+    $cat->where('unit_bisnis',$user->unit_bisnis);
   }
   $cat = $cat->where('role_name','approver')->get();
   $data = '';

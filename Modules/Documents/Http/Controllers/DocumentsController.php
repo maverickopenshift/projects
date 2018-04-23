@@ -161,6 +161,7 @@ class DocumentsController extends Controller
             }
             if(!in_array($user->role_name,['admin','monitor'])){
               $divisi = $user->divisi;
+              $unit = $user->unit_bisnis;
             }
             if(!empty($divisi)){
                 $documents->where(function($q) use ($divisi) {
@@ -276,6 +277,7 @@ class DocumentsController extends Controller
       $data['doc_status'] = $status;
       $data['user'] = $user;
       $data['form'] = [
+        'divisi' => $divisi,
         'unit_bisnis' => $unit,
         'unit_kerja' => $unit_kerja,
         'open' => $open,

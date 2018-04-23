@@ -147,7 +147,7 @@ $(function () {
               });
             }else{
               if(response.status=="all"){
-                //window.location.href = "{{route('supplier.list')}}";
+                window.location.href = "{{route('supplier.list')}}";
               }
             }
           }

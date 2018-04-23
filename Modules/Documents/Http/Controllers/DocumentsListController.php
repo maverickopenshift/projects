@@ -138,7 +138,7 @@ class DocumentsListController extends Controller
           }
 
           if($value['doc_signing'] == '0'){
-            $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason'])." <small> : ".$v_nama_karyawan." (".$n_nik.")</small>";
+            $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason'])."<br/><small> ".Helpers::get_approver_by_id($value['users_id'])."</small>";
           }else{
             $value['status'] = Helpers::label_status($value['doc_signing'],$value['doc_status'],$value['doc_signing_reason'])." <small> To ".$name." (".$username.")</small>";
           }

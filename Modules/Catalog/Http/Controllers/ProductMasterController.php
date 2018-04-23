@@ -43,9 +43,9 @@ class ProductMasterController extends Controller
         $rules = array();
 
         foreach($request->f_kodeproduct as $key => $val){
-            $rules['f_kodeproduct.'.$key]   ='required|max:20|min:1|regex:/^[a-z0-9 .\-]+$/i';
-            $rules['f_ketproduct.'.$key]   ='required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i';
-            $rules['f_unitproduct.'.$key]   ='required|max:50|min:1|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_kodeproduct.'.$key]   = 'required|max:20|min:1|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_ketproduct.'.$key]    = 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_unitproduct.'.$key]   = 'required|max:50|min:1|regex:/^[a-z0-9 .\-]+$/i';
         }
 
         $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());

@@ -130,7 +130,7 @@
 
             </li>
             @endrole
-
+            {{--
             @role('katalog-master|katalog-user-manager|katalog-user')
             <li class="treeview {{Request::is('catalog/*') ?'active':''}}">
               <a href="#"><img src="{{asset('/images/menu_katalog.png')}}" title="Catalog" />
@@ -150,6 +150,27 @@
               </ul>
             </li>
             @endrole
+            --}}
+
+            @permission('katalog-master-item-proses|katalog-kategori-proses|katalog-item-price-proses')
+            <li class="treeview {{Request::is('catalog/*') ?'active':''}}">
+              <a href="#"><img src="{{asset('/images/menu_katalog.png')}}" title="Catalog" />
+                <span>Manajemen Katalog</span> <i class="fa fa-angle-left pull-right"></i></a>
+              <ul class="treeview-menu">
+                @permission('katalog-kategori-proses')
+                <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Taxonomy</a></li>
+                @endpermission
+
+                @permission('katalog-master-item-proses')
+                <li class="{{Request::is('catalog/catalog_list/product_master') ?'active':''}}"><a href="{{route('catalog.list.product_master')}}">List Master Item</a></li>
+                @endpermission
+
+                @permission('katalog-item-price-proses')
+                <li class="{{Request::is('catalog/catalog_list/product_logistic') ?'active':''}}"><a href="{{route('catalog.list.product_logistic')}}">List Item Price</a></li>
+                @endpermission
+              </ul>
+            </li>
+            @endpermission
 
             @permission('lihat-config')
             <li class="treeview {{Request::is('config') ?'active':''}}">

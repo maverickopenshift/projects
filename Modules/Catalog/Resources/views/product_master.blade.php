@@ -316,7 +316,9 @@ if(isset($kategori->id)){
                     });
                   }else{
                     if(response.status=="all"){
-                      window.location.href = "{{route('catalog.product.master')}}?id_kategori=" + $(".f_parentid").val();
+                      //window.location.href = "{{route('catalog.product.master')}}?id_kategori=" + $(".f_parentid").val();
+                      //catalog.list.product_master
+                      window.location.href = "{{route('catalog.list.product_master')}}";
                     }
                   }
                 }

@@ -38,11 +38,12 @@ class ProductLogisticController extends Controller
         $data = Documents::selectRaw('id, doc_no as text')
                 ->where('doc_signing','1');
 
+        /*
         $data->where(function($q){
             $q->orWhere('doc_type', 'turnkey');
             $q->orWhere('doc_type', 'sp');
         });
-
+        */
         if(!empty($search)){
           $data->where(function($q) use ($search) {
               $q->orWhere('doc_no', 'like', '%'.$search.'%');
@@ -56,12 +57,12 @@ class ProductLogisticController extends Controller
     public function get_kontrak_normal(Request $request){        
         $data = Documents::selectRaw('id, doc_no as text')
                 ->where('doc_signing','1');
-
+        /*
         $data->where(function($q){
             $q->orWhere('doc_type', 'turnkey');
             $q->orWhere('doc_type', 'sp');
         });
-                
+        */      
         $data = $data->get();
 
         $hasil=array();

@@ -107,19 +107,6 @@ class ProductLogisticController extends Controller
                         $proses->harga_jasa_logistic    = Helpers::input_rupiah($request['f_hargajasa'][$key]);
                         $proses->jenis_referensi        = $request['f_jenis'][$key];
 
-                        /*
-                        if($request['f_jenis'][$key]==1){
-                            $doc_cari=Documents::select('doc_no')
-                                ->where('id',$request['f_referensi'][$key])
-                                ->first();
-
-                            $ref=$doc_cari->doc_no;
-                        }else{
-                            $ref=$request['f_referensi'][$key];
-                        }
-                        
-                        $proses->referensi_logistic     = $ref;
-                        */
                         $proses->referensi_logistic     = $request['f_referensi'][$key];
 
                         $proses->divisi                 = $pegawai->divisi;

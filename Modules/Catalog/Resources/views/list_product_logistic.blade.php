@@ -11,6 +11,11 @@
         height: auto;
         padding: 1px 2px;
     }
+
+    .modal-xl {
+        width: 90%;
+        max-width:1200px;
+    }
 </style>
 <div class="row">
     <div class="col-md-3">
@@ -67,6 +72,10 @@
                     <div class="form-inline bottom25" style="width: 100%;">
                         <form id="form_me_cari" method="post">
                             <div class="form-group top10">
+                                <input type="text" class="form-control" id="f_caritext" name="f_caritext"  placeholder="Pencarian ...">
+                            </div>
+
+                            <div class="form-group top10">
                                 {!!Helper::select_all_divisi('divisi')!!}
                             </div>
 
@@ -107,7 +116,7 @@
 </div>
 
 <div class="modal fade" role="dialog" id="form-modal-product">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-xl" role="document">
         <div class="modal-content">
             <form id="form-me-product" action="{{route('catalog.product_logistic.edit')}}" method="post">
                 {{ csrf_field() }}
@@ -151,6 +160,29 @@
                         </div>
                         <div class="error-f_referensi"></div>
                     </div>
+                    <div class="referensi_kontrak">
+                        <br><br>
+
+                        <div class="form-group input-group">
+                            <input class="form-control doc_text" type="text" placeholder="No.Kontrak / Judul Kontrak">
+                            <span class="input-group-btn">
+                                <a class="btn btn-primary cari-kontrak">Cari No Kontrak</a>
+                            </span>
+                        </div>
+
+                        <div class="form-group formerror-f_referensi">
+                            <table class="table table-striped" id="daftar_kontrak">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>No Kontrak</th>
+                                        <th>Judul Kontrak</th>
+                                        <th width="20%">Aksi</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -184,6 +216,7 @@
 <script>
 var table_product;
 var table_price;
+var table_kontrak;
 var table_kategori;
 var no_kategori=0;
 
@@ -247,22 +280,22 @@ function create_table_master(no_kategori){
     });
 }
 
-function create_table_price(no_product, divisi, unit_bisnis, unit_kerja){
+function create_table_price(no_product, divisi, unit_bisnis, unit_kerja, f_caritext){
     if ($('.btn-price-add').length){
         var coloumx=[
                 { data: 'DT_Row_Index',orderable:false,searchable:false},
-                { data: 'lokasi_logistic'},
-                { data: 'harga_barang_logistic'},
-                { data: 'harga_jasa_logistic'},
-                { data: 'referensi_logistic'},
+                { data: 'lokasi_logistic', name: 'a.lokasi_logistic'},
+                { data: 'harga_barang_logistic', name: 'a.harga_barang_logistic'},
+                { data: 'harga_jasa_logistic', name: 'a.harga_jasa_logistic'},
+                { data: 'referensi_fix', name: 'c.doc_no'},
                 { data: 'action', name: 'action',orderable:false,searchable:false }];
     }else{
         var coloumx=[
                 { data: 'DT_Row_Index',orderable:false,searchable:false},
-                { data: 'lokasi_logistic'},
-                { data: 'harga_barang_logistic'},
-                { data: 'harga_jasa_logistic'},
-                { data: 'referensi_logistic'}];
+                { data: 'lokasi_logistic', name: 'a.lokasi_logistic'},
+                { data: 'harga_barang_logistic', name: 'a.harga_barang_logistic'},
+                { data: 'harga_jasa_logistic', name: 'a.harga_jasa_logistic'},
+                { data: 'referensi_fix', name: 'doc_no'}];
     }
     table_price = $('#daftar_product_price').on('xhr.dt', function ( e, settings, json, xhr ) {
         if(xhr.responseText=='Unauthorized.'){
@@ -272,9 +305,10 @@ function create_table_price(no_product, divisi, unit_bisnis, unit_kerja){
         processing: true,
         serverSide: true,
         autoWidth : false,
+        searching : false,
         pageLength: 50,
         ajax: {
-            "url": "{!! route('catalog.list.product_logistic.datatables') !!}?id="+ no_product + "&divisi=" + divisi + "&unit_bisnis=" + unit_bisnis + "&unit_kerja=" + unit_kerja,
+            "url": "{!! route('catalog.list.product_logistic.datatables') !!}?id="+ no_product + "&divisi=" + divisi + "&unit_bisnis=" + unit_bisnis + "&unit_kerja=" + unit_kerja  + "&f_caritext=" + f_caritext,
             "type": "POST",
             'headers': {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -284,20 +318,51 @@ function create_table_price(no_product, divisi, unit_bisnis, unit_kerja){
     });
 }
 
+function create_table_kontrak(text_cari_kontrak){
+    table_kontrak = $('#daftar_kontrak').on('xhr.dt', function ( e, settings, json, xhr ) {
+        if(xhr.responseText=='Unauthorized.'){
+            location.reload();
+        }
+    }).DataTable({
+        processing: true,
+        serverSide: true,
+        autoWidth : false,
+        searching : false,
+        pageLength: 50,
+        ajax: {
+            "url": "{!! route('catalog.list.kontrak.datatables') !!}?cari=" + text_cari_kontrak,
+            "type": "POST",
+            'headers': {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        },
+        columns:[
+            { data: 'DT_Row_Index',orderable:false,searchable:false},
+            { data: 'doc_no'},
+            { data: 'doc_title'},
+            { data: 'action', name: 'action',orderable:false,searchable:false }],
+    });
+}
+
 function refresh_product_master(no_kategori){
     table_product.destroy();
     create_table_master(no_kategori)
 }
 
-function refresh_product_price(no_product, divisi, unit_bisnis, unit_kerja){
+function refresh_product_price(no_product, divisi, unit_bisnis, unit_kerja, f_caritext){
     table_price.destroy();
-    create_table_price(no_product, divisi, unit_bisnis, unit_kerja);
+    create_table_price(no_product, divisi, unit_bisnis, unit_kerja, f_caritext);
+}
+
+function refresh_table_kontrak(text_cari_kontrak){
+    table_kontrak.destroy();
+    create_table_kontrak(text_cari_kontrak)
 }
 
 function template_referensi_kontrak(){
     return '\
-        <select class="form-control select_kontrak" name="f_referensi" style="width: 100%;" required>\
-        </select>\
+            <input type="hidden" name="f_referensi" class="doc_no_input">\
+            <input class="form-control doc_text_input" type="text" placeholder="No.Kontrak" readonly>\
     ';
 }
 
@@ -305,25 +370,6 @@ function template_refrensi_freetext(){
     return '\
         <input type="text" class="form-control f_referensi" name="f_referensi" autocomplete="off" placeholder="Referensi..">\
     ';
-}
-
-function select_kontrak_referensi(parent){
-    $(".select_kontrak").empty().trigger('change');
-    {{--
-    $.ajax({
-        url: "{{route('catalog.product_logistic.get_kontrak_normal')}}",
-        dataType: 'json',
-        success: function(data)
-        {
-            $(".select_kontrak").select2({
-                data: data,
-                placeholder: "Silahkan Pilih.."
-            });
-
-            $(".select_kontrak").val(parent).trigger('change');
-        }
-    });
-    --}}
 }
 
 var modalDelete = $('#modal-delete');
@@ -362,14 +408,28 @@ formModal.on('show.bs.modal', function (event) {
         var new_referensi = $(template_referensi_kontrak()).clone(true);
         $(".isi-referensi").html('');
         $(".isi-referensi").append(new_referensi);
-        select_kontrak_referensi(data.jenis_referensi);
+
+        refresh_table_kontrak('');
+        $(".referensi_kontrak").show();
     }else{
         var new_referensi = $(template_refrensi_freetext()).clone(true);
         $(".isi-referensi").html('');
         $(".isi-referensi").append(new_referensi);
 
         $(".f_referensi").val(data.referensi_logistic);
+        $(".referensi_kontrak").hide();
     }
+});
+
+$(document).on('click', '.cari-kontrak', function(event) {
+    var text_cari_kontrak = $(".doc_text").val();
+    refresh_table_kontrak(text_cari_kontrak);
+});
+
+$(document).on('click', '.btn-pilih-kontrak', function(event) {
+    var data = $(this).data('data');
+    $(".doc_no_input").val(data.id);
+    $(".doc_text_input").val(data.doc_no);
 });
 
 $("#f_jenis").on('change', function(event) {        
@@ -378,11 +438,13 @@ $("#f_jenis").on('change', function(event) {
         $(".isi-referensi").html('');
         $(".isi-referensi").append(new_referensi);
         
-        select_kontrak_referensi();
+        refresh_table_kontrak('');
+        $(".referensi_kontrak").show();
     }else{
         var new_referensi = $(template_refrensi_freetext()).clone(true);
         $(".isi-referensi").html('');
         $(".isi-referensi").append(new_referensi);
+        $(".referensi_kontrak").hide();
     }
 });
 
@@ -458,8 +520,9 @@ $(document).on('submit','#form-me-product',function (event) {
                 var divisi = $("#divisi").val();
                 var unit_bisnis = $("#unit_bisnis").val();
                 var unit_kerja = $("#unit_kerja").val();
+                var f_caritext = $("#f_caritext").val();
 
-                refresh_product_price(no_product, divisi , unit_bisnis, unit_kerja);
+                refresh_product_price(no_product, divisi , unit_bisnis, unit_kerja, f_caritext);
 
                 btnSave.button('reset');
                 $('#form-modal-product').modal('hide');
@@ -488,10 +551,10 @@ $(document).on('click', '.btn-delete-modal', function(event) {
                 var divisi = $("#divisi").val();
                 var unit_bisnis = $("#unit_bisnis").val();
                 var unit_kerja = $("#unit_kerja").val();
+                var f_caritext = $("#f_caritext").val();
 
-                refresh_product_price(no_product, divisi , unit_bisnis, unit_kerja);
+                refresh_product_price(no_product, divisi , unit_bisnis, unit_kerja, f_caritext);
 
-                //refresh_product_price(0,'','','');
                 btnDelete.button('reset');
                 btnDelete.attr('data-is','');
                 modalDelete.modal('hide');
@@ -503,7 +566,7 @@ $(document).on('click', '.btn-delete-modal', function(event) {
 $(document).on('click', '.detail_price', function(event) {
     event.preventDefault();
     var id=$(this).attr('data-id');
-    refresh_product_price(id,'','','');
+    refresh_product_price(id,'','','','');
     $("#f_noproduct").val(id);
     $(".parent_product_price").show();
 });
@@ -532,7 +595,7 @@ $(document).on('change', '#divisi', function(event) {
             });
             $('#unit_bisnis').find('option[value=""]').text('Pilih Unit Bisnis');
         }else{
-            $('#unit_bisnis').find('option[value=""]').text('Tidak ada data');
+            $('#unit_bisnis').find('option[value=""]').text('Pilih Unit Bisnis');
         }
     });
 });
@@ -557,7 +620,7 @@ $(document).on('change', '#unit_bisnis', function(event) {
                 });
                 $('#unit_kerja').find('option[value=""]').text('Pilih Unit Kerja');
             }else{
-                $('#unit_kerja').find('option[value=""]').text('Tidak ada data');
+                $('#unit_kerja').find('option[value=""]').text('Pilih Unit Kerja');
             }
         });
 });
@@ -574,17 +637,20 @@ $(document).on('submit','#form_me_cari',function (event) {
     var divisi = $("#divisi").val();
     var unit_bisnis = $("#unit_bisnis").val();
     var unit_kerja = $("#unit_kerja").val();
+    var f_caritext = $("#f_caritext").val();
 
-    refresh_product_price(no_product, divisi , unit_bisnis, unit_kerja);
+    refresh_product_price(no_product, divisi , unit_bisnis, unit_kerja, f_caritext);
 });
 
 $(function() {
     create_table_master(0);
-    create_table_price(0,'','','');
+    create_table_price(0,'','','','');
     $(".parent_product_price").hide();
 
     $('#unit_bisnis').change();
     $('#divisi').change();
+
+    create_table_kontrak('');
 
     $(".flash-message").fadeTo(2000, 500).slideUp(500, function(){
         $(".flash-message").slideUp(500);

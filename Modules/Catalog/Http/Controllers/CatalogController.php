@@ -115,10 +115,21 @@ class CatalogController extends Controller
     public function index_product_logistic_datatables(Request $request){
         $pengguna=Auth::id();
         $data=DB::table('catalog_product_logistic as a')
-                ->join('catalog_product_master as b','b.id','=','a.product_master_id')
-                ->selectRaw("a.*, b.kode_product as kode_product")
+                ->leftjoin('documents as c','c.id','=','a.referensi_logistic')
+                ->selectRaw("a.*, c.doc_no")
                 ->where('a.product_master_id',$request->id)
                 ->orderbyRaw("(CASE WHEN a.user_id = $pengguna THEN 1 ELSE 2 END)");
+        
+        if($request->f_caritext!=""){
+            $data->where(function ($query) use ($request) {
+                $query->orwhere('c.doc_no', 'like' , '%'.$request->f_caritext.'%')
+                      ->orwhere('a.referensi_logistic', 'like' , '%'.$request->f_caritext.'%')
+                      ->orwhere('a.lokasi_logistic', 'like' , '%'.$request->f_caritext.'%')
+                      ->orwhere('a.harga_barang_logistic', 'like' , '%'.$request->f_caritext.'%')
+                      ->orwhere('a.harga_jasa_logistic', 'like' , '%'.$request->f_caritext.'%')
+                      ->orwhere('a.referensi_logistic', 'like' , '%'.$request->f_caritext.'%');
+            });
+        }
 
         if($request->divisi!=""){
             $data->where('a.divisi',$request->divisi);
@@ -134,7 +145,6 @@ class CatalogController extends Controller
 
         $data->get();
         
-
         return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($data) {
@@ -145,6 +155,16 @@ class CatalogController extends Controller
                             $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-type="product" data-toggle="modal" data-target="#modal-delete"><i class="glyphicon glyphicon-trash"></i> Delete</button>';
                         }
                     $act .='</div>';
+                    return $act;
+                })
+                ->editColumn('referensi_fix', function($data) {
+                    $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
+
+                    if($data->jenis_referensi==2){
+                        $act=$data->referensi_logistic;
+                    }else{
+                        $act=$data->doc_no;
+                    }
                     return $act;
                 })
                 ->make(true);
@@ -215,6 +235,14 @@ class CatalogController extends Controller
                 ->where('a.referensi_logistic',$request->id)
                 ->where('a.jenis_referensi',1)
                 ->orderbyRaw("(CASE WHEN a.user_id = $pengguna THEN 1 ELSE 2 END)");
+
+        if($request->f_caritext!=""){
+            $data->where(function ($query) use ($request) {
+                $query->orwhere('a.lokasi_logistic', 'like' , '%'.$request->f_caritext.'%')
+                      ->orwhere('a.harga_barang_logistic', 'like' , '%'.$request->f_caritext.'%')
+                      ->orwhere('a.harga_jasa_logistic', 'like' , '%'.$request->f_caritext.'%');
+            });
+        }
 
         if($request->divisi!=""){
             $data->where('a.divisi',$request->divisi);

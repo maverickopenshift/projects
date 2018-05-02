@@ -25,10 +25,11 @@ class Profiluser extends Controller
 
   public function update(Request $request)
   {
+
     $tipe = $request->tipe;
     if($tipe=="prof"){
     $rules = array (
-        'nama_user'             => 'required|min:3|max:100|regex:/^[a-z .\-]+$/i',
+        'nama_user'             => 'required|min:3|max:250',
         'email'                 => 'required|max:50|min:4|email',
         'phone'                 => 'required|regex:/[0-9]/|digits_between:7,20',
     );
@@ -38,6 +39,7 @@ class Profiluser extends Controller
       return redirect()->back()
                   ->withInput($request->input())
                   ->withErrors($validator);
+
     }
     else {
       $data = User::where('id','=',$request->id)->first();

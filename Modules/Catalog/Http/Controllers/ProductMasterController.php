@@ -5,7 +5,9 @@ namespace Modules\Catalog\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Catalog\Entities\CatalogProductMaster as CatalogProductMaster;
+use Modules\Catalog\Entities\CatalogProductLogistic as CatalogProductLogistic;
 use Modules\Catalog\Entities\CatalogCategory as CatalogCategory;
+use Modules\Catalog\Entities\CatalogSatuan as CatalogSatuan;
 use Modules\Supplier\Entities\Supplier as Supplier;
 use Modules\Documents\Entities\DocBoq as DocBoq;
 use App\Permission;
@@ -34,6 +36,33 @@ class ProductMasterController extends Controller
         for($i=0;$i<count($result);$i++){
             $hasil[$i]['id']=$result[$i]->id;
             $hasil[$i]['text']=$result[$i]->code ." - ". $result[$i]->display_name;
+        }
+
+        return Response::json($hasil);
+    }
+
+    public function get_satuan(Request $request){
+        $search = trim($request->q);
+        $data = CatalogSatuan::selectRaw('id as id, nama_satuan as text');
+
+        if(!empty($search)){
+          $data->where(function($q) use ($search) {
+              $q->orWhere('nama_satuan', 'like', '%'.$search.'%');
+          });
+        }
+        
+        $data = $data->paginate(30);
+        return \Response::json($data);
+    }
+
+    public function get_satuan_normal(Request $request){
+        $data = CatalogSatuan::selectRaw('id, nama_satuan as text')
+                ->get();
+
+        $hasil=array();
+        for($i=0;$i<count($data);$i++){
+            $hasil[$i]['id']=$data[$i]->id;
+            $hasil[$i]['text']=$data[$i]->text;
         }
 
         return Response::json($hasil);
@@ -73,12 +102,12 @@ class ProductMasterController extends Controller
             if(count($request->f_kodeproduct)>0){
                 foreach($request->f_kodeproduct as $key => $val){
                     if(!empty($val)){
-                        $proses = new CatalogProductMaster();
-                        $proses->user_id = Auth::id();
-                        $proses->catalog_category_id = $request['f_parentid'];
-                        $proses->kode_product = $request['f_kodeproduct'][$key];
-                        $proses->keterangan_product =$request['f_ketproduct'][$key];
-                        $proses->satuan_product = $request['f_unitproduct'][$key];
+                        $proses                         = new CatalogProductMaster();
+                        $proses->user_id                = Auth::id();
+                        $proses->catalog_category_id    = $request['f_parentid'];
+                        $proses->kode_product           = $request['f_kodeproduct'][$key];
+                        $proses->keterangan_product     = $request['f_ketproduct'][$key];
+                        $proses->satuan_id              = $request['f_unitproduct'][$key];
                         $proses->save();
                     }
                 }
@@ -94,8 +123,8 @@ class ProductMasterController extends Controller
     public function edit(Request $request){
         $rules = array (
             'f_kodeproduct' => 'required|max:20|min:1|regex:/^[a-z0-9 .\-]+$/i',
-            'f_ketproduct' => 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i',
-            'f_unitproduct' => 'required|max:50|min:1i|regex:/^[a-z0-9 .\-]+$/i',
+            'f_ketproduct'  => 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i',
+            'f_unitproduct' => 'required',
         );
         $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
         $validator->after(function ($validator) use ($request) {
@@ -114,12 +143,12 @@ class ProductMasterController extends Controller
                 'errors' => $validator->getMessageBag()->toArray()
             ));
         else{
-            $proses = CatalogProductMaster::where('id',$request->f_id)->first();
-            $proses->user_id = Auth::id();
-            $proses->catalog_category_id = $request->f_produk_parent;
-            $proses->kode_product = $request->f_kodeproduct;
-            $proses->keterangan_product =$request->f_ketproduct;
-            $proses->satuan_product = $request->f_unitproduct;
+            $proses                         = CatalogProductMaster::where('id',$request->f_id)->first();
+            $proses->user_id                = Auth::id();
+            $proses->catalog_category_id    = $request->f_produk_parent;
+            $proses->kode_product           = $request->f_kodeproduct;
+            $proses->keterangan_product     = $request->f_ketproduct;
+            $proses->satuan_id              = $request->f_unitproduct;
             $proses->save();   
 
             return Response::json (array(
@@ -129,12 +158,17 @@ class ProductMasterController extends Controller
     }
 
     public function delete(Request $request){
-        $proses=CatalogProductMaster::where('id',$request->id)->delete();
-        return 1;
+        $cek_logistic = CatalogProductLogistic::where('product_master_id',$request->id)->count();
+        if($cek_logistic==0){
+            $proses=CatalogProductMaster::where('id',$request->id)->delete();
+            return 1;    
+        }else{
+            return 0;
+        }
+        
     }
     
-    public function upload(Request $request)
-    {
+    public function upload(Request $request){
         if ($request->ajax()) {
             $data = Excel::load($request->file('upload-product-master')->getRealPath(), function ($reader) {})->get();
             $header = ['kode','keterangan','satuan'];
@@ -143,7 +177,23 @@ class ProductMasterController extends Controller
             $colomn = $data->first()->keys()->toArray();
 
             if(!empty($data) && count($colomn) == $jml_header && $colomn == $header){
-                return Response::json(['status'=>true,'csrf_token'=>csrf_token(),'data'=>$data]);
+                $hasil=array();
+
+                for($i=0;$i<count($data);$i++){
+                    $hasil[$i]['kode']          = $data[$i]['kode'];
+                    $hasil[$i]['keterangan']    = $data[$i]['keterangan'];
+                    $hasil[$i]['satuan']        = $data[$i]['satuan'];
+
+                    $count_satuan=CatalogSatuan::where('nama_satuan',$data[$i]['satuan'])->count();
+                    if($count_satuan!=0){
+                        $satuan=CatalogSatuan::where('nama_satuan',$data[$i]['satuan'])->first();
+                        $hasil[$i]['no_satuan']=$satuan->id;
+                    }else{
+                        $hasil[$i]['no_satuan']=0;
+                    }
+                }
+
+                return Response::json(['status'=>true,'csrf_token'=>csrf_token(),'data'=>$hasil]);
             }else{
                 return Response::json(['status'=>false]);
             }

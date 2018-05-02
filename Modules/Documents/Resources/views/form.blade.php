@@ -281,6 +281,7 @@ $(function () {
     var formMe = $('#form-kontrak');
     formMe.css({'position':'relative'});
     var loading = formMe.find('.loading2');
+
     $(".formerror").removeClass("has-error");
     $(".error").html('');
     swal({

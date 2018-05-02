@@ -130,29 +130,8 @@
 
             </li>
             @endrole
-            {{--
-            @role('katalog-master|katalog-user-manager|katalog-user')
-            <li class="treeview {{Request::is('catalog/*') ?'active':''}}">
-              <a href="#"><img src="{{asset('/images/menu_katalog.png')}}" title="Catalog" />
-                <span>Manajemen Katalog</span> <i class="fa fa-angle-left pull-right"></i></a>
-              <ul class="treeview-menu">
-                @role('katalog-master')
-                <li class="{{Request::is('catalog/category') ?'active':''}}"><a href="{{route('catalog.category')}}">Taxonomy</a></li>
-                @endrole
 
-                @role('katalog-master')
-                <li class="{{Request::is('catalog/catalog_list/product_master') ?'active':''}}"><a href="{{route('catalog.list.product_master')}}">List Master Item</a></li>
-                @endrole
-
-                @role('katalog-user|katalog-user-manager')
-                <li class="{{Request::is('catalog/catalog_list/product_logistic') ?'active':''}}"><a href="{{route('catalog.list.product_logistic')}}">List Item Price</a></li>
-                @endrole
-              </ul>
-            </li>
-            @endrole
-            --}}
-
-            @permission('katalog-master-item-proses|katalog-kategori-proses|katalog-item-price-proses')
+            @permission('katalog')
             <li class="treeview {{Request::is('catalog/*') ?'active':''}}">
               <a href="#"><img src="{{asset('/images/menu_katalog.png')}}" title="Catalog" />
                 <span>Manajemen Katalog</span> <i class="fa fa-angle-left pull-right"></i></a>
@@ -165,8 +144,13 @@
                 <li class="{{Request::is('catalog/catalog_list/product_master') ?'active':''}}"><a href="{{route('catalog.list.product_master')}}">List Master Item</a></li>
                 @endpermission
 
-                @permission('katalog-item-price-proses')
+                @permission('katalog-item-price-proses|katalog-item-price')
                 <li class="{{Request::is('catalog/catalog_list/product_logistic') ?'active':''}}"><a href="{{route('catalog.list.product_logistic')}}">List Item Price</a></li>
+                <li class="{{Request::is('catalog/catalog_list/product_kontrak') ?'active':''}}"><a href="{{route('catalog.list.product_kontrak')}}">Bulk Entry</a></li>                
+                @endpermission
+
+                @permission('katalog-satuan-proses')
+                <li class="{{Request::is('catalog/satuan') ?'active':''}}"><a href="{{route('catalog.satuan')}}">Satuan</a></li>
                 @endpermission
               </ul>
             </li>

@@ -26,6 +26,7 @@
 
 @endphp
 <div class="row">
+    <div class="loading2"></div>
     <div class="col-md-12">
         <div class="box box-danger test-product">
             <div class="box-header with-border">
@@ -41,8 +42,10 @@
                     </div>
                 </div>
             </div>
-            
+
+            <form method="post" action="{{ route('catalog.product_logistic.add_ajax') }}" id="form-produk">
                 {{ csrf_field() }}
+                <input type="hidden" name="f_idproduct" value="{{$product->id}}">
                 <div class="box-body form-horizontal">
                     <div class="flash-message" id="alertBS">
                         @foreach (['danger', 'warning', 'success', 'info'] as $msg)
@@ -69,46 +72,9 @@
 
                     <div class="form-group ">
                         <label class="col-sm-2 control-label">Satuan </label>
-                        <div class="col-sm-10 text-me">{{$product->satuan_product}}</div>
+                        <div class="col-sm-10 text-me">{{$product->nama_satuan}}</div>
                     </div>
 
-                
-                    {{--
-                    <div class="form-group">
-                        <label for="pemilik_kontrak" class="col-sm-2 control-label"><span class="text-red">*</span>Pemilik Kontrak</label>
-                        <div class="col-sm-6">
-                            <div class="col-sm-12">
-                                <div class="form-group formerror formerror-divisi">
-                                    <div class="input-group" style="width:100%">
-                                        <span class="input-group-addon" style="font-weight:bold;width:90px;text-align:left;">Divisi :</span>
-                                        {!!Helper::select_all_divisi('divisi')!!}
-                                    </div>
-                                    <div class="error error-divisi" style="margin-bottom:10px"></div>
-                                </div>
-
-                                <div class="form-group formerror formerror-unit_bisnis">
-                                    <div class="input-group" style="width:100%">
-                                        <span class="input-group-addon text-right" style="font-weight:bold;width:90px;text-align:left;">Unit Bisnis :</span>
-                                        <select class="form-control" name="unit_bisnis" id="unit_bisnis">
-                                            <option value="">Pilih Unit Bisnis</option>
-                                        </select>
-                                    </div>
-                                    <div class="error error-unit_bisnis" style="margin-bottom:10px"></div>
-                                </div>
-
-                                <div class="form-group formerror formerror-unit_kerja">
-                                    <div class="input-group" style="width:100%">
-                                        <span class="input-group-addon text-right" style="font-weight:bold;width:90px;text-align:left;">Unit Kerja :</span>
-                                        <select class="form-control" name="unit_kerja" id="unit_kerja">
-                                            <option value="">Pilih Unit Kerja</option>
-                                        </select>
-                                    </div>
-                                    <div class="error error-unit_kerja" style="margin-bottom:10px"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    --}}
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Pemilik Katalog </label>
                         <div class="col-sm-6 text-me text-uppercase">
@@ -119,14 +85,11 @@
                             <span class="span-oke">Jabatan</span> {{$pegawai->v_short_posisi}} </br>
                         </div>
                     </div>
-                <form method="post" action="{{ route('catalog.product_logistic.add_ajax') }}" id="form-produk">
-                    {{ csrf_field() }}
-                    <input type="hidden" name="f_idproduct" value="{{$product->id}}">
 
                     <table class="table table-striped table-parent-product" width="100%">
                         <thead>
                             <tr>
-                                <th>Lokasi</th>
+                                <th>Price Coverage</th>
                                 <th>Harga Barang</th>
                                 <th>Harga Jasa</th>
                                 <th>Jenis Referensi</th>
@@ -140,7 +103,7 @@
                 </div>
                 <div class="box-footer">
                     <div class="box-tools pull-right">
-                        <a class="btn bg-red btn-reset" href="{{route('catalog.product.master')}}" style="margin-bottom: 2px;">
+                        <a class="btn bg-red btn-reset" href="{{route('catalog.product.logistic')}}?id_product={{$product->id}}" style="margin-bottom: 2px;">
                             Reset
                         </a>
                         <input type="submit" class="btn btn-primary simpan-product" value="Simpan">
@@ -155,11 +118,50 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="modalkontrak" style="overflow:hidden;" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">Data Kontrak</h4> 
+            </div>
+            <div class="modal-body">
+                <div class="form-group input-group">
+                    <input class="form-control doc_text" type="text" placeholder="No.Kontrak / Judul Kontrak">
+                    <span class="input-group-btn">
+                        <a class="btn btn-primary cari-kontrak">Cari No Kontrak</a>
+                    </span>
+                </div>
 
+                <div class="form-group table-parent-kontrak">
+                    <div id="holder">
+                        <table class="table table-striped" id="daftar_kontrak">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>No Kontrak</th>
+                                    <th>Judul Kontrak</th>
+                                    <th width="20%">Aksi</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-primary simpan-kontrak">Simpan</a>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 @push('scripts')
 <script>
 $('#daftar1').DataTable();
+var table_kontrak;
+var doc_no_input;
+var doc_text_input;
 
 $('.upload-product-price-btn').on('click', function(event) {
     event.stopPropagation();
@@ -170,7 +172,7 @@ $('.upload-product-price-btn').on('click', function(event) {
 $('.upload-product-price').on('change', function(event) {
     event.stopPropagation();
     event.preventDefault();
-
+    $(".loading2").show();
     $.ajax({
         url: "{{ route('catalog.product_logistic.upload') }}",
         type: 'post',
@@ -186,6 +188,7 @@ $('.upload-product-price').on('change', function(event) {
             $('.error-product-price').html('Format File tidak valid!');
             return false;
         }
+        $(".loading2").hide();
     });
 
     $(this).val('');
@@ -194,8 +197,10 @@ $('.upload-product-price').on('change', function(event) {
 function handleFile(data) {
     $.each(data.data,function(index, el) {
         var dt = data.data[index];
-        console.log(dt);
-        var new_row = $(template_add(dt.lokasi, dt.harga_barang, dt.harga_jasa)).clone(true).insertAfter(".tabel-product:last");
+        //console.log(dt);
+        //var new_row = $(template_add(dt.price_coverage, dt.harga_barang, dt.harga_jasa)).clone(true).insertAfter(".tabel-product:last");
+        var new_row = $(template_add(dt.price_coverage, dt.harga_barang, dt.harga_jasa)).clone(true);
+        $(".table-test").prepend(new_row);
         var input_new_row = new_row.find('td');
 
         select_referensi(input_new_row.eq(3).find('.select-jenis'), input_new_row.eq(4));
@@ -234,57 +239,6 @@ $(document).on('click', '.add-product', function(event) {
 });
 
 function select_kontrak_referensi(input){
-    input.select2({
-        placeholder : "Silahkan Pilih....",
-        ajax: {
-            url: '{!! route('catalog.product_logistic.get_kontrak') !!}',
-            dataType: 'json',
-            delay: 350,
-            
-            data: function (params) {
-                var datas =  {
-                    q: params.term,
-                    page: params.page
-                };
-                return datas;
-            },
-            processResults: function (data, params) {
-                var results = [];
-                $.each(data.data, function (i, v) {                       
-                    var o = {};
-                    o.id = v.id;
-                    o.text = v.text;
-                    results.push(o);
-                })
-                params.page = params.page || 1;
-                return {
-                    results: data.data,
-                    pagination: {
-                        more: (data.next_page_url ? true: false)
-                    }
-                };
-            },
-            cache: true
-        },        
-        escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
-        minimumInputLength: 0,
-        templateResult: function (state) {
-            if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching..' ;  }
-            var $state = $(
-                '<span>'+  state.text + '</span>'
-            );
-            return $state;
-        },
-        templateSelection: function (data) {
-            if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
-                return "Silahkan Pilih..";
-            }
-            if(data.text === undefined){
-              return data.text;
-            }
-            return data.text ;
-        }
-    });
 }
 
 function select_referensi(input, isi){
@@ -293,7 +247,9 @@ function select_referensi(input, isi){
             var new_referensi = $(template_referensi_kontrak()).clone(true);
             isi.html('');
             isi.append(new_referensi);
+            /*
             select_kontrak_referensi(isi.find('.select_kontrak'));
+            */
         }else{
             var new_referensi = $(template_refrensi_freetext()).clone(true);
             isi.html('');
@@ -306,7 +262,7 @@ function template_add(lokasi, harga_barang, harga_jasa){
     return '\
     <tr class="tabel-product">\
         <td class="formerror formerror-f_lokasi-0">\
-            <input type="text" name="f_lokasi[]" placeholder="Lokasi .." value="'+ lokasi +'" class="form-control">\
+            <input type="text" name="f_lokasi[]" placeholder="Price Coverage .." value="'+ lokasi +'" class="form-control">\
             <div class="error error-f_lokasi error-f_lokasi-0"></div>\
         </td>\
         <td class="formerror formerror-f_hargabarang-0">\
@@ -341,8 +297,13 @@ function template_add(lokasi, harga_barang, harga_jasa){
 
 function template_referensi_kontrak(){
     return '\
-        <select class="form-control select_kontrak" name="f_referensi[]" style="width: 100%;" required>\
-        </select>\
+        <div class="input-group">\
+            <input type="hidden" name="f_referensi[]" class="doc_no_input">\
+            <input class="form-control doc_text_input" type="text" placeholder="No.Kontrak" readonly>\
+            <span class="input-group-btn">\
+                <button class="btn btn-success btn-open-kontrak" type="button"><i class="glyphicon glyphicon-search"></i></button>\
+            </span>\
+        </div>\
     ';
 }
 
@@ -395,61 +356,7 @@ function fix_no_error(){
 
     });        
 }
-/*
-$(document).on('change', '#divisi', function(event) {
-    event.preventDefault();
-    var divisi = this.value;
 
-    $('#unit_bisnis').find('option').not('option[value=""]').remove();
-    var t_awal = $('#unit_bisnis').find('option[value=""]').text();
-    $('#unit_bisnis').find('option[value=""]').text('Please wait.....');
-    $('#unit_kerja').find('option').not('option[value=""]').remove();
-
-    $.ajax({
-        url: '{!!route('doc.get-unit-bisnis')!!}',
-        type: 'GET',
-        cache: false,
-        dataType: 'json',
-        data: {divisi: encodeURIComponent(divisi)}
-    })
-    .done(function(data) {
-        console.log("test");
-        if(data.length>0){
-            $.each(data,function(index, el) {
-                $('#unit_bisnis').append('<option value="'+this.id+'">'+this.title+'</option>');
-            });
-            $('#unit_bisnis').find('option[value=""]').text('Pilih Unit Bisnis');
-        }else{
-            $('#unit_bisnis').find('option[value=""]').text('Tidak ada data');
-        }
-    });
-});
-
-$(document).on('change', '#unit_bisnis', function(event) {
-    event.preventDefault();
-    var unit_bisnis = this.value;
-    $('#unit_kerja').find('option').not('option[value=""]').remove();
-    var t_awal = $('#unit_kerja').find('option[value=""]').text();
-    $('#unit_kerja').find('option[value=""]').text('Please wait.....');
-        $.ajax({
-            url: '{!!route('doc.get-unit-kerja')!!}',
-            type: 'GET',
-            cache: false,
-            dataType: 'json',
-            data: {unit_bisnis: encodeURIComponent(unit_bisnis)}
-        })
-        .done(function(data) {
-            if(data.length>0){
-                $.each(data,function(index, el) {
-                    $('#unit_kerja').append('<option value="'+this.id+'">'+this.title+'</option>');
-                });
-                $('#unit_kerja').find('option[value=""]').text('Pilih Unit Kerja');
-            }else{
-                $('#unit_kerja').find('option[value=""]').text('Tidak ada data');
-            }
-        });
-});
-*/
 $(document).on('click', '.simpan-product', function(event) {
     event.preventDefault();
     
@@ -472,6 +379,7 @@ $(document).on('click', '.simpan-product', function(event) {
       },
       callback: function (result) {
         if(result){
+          $(".loading2").show();
           $.ajax({
             url: formMe.attr('action'),
             type: 'post',
@@ -481,6 +389,7 @@ $(document).on('click', '.simpan-product', function(event) {
             dataType: 'json',
             success: function(response){
               if(response.errors){
+                $(".loading2").hide();
                 $.each(response.errors, function(index, value){
                     if (value.length !== 0){
                       index = index.replace(".", "-");
@@ -497,6 +406,7 @@ $(document).on('click', '.simpan-product', function(event) {
                   message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
                 });
               }else{
+                $(".loading2").hide();
                 if(response.status=="all"){
                   window.location.href = "{{route('catalog.list.product_logistic')}}";
                 }
@@ -506,10 +416,73 @@ $(document).on('click', '.simpan-product', function(event) {
         }
       }
     });
-  });
+});
 
-$(function() {
+function create_table_kontrak(text_cari_kontrak){
+    table_kontrak = $('#daftar_kontrak').on('xhr.dt', function ( e, settings, json, xhr ) {
+        if(xhr.responseText=='Unauthorized.'){
+            location.reload();
+        }
+    }).DataTable({
+        processing: true,
+        serverSide: true,
+        autoWidth : false,
+        searching : false,
+        pageLength: 50,
+        ajax: {
+            "url": "{!! route('catalog.list.kontrak.datatables') !!}?cari=" + text_cari_kontrak,
+            "type": "POST",
+            'headers': {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        },
+        columns:[
+            { data: 'DT_Row_Index',orderable:false,searchable:false},
+            { data: 'doc_no'},
+            { data: 'doc_title'},
+            { data: 'action', name: 'action',orderable:false,searchable:false }],
+    });
+}
 
+function refresh_table_kontrak(text_cari_kontrak){
+    table_kontrak.destroy();
+    create_table_kontrak(text_cari_kontrak)
+}
+
+var formModal = $('#modalkontrak');
+formModal.on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget)
+    var modal = $(this)
+
+    var text_cari_kontrak = $(".doc_text").val();
+
+    refresh_table_kontrak('');
+});
+
+$(document).on('click', '.cari-kontrak', function(event) {
+    var text_cari_kontrak = $(".doc_text").val();
+    refresh_table_kontrak(text_cari_kontrak);
+});
+
+$(document).on('click', '.btn-open-kontrak', function(event) {
+    var parent          = $(this).parent().parent();
+
+    doc_no_input    = parent.find(".doc_no_input");
+    doc_text_input  = parent.find(".doc_text_input");
+    
+    $('#modalkontrak').modal();
+    refresh_table_kontrak('');
+});
+
+$(document).on('click', '.btn-pilih-kontrak', function(event) {
+    var data = $(this).data('data');
+    doc_no_input.val(data.id);
+    doc_text_input.val(data.doc_no);
+    
+    $('#modalkontrak').modal('hide');
+});
+
+$(function(){
     var new_row = $(template_add('','','')).clone(true);
     $(".table-test").append(new_row);
     var input_new_row = new_row.find('td');
@@ -519,7 +492,8 @@ $(function() {
     var new_referensi = $(template_referensi_kontrak()).clone(true);
     input_new_row.eq(4).html('');
     input_new_row.eq(4).append(new_referensi);
-    select_kontrak_referensi(input_new_row.eq(4).find('.select_kontrak'));
+
+    create_table_kontrak('');
     
     $("#alertBS").fadeTo(2000, 500).slideUp(500, function(){
         $("#alertBS").slideUp(500);

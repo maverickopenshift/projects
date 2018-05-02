@@ -13,24 +13,19 @@
     }
 </style>
 <div class="row">
-    <div class="col-md-3">
-        <div class="box box-danger">
-            <div class="box-body form-horizontal">
-                <div class="form-group">
-                    <div class="col-sm-12">
-                        <input type="text" placeholder="Search Kategori.." class="form-control f_carikategori">
-                    </div>
-                </div>
-                <div id="jstree"></div>
-            </div>
-        </div>
-    </div>
 
-    <div class="col-md-9">
+    <div class="col-md-12">
         <div class="box box-danger">
             <div class="box-header with-border">
                 <i class="fa fa-cogs"></i>
-                <h3 class="box-title f_parentname_product">Daftar Master Item</h3>
+                <h3 class="box-title f_parentname_product">Daftar Kontrak Item</h3>
+                <div class="pull-right">
+                    @permission('katalog-item-price-proses')
+                    <div class="col-sm-12">
+                        <a class="btn btn-danger btn-additem" href="{{route('catalog.product.kontrak')}}" type="button"><i class="fa fa-plus"></i> Tambah Kontrak Item</a>
+                    </div>
+                    @endpermission
+                </div>
             </div>
             <div class="box-body">
                 <div class="flash-message">
@@ -40,21 +35,22 @@
                         @endif
                     @endforeach
                 </div>
-                <table class="table table-striped" id="daftar_product_master">
+                <table class="table table-striped" id="daftar_product_kontrak">
                     <thead>
                         <tr>
-                            <th>Kode</th>
-                            <th>Keterangan</th>
-                            <th>Satuan</th>
+                            <th>No</th>
+                            <th>No.Kontrak</th>
+                            <th>Judul Dokumen</th>
+                            <th>Tipe</th>
                             <th width="20%">Aksi</th>
                         </tr>
                     </thead>
                 </table>
             </div>
         </div>
-
+        
         <div class="box box-danger parent_product_price">
-            <input type="hidden" id="f_noproduct">
+            <input type="hidden" id="f_id_doc">
             <div class="box box-danger">
                 <div class="box-header with-border">
                     <i class="fa fa-cogs"></i>
@@ -93,10 +89,6 @@
                                 <th>Price Coverage</th>
                                 <th>Harga Barang</th>
                                 <th>Harga Jasa</th>
-                                <th>Referensi</th>
-                                @permission('katalog-item-price-proses')
-                                <th width="20%">Aksi</th>
-                                @endpermission
                             </tr>
                         </thead>
                     </table>
@@ -105,7 +97,7 @@
         </div>
     </div>
 </div>
-
+{{--
 <div class="modal fade" role="dialog" id="form-modal-product">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -119,8 +111,8 @@
                     <input type="hidden" id="f_id" name="f_id">
 
                     <div class="form-group formerror-f_lokasi">
-                        <label>Price Coverage</label>
-                        <input type="text" class="form-control" id="f_lokasi" name="f_lokasi"  placeholder="Price Coverage ...">
+                        <label>Lokasi Logistic</label>
+                        <input type="text" class="form-control" id="f_lokasi" name="f_lokasi"  placeholder="Lokasi Logistic ...">
                         <div class="error-f_lokasi"></div>
                     </div>
 
@@ -179,50 +171,15 @@
         </div>
     </div>
 </div>
+--}}
 @endsection
 @push('scripts')
 <script>
-var table_product;
+var table_kontrak;
 var table_price;
-var table_kategori;
-var no_kategori=0;
 
-$('#jstree')
-    .on("changed.jstree", function (e, data) {
-        if(data.selected.length) {
-            $(".f_parentname_product").html("Daftar Master Item - " + data.instance.get_node(data.selected[0]).text);
-            $(".f_parentid").val(data.instance.get_node(data.selected[0]).id);
-            $(".btn-edit").attr('data-id',data.instance.get_node(data.selected[0]).id)
-            $(".btn-delete").attr('data-id',data.instance.get_node(data.selected[0]).id)
-
-            refresh_product_master(data.instance.get_node(data.selected[0]).id);
-            $(".parent_product_price").hide();
-        }
-    })
-    .jstree({
-        "plugins" : [ "search" ],
-        'core' : {
-            'data' : {
-                "url" : "{{route('catalog.category.get_category_all',['parent_id' => 0])}}",
-            }
-        }
-    })
-    .bind("ready.jstree", function (event, data) {
-         $(this).jstree("open_all");
-    });
-
-var to = false;
-$('.f_carikategori').keyup(function () {
-    if(to){clearTimeout(to);}
-
-    to = setTimeout(function () {
-        var v = $('.f_carikategori').val();
-        $('#jstree').jstree(true).search(v);
-    }, 250);
-});
-
-function create_table_master(no_kategori){
-    table_product = $('#daftar_product_master').on('xhr.dt', function ( e, settings, json, xhr ) {
+function create_table_kontrak(){
+    table_product = $('#daftar_product_kontrak').on('xhr.dt', function ( e, settings, json, xhr ) {
         if(xhr.responseText=='Unauthorized.'){
             location.reload();
         }
@@ -232,38 +189,30 @@ function create_table_master(no_kategori){
         autoWidth : false,
         pageLength: 50,
         ajax: {
-            "url": "{!! route('catalog.list.product_master.datatables') !!}?parent_id="+ no_kategori + "&type=2",
+            "url": "{!! route('catalog.list.product_kontrak.datatables') !!}?",
             "type": "POST",
             'headers': {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 }
         },
         columns: [
-            { data: 'kode_product'},
-            { data: 'keterangan_product'},
-            { data: 'nama_satuan'},
+            { data: 'DT_Row_Index',orderable:false,searchable:false},
+            { data: 'doc_no'},
+            { data: 'doc_title'},
+            { data: 'doc_type'},
             { data: 'action', name: 'action',orderable:false,searchable:false},
         ]
     });
 }
 
-function create_table_price(no_product, divisi, unit_bisnis, unit_kerja){
-    if ($('.btn-price-add').length){
-        var coloumx=[
-                { data: 'DT_Row_Index',orderable:false,searchable:false},
-                { data: 'lokasi_logistic'},
-                { data: 'harga_barang_logistic'},
-                { data: 'harga_jasa_logistic'},
-                { data: 'referensi_logistic'},
-                { data: 'action', name: 'action',orderable:false,searchable:false }];
-    }else{
-        var coloumx=[
-                { data: 'DT_Row_Index',orderable:false,searchable:false},
-                { data: 'lokasi_logistic'},
-                { data: 'harga_barang_logistic'},
-                { data: 'harga_jasa_logistic'},
-                { data: 'referensi_logistic'}];
-    }
+function create_table_price(id_doc, divisi, unit_bisnis, unit_kerja){
+
+    var coloumx=[
+            { data: 'DT_Row_Index',orderable:false,searchable:false},
+            { data: 'lokasi_logistic'},
+            { data: 'harga_barang_logistic'},
+            { data: 'harga_jasa_logistic'}];
+    
     table_price = $('#daftar_product_price').on('xhr.dt', function ( e, settings, json, xhr ) {
         if(xhr.responseText=='Unauthorized.'){
             location.reload();
@@ -274,7 +223,7 @@ function create_table_price(no_product, divisi, unit_bisnis, unit_kerja){
         autoWidth : false,
         pageLength: 50,
         ajax: {
-            "url": "{!! route('catalog.list.product_logistic.datatables') !!}?id="+ no_product + "&divisi=" + divisi + "&unit_bisnis=" + unit_bisnis + "&unit_kerja=" + unit_kerja,
+            "url": "{!! route('catalog.list.product_kontrak_logistic.datatables') !!}?id="+ id_doc + "&divisi=" + divisi + "&unit_bisnis=" + unit_bisnis + "&unit_kerja=" + unit_kerja,
             "type": "POST",
             'headers': {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -284,16 +233,16 @@ function create_table_price(no_product, divisi, unit_bisnis, unit_kerja){
     });
 }
 
-function refresh_product_master(no_kategori){
+function refresh_product_kontrak(){
     table_product.destroy();
-    create_table_master(no_kategori)
+    create_table_master()
 }
 
 function refresh_product_price(no_product, divisi, unit_bisnis, unit_kerja){
     table_price.destroy();
     create_table_price(no_product, divisi, unit_bisnis, unit_kerja);
 }
-
+/*
 function template_referensi_kontrak(){
     return '\
         <select class="form-control select_kontrak" name="f_referensi" style="width: 100%;" required>\
@@ -499,12 +448,12 @@ $(document).on('click', '.btn-delete-modal', function(event) {
         }
     });
 });
-
+*/
 $(document).on('click', '.detail_price', function(event) {
     event.preventDefault();
     var id=$(this).attr('data-id');
     refresh_product_price(id,'','','');
-    $("#f_noproduct").val(id);
+    $("#f_id_doc").val(id);
     $(".parent_product_price").show();
 });
 
@@ -564,22 +513,16 @@ $(document).on('change', '#unit_bisnis', function(event) {
 
 $(document).on('submit','#form_me_cari',function (event) {
     event.preventDefault();
-    /*
-    var divisi = "";
-    var unit_bisnis = "";
-    var unit_kerja = "";
-    */
-
-    var no_product = $("#f_noproduct").val();
+    var id_doc = $("#f_id_doc").val();
     var divisi = $("#divisi").val();
     var unit_bisnis = $("#unit_bisnis").val();
     var unit_kerja = $("#unit_kerja").val();
 
-    refresh_product_price(no_product, divisi , unit_bisnis, unit_kerja);
+    refresh_product_price(id_doc, divisi , unit_bisnis, unit_kerja);
 });
 
 $(function() {
-    create_table_master(0);
+    create_table_kontrak();
     create_table_price(0,'','','');
     $(".parent_product_price").hide();
 

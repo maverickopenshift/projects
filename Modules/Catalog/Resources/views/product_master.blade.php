@@ -32,6 +32,7 @@ if(isset($kategori->id)){
 }
 @endphp
 <div class="row">
+    <div class="loading2"></div>
     <div class="col-md-3">
         <div class="box box-danger">
             <div class="box-header with-border">
@@ -66,6 +67,7 @@ if(isset($kategori->id)){
             </div>
 
             <form method="post" action="{{ route('catalog.product_master.add_ajax') }}" id="form-produk">
+
                 <input type="hidden" class="f_parentid" name="f_parentid" value="{{$idkategori}}">
                 {{ csrf_field() }}
                 <div class="box-body form-horizontal">
@@ -111,6 +113,7 @@ if(isset($kategori->id)){
 @endsection
 @push('scripts')
 <script>
+    var to = false;
     $('#daftar1').DataTable();
 
     $('.upload-product-master-btn').on('click', function(event) {
@@ -122,7 +125,7 @@ if(isset($kategori->id)){
     $('.upload-product-master').on('change', function(event) {
         event.stopPropagation();
         event.preventDefault();
-
+        $(".loading2").show();
         $.ajax({
             url: "{{ route('catalog.product_master.upload') }}",
             type: 'post',
@@ -138,18 +141,28 @@ if(isset($kategori->id)){
                 $('.error-product-master').html('Format File tidak valid!');
                 return false;
             }
+            $(".loading2").hide();
         });
 
         $(this).val('');
+        
     });
 
     function handleFile(data) {
         $.each(data.data,function(index, el) {
             var dt = data.data[index];
-            var new_row = $(template_add(dt.kode, dt.keterangan, dt.satuan)).clone(true).insertAfter(".tabel-product:last");
-        });
+            //var new_row = $(template_add('','')).clone(true);
+            
+            var new_row = $(template_add(dt.kode, dt.keterangan)).clone(true);;
+            $(".table-test").prepend(new_row);
+            var input_new_row = new_row.find('td');
+            select_satuan(input_new_row.eq(2).find('.select_satuan'));
 
-        fix_no_error();
+            if(dt.no_satuan!=0){
+                set_select2(input_new_row.eq(2).find('.select_satuan'),dt.satuan,dt.no_satuan);
+            }            
+        });
+        fix_no_error();       
     }
 
     $('#jstree')
@@ -180,7 +193,6 @@ if(isset($kategori->id)){
              }
         });
 
-    var to = false;
     $('.f_carikategori').keyup(function () {
         if(to){clearTimeout(to);}
 
@@ -201,10 +213,13 @@ if(isset($kategori->id)){
     });
 
     $(document).on('click', '.add-product', function(event) {        
-        var new_row = $(template_add('','','')).clone(true).insertAfter(".tabel-product:last");
+        var new_row = $(template_add('','')).clone(true).insertAfter(".tabel-product:last");
         var input_new_row = new_row.find('td');
+
+        select_satuan(input_new_row.eq(2).find('.select_satuan'));
         
         fix_no_error();
+
     });
 
     function template_add(kode, keterangan, satuan){
@@ -219,7 +234,8 @@ if(isset($kategori->id)){
                 <div class="error error-f_ketproduct error-f_ketproduct-0"></div>\
             </td>\
             <td class="formerror formerror-f_unitproduct-0">\
-                <input type="text" name="f_unitproduct[]" placeholder="Satuan.." value="'+ satuan +'" class="form-control">\
+                <select class="form-control select_satuan" name="f_unitproduct[]" style="width: 100%;" required>\
+                </select>\
                 <div class="error error-f_unitproduct error-f_unitproduct-0"></div>\
             </td>\
             <td width="100px">\
@@ -235,13 +251,66 @@ if(isset($kategori->id)){
         </tr>';
     }
 
+    function select_satuan(input){
+        input.select2({
+            placeholder : "Silahkan Pilih....",
+            ajax: {
+                url: '{!! route('catalog.product_master.get_satuan') !!}',
+                dataType: 'json',
+                delay: 350,
+                
+                data: function (params) {
+                    var datas =  {
+                        q: params.term,
+                        page: params.page
+                    };
+                    return datas;
+                },
+                processResults: function (data, params) {
+                    var results = [];
+                    $.each(data.data, function (i, v) {                       
+                        var o = {};
+                        o.id = v.id;
+                        o.text = v.text;
+                        results.push(o);
+                    })
+                    params.page = params.page || 1;
+                    return {
+                        results: data.data,
+                        pagination: {
+                            more: (data.next_page_url ? true: false)
+                        }
+                    };
+                },
+                cache: true
+            },        
+            escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            minimumInputLength: 0,
+            templateResult: function (state) {
+                if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching..' ;  }
+                var $state = $(
+                    '<span>'+  state.text + '</span>'
+                );
+                return $state;
+            },
+            templateSelection: function (data) {
+                if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
+                    return "Silahkan Pilih..";
+                }
+                if(data.text === undefined){
+                  return data.text;
+                }
+                return data.text ;
+            }
+        });
+    }
+
     function fix_no_error(){
         console.log("test");
         var $this = $('.tabel-product');
         $.each($this,function(index, el) {
             console.log(index);
             var mdf_new_row = $(this).find('td');
-            //mdf_new_row.eq(0).find('.total_pasal').text(index+1);
 
             if(mdf_new_row.eq(0).hasClass("has-error")){
                 mdf_new_row.eq(0).removeClass().addClass("has-error formerror formerror-f_kodeproduct-"+ index);
@@ -270,80 +339,91 @@ if(isset($kategori->id)){
 
     $(document).on('click', '.simpan-product', function(event) {
         event.preventDefault();
-        
+        $(".loading2").show();
         var formMe = $('#form-produk');
         $(".formerror").removeClass("has-error");
         $(".error").html('');
-
-        bootbox.confirm({
-          title:"Konfirmasi",
-          message: "Apakah anda yakin untuk submit?",
-          buttons: {
-              confirm: {
-                  label: 'Yakin',
-                  className: 'btn-success'
-              },
-              cancel: {
-                  label: 'Tidak',
-                  className: 'btn-danger'
-              }
-          },
-          callback: function (result) {
-            if(result){
-              $.ajax({
-                url: formMe.attr('action'),
-                type: 'post',
-                processData: false,
-                contentType: false,
-                data: new FormData(document.getElementById("form-produk")),
-                dataType: 'json',
-                success: function(response){
-                  if(response.errors){
-                    $.each(response.errors, function(index, value){
-                        if (value.length !== 0){
-                          index = index.replace(".", "-");
-                          $(".formerror-"+ index).removeClass("has-error");
-                          $(".error-"+ index).html('');
-
-                          $(".formerror-"+ index).addClass("has-error");
-                          $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
-                        }
-                    });
-
-                    bootbox.alert({
-                      title:"Pemberitahuan",
-                      message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
-                    });
-                  }else{
-                    if(response.status=="all"){
-                      //window.location.href = "{{route('catalog.product.master')}}?id_kategori=" + $(".f_parentid").val();
-                      //catalog.list.product_master
-                      window.location.href = "{{route('catalog.list.product_master')}}";
-                    }
+        var f_parentid = $(".f_parentid").val();
+        if(f_parentid!=0){
+            bootbox.confirm({
+              title:"Konfirmasi",
+              message: "Apakah anda yakin untuk submit?",
+              buttons: {
+                  confirm: {
+                      label: 'Yakin',
+                      className: 'btn-success'
+                  },
+                  cancel: {
+                      label: 'Tidak',
+                      className: 'btn-danger'
                   }
+              },
+              callback: function (result) {
+                if(result){
+                  $.ajax({
+                    url: formMe.attr('action'),
+                    type: 'post',
+                    processData: false,
+                    contentType: false,
+                    data: new FormData(document.getElementById("form-produk")),
+                    dataType: 'json',
+                    success: function(response){
+                      if(response.errors){
+                        $(".loading2").hide();
+
+                        $.each(response.errors, function(index, value){
+                            if (value.length !== 0){
+                              index = index.replace(".", "-");
+                              $(".formerror-"+ index).removeClass("has-error");
+                              $(".error-"+ index).html('');
+
+                              $(".formerror-"+ index).addClass("has-error");
+                              $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
+                            }
+                        });
+
+
+                        bootbox.alert({
+                          title:"Pemberitahuan",
+                          message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
+                        });
+                      }else{
+                        if(response.status=="all"){
+                          window.location.href = "{{route('catalog.list.product_master')}}";
+                        }
+                      }
+                    }
+                  });
                 }
-              });
-            }
-          }
-        });
+              }
+            });
+        }else{
+            $(".loading2").hide();
+            bootbox.alert({
+                title:"Pemberitahuan",
+                message: "Silahkan pilih kategori terlebih dahulu!",
+            });
+        }
       });
 
-$(function(){
-    $(".add-product").prop("disabled", true);
-    $(".upload-boq-btn").prop("disabled", true);
-    $(".simpan-product").prop( "disabled", true );
+    function set_select2(attr_obj,text,id) {
+        attr_obj.find('option').remove();
+        var newOption = new Option(text, id, false, true);
+        attr_obj.append(newOption);
+        attr_obj.val(id).change();
+        //var id_name = attr_obj.attr('id');
+    }
 
-    var new_row = $(template_add('','','')).clone(true);
-    $(".table-test").append(new_row);
-    var input_new_row = new_row.find('td');
-    
-    input_new_row.eq(4).find('select').select2({
-        placeholder:"Silahkan Pilih"
-    });
+    $(function(){
+        var new_row = $(template_add('','')).clone(true);
+        $(".table-test").append(new_row);
+        var input_new_row = new_row.find('td');
+        
+        select_satuan(input_new_row.eq(2).find('.select_satuan'));
 
-    $("#alertBS").fadeTo(2000, 500).slideUp(500, function(){
-        $("#alertBS").slideUp(500);
+        $("#alertBS").fadeTo(2000, 500).slideUp(500, function(){
+            $("#alertBS").slideUp(500);
+        });
     });
-});
 </script>
 @endpush

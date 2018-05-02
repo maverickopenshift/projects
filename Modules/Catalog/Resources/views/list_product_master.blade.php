@@ -33,19 +33,32 @@
                 <h3 class="box-title f_parentname_product">Daftar Master Item</h3>
                 <div class="pull-right">
                     <div class="col-sm-12">
+                        @permission('katalog-master-item-proses')
                         <a class="btn btn-danger btn-additem" href="{{route('catalog.product.master')}}?id_kategori=0" type="button"><i class="fa fa-plus"></i> Tambah Master Item</a>
+                        @endpermission
                     </div>
                 </div>
             </div>
             <div class="box-body">
                 <div id="alertBS_2"></div>
+                <div class="flash-message">
+                    @foreach (['danger', 'warning', 'success', 'info'] as $msg)
+                        @if(Session::has('alert-' . $msg))
+                            <p class="alert alert-{{ $msg }}">{{ Session::get('alert-' . $msg) }} <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a></p>
+                        @endif
+                    @endforeach
+                </div>
+
                 <table class="table table-striped" id="daftar_product">
                     <thead>
                         <tr>
+                            <th>No</th>
                             <th>Kode</th>
                             <th>Keterangan</th>
                             <th>Satuan</th>
+                            @permission('katalog-master-item-proses')
                             <th width="25%">Aksi</th>
+                            @endpermission
                         </tr>
                     </thead>
                 </table>
@@ -58,6 +71,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form id="form-me-product" action="{{route('catalog.product_master.edit')}}" method="post">
+
                 {{ csrf_field() }}
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -88,7 +102,8 @@
 
                     <div class="form-group formerror-f_unitproduct">
                         <label>Satuan Produk</label>
-                        <input type="text" class="form-control" id="f_unitproduct" name="f_unitproduct"  placeholder="Unit Produk ...">
+                        <select class="form-control select_satuan" name="f_unitproduct" style="width: 100%;">
+                        </select>
                         <div class="error-f_unitproduct"></div>
                     </div>
 
@@ -131,7 +146,7 @@ var no_kategori=0;
 $('#jstree')
     .on("changed.jstree", function (e, data) {
         if(data.selected.length) {
-            $(".f_parentname_product").html("Daftar Product - " + data.instance.get_node(data.selected[0]).text);
+            $(".f_parentname_product").html("Daftar Master Item - " + data.instance.get_node(data.selected[0]).text);
             $(".f_parentid").val(data.instance.get_node(data.selected[0]).id);
             $(".btn-edit").attr('data-id',data.instance.get_node(data.selected[0]).id)
             $(".btn-delete").attr('data-id',data.instance.get_node(data.selected[0]).id)
@@ -165,6 +180,21 @@ $('.f_carikategori').keyup(function () {
 });
 
 function create_table(no_kategori){
+    if ($('.btn-additem').length){
+        var coloumx=[
+            { data: 'DT_Row_Index',orderable:false,searchable:false},
+            { data: 'kode_product'},
+            { data: 'keterangan_product'},
+            { data: 'nama_satuan'},
+            { data: 'action', name: 'action',orderable:false,searchable:false}];
+    }else{
+        var coloumx=[
+            { data: 'DT_Row_Index',orderable:false,searchable:false},
+            { data: 'kode_product'},
+            { data: 'keterangan_product'},
+            { data: 'nama_satuan'}];
+    }    
+
     table_product = $('#daftar_product').on('xhr.dt', function ( e, settings, json, xhr ) {
         if(xhr.responseText=='Unauthorized.'){
             location.reload();
@@ -181,12 +211,7 @@ function create_table(no_kategori){
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                 }
         },
-        columns: [
-            { data: 'kode_product'},
-            { data: 'keterangan_product'},
-            { data: 'satuan_product'},
-            { data: 'action', name: 'action',orderable:false,searchable:false},
-        ]
+        columns: coloumx,
     });
 }
 
@@ -210,6 +235,67 @@ function get_produk_induk(parent){
             $("#f_produk_parent").val(parent).trigger('change');
         }
     });
+}
+
+function select_satuan(input){
+    input.select2({
+        placeholder : "Silahkan Pilih....",
+        ajax: {
+            url: '{!! route('catalog.product_master.get_satuan') !!}',
+            dataType: 'json',
+            delay: 350,
+            
+            data: function (params) {
+                var datas =  {
+                    q: params.term,
+                    page: params.page
+                };
+                return datas;
+            },
+            processResults: function (data, params) {
+                var results = [];
+                $.each(data.data, function (i, v) {                       
+                    var o = {};
+                    o.id = v.id;
+                    o.text = v.text;
+                    results.push(o);
+                })
+                params.page = params.page || 1;
+                return {
+                    results: data.data,
+                    pagination: {
+                        more: (data.next_page_url ? true: false)
+                    }
+                };
+            },
+            cache: true
+        },        
+        escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+        minimumInputLength: 0,
+        templateResult: function (state) {
+            if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching..' ;  }
+            var $state = $(
+                '<span>'+  state.text + '</span>'
+            );
+            return $state;
+        },
+        templateSelection: function (data) {
+            if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
+                return "Silahkan Pilih..";
+            }
+            if(data.text === undefined){
+              return data.text;
+            }
+            return data.text ;
+        }
+    });
+}
+
+function set_select2(attr_obj,text,id) {
+    attr_obj.find('option').remove();
+    var newOption = new Option(text, id, false, true);
+    attr_obj.append(newOption);
+    attr_obj.val(id).change();
 }
 
 var modalDelete = $('#modal-delete');
@@ -244,7 +330,9 @@ formModal.on('show.bs.modal', function (event) {
 
     modal.find('.modal-body input#f_kodeproduct').val(data.kode_product);
     modal.find('.modal-body input#f_ketproduct').val(data.keterangan_product);
-    modal.find('.modal-body input#f_unitproduct').val(data.satuan_product);
+
+    select_satuan(modal.find('.modal-body .select_satuan'));
+    set_select2(modal.find('.modal-body .select_satuan'),data.nama_satuan,data.satuan_id);
 });    
 
 $(document).on('submit','#form-me-product',function (event) {
@@ -252,17 +340,17 @@ $(document).on('submit','#form-me-product',function (event) {
 
     var formMe = $(this)
 
-    var attError_f_kodeproduk = formMe.find('.error-f_kodeproduk')
-    var attError_f_ketproduk = formMe.find('.error-f_ketproduk')
-    var attError_f_unitproduk = formMe.find('.error-f_unitproduk')
+    var attError_f_kodeproduct = formMe.find('.error-f_kodeproduct')
+    var attError_f_ketproduct = formMe.find('.error-f_ketproduct')
+    var attError_f_unitproduct = formMe.find('.error-f_unitproduct')
 
-    formMe.find('.formerror-f_kodeproduk').removeClass("has-error");
-    formMe.find('.formerror-f_ketproduk').removeClass("has-error");
-    formMe.find('.formerror-f_unitproduk').removeClass("has-error");
+    formMe.find('.formerror-f_kodeproduct').removeClass("has-error");
+    formMe.find('.formerror-f_ketproduct').removeClass("has-error");
+    formMe.find('.formerror-f_unitproduct').removeClass("has-error");
 
-    attError_f_kodeproduk.html('');
-    attError_f_ketproduk.html('');
-    attError_f_unitproduk.html('');
+    attError_f_kodeproduct.html('');
+    attError_f_ketproduct.html('');
+    attError_f_unitproduct.html('');
 
     var btnSave = formMe.find('.btn-simpan')
     //btnSave.button('loading')
@@ -270,23 +358,23 @@ $(document).on('submit','#form-me-product',function (event) {
     $.ajax({
         url: formMe.attr('action'),
         type: 'post',
-        data: formMe.serialize(), // Remember that you need to have your csrf token included
+        data: formMe.serialize(),
         dataType: 'json',
         success: function(response){
             if(response.errors){
                 alertBS_2('Something Wrong','danger');
 
-                if(response.errors.f_kodeproduk){
-                    attError_f_kodeproduk.html('<span class="help-block">'+response.errors.f_kodeproduk+'</span>');
-                    formMe.find('.formerror-f_kodeproduk').addClass("has-error");
+                if(response.errors.f_kodeproduct){
+                    attError_f_kodeproduct.html('<span class="help-block">'+response.errors.f_kodeproduct+'</span>');
+                    formMe.find('.formerror-f_kodeproduct').addClass("has-error");
                 }
-                if(response.errors.f_namaproduk){
-                    attError_f_ketproduk.html('<span class="help-block">'+response.errors.f_ketproduk+'</span>');
-                    formMe.find('.formerror-f_ketproduk').addClass("has-error");
+                if(response.errors.f_ketproduct){
+                    attError_f_ketproduct.html('<span class="help-block">'+response.errors.f_ketproduct+'</span>');
+                    formMe.find('.formerror-f_ketproduct').addClass("has-error");
                 }
-                if(response.errors.f_unitproduk){
-                    attError_f_unitproduk.html('<span class="help-block">'+response.errors.f_unitproduk+'</span>');
-                    formMe.find('.formerror-f_unitproduk').addClass("has-error");
+                if(response.errors.f_unitproduct){
+                    attError_f_unitproduk.html('<span class="help-block">'+response.errors.f_unitproduct+'</span>');
+                    formMe.find('.formerror-f_unitproduct').addClass("has-error");
                 }
 
                 btnSave.button('reset');
@@ -320,6 +408,12 @@ $(document).on('click', '.btn-delete-modal', function(event) {
                 btnDelete.button('reset');
                 btnDelete.attr('data-is','');
                 modalDelete.modal('hide');
+            }else{
+                alertBS_2('Data gagal di hapus, master item ini sudah memiliki item price','danger');
+                refresh_product(0);
+                btnDelete.button('reset');
+                btnDelete.attr('data-is','');
+                modalDelete.modal('hide');
             }
         }
     });
@@ -327,6 +421,10 @@ $(document).on('click', '.btn-delete-modal', function(event) {
 
 $(function() {
     create_table(0);
+
+    $(".flash-message").fadeTo(2000, 500).slideUp(500, function(){
+        $(".flash-message").slideUp(500);
+    });
 });
 </script>
 @endpush

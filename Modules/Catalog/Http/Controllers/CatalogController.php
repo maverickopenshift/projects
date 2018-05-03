@@ -114,6 +114,7 @@ class CatalogController extends Controller
     
     public function index_product_logistic_datatables(Request $request){
         $pengguna=Auth::id();
+        $pegawai = User::get_user_pegawai();
         $data=DB::table('catalog_product_logistic as a')
                 ->leftjoin('documents as c','c.id','=','a.referensi_logistic')
                 ->selectRaw("a.*, c.doc_no")
@@ -147,14 +148,28 @@ class CatalogController extends Controller
         
         return Datatables::of($data)
                 ->addIndexColumn()
-                ->addColumn('action', function ($data) {
+                ->addColumn('action', function ($data) use ($pegawai) {
                     $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
                     $act= '<div class="btn-group">';
-                        if(Auth::user()->hasPermission('katalog-item-price-proses') && $data->user_id==Auth::id()){
+                        if(Auth::user()->hasPermission('katalog-item-price-proses') && $data->divisi==$pegawai->divisi){
                             $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal-product"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-type="product" ><i class="glyphicon glyphicon-edit"></i> Edit</button>';
                             $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-type="product" data-toggle="modal" data-target="#modal-delete"><i class="glyphicon glyphicon-trash"></i> Delete</button>';
                         }
                     $act .='</div>';
+                    return $act;
+                })
+                ->addColumn('flag', function ($data) {
+                    $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
+                    if($data->jenis_referensi==1){
+                        $doc=Documents::where('id',$data->referensi_logistic)->first();
+                        if($doc->doc_type=="khs"){
+                            $act="KHS";    
+                        }else{
+                            $act='';
+                        }
+                    }else{
+                        $act='';
+                    }
                     return $act;
                 })
                 ->editColumn('referensi_fix', function($data) {

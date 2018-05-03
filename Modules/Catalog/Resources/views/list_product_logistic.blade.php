@@ -103,6 +103,7 @@
                                 <th>Harga Barang</th>
                                 <th>Harga Jasa</th>
                                 <th>Referensi</th>
+                                <th>Flag</th>
                                 @permission('katalog-item-price-proses')
                                 <th width="20%">Aksi</th>
                                 @endpermission
@@ -288,6 +289,7 @@ function create_table_price(no_product, divisi, unit_bisnis, unit_kerja, f_carit
                 { data: 'harga_barang_logistic', name: 'a.harga_barang_logistic'},
                 { data: 'harga_jasa_logistic', name: 'a.harga_jasa_logistic'},
                 { data: 'referensi_fix', name: 'c.doc_no'},
+                { data: 'flag', searchable:false},
                 { data: 'action', name: 'action',orderable:false,searchable:false }];
     }else{
         var coloumx=[
@@ -295,7 +297,8 @@ function create_table_price(no_product, divisi, unit_bisnis, unit_kerja, f_carit
                 { data: 'lokasi_logistic', name: 'a.lokasi_logistic'},
                 { data: 'harga_barang_logistic', name: 'a.harga_barang_logistic'},
                 { data: 'harga_jasa_logistic', name: 'a.harga_jasa_logistic'},
-                { data: 'referensi_fix', name: 'doc_no'}];
+                { data: 'referensi_fix', name: 'doc_no'},
+                { data: 'flag', searchable:false}];
     }
     table_price = $('#daftar_product_price').on('xhr.dt', function ( e, settings, json, xhr ) {
         if(xhr.responseText=='Unauthorized.'){

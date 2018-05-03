@@ -94,6 +94,7 @@
                                 <th>Harga Jasa</th>
                                 <th>Jenis Referensi</th>
                                 <th>Referensi</th>
+                                <th>Flag</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -162,6 +163,7 @@ $('#daftar1').DataTable();
 var table_kontrak;
 var doc_no_input;
 var doc_text_input;
+var doc_type;
 
 $('.upload-product-price-btn').on('click', function(event) {
     event.stopPropagation();
@@ -197,8 +199,6 @@ $('.upload-product-price').on('change', function(event) {
 function handleFile(data) {
     $.each(data.data,function(index, el) {
         var dt = data.data[index];
-        //console.log(dt);
-        //var new_row = $(template_add(dt.price_coverage, dt.harga_barang, dt.harga_jasa)).clone(true).insertAfter(".tabel-product:last");
         var new_row = $(template_add(dt.price_coverage, dt.harga_barang, dt.harga_jasa)).clone(true);
         $(".table-test").prepend(new_row);
         var input_new_row = new_row.find('td');
@@ -208,7 +208,7 @@ function handleFile(data) {
         var new_referensi = $(template_referensi_kontrak()).clone(true);
         input_new_row.eq(4).html('');
         input_new_row.eq(4).append(new_referensi);
-        select_kontrak_referensi(input_new_row.eq(4).find('.select_kontrak'));
+        //select_kontrak_referensi(input_new_row.eq(4).find('.select_kontrak'));
         
     });
 
@@ -281,6 +281,8 @@ function template_add(lokasi, harga_barang, harga_jasa){
             <div class="error error-f_unitproduct error-f_unitproduct-0"></div>\
         </td>\
         <td class="formerror formerror-f_referensi-0 isi-referensi">\
+        </td>\
+        <td class="isi-flag">\
         </td>\
         <td width="100px">\
             <div class="btn-group">\
@@ -469,6 +471,7 @@ $(document).on('click', '.btn-open-kontrak', function(event) {
 
     doc_no_input    = parent.find(".doc_no_input");
     doc_text_input  = parent.find(".doc_text_input");
+    doc_type  = parent.parent().parent().find(".isi-flag");
     
     $('#modalkontrak').modal();
     refresh_table_kontrak('');
@@ -478,6 +481,14 @@ $(document).on('click', '.btn-pilih-kontrak', function(event) {
     var data = $(this).data('data');
     doc_no_input.val(data.id);
     doc_text_input.val(data.doc_no);
+    
+    //doc_type.html(data.doc_type.toUpperCase());
+    if(data.doc_type=="khs"){
+        doc_type.html('<i class="fa fa-check" style="color:green;"></i>');
+    }else{
+        doc_type.html('');
+    }
+    
     
     $('#modalkontrak').modal('hide');
 });

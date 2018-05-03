@@ -2,7 +2,7 @@
   {{-- <label for="prinsipal_st" class="col-sm-2 control-label"> PR</label> --}}
   <div class="col-sm-3">
     <div class="input-group">
-      <input class="form-control no_pr" type="text" name="doc_pr" value="{{old('doc_pr',Helper::prop_exists($doc,'doc_pr'))}}" placeholder="Masukan No.PR" autocomplete="off">
+      <input class="form-control no_pr" type="text" name="doc_pr" value="{{old('doc_pr',Helper::prop_exists($doc,'doc_pr'))}}" placeholder="Masukan No.PO" autocomplete="off">
       <span class="input-group-btn">
         <button class="btn btn-success cari-pr" type="button"><i class="glyphicon glyphicon-search"></i></button>
       </span>

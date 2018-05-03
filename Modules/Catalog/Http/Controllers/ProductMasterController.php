@@ -174,26 +174,30 @@ class ProductMasterController extends Controller
             $header = ['kode','keterangan','satuan'];
             $jml_header = '3';
 
-            $colomn = $data->first()->keys()->toArray();
+            if(!empty($data) && $data->first() != null ){
+                $colomn = $data->first()->keys()->toArray();
 
-            if(!empty($data) && count($colomn) == $jml_header && $colomn == $header){
-                $hasil=array();
+                if(!empty($data) && count($colomn) == $jml_header && $colomn == $header){
+                    $hasil=array();
 
-                for($i=0;$i<count($data);$i++){
-                    $hasil[$i]['kode']          = $data[$i]['kode'];
-                    $hasil[$i]['keterangan']    = $data[$i]['keterangan'];
-                    $hasil[$i]['satuan']        = $data[$i]['satuan'];
+                    for($i=0;$i<count($data);$i++){
+                        $hasil[$i]['kode']          = $data[$i]['kode'];
+                        $hasil[$i]['keterangan']    = $data[$i]['keterangan'];
+                        $hasil[$i]['satuan']        = $data[$i]['satuan'];
 
-                    $count_satuan=CatalogSatuan::where('nama_satuan',$data[$i]['satuan'])->count();
-                    if($count_satuan!=0){
-                        $satuan=CatalogSatuan::where('nama_satuan',$data[$i]['satuan'])->first();
-                        $hasil[$i]['no_satuan']=$satuan->id;
-                    }else{
-                        $hasil[$i]['no_satuan']=0;
+                        $count_satuan=CatalogSatuan::where('nama_satuan',$data[$i]['satuan'])->count();
+                        if($count_satuan!=0){
+                            $satuan=CatalogSatuan::where('nama_satuan',$data[$i]['satuan'])->first();
+                            $hasil[$i]['no_satuan']=$satuan->id;
+                        }else{
+                            $hasil[$i]['no_satuan']=0;
+                        }
                     }
-                }
 
-                return Response::json(['status'=>true,'csrf_token'=>csrf_token(),'data'=>$hasil]);
+                    return Response::json(['status'=>true,'csrf_token'=>csrf_token(),'data'=>$hasil]);
+                }else{
+                    return Response::json(['status'=>false]);
+                }
             }else{
                 return Response::json(['status'=>false]);
             }

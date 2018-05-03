@@ -118,13 +118,15 @@ $('.upload-product-kontrak').on('change', function(event) {
         dataType: 'json',
     })
     .done(function(data) {
-        if(data.status){
+        console.log(data.status);
+        if(data.status==true){
             handleFile(data);
+            $(".loading2").hide();
         }else{
-            $('.error-product-kontrak').html('Format File tidak valid!');
-            return false;
+            $(".loading2").hide();
+            alertBS('File yang di upload kosong, atau tidak sesuai format template','danger');
         }
-        $(".loading2").hide();
+        
     });
 
     $(this).val('');

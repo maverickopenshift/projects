@@ -163,10 +163,14 @@ class ProductLogisticController extends Controller
             $header = ['price_coverage','harga_barang','harga_jasa'];
             $jml_header = '3';
 
-            $colomn = $data->first()->keys()->toArray();
+            if(!empty($data) && $data->first() != null ){
+                $colomn = $data->first()->keys()->toArray();
 
-            if(!empty($data) && count($colomn) == $jml_header && $colomn == $header){
-                return Response::json(['status'=>true,'csrf_token'=>csrf_token(),'data'=>$data]);
+                if(!empty($data) && count($colomn) == $jml_header && $colomn == $header){
+                    return Response::json(['status'=>true,'csrf_token'=>csrf_token(),'data'=>$data]);
+                }else{
+                    return Response::json(['status'=>false]);
+                }
             }else{
                 return Response::json(['status'=>false]);
             }

@@ -141,49 +141,54 @@ class ProductKontrakController extends Controller
     public function upload(Request $request){
         if ($request->ajax()) {
             $data = Excel::load($request->file('upload-product-kontrak')->getRealPath(), function ($reader) {})->get();
+            
             $header = ['kode_master_item','price_coverage','harga_barang','harga_jasa','no_kontrak'];
             $jml_header = '5';
-            $colomn = $data->first()->keys()->toArray();
+            
+            if(!empty($data) && $data->first() != null ){
+                $colomn = $data->first()->keys()->toArray();
+                if(count($colomn) == $jml_header && $colomn == $header){
+                    $hasil=array();
 
-            if(!empty($data) && count($colomn) == $jml_header && $colomn == $header){
-                $hasil=array();
+                    for($i=0;$i<count($data);$i++){
+                        $hasil[$i]['kode_master_item']          = $data[$i]['kode_master_item'];
+                        $hasil[$i]['price_coverage']            = $data[$i]['price_coverage'];
+                        $hasil[$i]['harga_barang']              = $data[$i]['harga_barang'];
+                        $hasil[$i]['harga_jasa']                = $data[$i]['harga_jasa'];
+                        $hasil[$i]['no_kontrak']                = $data[$i]['no_kontrak'];
+                        $hasil[$i]['error_kontrak']             = "";
+                        $hasil[$i]['kode_master_item_error']    = "";
+                        $hasil[$i]['flag']                      = "";
 
-                for($i=0;$i<count($data);$i++){
-                    $hasil[$i]['kode_master_item']          = $data[$i]['kode_master_item'];
-                    $hasil[$i]['price_coverage']            = $data[$i]['price_coverage'];
-                    $hasil[$i]['harga_barang']              = $data[$i]['harga_barang'];
-                    $hasil[$i]['harga_jasa']                = $data[$i]['harga_jasa'];
-                    $hasil[$i]['no_kontrak']                = $data[$i]['no_kontrak'];
-                    $hasil[$i]['error_kontrak']             = "";
-                    $hasil[$i]['kode_master_item_error']    = "";
-                    $hasil[$i]['flag']                      = "";
-
-                    $count_kode=CatalogProductMaster::where('kode_product',$data[$i]['kode_master_item'])->count();
-                    if($count_kode!=0){
-                        $kode=CatalogProductMaster::where('kode_product',$data[$i]['kode_master_item'])->first();
-                        $hasil[$i]['id_master_item']=$kode->id;
-                        $hasil[$i]['kode_master_item_error']="";
-                    }else{
-                        $hasil[$i]['id_master_item']=0;
-                        $hasil[$i]['kode_master_item_error']="Data tidak ditemukan";
-                    }
-
-
-                    $count_doc=Documents::where('doc_no',$data[$i]['no_kontrak'])->count();
-                    if($count_doc!=0){
-                        $doc=Documents::where('doc_no',$data[$i]['no_kontrak'])->first();
-                        $hasil[$i]['id_kontrak']=$doc->id;
-
-                        if($doc->doc_type=="khs"){
-                            $hasil[$i]['flag'] = "true";
+                        $count_kode=CatalogProductMaster::where('kode_product',$data[$i]['kode_master_item'])->count();
+                        if($count_kode!=0){
+                            $kode=CatalogProductMaster::where('kode_product',$data[$i]['kode_master_item'])->first();
+                            $hasil[$i]['id_master_item']=$kode->id;
+                            $hasil[$i]['kode_master_item_error']="";
+                        }else{
+                            $hasil[$i]['id_master_item']=0;
+                            $hasil[$i]['kode_master_item_error']="Data tidak ditemukan";
                         }
-                    }else{
-                        $hasil[$i]['id_kontrak']=0;
-                        $hasil[$i]['error_kontrak']="Data tidak ditemukan";
+
+
+                        $count_doc=Documents::where('doc_no',$data[$i]['no_kontrak'])->count();
+                        if($count_doc!=0){
+                            $doc=Documents::where('doc_no',$data[$i]['no_kontrak'])->first();
+                            $hasil[$i]['id_kontrak']=$doc->id;
+
+                            if($doc->doc_type=="khs"){
+                                $hasil[$i]['flag'] = "true";
+                            }
+                        }else{
+                            $hasil[$i]['id_kontrak']=0;
+                            $hasil[$i]['error_kontrak']="Data tidak ditemukan";
+                        }
                     }
+                    
+                    return Response::json(['status'=>true,'csrf_token'=>csrf_token(),'data'=>$hasil]);
+                }else{
+                    return Response::json(['status'=>false]);
                 }
-                
-                return Response::json(['status'=>true,'csrf_token'=>csrf_token(),'data'=>$hasil]);
             }else{
                 return Response::json(['status'=>false]);
             }

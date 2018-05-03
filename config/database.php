@@ -41,11 +41,11 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'host' => env('DB_HOST', getenv('MARIADBCONSYS_SERVICE_HOST')),
-            'port' => env('DB_PORT', getenv('MARIADBCONSYS_SERVICE_PORT')),
-            'database' => env('DB_DATABASE',  'consys'),
-            'username' => env('DB_USERNAME',  'consys'),
-            'password' => env('DB_PASSWORD',  'consys2017!'),
+            'host' => env('DB_HOST', getenv('MAVERICSDB_SERVICE_HOST')),
+            'port' => env('DB_PORT', getenv('MAVERICSDB_SERVICE_PORT')),
+            'database' => env('DB_DATABASE',  'maverics'),
+            'username' => env('DB_USERNAME',  'maverics'),
+            'password' => env('DB_PASSWORD',  'maverics2018!'),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',

@@ -1,5 +1,5 @@
 div,a,h1,h2,h3,h4,h5,h6,*{
-  font-family: "Oswald-Light";
+  font-family: "Rajdhani-Regular";
   letter-spacing: 0.4px !important;
 }
 html {
@@ -38,12 +38,12 @@ body.login-page, body.register-page{
 }
 .error-text{
   font-size: 85px;
-  font-family: "Oswald-Bold";
+  font-family: "Rajdhani-Regular";
   text-align: center;
   color: #dd4b39;
 }
 .error-text-2{
   font-size: 15px;
-  font-family: "Oswald-SemiBold";
+  font-family: "Rajdhani-Regular";
   text-align: center;
 }

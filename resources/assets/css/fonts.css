@@ -35,3 +35,34 @@
   font-weight: normal;
   font-style: normal;
 }
+@font-face {
+  font-family: 'Rajdhani-Bold';
+  src: url('../fonts/Rajdhani-Bold/Rajdhani-Bold.eot?#iefix') format('embedded-opentype'),  url('../fonts/Rajdhani-Bold/Rajdhani-Bold.woff') format('woff'), url('../fonts/Rajdhani-Bold/Rajdhani-Bold.ttf')  format('truetype'), url('../fonts/Rajdhani-Bold/Rajdhani-Bold.svg#Rajdhani-Bold') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Rajdhani-Light';
+  src: url('../fonts/Rajdhani-Light/Rajdhani-Light.eot?#iefix') format('embedded-opentype'),  url('../fonts/Rajdhani-Light/Rajdhani-Light.woff') format('woff'), url('../fonts/Rajdhani-Light/Rajdhani-Light.ttf')  format('truetype'), url('../fonts/Rajdhani-Light/Rajdhani-Light.svg#Rajdhani-Light') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Rajdhani-Medium';
+  src: url('../fonts/Rajdhani-Medium/Rajdhani-Medium.eot?#iefix') format('embedded-opentype'),  url('../fonts/Rajdhani-Medium/Rajdhani-Medium.woff') format('woff'), url('../fonts/Rajdhani-Medium/Rajdhani-Medium.ttf')  format('truetype'), url('../fonts/Rajdhani-Medium/Rajdhani-Medium.svg#Rajdhani-Medium') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Rajdhani-Regular';
+  src: url('../fonts/Rajdhani-Regular/Rajdhani-Regular.eot?#iefix') format('embedded-opentype'),  url('../fonts/Rajdhani-Regular/Rajdhani-Regular.woff') format('woff'), url('../fonts/Rajdhani-Regular/Rajdhani-Regular.ttf')  format('truetype'), url('../fonts/Rajdhani-Regular/Rajdhani-Regular.svg#Rajdhani-Regular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Rajdhani-SemiBold';
+  src: url('../fonts/Rajdhani-SemiBold/Rajdhani-SemiBold.eot?#iefix') format('embedded-opentype'),  url('../fonts/Rajdhani-SemiBold/Rajdhani-SemiBold.woff') format('woff'), url('../fonts/Rajdhani-SemiBold/Rajdhani-SemiBold.ttf')  format('truetype'), url('../fonts/Rajdhani-SemiBold/Rajdhani-SemiBold.svg#Rajdhani-SemiBold') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+

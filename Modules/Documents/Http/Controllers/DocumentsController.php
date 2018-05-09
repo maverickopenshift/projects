@@ -145,23 +145,41 @@ class DocumentsController extends Controller
             if(!empty($dari)){
 
               $documents->where(function($q) use ($dari) {
-                $q->orwhere('documents.doc_enddate','>=',"$dari");
-                $q->orwhere('child.doc_enddate','>=',"$dari");
-                $q->orwhere('child2.doc_enddate','>=',"$dari");
-                $q->orwhere('child3.doc_enddate','>=',"$dari");
+                $q->orwhere('documents.doc_enddate','>=',Helpers::date_set_db($dari));
+                $q->orwhere('child.doc_enddate','>=',Helpers::date_set_db($dari));
+                $q->orwhere('child2.doc_enddate','>=',Helpers::date_set_db($dari));
+                $q->orwhere('child3.doc_enddate','>=',Helpers::date_set_db($dari));
               });
             }
             if(!empty($sampai)){
               $documents->where(function($q) use ($sampai) {
-                $q->orwhere('documents.doc_enddate','<=',"$sampai");
-                $q->orwhere('child.doc_enddate','<=',"$sampai");
-                $q->orwhere('child2.doc_enddate','<=',"$sampai");
-                $q->orwhere('child3.doc_enddate','<=',"$sampai");
+                $q->orwhere('documents.doc_enddate','<=',Helpers::date_set_db($sampai));
+                $q->orwhere('child.doc_enddate','<=',Helpers::date_set_db($sampai));
+                $q->orwhere('child2.doc_enddate','<=',Helpers::date_set_db($sampai));
+                $q->orwhere('child3.doc_enddate','<=',Helpers::date_set_db($sampai));
               });
             }
             if(!in_array($user->role_name,['admin','monitor'])){
               $divisi = $user->divisi;
               $unit = $user->unit_bisnis;
+            }
+            if(!empty($open)){
+                $hmm = ($open=='2')?'=':'!=';
+                $documents->where(function($q) use ($hmm) {
+                  $q->orwhere('documents.doc_signing',$hmm,'4');
+                  $q->orwhere('child.doc_signing',$hmm,'4');
+                  $q->orwhere('child2.doc_signing',$hmm,'4');
+                  $q->orwhere('child3.doc_signing',$hmm,'4');
+                });
+                
+            }
+            if(!empty($divisi)){
+                $documents->where(function($q) use ($divisi) {
+                  $q->orwhere('documents.divisi','=',$divisi);
+                  $q->orwhere('child.divisi','=',$divisi);
+                  $q->orwhere('child2.divisi','=',$divisi);
+                  $q->orwhere('child3.divisi','=',$divisi);
+                });
             }
             if(!empty($divisi)){
                 $documents->where(function($q) use ($divisi) {

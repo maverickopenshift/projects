@@ -54,7 +54,7 @@
           <div class="form-group top10">
             {!! Helper::select_type2('jenis',$form['jenis']) !!}
           </div>
-          <div class="form-group top10">
+          <div class="form-group top10 hide">
             <select class="form-control" id="doc_signing" name="open">
               <option value="">Pilih Status</option>
               <option value="1" {!!$form['open']=='1'?'selected':''!!}>Open</option>

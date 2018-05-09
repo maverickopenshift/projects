@@ -166,7 +166,7 @@ class CustomErrors
             'cp1_nama.regex' => 'Nama harus huruf',
 
             'cp1_telp.required' => 'No Telepon harus diisi',
-            'cp1_telp.digits_between' => 'No Telepon harus diantara 7 sampai 20 digit',
+            'cp1_telp.digits_between' => 'No Telepon harus angka dan diantara 7 sampai 20 digit',
 
             'cp1_email.required' => 'Email harus diisi',
             'cp1_email.email' => 'Email harus format email',

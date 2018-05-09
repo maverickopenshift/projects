@@ -115,6 +115,7 @@ class KlasifikasiUsahaController extends Controller
 
     public function getSelect(Request $request){
         $search = trim($request->q);
+        $not_in = $request->notin;
 
         // if (empty($search)) {
         //     return \Response::json([]);
@@ -125,6 +126,9 @@ class KlasifikasiUsahaController extends Controller
               $q->orWhere('text', 'like', '%'.$search.'%');
               $q->orWhere('kode', 'like', '%'.$search.'%');
           });
+        }
+        if(is_array($not_in)){
+          $data->whereNotIn('kode',$not_in);
         }
         $data = $data->paginate(30);
         return \Response::json($data);

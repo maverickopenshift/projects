@@ -30,7 +30,7 @@
             @foreach ($klasifikasi_kode as $key => $value)
               <tr>
                 <td>{{$key+1}}</td>
-                <td class="hide"><input type="hidden" name="klasifikasi_kode[]" value="{{$klasifikasi_kode[$key]}}"></td>
+                <td class="hide"><input class="klasifikasi_kode" type="hidden" name="klasifikasi_kode[]" value="{{$klasifikasi_kode[$key]}}"></td>
                 <td> {{$klasifikasi_kode[$key]}} </td>
                 <td>{{$klasifikasi_text[$key]}}</td>
                 <td class="hide"><input type="hidden" name="klasifikasi_text[]" value="{{$klasifikasi_text[$key]}}"></td>
@@ -52,8 +52,16 @@ $('.select-klasifikasi-usaha').select2({
         dataType: 'json',
         delay: 350,
         data: function (params) {
+            var param_val = [];
+            var form_param = $('.table-klasifikasi_usaha').find('input[class="klasifikasi_kode"]');
+            if(form_param.length>0){
+              form_param.each(function(index, el) {
+                param_val.push($(this).val())
+              });
+            }
             var datas =  {
                 q: params.term, // search term
+                notin:param_val,
                 page: params.page
             };
             return datas;
@@ -103,7 +111,7 @@ function aoTempSelect(data){
 function templateAtasan(){
   return '<tr>\
             <td>1</td>\
-            <td class="hide"><input type="hidden" name="klasifikasi_kode[]"></td>\
+            <td class="hide"><input class="klasifikasi_kode" type="hidden" name="klasifikasi_kode[]"></td>\
             <td></td>\
             <td></td>\
             <td class="hide"><input type="hidden" name="klasifikasi_text[]"></td>\

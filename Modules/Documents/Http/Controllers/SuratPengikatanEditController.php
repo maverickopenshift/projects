@@ -194,6 +194,55 @@ class SuratPengikatanEditController extends Controller
         }
       }
     });
+    $validator->after(function ($validator) use ($request) {
+      $tabs_error = [];
+      if(
+          $validator->errors()->has('doc_no') || 
+          $validator->errors()->has('doc_title') ||
+          $validator->errors()->has('doc_desc') ||
+          $validator->errors()->has('doc_startdate') ||
+          $validator->errors()->has('doc_enddate') || 
+          $validator->errors()->has('divisi') || 
+          $validator->errors()->has('unit_bisnis') || 
+          $validator->errors()->has('unit_kerja') || 
+          $validator->errors()->has('doc_pihak1') || 
+          $validator->errors()->has('doc_pihak1_nama') || 
+          $validator->errors()->has('supplier_id') || 
+          $validator->errors()->has('doc_pihak2_nama') || 
+          $validator->errors()->has('doc_lampiran_nama.*') || 
+          $validator->errors()->has('doc_lampiran.*')
+        ){
+          array_push($tabs_error,'tab_general_info');
+        }
+        if(
+          $validator->errors()->has('lt_judul_rks') || 
+          $validator->errors()->has('lt_tanggal_rks') || 
+          $validator->errors()->has('lt_file_rks') || 
+          $validator->errors()->has('lt_judul_ketetapan_pemenang') || 
+          $validator->errors()->has('lt_tanggal_ketetapan_pemenang') || 
+          $validator->errors()->has('lt_file_ketetapan_pemenang') || 
+          $validator->errors()->has('lt_judul_kesanggupan_mitra') || 
+          $validator->errors()->has('lt_tanggal_kesanggupan_mitra') || 
+          $validator->errors()->has('lt_file_kesanggupan_mitra') || 
+          $validator->errors()->has('f_latar_belakang_judul.*') || 
+          $validator->errors()->has('f_latar_belakang_tanggal.*') || 
+          $validator->errors()->has('f_latar_belakang_isi.*') || 
+          $validator->errors()->has('f_latar_belakang_file.*')
+        ){
+          array_push($tabs_error,'tab_latar_belakang');
+        }
+        if(
+          $validator->errors()->has('ps_judul.*') || 
+          $validator->errors()->has('ps_isi.*')
+        ){
+          array_push($tabs_error,'tab_pasal_khusus');
+        }
+        if(count($tabs_error)>0){
+          foreach ($tabs_error as $key=>$val){
+            $validator->errors()->add('tabs_error.'.$key, $val);
+          }
+        }
+    });
     $request->merge(['doc_value' => $doc_value]);
     if(isset($hs_harga) && count($hs_harga)>0){
       $request->merge(['hs_harga'=>$hs_harga]);

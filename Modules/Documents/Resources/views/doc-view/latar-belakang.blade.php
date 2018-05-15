@@ -36,6 +36,7 @@
             <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_latar_belakang'])}}">
             <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
             </a>
+            <input name="disclaimer[]" class="disclaimer hide" autocomplete="off" type="checkbox">
             @else
             -
           @endif

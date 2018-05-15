@@ -26,11 +26,11 @@
           </div>    
           @if($user->pegawai_type!='subsidiary')
           <div class="form-group top10">
-            {!!Helper::select_all_divisi('divisi',Laratrust::hasRole('monitor')?$form['divisi']:$user->divisi)!!}
+            {!!Helper::select_all_divisi('divisi',Laratrust::hasRole('monitoring-nasional')?$form['divisi']:$user->divisi)!!}
           </div>
           <div class="form-group top10">
             {{-- @if(!empty($form['unit_bisnis'])) --}}
-              {!!Helper::select_unit_bisnis('unit_bisnis',Laratrust::hasRole('monitor')?$form['unit_bisnis']:$user->unit_bisnis,Laratrust::hasRole('monitor')?$form['divisi']:$user->divisi)!!}
+              {!!Helper::select_unit_bisnis('unit_bisnis',Laratrust::hasRole('monitor')?$form['unit_bisnis']:$user->unit_bisnis,Laratrust::hasRole('monitoring-nasional')?$form['divisi']:$user->divisi)!!}
             {{-- @else
               <select class="form-control" name="unit_bisnis" id="unit_bisnis">
                 <option value="">Pilih Unit Bisnis</option>
@@ -39,7 +39,7 @@
           </div>
           <div class="form-group top10">
           @if(!empty($form['unit_kerja']))
-            {!!Helper::select_unit_kerja('unit_kerja',$form['unit_kerja'],Laratrust::hasRole('monitor')?$form['unit_bisnis']:$user->unit_bisnis)!!}
+            {!!Helper::select_unit_kerja('unit_kerja',$form['unit_kerja'],Laratrust::hasRole('monitoring-nasional')?$form['unit_bisnis']:$user->unit_bisnis)!!}
           @else
             <select class="form-control" name="unit_kerja" id="unit_kerja">
               <option value="">Pilih Unit Kerja</option>
@@ -600,7 +600,7 @@ $(document).on('click', '.btn-reject', function(event) {
 </script>
 <script>
 var user_role = '{{$user->role_name}}';
-if(user_role!='monitor'){
+if(user_role!='monitoring-nasional'){
   $('#divisi').prop('disabled', 'disabled');
   $('#unit_bisnis').prop('disabled', 'disabled');
 }
@@ -664,10 +664,10 @@ $(document).on('change', '#unit_bisnis', function(event) {
 $(function(e){
     var unit_bisnis = '{{$form['unit_bisnis']}}';
     var unit_kerja = '{{$form['unit_kerja']}}';
-    // if(user_role=='monitor'){
+    // if(user_role=='monitoring-nasional'){
     //   if($('#divisi').val()!=="" && unit_bisnis==""){
     //     $('#unit_bisnis').find('option').not('option[value=""]').remove();
-    //     if(user_role!='monitor'){
+    //     if(user_role!='monitoring-nasional'){
     //       $('#divisi').change();
     //     }
     //   }

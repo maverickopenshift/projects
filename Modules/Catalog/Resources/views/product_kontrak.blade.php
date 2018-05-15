@@ -60,11 +60,12 @@
                         <thead>
                             <tr>
                                 <th>Kode Master Item</th>
-                                <th>Price Coverage</th>
+                                <th>Group Coverage</th>
+                                <th>Coverage</th>
                                 <th>Harga Barang</th>
                                 <th>Harga Jasa</th>
                                 <th>Doc No</th>
-                                <th>Flag</th>
+                                <th>KHS</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -135,7 +136,7 @@ $('.upload-product-kontrak').on('change', function(event) {
 function handleFile(data) {
     $.each(data.data,function(index, el) {
         var dt = data.data[index];
-        var new_row = $(template_add(dt.id_master_item, dt.kode_master_item, dt.kode_master_item_error, dt.price_coverage, dt.harga_barang, dt.harga_jasa, dt.no_kontrak, dt.id_kontrak, dt.error_kontrak, dt.flag)).clone(true);
+        var new_row = $(template_add(dt.id_master_item, dt.kode_master_item, dt.kode_master_item_error, dt.id_group_coverage, dt.group_coverage, dt.group_coverage_error, dt.id_coverage, dt.coverage, dt.coverage_error, dt.harga_barang, dt.harga_jasa, dt.no_kontrak, dt.id_kontrak, dt.error_kontrak, dt.flag)).clone(true);
         $(".table-kontrak").append(new_row);
     });
 }
@@ -149,7 +150,7 @@ $('.table-parent-kontrak').on('click', '.btn-delete', function(e){
     }
 });
 
-function template_add(id_master_item, kode_master_item, kode_master_item_error, lokasi, harga_barang, harga_jasa, no_kontrak, id_kontrak, error_kontrak, flag){
+function template_add(id_master_item, kode_master_item, kode_master_item_error, id_group_coverage, group_coverage, group_coverage_error, id_coverage, coverage, coverage_error, harga_barang, harga_jasa, no_kontrak, id_kontrak, error_kontrak, flag){
     var template ='\
     <tr class="tabel-product">';
 
@@ -157,23 +158,51 @@ function template_add(id_master_item, kode_master_item, kode_master_item_error, 
             template  = template + '\
                 <td class="formerror formerror-f_kodemaster-0 has-error">\
                     <input type="hidden" name="f_id_master_item[]" value="'+ id_master_item +'">\
-                    <input type="text" name="f_kodemaster[]" placeholder="Kode Master .." value="'+ kode_master_item +'" class="form-control" readonly>\
+                    <input type="text" placeholder="Kode Master .." value="'+ kode_master_item +'" class="form-control" readonly>\
                         <div class="error error-f_kodemaster error-f_kodemaster-0 has-error"><span class="help-block">"'+ kode_master_item_error +'"</span></div>\
                 </td>';
         }else{
             template = template + '\
                 <td class="formerror formerror-f_kodemaster-0">\
                     <input type="hidden" name="f_id_master_item[]" value="'+ id_master_item +'">\
-                    <input type="text" name="f_kodemaster[]" placeholder="Kode Master .." value="'+ kode_master_item +'" class="form-control" readonly>\
+                    <input type="text" placeholder="Kode Master .." value="'+ kode_master_item +'" class="form-control" readonly>\
                         <div class="error error-f_kodemaster error-f_kodemaster-0"></div>\
                 </td>';
         }
 
+        if(group_coverage_error!=""){
+            template  = template + '\
+                <td class="formerror formerror-f_nogroupcoverage-0 has-error">\
+                    <input type="hidden" name="f_nogroupcoverage[]" value="'+ id_group_coverage +'">\
+                    <input type="text" placeholder="Group Coverage.." value="'+ group_coverage +'" class="form-control" readonly>\
+                        <div class="error error-f_nogroupcoverage error-f_nogroupcoverage-0 has-error"><span class="help-block">"'+ group_coverage_error +'"</span></div>\
+                </td>';
+        }else{
+            template = template + '\
+                <td class="formerror formerror-f_nogroupcoverage-0">\
+                    <input type="hidden" name="f_nogroupcoverage[]" value="'+ id_group_coverage +'">\
+                    <input type="text" placeholder="Group Coverage.." value="'+ group_coverage +'" class="form-control" readonly>\
+                        <div class="error error-f_nogroupcoverage error-f_nogroupcoverage-0"></div>\
+                </td>';
+        }
+
+        if(coverage_error!=""){
+            template  = template + '\
+                <td class="formerror formerror-f_nocoverage-0 has-error">\
+                    <input type="hidden" name="f_nocoverage[]" value="'+ id_coverage +'">\
+                    <input type="text" placeholder="Kode Master .." value="'+ coverage +'" class="form-control" readonly>\
+                        <div class="error error-f_nocoverage error-f_nocoverage-0 has-error"><span class="help-block">"'+ coverage_error +'"</span></div>\
+                </td>';
+        }else{
+            template = template + '\
+                <td class="formerror formerror-f_nocoverage-0">\
+                    <input type="hidden" name="f_nocoverage[]" value="'+ id_coverage +'">\
+                    <input type="text" placeholder="Kode Master .." value="'+ coverage +'" class="form-control" readonly>\
+                        <div class="error error-f_nocoverage error-f_nocoverage-0"></div>\
+                </td>';
+        }
+
         template  = template + '\
-        <td class="formerror formerror-f_lokasi-0">\
-            <input type="text" name="f_lokasi[]" placeholder="Price Coverage .." value="'+ lokasi +'" class="form-control" readonly>\
-            <div class="error error-f_lokasi error-f_lokasi-0"></div>\
-        </td>\
         <td class="formerror formerror-f_hargabarang-0">\
             <input type="text" name="f_hargabarang[]" placeholder="Harga Barang.." value="'+ harga_barang +'" class="form-control input-rupiah" readonly>\
             <div class="error error-f_hargabarang error-f_hargabarang-0"></div>\
@@ -316,7 +345,7 @@ $(document).on('click', '.simpan-product', function(event) {
                 });
               }else{
                 if(response.status=="all"){
-                  window.location.href = "{{route('catalog.list.product_kontrak')}}";
+                  //window.location.href = "{{route('catalog.list.product_kontrak')}}";
                 }
               }
             }
@@ -327,7 +356,7 @@ $(document).on('click', '.simpan-product', function(event) {
 });
 
 $(function(){
-    var new_row = $(template_add('','','','','','','','','','')).clone(true);
+    var new_row = $(template_add('','','','','','','','','','','','','','','','')).clone(true);
     $(".table-kontrak").append(new_row);
     var input_new_row = new_row.find('td');
 });

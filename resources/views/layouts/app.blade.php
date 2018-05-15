@@ -28,6 +28,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <meta name="theme-color" content="#ffffff">
     
     <link href="{{ asset('js/jstree/dist/themes/default/style.min.css') }}" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('js/pdfjs-dist/web/pdf_viewer.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ mix('css/all.css') }}" rel="stylesheet" type="text/css" />
     @stack('css')
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -40,11 +41,16 @@ scratch. This page gets rid of all links and provides the needed markup only.
       .canvasattr{
         display: block;
       }
+      .pdfViewer .page{
+        /* margin: 0; */
+        border: 0px none;
+      }
     </style>
     <script>
         window.Laravel = <?php echo json_encode([
             'csrfToken' => csrf_token(),
         ]); ?>;
+        var BASE_URL = '{{url('/')}}';
         var routes = {};
     </script>
     @permission('lihat-kontrak|tambah-kontrak')
@@ -122,26 +128,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- /.modal-dialog -->
     </div>
 </div><!-- ./wrapper -->
-
-<!-- modal-preview-pdf -->
-<div class="modal fade" id="ModalPDF" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h4 class="modal-title" id="myModalLabel"></h4> 
-      </div>
-      <div class="modal-body">
-        <div style=" max-height: 500px; overflow: auto;" style="text-align: center;" id="holder">   
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
-</div>
-
+@include('layouts.modal-pdf')
 
 <script src="{{ mix('js/all.js') }}"></script>
 <script src="{{ asset('js/jstree/dist/jstree.min.js') }}"></script>
@@ -158,51 +145,6 @@ var is_admin = function(){
   }
   return admin;
 }
-</script>
-
-<!-- Javascript Preview PDF -->
-<script src="{{asset('js/pdf.js')}}"></script>
-
-<script type="text/javascript">
-function renderPDF(url, canvasContainer, options) {
-    var options = options || { scale: 1 };
-        
-    function renderPage(page) {
-        var viewport = page.getViewport(options.scale);
-        var canvas = document.createElement('canvas');
-        var canvasattr = document.createAttribute("class");   
-        canvasattr.value = "canvasattr";                      
-        canvas.setAttributeNode(canvasattr); 
-        var ctx = canvas.getContext('2d');
-        var renderContext = {
-          canvasContext: ctx,
-          viewport: viewport
-        };
-        
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
-        canvasContainer.appendChild(canvas);
-        
-        page.render(renderContext);
-    }
-    
-    function renderPages(pdfDoc) {
-        for(var num = 1; num <= pdfDoc.numPages; num++)
-            pdfDoc.getPage(num).then(renderPage);
-    }
-    PDFJS.disableWorker = true;
-    PDFJS.getDocument(url).then(renderPages);
-}   
-</script> 
-
-<script type="text/javascript">
-
-  $('#ModalPDF').on('show.bs.modal', function (e) {
-    var url = $(e.relatedTarget).data('load-url');
-    $(this).find('#holder').html('');
-    renderPDF(url, document.getElementById('holder'));  
-  });
-  
 </script>
 
 @stack('scripts')

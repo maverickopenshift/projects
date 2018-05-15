@@ -27,6 +27,7 @@
 @endphp
 <div class="row">
     <div class="loading2"></div>
+
     <div class="col-md-12">
         <div class="box box-danger test-product">
             <div class="box-header with-border">
@@ -43,9 +44,7 @@
                 </div>
             </div>
 
-            <form method="post" action="{{ route('catalog.product_logistic.add_ajax') }}" id="form-produk">
-                {{ csrf_field() }}
-                <input type="hidden" name="f_idproduct" value="{{$product->id}}">
+            
                 <div class="box-body form-horizontal">
                     <div class="flash-message" id="alertBS">
                         @foreach (['danger', 'warning', 'success', 'info'] as $msg)
@@ -54,53 +53,77 @@
                             @endif
                         @endforeach
                     </div>
+                    <div class="col-md-6">
+                        <div class="form-group ">
+                            <label class="col-sm-4 control-label">Taxonomy </label>
+                            <div class="col-sm-8 text-me">{{$product->category_name}}</div>
+                        </div>
 
-                    <div class="form-group ">
-                        <label class="col-sm-2 control-label">Taxonomy </label>
-                        <div class="col-sm-10 text-me">{{$product->category_name}}</div>
-                    </div>
+                        <div class="form-group ">
+                            <label class="col-sm-4 control-label">Kode Master Item </label>
+                            <div class="col-sm-8 text-me">{{$product->kode_product}}</div>
+                        </div>
 
-                    <div class="form-group ">
-                        <label class="col-sm-2 control-label">Kode Master Item </label>
-                        <div class="col-sm-10 text-me">{{$product->kode_product}}</div>
-                    </div>
+                        <div class="form-group ">
+                            <label class="col-sm-4 control-label">Keterangan </label>
+                            <div class="col-sm-8 text-me">{{$product->keterangan_product}}</div>
+                        </div>
 
-                    <div class="form-group ">
-                        <label class="col-sm-2 control-label">Keterangan </label>
-                        <div class="col-sm-10 text-me">{{$product->keterangan_product}}</div>
-                    </div>
+                        <div class="form-group ">
+                            <label class="col-sm-4 control-label">Satuan </label>
+                            <div class="col-sm-8 text-me">{{$product->nama_satuan}}</div>
+                        </div>
 
-                    <div class="form-group ">
-                        <label class="col-sm-2 control-label">Satuan </label>
-                        <div class="col-sm-10 text-me">{{$product->nama_satuan}}</div>
-                    </div>
+                        <br>
 
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Pemilik Katalog </label>
-                        <div class="col-sm-6 text-me text-uppercase">
-                            <span class="span-oke">Nama</span> {{$pegawai->v_nama_karyawan}} <i>({{$pegawai->n_nik}})</i></br> 
-                            <span class="span-oke">Divisi</span> {{$pegawai->divisi}} </br>
-                            <span class="span-oke">Unit Bisnis</span> {{$pegawai->unit_bisnis}} </br>
-                            <span class="span-oke">Unit Kerja</span> {{$pegawai->unit_kerja}} </br>
-                            <span class="span-oke">Jabatan</span> {{$pegawai->v_short_posisi}} </br>
+                        <div class="form-group ">
+                            <label class="col-sm-4 control-label">Nama </label>
+                            <div class="col-sm-8 text-me">{{$pegawai->v_nama_karyawan}} <i>({{$pegawai->n_nik}})</i></div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-4 control-label">Divisi </label>
+                            <div class="col-sm-8 text-me">{{$pegawai->divisi}}</div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-4 control-label">Unit Bisnis </label>
+                            <div class="col-sm-8 text-me">{{$pegawai->unit_bisnis}}</div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-4 control-label">Unit Kerja </label>
+                            <div class="col-sm-8 text-me">{{$pegawai->unit_kerja}}</div>
+                        </div>
+                        <div class="form-group ">
+                            <label class="col-sm-4 control-label">Jabatan </label>
+                            <div class="col-sm-8 text-me">{{$pegawai->v_short_posisi}}</div>
                         </div>
                     </div>
 
-                    <table class="table table-striped table-parent-product" width="100%">
-                        <thead>
-                            <tr>
-                                <th>Price Coverage</th>
-                                <th>Harga Barang</th>
-                                <th>Harga Jasa</th>
-                                <th>Jenis Referensi</th>
-                                <th>Referensi</th>
-                                <th>Flag</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="table-test">
-                        </tbody>
-                    </table>
+                     <div class="col-md-6">
+                        <div class="form-group ">
+                            <img src='product_master/image/{{$product->image_product}}'></img>
+                        </div>
+                    </div>
+
+                    <form method="post" action="{{ route('catalog.product_logistic.add_ajax') }}" id="form-produk">
+                        {{ csrf_field() }}
+                        <input type="hidden" class="f_idproduct" name="f_idproduct" value="{{$product->id}}">
+
+                        <table class="table table-striped table-parent-product" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Group Coverage</th>
+                                    <th>Price Coverage</th>
+                                    <th>Harga Barang</th>
+                                    <th>Harga Jasa</th>
+                                    <th>Jenis Referensi</th>
+                                    <th>Referensi</th>
+                                    <th>KHS</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-test">
+                            </tbody>
+                        </table>
                 </div>
                 <div class="box-footer">
                     <div class="box-tools pull-right">
@@ -119,6 +142,7 @@
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="modalkontrak" style="overflow:hidden;" role="dialog" aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -142,6 +166,10 @@
                                     <th>No</th>
                                     <th>No Kontrak</th>
                                     <th>Judul Kontrak</th>
+                                    <th>Type</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Mitra</th>
                                     <th width="20%">Aksi</th>
                                 </tr>
                             </thead>
@@ -200,20 +228,44 @@ $('.upload-product-price').on('change', function(event) {
 function handleFile(data) {
     $.each(data.data,function(index, el) {
         var dt = data.data[index];
-        var new_row = $(template_add(dt.price_coverage, dt.harga_barang, dt.harga_jasa)).clone(true);
+        var new_row = $(template_add(dt.error_group_coverage, dt.error_coverage, dt.harga_barang, dt.harga_jasa)).clone(true);
         $(".table-test").prepend(new_row);
         var input_new_row = new_row.find('td');
+        select_referensi(input_new_row.eq(4).find('.select-jenis'), input_new_row.eq(5), input_new_row.eq(6));
+        input_new_row.eq(4).find('.select-jenis').val(dt.jenis_referensi).trigger('change');
 
-        select_referensi(input_new_row.eq(3).find('.select-jenis'), input_new_row.eq(4));
+        if(dt.jenis_referensi==1){
+            input_new_row.eq(5).find('.doc_no_input').val(dt.id_kontrak);
+            input_new_row.eq(5).find('.doc_text_input').val(dt.referensi);
+        }else{
+            input_new_row.eq(5).find('.doc_no_input').val(dt.referensi);
+        }
 
-        var new_referensi = $(template_referensi_kontrak()).clone(true);
-        input_new_row.eq(4).html('');
-        input_new_row.eq(4).append(new_referensi);
-        //select_kontrak_referensi(input_new_row.eq(4).find('.select_kontrak'));
-        
+        if(dt.khs==1){
+            input_new_row.eq(6).html('<i class="fa fa-check" style="color:green;"></i>');
+        }else{
+            input_new_row.eq(6).html('');
+        }
+
+        select_group_coverage(input_new_row.eq(0).find('.select_group_coverage'));
+
+        if(dt.id_group_coverage!=0){
+            set_select2(input_new_row.eq(0).find('.select_group_coverage'),dt.group_coverage, dt.id_group_coverage);
+        }
+
+        if(dt.id_coverage!=0){
+            set_select2(input_new_row.eq(1).find('.select_coverage'),dt.coverage, dt.id_coverage);
+        }
     });
 
     fix_no_error();
+}
+
+function set_select2(attr_obj,text,id) {
+    attr_obj.find('option').remove();
+    var newOption = new Option(text, id, false, true);
+    attr_obj.append(newOption);
+    attr_obj.val(id).change();
 }
 
 $('.table-parent-product').on('click', '.btn-delete', function(e){
@@ -223,49 +275,195 @@ $('.table-parent-product').on('click', '.btn-delete', function(e){
     }else{
         alertBS('Jika jumlah baris hanya ada 1 tidak bisa di hapus, silahkan tambah sebelum menghapus','danger');
     }
-});
 
-$(document).on('click', '.add-product', function(event) {        
-    var new_row = $(template_add('','','')).clone(true).insertAfter(".tabel-product:last");
-    var input_new_row = new_row.find('td');
-
-    select_referensi(input_new_row.eq(3).find('.select-jenis'), input_new_row.eq(4));
-
-    var new_referensi = $(template_referensi_kontrak()).clone(true);
-    input_new_row.eq(4).html('');
-    input_new_row.eq(4).append(new_referensi);
-    select_kontrak_referensi(input_new_row.eq(4).find('.select_kontrak'));
-    
     fix_no_error();
 });
 
-function select_kontrak_referensi(input){
-}
+$(document).on('click', '.add-product', function(event) {        
+    var new_row = $(template_add('','','','','')).clone(true);
+    $(".table-test").append(new_row);
+    var input_new_row = new_row.find('td');
 
-function select_referensi(input, isi){
+    select_referensi(input_new_row.eq(4).find('.select-jenis'), input_new_row.eq(5), input_new_row.eq(6));
+    select_group_coverage(input_new_row.eq(0).find('.select_group_coverage'));
+
+    var new_referensi = $(template_referensi_kontrak()).clone(true);
+    input_new_row.eq(5).html('');
+    input_new_row.eq(5).append(new_referensi);
+
+    fix_no_error();
+});
+
+function select_referensi(input, isi, flag){
     $(input).on('change', function(event) {        
         if(input.val()==1){
             var new_referensi = $(template_referensi_kontrak()).clone(true);
             isi.html('');
+            flag.html('');
+            isi.removeClass().addClass("formerror formerror-f_referensi-0 isi-referensi");
             isi.append(new_referensi);
-            /*
-            select_kontrak_referensi(isi.find('.select_kontrak'));
-            */
+            fix_no_error();
         }else{
             var new_referensi = $(template_refrensi_freetext()).clone(true);
             isi.html('');
+            flag.html('');
+            isi.removeClass().addClass("formerror formerror-f_referensi-0 isi-referensi");
+
             isi.append(new_referensi);
+            fix_no_error();
+        }
+    });   
+}
+
+function select_group_coverage(input){
+    input.select2({
+        placeholder : "Silahkan Pilih....",
+        ajax: {
+            url: '{!! route('catalog.coverage.get_group_coverage') !!}',
+            dataType: 'json',
+            delay: 350,
+            
+            data: function (params) {
+                var datas =  {
+                    q: params.term,
+                    page: params.page
+                };
+                return datas;
+            },
+            processResults: function (data, params) {
+                var results = [];
+                $.each(data.data, function (i, v) {                       
+                    var o = {};
+                    o.id = v.id;
+                    o.text = v.text;
+                    results.push(o);
+                })
+                params.page = params.page || 1;
+                return {
+                    results: data.data,
+                    pagination: {
+                        more: (data.next_page_url ? true: false)
+                    }
+                };
+            },
+            cache: true
+        },        
+        escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+        minimumInputLength: 0,
+        templateResult: function (state) {
+            if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching..' ;  }
+            var $state = $(
+                '<span>'+  state.text + '</span>'
+            );
+            return $state;
+        },
+        templateSelection: function (data) {
+            if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
+                return "Silahkan Pilih..";
+            }
+            if(data.text === undefined){
+              return data.text;
+            }
+            return data.text ;
         }
     });
 }
 
-function template_add(lokasi, harga_barang, harga_jasa){
-    return '\
-    <tr class="tabel-product">\
-        <td class="formerror formerror-f_lokasi-0">\
-            <input type="text" name="f_lokasi[]" placeholder="Price Coverage .." value="'+ lokasi +'" class="form-control">\
-            <div class="error error-f_lokasi error-f_lokasi-0"></div>\
-        </td>\
+function select_coverage(input, group_coverage){
+    input.select2({
+        placeholder : "Silahkan Pilih....",
+        ajax: {
+            url: '{!! route('catalog.coverage.get_coverage') !!}?id_group_coverage=' + group_coverage,
+            dataType: 'json',
+            delay: 350,            
+            data: function (params) {
+                var datas =  {
+                    q: params.term,
+                    page: params.page
+                };
+                return datas;
+            },
+            processResults: function (data, params) {
+                var results = [];
+                $.each(data.data, function (i, v) {                       
+                    var o = {};
+                    o.id = v.id;
+                    o.text = v.text;
+                    results.push(o);
+                })
+                params.page = params.page || 1;
+                return {
+                    results: data.data,
+                    pagination: {
+                        more: (data.next_page_url ? true: false)
+                    }
+                };
+            },
+            cache: true
+        },        
+        escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+        minimumInputLength: 0,
+        templateResult: function (state) {
+            if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching..' ;  }
+            var $state = $(
+                '<span>'+  state.text + '</span>'
+            );
+            return $state;
+        },
+        templateSelection: function (data) {
+            if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
+                return "Silahkan Pilih..";
+            }
+            if(data.text === undefined){
+              return data.text;
+            }
+            return data.text ;
+        }
+    });
+}
+
+function template_add(error_group_coverage, error_coverage, harga_barang, harga_jasa){
+    console.log(harga_jasa);
+    var template = '\
+    <tr class="tabel-product">';
+
+        if(error_group_coverage!=""){
+            template = template + '\
+                <td class="formerror formerror-f_nogroupcoverage-0 has-error">\
+                    <select class="form-control select_group_coverage" name="f_nogroupcoverage[]" style="width: 100%;" required>\
+                    <option value=""></option>\
+                    </select>\
+                    <div class="error error-f_nogroupcoverage error-f_nogroupcoverage-0 has-error"><span class="help-block">"'+ error_group_coverage +'"</span></div>\
+                </td>';
+        }else{
+            template = template + '\
+                <td class="formerror formerror-f_nogroupcoverage-0">\
+                    <select class="form-control select_group_coverage" name="f_nogroupcoverage[]" style="width: 100%;" required>\
+                    <option value=""></option>\
+                    </select>\
+                    <div class="error error-f_nogroupcoverage error-f_nogroupcoverage-0"></div>\
+                </td>';
+        }
+
+        if(error_coverage!=""){
+            template = template + '\
+                <td class="formerror formerror-f_nocoverage-0 has-error">\
+                    <select class="form-control select_coverage" name="f_nocoverage[]" style="width: 100%;" required>\
+                    <option value=""></option>\
+                    </select>\
+                    <div class="error error-f_nocoverage error-f_nocoverage-0 has-error"><span class="help-block">"'+ error_coverage +'"</span></div>\
+                </td>';
+        }else{
+            template = template + '\
+                <td class="formerror formerror-f_nocoverage-0">\
+                    <select class="form-control select_coverage" name="f_nocoverage[]" style="width: 100%;" required>\
+                    <option value=""></option>\
+                    </select>\
+                    <div class="error error-f_nocoverage error-f_nocoverage-0"></div>\
+                </td>';
+        }
+
+        template = template + '\
         <td class="formerror formerror-f_hargabarang-0">\
             <input type="text" name="f_hargabarang[]" placeholder="Harga Barang.." value="'+ harga_barang +'" class="form-control input-rupiah">\
             <div class="error error-f_hargabarang error-f_hargabarang-0"></div>\
@@ -279,7 +477,7 @@ function template_add(lokasi, harga_barang, harga_jasa){
                 <option value="1">No.Kontrak</option>\
                 <option value="2">Freetext</option>\
             </select>\
-            <div class="error error-f_unitproduct error-f_unitproduct-0"></div>\
+            <div class="error error-f_jenis error-f_jenis-0"></div>\
         </td>\
         <td class="formerror formerror-f_referensi-0 isi-referensi">\
         </td>\
@@ -296,6 +494,8 @@ function template_add(lokasi, harga_barang, harga_jasa){
             </div>\
         </td>\
     </tr>';
+
+    return template
 }
 
 function template_referensi_kontrak(){
@@ -307,12 +507,14 @@ function template_referensi_kontrak(){
                 <button class="btn btn-success btn-open-kontrak" type="button"><i class="glyphicon glyphicon-search"></i></button>\
             </span>\
         </div>\
+        <div class="error error-f_referensi error-f_referensi-0"></div>\
     ';
 }
 
 function template_refrensi_freetext(){
     return '\
-        <input type="text" class="form-control" name="f_referensi[]" autocomplete="off" placeholder="Referensi..">\
+        <input type="text" class="form-control doc_no_input" name="f_referensi[]" autocomplete="off" placeholder="Referensi..">\
+        <div class="error error-f_referensi error-f_referensi-0"></div>\
     ';
 }
 
@@ -322,36 +524,43 @@ function fix_no_error(){
         var mdf_new_row = $(this).find('td');
 
         if(mdf_new_row.eq(0).hasClass("has-error")){
-            mdf_new_row.eq(0).removeClass().addClass("has-error formerror formerror-f_lokasi-"+ index);
+            mdf_new_row.eq(0).removeClass().addClass("has-error formerror formerror-f_nogroupcoverage-"+ index);
         }else{
-            mdf_new_row.eq(0).removeClass().addClass("formerror formerror-f_lokasi-"+ index);
+            mdf_new_row.eq(0).removeClass().addClass("formerror formerror-f_nogroupcoverage-"+ index);
         }
 
         if(mdf_new_row.eq(1).hasClass("has-error")){
-            mdf_new_row.eq(1).removeClass().addClass("has-error formerror formerror-f_hargabarang-"+ index);
+            mdf_new_row.eq(1).removeClass().addClass("has-error formerror formerror-f_nocoverage-"+ index);
         }else{
-            mdf_new_row.eq(1).removeClass().addClass("formerror formerror-f_hargabarang-"+ index);
+            mdf_new_row.eq(1).removeClass().addClass("formerror formerror-f_nocoverage-"+ index);
         }
 
         if(mdf_new_row.eq(2).hasClass("has-error")){
-            mdf_new_row.eq(2).removeClass().addClass("has-error formerror formerror-f_hargajasa-"+ index);
+            mdf_new_row.eq(2).removeClass().addClass("has-error formerror formerror-f_hargabarang-"+ index);
         }else{
-            mdf_new_row.eq(2).removeClass().addClass("formerror formerror-f_hargajasa-"+ index);
+            mdf_new_row.eq(2).removeClass().addClass("formerror formerror-f_hargabarang-"+ index);
         }
 
         if(mdf_new_row.eq(3).hasClass("has-error")){
-            mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-f_jenis-"+ index);
+            mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-f_hargajasa-"+ index);
         }else{
-            mdf_new_row.eq(3).removeClass().addClass("formerror formerror-f_jenis-"+ index);
+            mdf_new_row.eq(3).removeClass().addClass("formerror formerror-f_hargajasa-"+ index);
         }
 
         if(mdf_new_row.eq(4).hasClass("has-error")){
-            mdf_new_row.eq(4).removeClass().addClass("has-error formerror formerror-f_referensi-"+ index);
+            mdf_new_row.eq(4).removeClass().addClass("has-error formerror formerror-f_jenis-"+ index);
         }else{
-            mdf_new_row.eq(4).removeClass().addClass("formerror formerror-f_referensi-"+ index);
+            mdf_new_row.eq(4).removeClass().addClass("formerror formerror-f_jenis-"+ index);
         }
 
-        $(this).find('.error-f_lokasi').removeClass().addClass("error error-f_lokasi error-f_lokasi-"+ index);
+        if(mdf_new_row.eq(5).hasClass("has-error")){
+            mdf_new_row.eq(5).removeClass().addClass("has-error formerror formerror-f_referensi-"+ index);
+        }else{
+            mdf_new_row.eq(5).removeClass().addClass("formerror formerror-f_referensi-"+ index);
+        }
+
+        $(this).find('.error-f_nogroupcoverage').removeClass().addClass("error error-f_nogroupcoverage error-f_nogroupcoverage-"+ index);
+        $(this).find('.error-f_nocoverage').removeClass().addClass("error error-f_nocoverage error-f_nocoverage-"+ index);
         $(this).find('.error-f_hargabarang').removeClass().addClass("error error-f_hargabarang error-f_hargabarang-"+ index);
         $(this).find('.error-f_hargajasa').removeClass().addClass("error error-f_hargajasa error-f_hargajasa-"+ index);
         $(this).find('.error-f_jenis').removeClass().addClass("error error-f_jenis error-f_jenis-"+ index);
@@ -411,7 +620,7 @@ $(document).on('click', '.simpan-product', function(event) {
               }else{
                 $(".loading2").hide();
                 if(response.status=="all"){
-                  window.location.href = "{{route('catalog.list.product_logistic')}}";
+                  window.location.href = "{{route('catalog.list.product_logistic')}}?no_product=" + $(".f_idproduct").val();
                 }
               }
             }
@@ -443,6 +652,10 @@ function create_table_kontrak(text_cari_kontrak){
             { data: 'DT_Row_Index',orderable:false,searchable:false},
             { data: 'doc_no'},
             { data: 'doc_title'},
+            { data: 'doc_type'},
+            { data: 'doc_startdate'},
+            { data: 'doc_enddate'},
+            { data: 'nama_supplier'},
             { data: 'action', name: 'action',orderable:false,searchable:false }],
     });
 }
@@ -483,7 +696,6 @@ $(document).on('click', '.btn-pilih-kontrak', function(event) {
     doc_no_input.val(data.id);
     doc_text_input.val(data.doc_no);
     
-    //doc_type.html(data.doc_type.toUpperCase());
     if(data.doc_type=="khs"){
         doc_type.html('<i class="fa fa-check" style="color:green;"></i>');
     }else{
@@ -494,17 +706,20 @@ $(document).on('click', '.btn-pilih-kontrak', function(event) {
     $('#modalkontrak').modal('hide');
 });
 
+$(document).on('change', '.select_group_coverage', function(event){
+    $(this).closest('tr').find('.select_coverage').val('');
+    select_coverage($(this).closest('tr').find('.select_coverage'),$(this).val());
+});
+
 $(function(){
-    var new_row = $(template_add('','','')).clone(true);
+    var new_row = $(template_add('','','','','')).clone(true);
     $(".table-test").append(new_row);
     var input_new_row = new_row.find('td');
     
-    select_referensi(input_new_row.eq(3).find('.select-jenis'), input_new_row.eq(4));
-    
-    var new_referensi = $(template_referensi_kontrak()).clone(true);
-    input_new_row.eq(4).html('');
-    input_new_row.eq(4).append(new_referensi);
+    select_referensi(input_new_row.eq(4).find('.select-jenis'), input_new_row.eq(5), input_new_row.eq(6));
+    input_new_row.eq(4).find('.select-jenis').val('1').trigger('change');
 
+    select_group_coverage(input_new_row.eq(0).find('.select_group_coverage'));
     create_table_kontrak('');
     
     $("#alertBS").fadeTo(2000, 500).slideUp(500, function(){

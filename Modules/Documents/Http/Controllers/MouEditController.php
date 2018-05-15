@@ -167,6 +167,56 @@ class MouEditController extends Controller
         }
       }
     });
+    $validator->after(function ($validator) use ($request) {
+      $tabs_error = [];
+      if(
+          $validator->errors()->has('doc_no') || 
+          $validator->errors()->has('doc_title') ||
+          $validator->errors()->has('doc_desc') ||
+          $validator->errors()->has('parent_kontrak') ||
+          $validator->errors()->has('parent_sp') ||
+          $validator->errors()->has('doc_startdate') ||
+          $validator->errors()->has('doc_enddate') || 
+          $validator->errors()->has('divisi') || 
+          $validator->errors()->has('unit_bisnis') || 
+          $validator->errors()->has('unit_kerja') || 
+          $validator->errors()->has('doc_pihak1') || 
+          $validator->errors()->has('doc_pihak1_nama') || 
+          $validator->errors()->has('supplier_id') || 
+          $validator->errors()->has('doc_pihak2_nama') || 
+          $validator->errors()->has('doc_proc_process') || 
+          $validator->errors()->has('doc_mtu') || 
+          $validator->errors()->has('doc_value') || 
+          $validator->errors()->has('doc_po') || 
+          $validator->errors()->has('doc_nilai_material') || 
+          $validator->errors()->has('doc_nilai_jasa') || 
+          $validator->errors()->has('doc_lampiran_nama.*') || 
+          $validator->errors()->has('doc_lampiran.*') ||
+          $validator->errors()->has('pic_nama.*') ||
+          $validator->errors()->has('pic_jabatan.*') ||
+          $validator->errors()->has('pic_email.*') ||
+          $validator->errors()->has('pic_telp.*') ||
+          $validator->errors()->has('pic_posisi.*')
+        ){
+          array_push($tabs_error,'tab_general_info');
+        }
+        if(
+          $validator->errors()->has('doc_sow') 
+        ){
+          array_push($tabs_error,'tab_ruang_lingkup');
+        }
+        if(
+          $validator->errors()->has('ps_judul.*') || 
+          $validator->errors()->has('ps_isi.*')
+        ){
+          array_push($tabs_error,'tab_pasal_khusus');
+        }
+        if(count($tabs_error)>0){
+          foreach ($tabs_error as $key=>$val){
+            $validator->errors()->add('tabs_error.'.$key, $val);
+          }
+        }
+    });
     $request->merge(['doc_value' => $doc_value]);
     if(isset($hs_harga) && count($hs_harga)>0){
       $request->merge(['hs_harga'=>$hs_harga]);

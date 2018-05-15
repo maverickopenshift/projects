@@ -88,6 +88,16 @@
                         <input type="password" id="password_confirmation" name="password_confirmation" value="" class="form-control" placeholder="Enter ..."  autocomplete="off">
                         <div class="error error-password_confirmation"></div>
                     </div>
+                    <div class="form-group formerror formerror-roles">
+                      <label>Roles</label>
+                      <select class="form-control" style="width: 100%;" name="roles" id="roles">
+                        <option value="">Pilih Roles</option>
+                        @foreach ($roles as $role)
+                          <option value="{{$role->id}}">{{$role->display_name}}</option>
+                        @endforeach
+                      </select>
+                      <div class="error error-roles"></div>
+                    </div>
                     <div class="form-group formerror formerror-non_user_atasan">
                       <label>Pilih Penandatangan Kontrak</label>
                       <select class="form-control select-user-atasan" style="width: 100%;" name="non_user_atasan" id="non_user_atasan" data-action="non_atasan">
@@ -110,16 +120,6 @@
                           <tbody>
                           </tbody>
                       </table>
-                    </div>
-                    <div class="form-group formerror formerror-roles">
-                      <label>Roles</label>
-                      <select class="form-control" style="width: 100%;" name="roles" id="roles">
-                        <option value="">Pilih Roles</option>
-                        @foreach ($roles as $role)
-                          <option value="{{$role->id}}">{{$role->display_name}}</option>
-                        @endforeach
-                      </select>
-                      <div class="error error-roles"></div>
                     </div>
                 </div>
                 <div class="modal-footer">

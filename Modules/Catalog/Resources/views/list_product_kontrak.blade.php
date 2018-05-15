@@ -39,9 +39,12 @@
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>No.Kontrak</th>
-                            <th>Judul Dokumen</th>
-                            <th>Tipe</th>
+                            <th>No Kontrak</th>
+                            <th>Judul Kontrak</th>
+                            <th>Type</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Mitra</th>
                             <th width="20%">Aksi</th>
                         </tr>
                     </thead>
@@ -90,7 +93,8 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Price Coverage</th>
+                                <th>Group Coverage</th>
+                                <th>Coverage</th>
                                 <th>Harga Barang</th>
                                 <th>Harga Jasa</th>
                             </tr>
@@ -129,6 +133,9 @@ function create_table_kontrak(){
             { data: 'doc_no'},
             { data: 'doc_title'},
             { data: 'doc_type'},
+            { data: 'doc_startdate'},
+            { data: 'doc_enddate'},
+            { data: 'nama_supplier'},
             { data: 'action', name: 'action',orderable:false,searchable:false},
         ]
     });
@@ -138,7 +145,8 @@ function create_table_price(id_doc, divisi, unit_bisnis, unit_kerja, f_caritext)
 
     var coloumx=[
             { data: 'DT_Row_Index',orderable:false,searchable:false},
-            { data: 'lokasi_logistic'},
+            { data: 'nama_group_coverage'},
+            { data: 'nama_coverage'},
             { data: 'harga_barang_logistic'},
             { data: 'harga_jasa_logistic'}];
     

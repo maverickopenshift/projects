@@ -1,4 +1,4 @@
-@extends('layouts.app')
+ @extends('layouts.app')
 @section('content')
 
 <style type="text/css">
@@ -45,6 +45,10 @@
                         @endif
                     @endforeach
                 </div>
+
+                <input type="hidden" class="f_noproduct_origin" value="{{$no_product}}">
+                <input type="hidden" class="f_kodeproduct_origin" value="{{$kode_product}}">
+                <input type="hidden" class="f_ketproduct_origin" value="{{$ket_product}}">
                 <table class="table table-striped" id="daftar_product_master">
                     <thead>
                         <tr>
@@ -63,7 +67,7 @@
             <div class="box box-danger">
                 <div class="box-header with-border">
                     <i class="fa fa-cogs"></i>
-                    <h3 class="box-title f_parentname_product">Daftar Item Price</h3>
+                    <h3 class="box-title f_parentname_price">Daftar Item Price</h3>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
@@ -99,11 +103,12 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Price Coverage</th>
+                                <th>Group Coverage</th>
+                                <th>Coverage</th>
                                 <th>Harga Barang</th>
                                 <th>Harga Jasa</th>
                                 <th>Referensi</th>
-                                <th>Flag</th>
+                                <th>KHS</th>
                                 @permission('katalog-item-price-proses')
                                 <th width="20%">Aksi</th>
                                 @endpermission
@@ -128,10 +133,20 @@
                 <div class="modal-body">
                     <input type="hidden" id="f_id" name="f_id">
 
-                    <div class="form-group formerror-f_lokasi">
-                        <label>Price Coverage</label>
-                        <input type="text" class="form-control" id="f_lokasi" name="f_lokasi"  placeholder="Price Coverage ...">
-                        <div class="error-f_lokasi"></div>
+                    <div class="form-group formerror-f_nogroupcoverage">
+                        <label>Group Coverage</label>
+                        <select class="form-control select_group_coverage" name="f_nogroupcoverage" style="width: 100%;">
+                            <option value=""></option>
+                        </select>
+                        <div class="error-f_nogroupcoverage"></div>
+                    </div>
+
+                    <div class="form-group formerror-f_nocoverage">
+                        <label>Coverage</label>
+                        <select class="form-control select_coverage" name="f_nocoverage" style="width: 100%;">
+                            <option value=""></option>
+                        </select>
+                        <div class="error-f_nocoverage"></div>
                     </div>
 
                     <div class="form-group formerror-f_hargabarang">
@@ -178,6 +193,10 @@
                                         <th>No</th>
                                         <th>No Kontrak</th>
                                         <th>Judul Kontrak</th>
+                                        <th>Type</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Mitra</th>
                                         <th width="20%">Aksi</th>
                                     </tr>
                                 </thead>
@@ -282,24 +301,16 @@ function create_table_master(no_kategori){
 }
 
 function create_table_price(no_product, divisi, unit_bisnis, unit_kerja, f_caritext){
-    if ($('.btn-price-add').length){
-        var coloumx=[
-                { data: 'DT_Row_Index',orderable:false,searchable:false},
-                { data: 'lokasi_logistic', name: 'a.lokasi_logistic'},
-                { data: 'harga_barang_logistic', name: 'a.harga_barang_logistic'},
-                { data: 'harga_jasa_logistic', name: 'a.harga_jasa_logistic'},
-                { data: 'referensi_fix', name: 'c.doc_no'},
-                { data: 'flag', searchable:false},
-                { data: 'action', name: 'action',orderable:false,searchable:false }];
-    }else{
-        var coloumx=[
-                { data: 'DT_Row_Index',orderable:false,searchable:false},
-                { data: 'lokasi_logistic', name: 'a.lokasi_logistic'},
-                { data: 'harga_barang_logistic', name: 'a.harga_barang_logistic'},
-                { data: 'harga_jasa_logistic', name: 'a.harga_jasa_logistic'},
-                { data: 'referensi_fix', name: 'doc_no'},
-                { data: 'flag', searchable:false}];
-    }
+    var coloumx=[
+        { data: 'DT_Row_Index',orderable:false,searchable:false},
+        { data: 'nama_group_coverage', name: 'a.nama_group_coverage'},
+        { data: 'nama_coverage', name: 'a.nama_coverage'},
+        { data: 'harga_barang_logistic', name: 'a.harga_barang_logistic'},
+        { data: 'harga_jasa_logistic', name: 'a.harga_jasa_logistic'},
+        { data: 'referensi_fix', name: 'c.doc_no'},
+        { data: 'flag', searchable:false},
+        { data: 'action', name: 'action',orderable:false,searchable:false }];
+
     table_price = $('#daftar_product_price').on('xhr.dt', function ( e, settings, json, xhr ) {
         if(xhr.responseText=='Unauthorized.'){
             location.reload();
@@ -343,6 +354,10 @@ function create_table_kontrak(text_cari_kontrak){
             { data: 'DT_Row_Index',orderable:false,searchable:false},
             { data: 'doc_no'},
             { data: 'doc_title'},
+            { data: 'doc_type'},
+            { data: 'doc_startdate'},
+            { data: 'doc_enddate'},
+            { data: 'nama_supplier'},
             { data: 'action', name: 'action',orderable:false,searchable:false }],
     });
 }
@@ -362,10 +377,10 @@ function refresh_table_kontrak(text_cari_kontrak){
     create_table_kontrak(text_cari_kontrak)
 }
 
-function template_referensi_kontrak(){
+function template_referensi_kontrak(id_doc, doc_no){
     return '\
-            <input type="hidden" name="f_referensi" class="doc_no_input">\
-            <input class="form-control doc_text_input" type="text" placeholder="No.Kontrak" readonly>\
+            <input type="hidden" name="f_referensi" class="doc_no_input" value="'+ id_doc +'">\
+            <input class="form-control doc_text_input" type="text" placeholder="No.Kontrak" value="'+ doc_no +'" readonly>\
     ';
 }
 
@@ -373,6 +388,120 @@ function template_refrensi_freetext(){
     return '\
         <input type="text" class="form-control f_referensi" name="f_referensi" autocomplete="off" placeholder="Referensi..">\
     ';
+}
+
+function select_group_coverage(input){
+    input.select2({
+        placeholder : "Silahkan Pilih....",
+        ajax: {
+            url: '{!! route('catalog.coverage.get_group_coverage') !!}',
+            dataType: 'json',
+            delay: 350,
+            
+            data: function (params) {
+                var datas =  {
+                    q: params.term,
+                    page: params.page
+                };
+                return datas;
+            },
+            processResults: function (data, params) {
+                var results = [];
+                $.each(data.data, function (i, v) {                       
+                    var o = {};
+                    o.id = v.id;
+                    o.text = v.text;
+                    results.push(o);
+                })
+                params.page = params.page || 1;
+                return {
+                    results: data.data,
+                    pagination: {
+                        more: (data.next_page_url ? true: false)
+                    }
+                };
+            },
+            cache: true
+        },        
+        escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+        minimumInputLength: 0,
+        templateResult: function (state) {
+            if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching..' ;  }
+            var $state = $(
+                '<span>'+  state.text + '</span>'
+            );
+            return $state;
+        },
+        templateSelection: function (data) {
+            if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
+                return "Silahkan Pilih..";
+            }
+            if(data.text === undefined){
+              return data.text;
+            }
+            return data.text ;
+        }
+    });
+}
+
+function select_coverage(input, group_coverage){
+    input.select2({
+        placeholder : "Silahkan Pilih....",
+        ajax: {
+            url: '{!! route('catalog.coverage.get_coverage') !!}?id_group_coverage=' + group_coverage,
+            dataType: 'json',
+            delay: 350,            
+            data: function (params) {
+                var datas =  {
+                    q: params.term,
+                    page: params.page
+                };
+                return datas;
+            },
+            processResults: function (data, params) {
+                var results = [];
+                $.each(data.data, function (i, v) {                       
+                    var o = {};
+                    o.id = v.id;
+                    o.text = v.text;
+                    results.push(o);
+                })
+                params.page = params.page || 1;
+                return {
+                    results: data.data,
+                    pagination: {
+                        more: (data.next_page_url ? true: false)
+                    }
+                };
+            },
+            cache: true
+        },        
+        escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+        minimumInputLength: 0,
+        templateResult: function (state) {
+            if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching..' ;  }
+            var $state = $(
+                '<span>'+  state.text + '</span>'
+            );
+            return $state;
+        },
+        templateSelection: function (data) {
+            if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
+                return "Silahkan Pilih..";
+            }
+            if(data.text === undefined){
+              return data.text;
+            }
+            return data.text ;
+        }
+    });
+}
+
+function set_select2(attr_obj,text,id) {
+    attr_obj.find('option').remove();
+    var newOption = new Option(text, id, false, true);
+    attr_obj.append(newOption);
+    attr_obj.val(id).change();
 }
 
 var modalDelete = $('#modal-delete');
@@ -400,15 +529,19 @@ formModal.on('show.bs.modal', function (event) {
 
     var data = button.data('data');
 
+    select_group_coverage($('.select_group_coverage'));
+    //select_coverage($('.select_group_coverage'));
+    set_select2($('.select_group_coverage'), data.nama_group_coverage, data.group_coverage_id);
+    set_select2($('.select_coverage'), data.nama_coverage, data.coverage_id);
+
     $('#f_id').val(data.id);
     $('#f_parentid').val(data.product_master_id);
-    $('#f_lokasi').val(data.lokasi_logistic);
     $('#f_hargabarang').val(data.harga_barang_logistic);
     $('#f_hargajasa').val(data.harga_jasa_logistic);
     $('#f_jenis').val(data.jenis_referensi);
 
     if(data.jenis_referensi==1){
-        var new_referensi = $(template_referensi_kontrak()).clone(true);
+        var new_referensi = $(template_referensi_kontrak(data.referensi_logistic, data.doc_no)).clone(true);
         $(".isi-referensi").html('');
         $(".isi-referensi").append(new_referensi);
 
@@ -437,7 +570,7 @@ $(document).on('click', '.btn-pilih-kontrak', function(event) {
 
 $("#f_jenis").on('change', function(event) {        
     if($("#f_jenis").val()==1){
-        var new_referensi = $(template_referensi_kontrak()).clone(true);
+        var new_referensi = $(template_referensi_kontrak('','')).clone(true);
         $(".isi-referensi").html('');
         $(".isi-referensi").append(new_referensi);
         
@@ -569,9 +702,20 @@ $(document).on('click', '.btn-delete-modal', function(event) {
 $(document).on('click', '.detail_price', function(event) {
     event.preventDefault();
     var id=$(this).attr('data-id');
+    var kode=$(this).attr('data-kode');
+    var ket=$(this).attr('data-ket');
+
     refresh_product_price(id,'','','','');
     $("#f_noproduct").val(id);
+
+    $('.f_parentname_price').html('Daftar Item Price - ' + kode + ' - ' + ket)
+
     $(".parent_product_price").show();
+});
+
+$(document).on('change', '.select_group_coverage', function(event){
+    $('.select_coverage').val('');
+    select_coverage($('.select_coverage'),$(this).val());
 });
 
 $(document).on('change', '#divisi', function(event) {
@@ -647,13 +791,29 @@ $(document).on('submit','#form_me_cari',function (event) {
 
 $(function() {
     create_table_master(0);
-    create_table_price(0,'','','','');
+    
     $(".parent_product_price").hide();
 
     $('#unit_bisnis').change();
     $('#divisi').change();
 
     create_table_kontrak('');
+
+    if($('.f_noproduct_origin').val()!=0){
+        var id      = $('.f_noproduct_origin').val()
+        var kode    = $('.f_kodeproduct_origin').val()
+        var ket     = $('.f_ketproduct_origin').val()
+
+        //refresh_product_price(id,'','','','');
+        create_table_price(id,'','','','');
+        $("#f_noproduct").val(id);
+
+        $('.f_parentname_price').html('Daftar Item Price - ' + kode + ' - ' + ket)
+
+        $(".parent_product_price").show();
+    }else{
+        create_table_price(0,'','','','');
+    }
 
     $(".flash-message").fadeTo(2000, 500).slideUp(500, function(){
         $(".flash-message").slideUp(500);

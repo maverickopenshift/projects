@@ -66,7 +66,7 @@ class DocumentsListController extends Controller
         //   $documents->join('pegawai as g','g.n_nik','=','up.nik');
         //   $documents->where('g.objiddivisi',$divisi);
         // }
-        if(!in_array($user->role_name,['admin','monitor'])){
+        if(!in_array($user->role_name,['admin','monitoring-nasional'])){
           $divisi = $user->divisi;
           $unit = $user->unit_bisnis;
         }
@@ -93,7 +93,7 @@ class DocumentsListController extends Controller
               $documents->where('documents.user_id',\Auth::id());
             }
             else{
-              if(\Auth::user()->hasRole('monitor')){
+              if(\Auth::user()->hasRole('monitoring-nasional')){
                 $documents->where('documents.doc_user_type','telkom');
               }
               else{

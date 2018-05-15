@@ -147,6 +147,15 @@
           @include('documents::partials.comments')
       </div>
 @endsection
+@push('css')
+  @if($doc->doc_signing!=0 && !Laratrust::can('approve-kontrak'))
+    <style>
+      .form-horizontal.well.well-sm{
+        display: none;
+      }
+    </style>
+  @endif
+@endpush
 @push('scripts')
 <script>
 $(function () {
@@ -159,18 +168,44 @@ $(function () {
   $('.btnPrevious').click(function(){
    $('.nav-tabs > .active').prev('li').find('a').trigger('click');
   });
+  var can_approve = '{{Laratrust::can('approve-kontrak')}}';
+  var doc_signing = '{{$doc->doc_signing}}';
+  if(can_approve=='1' && doc_signing=='0'){
+    var tabs_list = $('.nav-tabs').find('li');
+    $.each(tabs_list,function(index, el) {
+      var link = $(this).find('a');
+      var buttonView=$(link.attr('href')).find('.button-view');
+      buttonView.before(template_disclaimer())
+    });
+  }
 });
-
+function template_disclaimer(){
+  return '<div class="form-horizontal well well-sm">\
+    <div class="form-group" style="margin-bottom:0px">\
+      <label class="col-sm-2 control-label">Disclaimer</label>\
+      <div class="col-sm-10 text-me">\
+        <div class="checkbox" style="padding-top:0px;">\
+          <label>\
+            <input type="checkbox" name="disclaimer[]" class="disclaimer" autocomplete="off"> Saya sudah membaca seluruh isi dan dokumen terlampir. Semua sudah sesuai\
+          </label>\
+        </div>\
+      </div>\
+    </div>\
+  </div>';
+}
 $(document).on('click', '.disclaimer', function(event) {
-  if($(this).is(':checked')) {
-    $('.disclaimer').prop('checked',true);
+  var disclaimer_all = $('.disclaimer');
+  var disclaimer_check = $('.disclaimer:checked');
+  if(disclaimer_all.length==disclaimer_check.length){
     $('.btn-setuju').prop('disabled', false);
     $('.btn-reject').prop('disabled', false);
-  }else{
-    $('.btn-setuju').prop('disabled', true);
-    $('.btn-reject').prop('disabled', true);
-    $('.disclaimer').prop('checked',false);
   }
+  else{
+    $('.btn-reject').prop('disabled', true);
+    $('.btn-setuju').prop('disabled', true);
+  }
+  // console.log(disclaimer_all.length);
+  // console.log(disclaimer_check.length);
 });
 $(document).on('click', '.btn-reject', function(event) {
   event.preventDefault();

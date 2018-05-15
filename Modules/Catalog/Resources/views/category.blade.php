@@ -52,6 +52,11 @@
             <div class="box-header with-border">
                 <i class="fa fa-cogs"></i>
                 <h3 class="box-title f_parentname">Tambah Induk Kategori</h3>
+                <div class="pull-right">
+                    <div class="col-sm-12">
+                        <a class="btn btn-danger" href="{{route('catalog.category.bulk')}}" type="button"><i class="fa fa-plus"></i> Tambah Bulk</a>
+                    </div>
+                </div>
             </div>
             <div class="box-body form-horizontal parent-category">
                 <div id="alertBS"></div>

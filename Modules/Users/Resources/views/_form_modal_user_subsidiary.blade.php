@@ -72,6 +72,16 @@
                         <div class="error-password_confirmation"></div>
                     </div>
                     <div class="form-group">
+                      <label>Roles</label>
+                      <select class="form-control" style="width: 100%;" name="roles" id="roles">
+                        <option value="">Pilih Roles</option>
+                        @foreach ($roles as $role)
+                          <option value="{{$role->id}}">{{$role->display_name}}</option>
+                        @endforeach
+                      </select>
+                      <div class="error-roles"></div>
+                    </div>
+                    <div class="form-group">
                       <label>Pilih Penandatangan Kontrak</label>
                       <select class="form-control select-user-atasan" style="width: 100%;" name="subsidiary_user_atasan" id="subsidiary_user_atasan" data-action="subsidiary_atasan">
                           <option value="">Pilih Penandatangan Kontrak</option>
@@ -93,16 +103,6 @@
                           <tbody>
                           </tbody>
                       </table>
-                    </div>
-                    <div class="form-group">
-                      <label>Roles</label>
-                      <select class="form-control" style="width: 100%;" name="roles" id="roles">
-                        <option value="">Pilih Roles</option>
-                        @foreach ($roles as $role)
-                          <option value="{{$role->id}}">{{$role->display_name}}</option>
-                        @endforeach
-                      </select>
-                      <div class="error-roles"></div>
                     </div>
                 </div>
                 <div class="modal-footer">

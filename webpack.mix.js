@@ -18,6 +18,7 @@ let mix = require('laravel-mix');
         .copyDirectory('resources/assets/js/ckeditor','public/js/ckeditor')
         .copyDirectory('node_modules/jstree','public/js/jstree')
         .copyDirectory('node_modules/highcharts','public/js/highcharts')
+        .copyDirectory('node_modules/pdfjs-dist','public/js/pdfjs-dist')
         .copy('node_modules/admin-lte/plugins/iCheck/square/blue.png','public/css/blue.png')
         .copy('node_modules/admin-lte/plugins/iCheck/square/blue@2x.png','public/css/blue@2x.png')
         .copy('resources/assets/images','public/images')
@@ -111,6 +112,9 @@ let mix = require('laravel-mix');
         .scripts([
             'resources/assets/js/pdfjs/pdf.js',
         ], 'public/js/pdf.js', './')
+        .scripts([
+            'resources/assets/js/pdf_view.js',
+        ], 'public/js/pdf_view.js', './')
         .scripts([
             'node_modules/admin-lte/plugins/jQuery/jquery-2.2.3.min.js',
             'node_modules/admin-lte/bootstrap/js/bootstrap.js',

@@ -34,11 +34,15 @@ function render_po(po){
               var tr = templatePO(po_data);
               table.find('tbody').append(tr);
             });
+            $('input.no_pr').val(po);
+            $('.cari-pr').trigger('click');
           }
           else{
             var po_data = parseItem(data,0,dataHeader.Currency);
             var tr = templatePO(po_data);
             table.find('tbody').append(tr);
+            $('input.no_pr').val(po);
+            $('.cari-pr').trigger('click');
           }
           var td = ParentPO(response.data);
           parentPO.find('tbody').append(td);

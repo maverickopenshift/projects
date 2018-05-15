@@ -47,6 +47,7 @@
               @if(!empty($dt->meta_file))
                 <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_scope_perubahan'])}}">
                 <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran </a>
+                <input name="disclaimer[]" class="disclaimer hide" autocomplete="off" type="checkbox">
                 <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>$doc_type['name'].'_scope_perubahan'])}}">
                 <i class="glyphicon glyphicon-download-alt"></i>  Download
                 </a>

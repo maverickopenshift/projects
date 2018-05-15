@@ -85,6 +85,7 @@ if(isset($kategori->id)){
                                 <th>Kode</th>
                                 <th>Keterangan</th>
                                 <th>Satuan</th>
+                                <th>Gambar</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -145,7 +146,6 @@ if(isset($kategori->id)){
         });
 
         $(this).val('');
-        
     });
 
     function handleFile(data) {
@@ -160,7 +160,7 @@ if(isset($kategori->id)){
 
             if(dt.no_satuan!=0){
                 set_select2(input_new_row.eq(2).find('.select_satuan'),dt.satuan,dt.no_satuan);
-            }            
+            }
         });
         fix_no_error();       
     }
@@ -213,7 +213,8 @@ if(isset($kategori->id)){
     });
 
     $(document).on('click', '.add-product', function(event) {        
-        var new_row = $(template_add('','')).clone(true).insertAfter(".tabel-product:last");
+        var new_row = $(template_add('','')).clone(true);
+        $(".table-test").append(new_row);
         var input_new_row = new_row.find('td');
 
         select_satuan(input_new_row.eq(2).find('.select_satuan'));
@@ -235,8 +236,19 @@ if(isset($kategori->id)){
             </td>\
             <td class="formerror formerror-f_unitproduct-0">\
                 <select class="form-control select_satuan" name="f_unitproduct[]" style="width: 100%;" required>\
+                <option value=""></option>\
                 </select>\
                 <div class="error error-f_unitproduct error-f_unitproduct-0"></div>\
+            </td>\
+            <td class="formerror formerror-f_gambar-0">\
+                <div class="input-group">\
+                    <input type="file" name="f_gambar[]" accept=".jpg" class="hide">\
+                    <input class="form-control" type="text" placeholder="Gambar.." readonly>\
+                    <span class="input-group-btn">\
+                        <button class="btn btn-success click-upload" type="button"><i class="glyphicon glyphicon-search"></i></button>\
+                    </span>\
+                </div>\
+                <div class="error error-f_gambar error-f_gambar-0"></div>\
             </td>\
             <td width="100px">\
                 <div class="btn-group">\
@@ -303,6 +315,7 @@ if(isset($kategori->id)){
                 return data.text ;
             }
         });
+        input.val("").trigger("change");
     }
 
     function fix_no_error(){
@@ -330,9 +343,16 @@ if(isset($kategori->id)){
                 mdf_new_row.eq(2).removeClass().addClass("formerror formerror-f_unitproduct-"+ index);
             }
 
+            if(mdf_new_row.eq(3).hasClass("has-error")){
+                mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-f_gambar-"+ index);
+            }else{
+                mdf_new_row.eq(3).removeClass().addClass("formerror formerror-f_gambar-"+ index);
+            }
+
             $(this).find('.error-f_kodeproduct').removeClass().addClass("error error-f_kodeproduct error-f_kodeproduct-"+ index);
             $(this).find('.error-f_ketproduct').removeClass().addClass("error error-f_ketproduct error-f_ketproduct-"+ index);
             $(this).find('.error-f_unitproduct').removeClass().addClass("error error-f_unitproduct error-f_unitproduct-"+ index);
+            $(this).find('.error-f_gambar').removeClass().addClass("error error-f_gambar error-f_gambar-"+ index);
 
         });        
     }
@@ -411,7 +431,6 @@ if(isset($kategori->id)){
         var newOption = new Option(text, id, false, true);
         attr_obj.append(newOption);
         attr_obj.val(id).change();
-        //var id_name = attr_obj.attr('id');
     }
 
     $(function(){

@@ -5,48 +5,51 @@
       <div class="nav-tabs-custom">
         <div class="loading2"></div>
         @php
+          $title_tabs = 'tab_sow_boq';
           $title_sow = 'SoW,BoQ';
           if($doc_type->name=='khs' || $doc_type->name=='amandemen_kontrak_khs'){
             $title_sow = 'DAFTAR HARGA SATUAN';
+            $title_tabs = 'tab_harga_satuan';
           }elseif($doc_type->name=='mou'){
             $title_sow = 'RUANG LINGKUP';
+            $title_tabs = 'tab_ruang_lingkup';
           }
         @endphp
         <ul class="nav nav-tabs">
-          <li class="active"><a href="#tab_1" data-toggle="tab">GENERAL INFO</a></li>
+          <li class="active tab_general_info"><a href="#tab_1" data-toggle="tab">GENERAL INFO</a></li>
           <input type="hidden" id="statusButton" name="statusButton"></li>
           @if(in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum','side_letter']))
             @if(in_array($doc_type->name,['amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey']))
-              <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
-              <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
-              <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
+              <li class="{{$title_tabs}}"><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
+              <li class="tab_latar_belakang"><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
+              <li class="tab_scope_perubahan"><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
             @elseif(in_array($doc_type->name,['amandemen_sp']))
-              <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
-              <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
+              <li class="{{$title_tabs}}"><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
+              <li class="tab_latar_belakang"><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
             @else
-              <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
-              <li><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
+              <li class="tab_latar_belakang"><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
+              <li class="tab_scope_perubahan"><a href="#tab_5" data-toggle="tab">SCOPE PERUBAHAN</a></li>
             @endif
           @else
             @if(!in_array($doc_type->name,['surat_pengikatan']))
-              <li><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
+              <li class="{{$title_tabs}}"><a href="#tab_2" data-toggle="tab">{{$title_sow}}</a></li>
             @endif
           @endif
 
           @if(!in_array($doc_type->name,['amandemen_sp','amandemen_kontrak','amandemen_kontrak_khs','amandemen_kontrak_turnkey','adendum','side_letter','mou']) )
-          <li><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
+          <li class="tab_latar_belakang"><a href="#tab_3" data-toggle="tab">LATAR BELAKANG</a></li>
           @endif
 
           @if(in_array($doc_type->name,['khs','turnkey','surat_pengikatan','mou']))
-            <li><a href="#tab_4" data-toggle="tab">PASAL KHUSUS</a></li>
+            <li class="tab_pasal_khusus"><a href="#tab_4" data-toggle="tab">PASAL KHUSUS</a></li>
           @endif
 
           @if(in_array($doc_type->name,['turnkey','sp']))
-            <li><a href="#tab_5" data-toggle="tab">JAMINAN DAN ASURANSI</a></li>
+            <li class="tab_jaminan_asuransi"><a href="#tab_5" data-toggle="tab">JAMINAN DAN ASURANSI</a></li>
           @endif
 
           @if(in_array($doc_type->name,['turnkey','amandemen_kontrak_turnkey']))
-            <li><a href="#tab_6" data-toggle="tab">TERM OF PAYMENT</a></li>
+            <li class="tab_term_of_payment"><a href="#tab_6" data-toggle="tab">TERM OF PAYMENT</a></li>
           @endif
         </ul>
 
@@ -162,6 +165,7 @@
 @endsection
 @push('scripts')
 <script>
+var tabs = ['tab_sow_boq','tab_harga_satuan','tab_ruang_lingkup','tab_general_info','tab_latar_belakang','tab_scope_perubahan','tab_pasal_khusus','tab_jaminan_asuransi','tab_term_of_payment'];
 $(function () {
   $('.datepicker').datepicker({
    format: 'dd-mm-yyyy',
@@ -225,6 +229,11 @@ $(function () {
 
                         $(".formerror-"+ index).addClass("has-error");
                         $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
+                        if(index.indexOf("tabs_error")>=0){
+                          if($.inArray(index, tabs)){
+                            $('.'+value).addClass('tabs-error');
+                          }
+                        }
                       }
                   });
 
@@ -307,6 +316,11 @@ $(function () {
 
                     $(".formerror-"+ index).addClass("has-error");
                     $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
+                    if(index.indexOf("tabs_error")>=0){
+                      if($.inArray(index, tabs)){
+                        $('.'+value).addClass('tabs-error');
+                      }
+                    }
                   }
               });
 

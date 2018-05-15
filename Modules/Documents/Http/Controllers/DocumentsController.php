@@ -159,7 +159,7 @@ class DocumentsController extends Controller
                 $q->orwhere('child3.doc_enddate','<=',Helpers::date_set_db($sampai));
               });
             }
-            if(!in_array($user->role_name,['admin','monitor'])){
+            if(!in_array($user->role_name,['admin','monitoring-nasional'])){
               $divisi = $user->divisi;
               $unit = $user->unit_bisnis;
             }
@@ -228,7 +228,7 @@ class DocumentsController extends Controller
               $documents->where('v_users_pegawai.company_id',\App\User::get_subsidiary_user()->company_id);
             }
             else {
-              if(\Auth::user()->hasRole('monitor')){
+              if(\Auth::user()->hasRole('monitoring-nasional')){
                 $documents->where('documents.doc_user_type','telkom');
               }
               else{

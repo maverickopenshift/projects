@@ -28,7 +28,7 @@
                     <ul class="treeview-menu ">
                       <li class="{{Request::is("documents/create/surat_pengikatan")?'active':''}}" ><a href="{{route('doc.create',['type'=>'surat_pengikatan'])}}">Surat Pengikatan</a></li>
                       <li class="{{Request::is("documents/create/khs")?'active':''}}" ><a href="{{route('doc.create',['type'=>'khs'])}}">KHS</a></li>
-                      <li class="{{Request::is("documents/create/turnkey")?'active':''}}" ><a href="{{route('doc.create',['type'=>'turnkey'])}}">Turnkey</a></li>
+                      <li class="{{Request::is("documents/create/turnkey")?'active':''}}" ><a href="{{route('doc.create',['type'=>'turnkey'])}}">Kontrak Turnkey</a></li>
                       <li class="{{Request::is("documents/create/sp")?'active':''}}" ><a href="{{route('doc.create',['type'=>'sp'])}}">Surat Pesanan (SP)</a></li>
                       <li class="{{Request::is("documents/create/amandemen_sp")?'active':''}}" ><a href="{{route('doc.create',['type'=>'amandemen_sp'])}}">Amandemen SP</a></li>
 
@@ -52,12 +52,12 @@
                   @if(Laratrust::hasRole('konseptor'))
                     <li class="{{Request::is("documents/status/draft")?'active':''}}" ><a href="{{route('doc',['status'=>'draft'])}}">Draft </a></li>
                   @endif
-                  @if(!Laratrust::hasRole('monitor'))
+                  @if(!in_array('1',[Laratrust::hasRole('monitor'),Laratrust::hasRole('monitoring-nasional')]))
                   <li class="{{Request::is("documents/status/proses")?'active':''}}" ><a href="{{route('doc',['status'=>'proses'])}}">Perlu Diproses</a></li>
                   @endif
                 @endpermission
                 @permission('lihat-kontrak')
-                  @if(!Laratrust::hasRole('monitor'))
+                  @if(!in_array('1',[Laratrust::hasRole('monitor'),Laratrust::hasRole('monitoring-nasional')]))
                   <li class="{{Request::is("documents/status/tracking")?'active':''}}" ><a href="{{route('doc',['status'=>'tracking'])}}">Tracking Proses</a></li>
                   @endif
                   <li class="{{Request::is("documents/status/selesai")?'active':''}}" ><a href="{{route('doc',['status'=>'selesai'])}}">Selesai</a></li>
@@ -146,11 +146,14 @@
 
                 @permission('katalog-item-price-proses|katalog-item-price')
                 <li class="{{Request::is('catalog/catalog_list/product_logistic') ?'active':''}}"><a href="{{route('catalog.list.product_logistic')}}">List Item Price</a></li>
+                <li class="{{Request::is('catalog/catalog_list/product_logistic_view') ?'active':''}}"><a href="{{route('catalog.list.product_logistic_view')}}">List Item</a></li>
                 <li class="{{Request::is('catalog/catalog_list/product_kontrak') ?'active':''}}"><a href="{{route('catalog.list.product_kontrak')}}">Bulk Entry</a></li>                
                 @endpermission
 
                 @permission('katalog-satuan-proses')
                 <li class="{{Request::is('catalog/satuan') ?'active':''}}"><a href="{{route('catalog.satuan')}}">Satuan</a></li>
+                <li class="{{Request::is('catalog/coverage') ?'active':''}}"><a href="{{route('catalog.coverage')}}">Coverage</a></li>
+                <li class="{{Request::is('catalog/group_coverage') ?'active':''}}"><a href="{{route('catalog.group_coverage')}}">Group Coverage</a></li>
                 @endpermission
               </ul>
             </li>

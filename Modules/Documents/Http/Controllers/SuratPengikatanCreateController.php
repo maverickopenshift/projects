@@ -41,6 +41,7 @@ class SuratPengikatanCreateController extends Controller
       $statusButton = $request->statusButton;
       $required = 'required';
       $date_format = 'date_format:"d-m-Y"';
+      $tabs_error = false;
       if($statusButton=='2'){
         $required = 'sometimes|nullable';
       }
@@ -124,15 +125,15 @@ class SuratPengikatanCreateController extends Controller
 
       $request->merge(['doc_lampiran' => $new_lamp]);
 
-      $rules['lt_judul_ketetapan_pemenang']     = $required.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['lt_judul_ketetapan_pemenang']     = $required.'|in:Ketetapan Pemenang|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['lt_tanggal_ketetapan_pemenang']   = $required;
       $rules['lt_file_ketetapan_pemenang']      = $required.'|mimes:pdf';
 
-      $rules['lt_judul_kesanggupan_mitra']    = $required.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['lt_judul_kesanggupan_mitra']    = $required.'|in:Kesanggupan Mitra|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['lt_tanggal_kesanggupan_mitra']  = $required;
       $rules['lt_file_kesanggupan_mitra']     = $required.'|mimes:pdf';
 
-      $rules['lt_judul_rks']    = $required.'|max:500|regex:/^[a-z0-9 .\-]+$/i';
+      $rules['lt_judul_rks']    = $required.'|in:RKS|max:500|regex:/^[a-z0-9 .\-]+$/i';
       $rules['lt_tanggal_rks']  = $required;
       $rules['lt_file_rks']     = $required.'|mimes:pdf';
 
@@ -163,6 +164,55 @@ class SuratPengikatanCreateController extends Controller
             $validator->errors()->add('doc_no', 'No Kontrak yang Anda masukan sudah ada!');
           }
         }
+      });
+      $validator->after(function ($validator) use ($request) {
+        $tabs_error = [];
+        if(
+            $validator->errors()->has('doc_no') || 
+            $validator->errors()->has('doc_title') ||
+            $validator->errors()->has('doc_desc') ||
+            $validator->errors()->has('doc_startdate') ||
+            $validator->errors()->has('doc_enddate') || 
+            $validator->errors()->has('divisi') || 
+            $validator->errors()->has('unit_bisnis') || 
+            $validator->errors()->has('unit_kerja') || 
+            $validator->errors()->has('doc_pihak1') || 
+            $validator->errors()->has('doc_pihak1_nama') || 
+            $validator->errors()->has('supplier_id') || 
+            $validator->errors()->has('doc_pihak2_nama') || 
+            $validator->errors()->has('doc_lampiran_nama.*') || 
+            $validator->errors()->has('doc_lampiran.*')
+          ){
+            array_push($tabs_error,'tab_general_info');
+          }
+          if(
+            $validator->errors()->has('lt_judul_rks') || 
+            $validator->errors()->has('lt_tanggal_rks') || 
+            $validator->errors()->has('lt_file_rks') || 
+            $validator->errors()->has('lt_judul_ketetapan_pemenang') || 
+            $validator->errors()->has('lt_tanggal_ketetapan_pemenang') || 
+            $validator->errors()->has('lt_file_ketetapan_pemenang') || 
+            $validator->errors()->has('lt_judul_kesanggupan_mitra') || 
+            $validator->errors()->has('lt_tanggal_kesanggupan_mitra') || 
+            $validator->errors()->has('lt_file_kesanggupan_mitra') || 
+            $validator->errors()->has('f_latar_belakang_judul.*') || 
+            $validator->errors()->has('f_latar_belakang_tanggal.*') || 
+            $validator->errors()->has('f_latar_belakang_isi.*') || 
+            $validator->errors()->has('f_latar_belakang_file.*')
+          ){
+            array_push($tabs_error,'tab_latar_belakang');
+          }
+          if(
+            $validator->errors()->has('ps_judul.*') || 
+            $validator->errors()->has('ps_isi.*')
+          ){
+            array_push($tabs_error,'tab_pasal_khusus');
+          }
+          if(count($tabs_error)>0){
+            foreach ($tabs_error as $key=>$val){
+              $validator->errors()->add('tabs_error.'.$key, $val);
+            }
+          }
       });
       $request->merge(['doc_value' => $doc_value]);
       if(isset($hs_harga) && count($hs_harga)>0){

@@ -31,6 +31,7 @@
                   <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$doc->lampiran_bast->meta_file,'type'=>'lampiran_bast'])}}">
                     <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
                   </a>
+                  <input name="disclaimer[]" class="disclaimer hide" autocomplete="off" type="checkbox">
                   <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$doc->lampiran_bast->meta_file,'type'=>'lampiran_bast'])}}">
                     <i class="glyphicon glyphicon-download-alt"></i>  Download
                   </a>
@@ -72,6 +73,7 @@
                   <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$doc->lampiran_baut->meta_file,'type'=>'lampiran_baut'])}}">
                     <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
                   </a>
+                  <input name="disclaimer[]" class="disclaimer hide" autocomplete="off" type="checkbox">
                   <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$doc->lampiran_baut->meta_file,'type'=>'lampiran_baut'])}}">
                     <i class="glyphicon glyphicon-download-alt"></i>  Download
                   </a>
@@ -109,6 +111,7 @@
                   <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->meta_file,'type'=>'lampiran_lain'])}}">
                     <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
                   </a>
+                  <input name="disclaimer[]" class="disclaimer hide" autocomplete="off" type="checkbox">
                   <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->meta_file,'type'=>'lampiran_lain'])}}">
                     <i class="glyphicon glyphicon-download-alt"></i>  Download
                   </a>

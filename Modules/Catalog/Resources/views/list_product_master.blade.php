@@ -35,6 +35,7 @@
                     <div class="col-sm-12">
                         @permission('katalog-master-item-proses')
                         <a class="btn btn-danger btn-additem" href="{{route('catalog.product.master')}}?id_kategori=0" type="button"><i class="fa fa-plus"></i> Tambah Master Item</a>
+                        <a class="btn btn-danger btn-additem" href="{{route('catalog.product_master.bulk')}}" type="button"><i class="fa fa-plus"></i> Tambah Master Item Bulk</a>
                         @endpermission
                     </div>
                 </div>
@@ -71,7 +72,6 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <form id="form-me-product" action="{{route('catalog.product_master.edit')}}" method="post">
-
                 {{ csrf_field() }}
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -98,16 +98,27 @@
                         <label>Keterangan Produk</label>
                         <input type="text" class="form-control" id="f_ketproduct" name="f_ketproduct"  placeholder="Keterangan Produk ...">
                         <div class="error-f_ketproduct"></div>
-                    </div>                    
+                    </div>
 
                     <div class="form-group formerror-f_unitproduct">
                         <label>Satuan Produk</label>
                         <select class="form-control select_satuan" name="f_unitproduct" style="width: 100%;">
+                            <option value=""></option>
                         </select>
                         <div class="error-f_unitproduct"></div>
                     </div>
 
-                </div>
+                    <div class="form-group formerror-f_gambar">
+                        <label>Gambar Produk</label>
+                        <div class="input-group">
+                            <input type="file" name="f_gambar" accept=".jpg" class="f_gambar hide">
+                            <input class="form-control f_gambar_text" type="text" placeholder="Gambar.." readonly>
+                            <span class="input-group-btn">
+                                <button class="btn btn-success click-upload" type="button"><i class="glyphicon glyphicon-search"></i></button>
+                            </span>
+                        </div>
+                    </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary btn-simpan" data-loading-text="Please wait..." autocomplete="off">Save changes</button>
@@ -150,7 +161,6 @@ $('#jstree')
             $(".f_parentid").val(data.instance.get_node(data.selected[0]).id);
             $(".btn-edit").attr('data-id',data.instance.get_node(data.selected[0]).id)
             $(".btn-delete").attr('data-id',data.instance.get_node(data.selected[0]).id)
-            //$(".btn-additem").attr("href",{!! route('catalog.product.master') !!} + "?id_kateogri=" + data.instance.get_node(data.selected[0]).id)
             $(".btn-additem").attr("href","{{ route('catalog.product.master') }}?id_kategori=" + data.instance.get_node(data.selected[0]).id )
 
             refresh_product(data.instance.get_node(data.selected[0]).id);
@@ -173,7 +183,6 @@ $('.f_carikategori').keyup(function () {
     if(to){clearTimeout(to);}
 
     to = setTimeout(function () {
-
         var v = $('.f_carikategori').val();
         $('#jstree').jstree(true).search(v);
     }, 250);
@@ -193,7 +202,7 @@ function create_table(no_kategori){
             { data: 'kode_product'},
             { data: 'keterangan_product'},
             { data: 'nama_satuan'}];
-    }    
+    }
 
     table_product = $('#daftar_product').on('xhr.dt', function ( e, settings, json, xhr ) {
         if(xhr.responseText=='Unauthorized.'){
@@ -331,6 +340,9 @@ formModal.on('show.bs.modal', function (event) {
     modal.find('.modal-body input#f_kodeproduct').val(data.kode_product);
     modal.find('.modal-body input#f_ketproduct').val(data.keterangan_product);
 
+    modal.find('.modal-body .f_gambar').val('');
+    modal.find('.modal-body .f_gambar_text').val('');
+
     select_satuan(modal.find('.modal-body .select_satuan'));
     set_select2(modal.find('.modal-body .select_satuan'),data.nama_satuan,data.satuan_id);
 });    
@@ -358,7 +370,9 @@ $(document).on('submit','#form-me-product',function (event) {
     $.ajax({
         url: formMe.attr('action'),
         type: 'post',
-        data: formMe.serialize(),
+        processData: false,
+        contentType: false,
+        data: new FormData(document.getElementById("form-me-product")),
         dataType: 'json',
         success: function(response){
             if(response.errors){

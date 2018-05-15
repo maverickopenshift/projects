@@ -347,6 +347,19 @@ td > .btn{
     font-size: 14px;
     text-transform:none;
 }
+.nav-tabs-custom > .nav-tabs > li.tabs-error > a:hover,
+.nav-tabs-custom > .nav-tabs > li.tabs-error > a{
+  color: #dd4b39;
+  position: relative;
+}
+.nav-tabs-custom > .nav-tabs > li.tabs-error > a:before{
+  position: absolute;
+  content: "*";
+  color: #dd4b39;
+  left: 0;
+  top: 13px;
+  font-weight: bold;
+}
 /*.child-2:before {
 
     background-image: url(../images/02.png);

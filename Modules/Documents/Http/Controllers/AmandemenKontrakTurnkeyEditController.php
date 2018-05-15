@@ -192,7 +192,84 @@ class AmandemenKontrakTurnkeyEditController extends Controller
         }
       }
     });
-
+    $validator->after(function ($validator) use ($request) {
+      $tabs_error = [];
+      if(
+          $validator->errors()->has('doc_no') || 
+          $validator->errors()->has('doc_title') ||
+          $validator->errors()->has('doc_desc') ||
+          $validator->errors()->has('parent_kontrak') ||
+          $validator->errors()->has('parent_sp') ||
+          $validator->errors()->has('doc_startdate') ||
+          $validator->errors()->has('doc_enddate') || 
+          $validator->errors()->has('divisi') || 
+          $validator->errors()->has('unit_bisnis') || 
+          $validator->errors()->has('unit_kerja') || 
+          $validator->errors()->has('doc_pihak1') || 
+          $validator->errors()->has('doc_pihak1_nama') || 
+          $validator->errors()->has('supplier_id') || 
+          $validator->errors()->has('doc_pihak2_nama') || 
+          $validator->errors()->has('doc_proc_process') || 
+          $validator->errors()->has('doc_mtu') || 
+          $validator->errors()->has('doc_value') || 
+          $validator->errors()->has('doc_po') || 
+          $validator->errors()->has('doc_nilai_material') || 
+          $validator->errors()->has('doc_nilai_jasa') || 
+          $validator->errors()->has('doc_lampiran_nama.*') || 
+          $validator->errors()->has('doc_lampiran.*') ||
+          $validator->errors()->has('pic_nama.*') ||
+          $validator->errors()->has('pic_jabatan.*') ||
+          $validator->errors()->has('pic_email.*') ||
+          $validator->errors()->has('pic_telp.*') ||
+          $validator->errors()->has('pic_posisi.*')
+        ){
+          array_push($tabs_error,'tab_general_info');
+        }
+        if(
+          $validator->errors()->has('doc_sow') || 
+          $validator->errors()->has('hs_kode_item.*') ||
+          $validator->errors()->has('hs_item.*') ||
+          $validator->errors()->has('hs_satuan.*') ||
+          $validator->errors()->has('hs_mtu.*') ||
+          $validator->errors()->has('hs_harga.*') ||
+          $validator->errors()->has('hs_harga_jasa.*') ||
+          $validator->errors()->has('hs_keterangan.*')
+        ){
+          array_push($tabs_error,'tab_harga_satuan');
+        }
+        if(
+          $validator->errors()->has('f_latar_belakang_judul.*') || 
+          $validator->errors()->has('f_latar_belakang_tanggal.*') || 
+          $validator->errors()->has('f_latar_belakang_isi.*') || 
+          $validator->errors()->has('f_latar_belakang_file.*')
+        ){
+          array_push($tabs_error,'tab_latar_belakang');
+        }
+        if(
+          $validator->errors()->has('f_scope_pasal.*') || 
+          $validator->errors()->has('f_scope_judul.*') || 
+          $validator->errors()->has('f_scope_isi.*') || 
+          $validator->errors()->has('f_scope_awal.*') ||
+          $validator->errors()->has('f_scope_akhir.*') ||
+          $validator->errors()->has('f_scope_file.*')
+        ){
+          array_push($tabs_error,'tab_scope_perubahan');
+        }
+        if(
+          $validator->errors()->has('top_deskripsi.*') || 
+          $validator->errors()->has('top_tanggal_mulai.*') ||
+          $validator->errors()->has('top_tanggal_selesai.*') ||
+          $validator->errors()->has('top_harga.*') ||
+          $validator->errors()->has('top_tanggal_bapp.*')
+        ){
+          array_push($tabs_error,'tab_term_of_payment');
+        }
+        if(count($tabs_error)>0){
+          foreach ($tabs_error as $key=>$val){
+            $validator->errors()->add('tabs_error.'.$key, $val);
+          }
+        }
+    });
     if ($validator->fails ()){
       return Response::json (array(
         'errors' => $validator->getMessageBag()->toArray()

@@ -44,7 +44,7 @@
     var pr = $('.no_pr').val(),error_po = $('.error-pr');
     error_po.html('<img src="{!!asset('/images/loader.gif')!!}" title="please wait..." width="25"/>');
     if(pr==""){
-      error_po.html('No.PR harus diisi');
+      error_po.html('No.PO harus diisi');
       return false;
     }
     else{
@@ -60,14 +60,16 @@
           if(__data.length>0){
             onJsonOke(__data);
             $('#jstree').show();
+            // $('input.no_po').val(pr);
+            // $('.cari-po').trigger('click');
           }
           error_po.html('');
         }
         else{
-          error_po.html('No.PR tidak ditemukan!');
+          error_po.html('No.PO tidak ditemukan!');
         }
       }).error(function() {
-        error_po.html('No.PR tidak ditemukan!');
+        error_po.html('No.PO tidak ditemukan!');
       });
     }
   });

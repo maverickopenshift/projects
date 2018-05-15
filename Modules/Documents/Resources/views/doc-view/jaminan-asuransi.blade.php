@@ -49,6 +49,7 @@
             <a class="btn btn-primary btn-lihat" data-toggle="modal" data-target="#ModalPDF" data-load-url="{{route('doc.file',['filename'=>$dt->doc_jaminan_file,'type'=>$doc_type['name'].'_asuransi'])}}">
               <i class="glyphicon glyphicon-paperclip"></i>  Lihat Lampiran
             </a>
+            <input name="disclaimer[]" class="disclaimer hide" autocomplete="off" type="checkbox">
             <a class="btn btn-info btn-lihat" target="_blank" href="{{route('doc.download',['filename'=>$dt->doc_jaminan_file,'type'=>$doc_type['name'].'_asuransi'])}}">
               <i class="glyphicon glyphicon-download-alt"></i>  Download
             </a>

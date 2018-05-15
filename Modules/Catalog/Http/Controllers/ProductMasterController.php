@@ -13,6 +13,7 @@ use Modules\Documents\Entities\DocBoq as DocBoq;
 use App\Helpers\Helpers;
 use App\Permission;
 use App\User;
+use Illuminate\Support\Facades\File;
 use Response;
 use Validator;
 use Datatables;
@@ -135,6 +136,8 @@ class ProductMasterController extends Controller
                                 $constraint->aspectRatio();
                                 $constraint->upsize();
                             });
+
+                            File::exists(storage_path('app/master_item/')) or File::makeDirectory(storage_path('app/master_item/'));
                             $image_resize->save(storage_path('app/master_item/' .$filename));
                             
                             $proses->image_product = $filename;

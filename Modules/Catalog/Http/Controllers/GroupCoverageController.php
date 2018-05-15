@@ -15,7 +15,7 @@ use Validator;
 class GroupCoverageController extends Controller
 {
     public function index(Request $request){
-        $data['page_title'] = 'Satuan';
+        $data['page_title'] = 'Group Coverage';
         return view('catalog::list_product_group_coverage')->with($data);
     }
 

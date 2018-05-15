@@ -76,6 +76,7 @@
                             <tr>
                                 <th>No</th>
                                 <th>Taxonomy</th>
+                                <th>Image</th>
                                 <th>Master Item</th>
                                 <th>Satuan</th>
                                 <th>Group Coverage</th>
@@ -101,6 +102,11 @@ function create_table_price(divisi, unit_bisnis, unit_kerja, f_caritext, f_nokat
     var coloumx=[
         { data: 'DT_Row_Index',orderable:false,searchable:false},
         { data: 'taxonomy'},
+        { data: 'image_product',
+            render: function( data, type, full, meta ) {
+                return "<img src=\"product_master/image/" + data + "\" height=\"50\"/>";
+            }
+        },
         { data: 'nama_product'},        
         { data: 'nama_satuan'},
         { data: 'nama_group_coverage'},

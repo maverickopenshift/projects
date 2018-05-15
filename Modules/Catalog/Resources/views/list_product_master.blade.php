@@ -54,6 +54,7 @@
                     <thead>
                         <tr>
                             <th>No</th>
+                            <th>Image</th>
                             <th>Kode</th>
                             <th>Keterangan</th>
                             <th>Satuan</th>
@@ -192,6 +193,11 @@ function create_table(no_kategori){
     if ($('.btn-additem').length){
         var coloumx=[
             { data: 'DT_Row_Index',orderable:false,searchable:false},
+            { data: 'image_product',
+                render: function( data, type, full, meta ) {
+                    return "<img src=\"product_master/image/" + data + "\" height=\"50\"/>";
+                }
+            },
             { data: 'kode_product'},
             { data: 'keterangan_product'},
             { data: 'nama_satuan'},
@@ -199,6 +205,11 @@ function create_table(no_kategori){
     }else{
         var coloumx=[
             { data: 'DT_Row_Index',orderable:false,searchable:false},
+            { data: 'image_product',
+                render: function( data, type, full, meta ) {
+                    return "<img src=\"product_master/image/" + data + "\" height=\"50\"/>";
+                }
+            },
             { data: 'kode_product'},
             { data: 'keterangan_product'},
             { data: 'nama_satuan'}];
@@ -218,7 +229,7 @@ function create_table(no_kategori){
             "type": "POST",
             'headers': {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
+            }
         },
         columns: coloumx,
     });

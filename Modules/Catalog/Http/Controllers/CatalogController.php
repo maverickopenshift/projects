@@ -230,7 +230,7 @@ class CatalogController extends Controller
                 ->join('catalog_satuan as f','f.id','=','e.satuan_id')
                 ->join('catalog_category as g','g.id','=','e.catalog_category_id')
 
-                ->selectRaw("a.*, b.nama_coverage, d.nama_group_coverage, c.doc_no, f.nama_satuan, concat(e.kode_product,' - ',e.keterangan_product) as nama_product, concat(g.code,' - ',g.display_name) as taxonomy ")
+                ->selectRaw("a.*, b.nama_coverage, d.nama_group_coverage, c.doc_no, f.nama_satuan, concat(e.kode_product,' - ',e.keterangan_product) as nama_product, concat(g.code,' - ',g.display_name) as taxonomy, e.image_product ")
                 ->orderbyRaw("(CASE WHEN a.user_id = $pengguna THEN 1 ELSE 2 END)");
         
         if($request->f_caritext!=""){

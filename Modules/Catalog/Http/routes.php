@@ -57,11 +57,6 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'catalog', 'namespace'
     Route::get('product_master/image/{filename}', function ($filename)
     {
         $path = storage_path('app/master_item/' . $filename);
-        /*
-        if (!File::exists($path)) {
-            abort(404);
-        }
-        */
 
         $file = File::get($path);
         $type = File::mimeType($path);
@@ -71,6 +66,26 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'catalog', 'namespace'
 
         return $response;
     });
+    /*
+    Route::get('product_master/image_thumb/{filename}', function ($filename)
+    {
+        $path = storage_path('app/master_item/' . $filename);
+
+        $image_resize = Image::make($path->getRealPath());              
+        $image_resize->resize(null, 150, function ($constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        });
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
+    });
+    */
 
     /////////////////////
 

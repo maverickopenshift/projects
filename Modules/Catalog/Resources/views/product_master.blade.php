@@ -359,7 +359,7 @@ if(isset($kategori->id)){
 
     $(document).on('click', '.simpan-product', function(event) {
         event.preventDefault();
-        $(".loading2").show();
+        
         var formMe = $('#form-produk');
         $(".formerror").removeClass("has-error");
         $(".error").html('');
@@ -380,6 +380,7 @@ if(isset($kategori->id)){
               },
               callback: function (result) {
                 if(result){
+                  $(".loading2").show();
                   $.ajax({
                     url: formMe.attr('action'),
                     type: 'post',
@@ -390,7 +391,6 @@ if(isset($kategori->id)){
                     success: function(response){
                       if(response.errors){
                         $(".loading2").hide();
-
                         $.each(response.errors, function(index, value){
                             if (value.length !== 0){
                               index = index.replace(".", "-");
@@ -408,6 +408,7 @@ if(isset($kategori->id)){
                           message: "Data yang Anda masukan belum valid, silahkan periksa kembali!",
                         });
                       }else{
+                        $(".loading2").hide();
                         if(response.status=="all"){
                           window.location.href = "{{route('catalog.list.product_master')}}";
                         }

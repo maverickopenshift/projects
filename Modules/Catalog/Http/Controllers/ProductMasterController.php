@@ -4,6 +4,7 @@ namespace Modules\Catalog\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\File;
 use Modules\Catalog\Entities\CatalogProductMaster as CatalogProductMaster;
 use Modules\Catalog\Entities\CatalogProductLogistic as CatalogProductLogistic;
 use Modules\Catalog\Entities\CatalogCategory as CatalogCategory;
@@ -13,7 +14,6 @@ use Modules\Documents\Entities\DocBoq as DocBoq;
 use App\Helpers\Helpers;
 use App\Permission;
 use App\User;
-use Illuminate\Support\Facades\File;
 use Response;
 use Validator;
 use Datatables;
@@ -85,7 +85,6 @@ class ProductMasterController extends Controller
             $rules['f_kodeproduct.'.$key]   = 'required|max:20|min:1|regex:/^[a-z0-9 .\-]+$/i';
             $rules['f_ketproduct.'.$key]    = 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i';
             $rules['f_unitproduct.'.$key]   = 'required';
-            $rules['f_gambar.'.$key]   = 'required';
         }
 
         $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
@@ -141,6 +140,8 @@ class ProductMasterController extends Controller
                             $image_resize->save(storage_path('app/master_item/' .$filename));
                             
                             $proses->image_product = $filename;
+                        }else{
+                            $proses->image_product = '';
                         }
                         $proses->save();
                     }
@@ -162,7 +163,6 @@ class ProductMasterController extends Controller
             $rules['f_kodeproduct.'.$key]   = 'required|max:20|min:1|regex:/^[a-z0-9 .\-]+$/i';
             $rules['f_ketproduct.'.$key]    = 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i';
             $rules['f_unitproduct.'.$key]   = 'required';
-            $rules['f_gambar.'.$key]        = 'required';
         }
 
         $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
@@ -212,8 +212,12 @@ class ProductMasterController extends Controller
                                 $constraint->aspectRatio();
                                 $constraint->upsize();
                             });
+                            File::exists(storage_path('app/master_item/')) or File::makeDirectory(storage_path('app/master_item/'));
                             $image_resize->save(storage_path('app/master_item/' .$filename));
+
                             $proses->image_product = $filename;
+                        }else{
+                            $proses->image_product = '';
                         }
                         $proses->save();
                     }

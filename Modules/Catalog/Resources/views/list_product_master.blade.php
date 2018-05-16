@@ -108,7 +108,7 @@
                         </select>
                         <div class="error-f_unitproduct"></div>
                     </div>
-
+                    
                     <div class="form-group formerror-f_gambar">
                         <label>Gambar Produk</label>
                         <div class="input-group">
@@ -119,7 +119,7 @@
                             </span>
                         </div>
                     </div>
-
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary btn-simpan" data-loading-text="Please wait..." autocomplete="off">Save changes</button>
@@ -129,7 +129,7 @@
     </div>
 </div>
 
-<div class="modal modal-danger fade" id="modal-delete">
+<div class="modal modal-danger fade" role="dialog" id="modal-delete">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
@@ -195,7 +195,11 @@ function create_table(no_kategori){
             { data: 'DT_Row_Index',orderable:false,searchable:false},
             { data: 'image_product',
                 render: function( data, type, full, meta ) {
-                    return "<img src=\"product_master/image/" + data + "\" height=\"50\"/>";
+                    if(data!=''){
+                        return "<img src=\"product_master/image/" + data + "\" height=\"50\"/>";
+                    }else{
+                        return "";
+                    }
                 }
             },
             { data: 'kode_product'},
@@ -207,7 +211,11 @@ function create_table(no_kategori){
             { data: 'DT_Row_Index',orderable:false,searchable:false},
             { data: 'image_product',
                 render: function( data, type, full, meta ) {
-                    return "<img src=\"product_master/image/" + data + "\" height=\"50\"/>";
+                    if(data!=''){
+                        return "<img src=\"product_master/image/" + data + "\" height=\"50\"/>";
+                    }else{
+                        return "";
+                    }                    
                 }
             },
             { data: 'kode_product'},

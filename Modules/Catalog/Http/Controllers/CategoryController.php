@@ -27,10 +27,10 @@ class CategoryController extends Controller
 
     public function bulk_add(Request $request){
         $rules = array();
-
+        
         foreach($request->f_kode as $key => $val){
-            $rules['f_kode.'.$key]          = 'required|max:20|min:1|regex:/^[a-z0-9 .\-]+$/i';
-            $rules['f_nama.'.$key]          = 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_kode.'.$key]          = 'required|max:20|min:5|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_nama.'.$key]          = 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
         }
 
         $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
@@ -50,10 +50,10 @@ class CategoryController extends Controller
                     }
                 }
 
-                if($request['kode_parent'][$key]!=''){
-                    $count_parent=CatalogCategory::where('code',$request['kode_parent'][$key])->count();
+                if($request['f_kodeparent'][$key]!=''){
+                    $count_parent=CatalogCategory::where('code',$request['f_kodeparent'][$key])->count();
                     if($count_parent==0){
-                        $validator->errors()->add("f_kode.$key", "Kode Tidak Boleh Sama! Sudah ada di database");
+                        $validator->errors()->add("f_kodeparent.$key", "Kode parent tidak ditemukan");
                     }
                 }
             }
@@ -71,7 +71,8 @@ class CategoryController extends Controller
                         $proses->code                   = $request['f_kode'][$key];
                         $proses->display_name           = $request['f_nama'][$key];
                         $proses->name                   = str_slug($request['f_nama'][$key]);
-                        if($request['f_kodeparent'][$key]!='0'){
+
+                        if($request['f_kodeparent'][$key]!=''){
                             $parent=CatalogCategory::where('code',$request['f_kodeparent'][$key])->first();
                             $proses->parent_id              = $parent->id;    
                         }else{
@@ -120,7 +121,13 @@ class CategoryController extends Controller
 
                     for($i=0;$i<count($data);$i++){
                         $hasil[$i]['id_parent']         = 0;
-                        $hasil[$i]['kode_parent']       = $data[$i]['kode_parent'];
+                        
+                        if($data[$i]['kode_parent']==""){
+                            $hasil[$i]['kode_parent']       = "";
+                        }else{
+                            $hasil[$i]['kode_parent']       = $data[$i]['kode_parent'];
+                        }
+                        
                         $hasil[$i]['kode']              = $data[$i]['kode'];
                         $hasil[$i]['nama']              = $data[$i]['nama'];
                         $hasil[$i]['error_kode_parent'] = '';
@@ -212,6 +219,63 @@ class CategoryController extends Controller
                     }
                 }
             }
+        return $hasil;
+    }
+
+    public function get_category_all_select(){
+        $result=CatalogCategory::where('parent_id',0)->get();
+        $hasil=array();
+        $x=0;
+        
+        for($i=0;$i<count($result);$i++){
+            $hasil[$x]['id']=$result[$i]->id;
+            $hasil[$x]['text']=$result[$i]->code ." - ". $result[$i]->display_name;
+            $hasil[$x]['child']=1;
+
+            $x++;
+            
+            $result_child1=CatalogCategory::where('parent_id',$result[$i]->id)->get();
+            for($j=0;$j<count($result_child1);$j++){
+                $hasil[$x]['id']=$result_child1[$j]->id;
+                $hasil[$x]['text']=$result_child1[$j]->code ." - ". $result_child1[$j]->display_name;
+                $hasil[$x]['child']=2;
+                $x++;
+                
+                $result_child2=CatalogCategory::where('parent_id',$result_child1[$j]->id)->get();
+                for($k=0;$k<count($result_child2);$k++){
+                    $hasil[$x]['id']=$result_child2[$k]->id;
+                    $hasil[$x]['text']=$result_child2[$k]->code ." - ". $result_child2[$k]->display_name;
+                    $hasil[$x]['child']=3;
+                    $x++;
+                    
+                    $result_child3=CatalogCategory::where('parent_id',$result_child2[$k]->id)->get();
+                    for($l=0;$l<count($result_child3);$l++){
+                        $hasil[$x]['id']=$result_child3[$l]->id;
+                        $hasil[$x]['text']=$result_child3[$l]->code ." - ". $result_child3[$l]->display_name;
+                        $hasil[$x]['child']=4;
+                        $x++;
+
+                        $result_child4=CatalogCategory::where('parent_id',$result_child3[$l]->id)->get();
+                        for($m=0;$m<count($result_child4);$m++){
+                            $hasil[$x]['id']=$result_child4[$m]->id;
+                            $hasil[$x]['text']=$result_child4[$m]->code ." - ". $result_child4[$m]->display_name;
+                            $hasil[$x]['child']=5;
+                            $x++;
+
+                            $result_child5=CatalogCategory::where('parent_id',$result_child4[$m]->id)->get();
+                            for($n=0;$n<count($result_child5);$n++){
+                                $hasil[$x]['id']=$result_child5[$n]->id;
+                                $hasil[$x]['text']=$result_child5[$n]->code ." - ". $result_child5[$n]->display_name;
+                                $hasil[$x]['child']=6;
+                                $x++;
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
+
         return $hasil;
     }
 

@@ -319,10 +319,8 @@ if(isset($kategori->id)){
     }
 
     function fix_no_error(){
-        console.log("test");
         var $this = $('.tabel-product');
         $.each($this,function(index, el) {
-            console.log(index);
             var mdf_new_row = $(this).find('td');
 
             if(mdf_new_row.eq(0).hasClass("has-error")){

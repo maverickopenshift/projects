@@ -63,7 +63,7 @@ class ProductMasterController extends Controller
         $data = $data->paginate(30);
         return \Response::json($data);
     }
-
+    /*
     public function get_select_category(Request $request){
         $search = trim($request->q);
         $data = CatalogCategory::selectRaw('id as id, concat(code," - ",display_name) as text');
@@ -75,6 +75,21 @@ class ProductMasterController extends Controller
         }
         
         $data = $data->paginate(30);
+        return \Response::json($data);
+    }
+    */
+    public function get_select_category(Request $request){
+        $search = trim($request->q);
+        $data = CatalogCategory::selectRaw('id as id, concat(code," - ",display_name) as text');
+
+        if(!empty($search)){
+          $data->where(function($q) use ($search) {
+              $q->orWhere('display_name', 'like', '%'.$search.'%');
+          });
+        }
+        
+        $data = $data->paginate(30);
+        //$data=$data->get();
         return \Response::json($data);
     }
 

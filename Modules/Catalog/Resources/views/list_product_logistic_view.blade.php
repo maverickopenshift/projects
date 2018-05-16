@@ -24,7 +24,7 @@
             <div class="box box-danger">
                 <div class="box-header with-border">
                     <i class="fa fa-cogs"></i>
-                    <h3 class="box-title f_parentname_price">Daftar Item Price</h3>
+                    <h3 class="box-title f_parentname_price">Daftar Item</h3>
                 </div>
                 <!-- /.box-header -->
                 <div class="box-body">
@@ -35,12 +35,64 @@
                             <div class="form-group top10">
                                 <input type="text" class="form-control" id="f_caritext" name="f_caritext"  placeholder="Pencarian ...">
                             </div>
-
+                            {{--
                             <div class="form-group top10">
-                                <select class="form-control" name="f_nokategori" id="f_nokategori">
+                                <select class="form-control" name="f_nokategori" id="f_nokategori" style="width: 250px;">
                                     <option value="">Pilih Kategori</option>
                                 </select>
                             </div>
+                            --}}
+                            <div class="form-group top10">
+                                <select class="form-control" name="f_nokategori" id="f_nokategori" style="width: 250px;">
+                                    <option value="">Silahkan Pilih Kategori..</option>
+                                    @php
+                                    for($i=0;$i<count($kategori);$i++){
+                                        if($kategori[$i]['child']==1){
+
+                                            echo "<option value='".$kategori[$i]['id']."'>
+                                                ".$kategori[$i]['text']."
+                                                </option>";
+
+                                        }elseif($kategori[$i]['child']==2){
+
+                                            echo "<option value='".$kategori[$i]['id']."'>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                ".$kategori[$i]['text']."
+                                                </option>";
+
+                                        }elseif($kategori[$i]['child']==3){
+
+                                            echo "<option value='".$kategori[$i]['id']."'>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                ".$kategori[$i]['text']."
+                                                </option>";
+
+                                        }elseif($kategori[$i]['child']==4){
+
+                                            echo "<option value='".$kategori[$i]['id']."'>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                ".$kategori[$i]['text']."
+                                                </option>";
+
+                                        }elseif($kategori[$i]['child']==5){
+
+                                            echo "<option value='".$kategori[$i]['id']."'>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                ".$kategori[$i]['text']."
+                                                </option>";
+                                        }
+                                    }
+                                    @endphp
+                                </select>
+                            </div>
+                            
+                            <br>
 
                             <div class="form-group top10">
                                 {!!Helper::select_all_divisi('divisi')!!}
@@ -57,6 +109,8 @@
                                     <option value="">Pilih Unit Kerja</option>
                                 </select>
                             </div>
+
+                            <br>
 
                             <div class="form-group top10">
                                 <input type="text" class="form-control input-rupiah" id="f_hargaterendah" name="f_hargaterendah"  placeholder="Harga Terendah ...">
@@ -98,13 +152,19 @@
 <script>
 var table_price;
 
+$("#f_nokategori").select2();
+
 function create_table_price(divisi, unit_bisnis, unit_kerja, f_caritext, f_nokategori, f_hargatertinggi, f_hargaterendah){
     var coloumx=[
         { data: 'DT_Row_Index',orderable:false,searchable:false},
         { data: 'taxonomy'},
         { data: 'image_product',
             render: function( data, type, full, meta ) {
-                return "<img src=\"product_master/image/" + data + "\" height=\"50\"/>";
+                if(data!=''){
+                    return "<img src=\"product_master/image/" + data + "\" height=\"50\"/>";
+                }else{
+                    return "";
+                }
             }
         },
         { data: 'nama_product'},        
@@ -141,7 +201,7 @@ function refresh_product_price(divisi, unit_bisnis, unit_kerja, f_caritext, f_no
     table_price.destroy();
     create_table_price(divisi, unit_bisnis, unit_kerja, f_caritext, f_nokategori, f_hargatertinggi, f_hargaterendah);
 }
-
+{{--
 function select_kategori(input){
     input.select2({
         placeholder : "Silahkan Pilih....",
@@ -180,13 +240,13 @@ function select_kategori(input){
         templateResult: function (state) {
             if (state.id === undefined || state.id === "") { return '<img src="/images/loader.gif" style="width:20px;"/> Searching..' ;  }
             var $state = $(
-                '<span>'+  state.text + '</span>'
+                '<span> xxxxxxxxxxx'+  state.text + '</span>'
             );
             return $state;
         },
         templateSelection: function (data) {
             if (data.id === undefined || data.id === "") { // adjust for custom placeholder values
-                return "Silahkan Pilih..";
+                return "Silahkan Pilih Kategori..";
             }
             if(data.text === undefined){
               return data.text;
@@ -195,7 +255,7 @@ function select_kategori(input){
         }
     });
 }
-
+--}}
 $(document).on('change', '#divisi', function(event) {
     event.preventDefault();
     var divisi = this.value;
@@ -267,8 +327,9 @@ $(document).on('submit','#form_me_cari',function (event) {
 $(function(){
     $('#unit_bisnis').change();
     $('#divisi').change();
+    {{--
     select_kategori($("#f_nokategori"));
-
+    --}}
     create_table_price('','','','','','','');
 
 });

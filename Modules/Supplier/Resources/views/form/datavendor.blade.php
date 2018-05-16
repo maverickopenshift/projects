@@ -177,7 +177,7 @@ $(function(){
     new_row.find('.delete-anak_perusahaan').remove();
     
     $this.parent().append(new_row);
-
+    
     var row = $('.input-anak_perusahaan');
     $.each(row,function(index, el) {
       if($(this).hasClass("has-error")){
@@ -199,21 +199,19 @@ $(function(){
   
   $(document).on('click', '.delete-anak_perusahaan', function(event) {
     $(this).parent().parent().parent().remove();
-    var $this = $('.input-anak_perusahaan');
-    $.each($this,function(index, el) {
-      if($(this).hasClass("has-error")){
-        $(this).removeClass().addClass("input-anak_perusahaan has-error formerror formerror-anak_perusahaan-"+ index);
+
+    var row = $('.input-anak_perusahaan');
+    $.each(row,function(index, el) {
+
+      if(row.hasClass("has-error")){
+        row.removeClass().addClass("input-anak_perusahaan has-error formerror formerror-anak_perusahaan-"+ index);
       }else{
-        $(this).removeClass().addClass("input-anak_perusahaan formerror formerror-anak_perusahaan-"+ index);
+        row.removeClass().addClass("input-anak_perusahaan formerror formerror-anak_perusahaan-"+ index);
       }
       
-      $(this).find('.error-anak_perusahaan').removeClass().addClass("error error-anak_perusahaan error-anak_perusahaan-"+ index);
-
-      if($(this).length==1){
-        $(this).find('.delete-anak_perusahaan').remove();
-      }else{
-        $(this).find('.delete-anak_perusahaan').remove();
-        $(this).find('.input-group-btn').append(btn_del);
+      row.find('.error-anak_perusahaan').removeClass().addClass("error error-anak_perusahaan error-anak_perusahaan-"+ index);
+      if(row.length==1){
+        row.find('.delete-anak_perusahaan').remove();
       }
     });
   });

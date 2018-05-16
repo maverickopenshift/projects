@@ -55,7 +55,7 @@
                 </div>
                 <div class="box-footer">
                     <div class="box-tools pull-right">
-                        <a class="btn bg-red btn-reset" href="{{route('catalog.product.kontrak')}}" style="margin-bottom: 2px;">
+                        <a class="btn bg-red btn-reset" href="{{route('catalog.category.bulk')}}" style="margin-bottom: 2px;">
                             Reset
                         </a>
                         <input type="submit" class="btn btn-primary simpan-product" value="Simpan">
@@ -193,9 +193,11 @@ function template_add(id_parent, kode_parent, kode, nama, error_kode_parent, err
 }
 
 function fix_no_error(){
-    var $this = $('.tabel-isi');
+    var $this = $('.tabel-product');
+
     $.each($this,function(index, el) {
         var mdf_new_row = $(this).find('td');
+        console.log("test");
 
         if(mdf_new_row.eq(0).hasClass("has-error")){
             mdf_new_row.eq(0).removeClass().addClass("has-error formerror formerror-f_kodeparent-"+ index);

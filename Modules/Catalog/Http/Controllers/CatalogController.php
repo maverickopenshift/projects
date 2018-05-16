@@ -81,7 +81,7 @@ class CatalogController extends Controller
                         $act= '<div class="btn-group">';
                             if($data->user_id==Auth::id()){
                                 $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal-product"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-type="product" ><i class="glyphicon glyphicon-edit"></i> Ubah</button>';
-                                $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-type="product" data-toggle="modal" data-target="#modal-delete"><i class="glyphicon glyphicon-trash"></i> Hapus</button>';
+                                $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-target="#modal-delete" data-toggle="modal" ><i class="glyphicon glyphicon-trash"></i> Hapus</button>';
                             }
                         $act .='</div>';
                         return $act;
@@ -167,7 +167,7 @@ class CatalogController extends Controller
                     $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
                     $act= '<div class="btn-group">';
                         if(Auth::user()->hasPermission('katalog-item-price-proses') && $data->divisi==$pegawai->divisi){
-                            $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal-product"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-type="product" ><i class="glyphicon glyphicon-edit"></i> Editx</button>';
+                            $act .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal-product"  data-title="Edit" data-data="'.$dataAttr.'" data-id="'.$data->id.'" data-type="product" ><i class="glyphicon glyphicon-edit"></i> Edit</button>';
                             $act .='<button type="button" class="btn btn-danger btn-xs" data-id="'.$data->id.'" data-type="product" data-toggle="modal" data-target="#modal-delete"><i class="glyphicon glyphicon-trash"></i> Delete</button>';
                         }
                     $act .='</div>';
@@ -215,6 +215,61 @@ class CatalogController extends Controller
             $data['kode_product']      = "";
             $data['ket_product']       = "";
         }
+
+        $result=CatalogCategory::where('parent_id',0)->get();
+        $hasil=array();
+        $x=0;
+        
+        for($i=0;$i<count($result);$i++){
+            $hasil[$x]['id']=$result[$i]->id;
+            $hasil[$x]['text']=$result[$i]->code ." - ". $result[$i]->display_name;
+            $hasil[$x]['child']=1;
+
+            $x++;
+            
+            $result_child1=CatalogCategory::where('parent_id',$result[$i]->id)->get();
+            for($j=0;$j<count($result_child1);$j++){
+                $hasil[$x]['id']=$result_child1[$j]->id;
+                $hasil[$x]['text']=$result_child1[$j]->code ." - ". $result_child1[$j]->display_name;
+                $hasil[$x]['child']=2;
+                $x++;
+                
+                $result_child2=CatalogCategory::where('parent_id',$result_child1[$j]->id)->get();
+                for($k=0;$k<count($result_child2);$k++){
+                    $hasil[$x]['id']=$result_child2[$k]->id;
+                    $hasil[$x]['text']=$result_child2[$k]->code ." - ". $result_child2[$k]->display_name;
+                    $hasil[$x]['child']=3;
+                    $x++;
+                    
+                    $result_child3=CatalogCategory::where('parent_id',$result_child2[$k]->id)->get();
+                    for($l=0;$l<count($result_child3);$l++){
+                        $hasil[$x]['id']=$result_child3[$l]->id;
+                        $hasil[$x]['text']=$result_child3[$l]->code ." - ". $result_child3[$l]->display_name;
+                        $hasil[$x]['child']=4;
+                        $x++;
+
+                        $result_child4=CatalogCategory::where('parent_id',$result_child3[$l]->id)->get();
+                        for($m=0;$m<count($result_child4);$m++){
+                            $hasil[$x]['id']=$result_child4[$m]->id;
+                            $hasil[$x]['text']=$result_child4[$m]->code ." - ". $result_child4[$m]->display_name;
+                            $hasil[$x]['child']=5;
+                            $x++;
+
+                            $result_child5=CatalogCategory::where('parent_id',$result_child4[$m]->id)->get();
+                            for($n=0;$n<count($result_child5);$n++){
+                                $hasil[$x]['id']=$result_child5[$n]->id;
+                                $hasil[$x]['text']=$result_child5[$n]->code ." - ". $result_child5[$n]->display_name;
+                                $hasil[$x]['child']=6;
+                                $x++;
+                            }
+                        }
+                    }
+                }
+                
+            }
+        }
+
+        $data['kategori'] = $hasil;
         
         return view('catalog::list_product_logistic_view')->with($data);
     }

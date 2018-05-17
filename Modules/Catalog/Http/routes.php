@@ -8,9 +8,6 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'catalog', 'namespace'
     Route::post('/category/bulk_upload',                ['middleware' => ['permission:katalog-kategori'],'uses' => 'CategoryController@bulk_upload'])->name('catalog.category.bulk_upload');
     Route::post('/category/datatables',                 ['middleware' => ['permission:katalog-kategori'],'uses' => 'CategoryController@datatables'])->name('catalog.category.datatables');    
     Route::get('/category/get_category',                ['middleware' => ['permission:katalog-kategori'],'uses' => 'CategoryController@get_category'])->name('catalog.category.get_category');
-
-    Route::get('/category/get_category_all_select',     ['middleware' => ['permission:katalog-kategori'],'uses' => 'CategoryController@get_category_all_select'])->name('catalog.category.get_category_all_select');
-
     Route::get('/category/get_category_induk/',         ['middleware' => ['permission:katalog-kategori'],'uses' => 'CategoryController@get_category_induk'])->name('catalog.category.get_category_induk');
     Route::get('/category/get_category_all/{parent_id}',['middleware' => ['permission:katalog-kategori'],'uses' => 'CategoryController@get_category_all'])->name('catalog.category.get_category_all');
     

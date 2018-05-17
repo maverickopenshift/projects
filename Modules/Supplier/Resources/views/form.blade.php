@@ -12,10 +12,10 @@
     <div class="nav-tabs-custom content-view">
       <div class="loading2"></div>
         <ul class="nav nav-tabs">
-          <li class="active"><a href="#tab_1" data-toggle="tab">Informasi Vendor</a></li>
-          <li><a href="#tab_2" data-toggle="tab">Data Vendor</a></li>
-          <li><a href="#tab_3" data-toggle="tab">Finansial Aspek</a></li>
-          <li><a href="#tab_4" data-toggle="tab">Legal Aspek</a></li>
+          <li class="active"><a href="#tab_1" data-toggle="tab">Informasi Supplier</a></li>
+          <li><a href="#tab_2" data-toggle="tab">Data Supplier</a></li>
+          <li><a href="#tab_3" data-toggle="tab">Finansial Supplier</a></li>
+          <li><a href="#tab_4" data-toggle="tab">Legal Supplier</a></li>
           <li><a href="#tab_5" data-toggle="tab">Employee Detail</a></li>
         </ul>
         <div class="tab-content">

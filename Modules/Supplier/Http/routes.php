@@ -78,7 +78,7 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'supplier', 'namespace
 
         return $response;
     })->name('supplier.sertifikat.file');
-
+    
     Route::get('/template-{filename}', function ($filename){
         $path = public_path('template/template_' . $filename.'.csv');
 

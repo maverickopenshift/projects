@@ -148,7 +148,7 @@ class CoverageController extends Controller
     }
 
     public function delete(Request $request){
-        $cek_satuan=CatalogProductLogistic::where("id_coverage",$request->id)->count();
+        $cek_satuan=CatalogProductLogistic::where("coverage_id",$request->id)->count();
         if($cek_satuan==0){
             $proses=CatalogCoverage::where('id',$request->id)->delete();
             return 1;

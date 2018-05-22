@@ -68,7 +68,6 @@
 var datatablesMe;
 $(function() {
   datatablesMe = $('#datatables').on('xhr.dt', function ( e, settings, json, xhr ) {
-      // console.log(JSON.stringify(xhr));
       if(xhr.responseText=='Unauthorized.'){
         location.reload();
       }

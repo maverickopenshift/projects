@@ -110,6 +110,18 @@ class LoginController extends Controller
           }
           if($login_status){
             $id = Auth::id();
+            $pegawai_hitung = DB::table('v_users_pegawai')->where('user_id',$id)->count();
+            if($pegawai_hitung!=0){
+              $pegawai = DB::table('v_users_pegawai')->where('user_id',$id)->first();
+              $request->session()->put('nik', $pegawai->n_nik);
+              $request->session()->put('posisi', $pegawai->v_short_posisi);
+            }else{
+              $request->session()->put('nik', '');
+              $request->session()->put('posisi', '');
+            }
+            
+            
+
             $user_pgs = UsersPgs::where('users_id',$id)->first();
             if($user_pgs){
               $role_1 = DB::table('roles')->where('id',$user_pgs->role_id)->first();
@@ -118,6 +130,7 @@ class LoginController extends Controller
                 ['id'=>$role_1->id,'title'=>$role_1->display_name],
                 ['id'=>$role_2->id,'title'=>$role_2->display_name],
               ];
+              
               $pgs = true;
             }
           }

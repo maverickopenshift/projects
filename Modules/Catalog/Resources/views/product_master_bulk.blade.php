@@ -67,8 +67,10 @@ if(isset($kategori->id)){
                             <tr>
                                 <th>Taxonomy</th>
                                 <th>Kode</th>
-                                <th>Keterangan</th>
+                                <th>Nama Item</th>
                                 <th>Satuan</th>
+                                <th>Serial</th>
+                                <th>Manufacture</th>
                                 <th>Gambar</th>
                                 <th>Aksi</th>
                             </tr>
@@ -135,9 +137,8 @@ if(isset($kategori->id)){
     function handleFile(data) {
         $.each(data.data,function(index, el) {
             var dt = data.data[index];
-            //var new_row = $(template_add('','')).clone(true);
             
-            var new_row = $(template_add(dt.kode, dt.keterangan, dt.error_kategori, dt.error_satuan)).clone(true);;
+            var new_row = $(template_add(dt.kode, dt.nama_item, dt.serial, dt.manufacture, dt.error_kategori, dt.error_satuan)).clone(true);;
             $(".table-test").prepend(new_row);
             var input_new_row = new_row.find('td');
             select_satuan(input_new_row.eq(3).find('.select_satuan'));
@@ -199,10 +200,11 @@ if(isset($kategori->id)){
         }else{
             alertBS('Jika jumlah baris hanya ada 1 tidak bisa di hapus, silahkan tambah sebelum menghapus','danger');
         }
+        fix_no_error();
     });
 
     $(document).on('click', '.add-product', function(event) {
-        var new_row = $(template_add('','','','')).clone(true).insertAfter(".tabel-product:last");
+        var new_row = $(template_add('','','','','','')).clone(true).insertAfter(".tabel-product:last");
         var input_new_row = new_row.find('td');
 
         select_satuan(input_new_row.eq(3).find('.select_satuan'));
@@ -211,7 +213,7 @@ if(isset($kategori->id)){
         fix_no_error();
     });
 
-    function template_add(kode, keterangan, error_kategori, error_satuan){
+    function template_add(kode, nama_item, serial, manufacture, error_kategori, error_satuan){
         var template = '\
         <tr class="tabel-product">';
 
@@ -238,9 +240,9 @@ if(isset($kategori->id)){
                     <input type="text" name="f_kodeproduct[]" placeholder="Kode.." value="'+ kode +'" class="form-control">\
                     <div class="error error-f_kodeproduct error-f_kodeproduct-0"></div>\
                 </td>\
-                <td class="formerror formerror-f_ketproduct-0">\
-                    <input type="text" name="f_ketproduct[]" placeholder="Keterangan .." value="'+ keterangan +'" class="form-control">\
-                    <div class="error error-f_ketproduct error-f_ketproduct-0"></div>\
+                <td class="formerror formerror-f_namaproduct-0">\
+                    <input type="text" name="f_namaproduct[]" placeholder="Nama Item .." value="'+ nama_item +'" class="form-control">\
+                    <div class="error error-f_namaproduct error-f_namaproduct-0"></div>\
                 </td>';
 
             if(error_satuan!=""){
@@ -262,6 +264,14 @@ if(isset($kategori->id)){
             }
 
             template = template + '\
+            <td class="formerror formerror-f_serialproduct-0">\
+                <input type="text" name="f_serialproduct[]" placeholder="Serial .." value="'+ serial +'" class="form-control">\
+                <div class="error error-f_serialproduct error-f_serialproduct-0"></div>\
+            </td>\
+            <td class="formerror formerror-f_manufactureproduct-0">\
+                <input type="text" name="f_manufactureproduct[]" placeholder="Manufacture .." value="'+ manufacture +'" class="form-control">\
+                <div class="error error-f_manufactureproduct error-f_manufactureproduct-0"></div>\
+            </td>\
             <td class="formerror formerror-f_gambar-0">\
                 <div class="input-group">\
                     <input type="file" name="f_gambar[]" accept=".jpg" class="hide">\
@@ -413,28 +423,44 @@ if(isset($kategori->id)){
             }
 
             if(mdf_new_row.eq(2).hasClass("has-error")){
-                mdf_new_row.eq(2).removeClass().addClass("has-error formerror formerror-f_ketproduct-"+ index);
+                mdf_new_row.eq(2).removeClass().addClass("has-error formerror formerror-f_namaproduct-"+ index);
             }else{
-                mdf_new_row.eq(2).removeClass().addClass("formerror formerror-f_ketproduct-"+ index);
+                mdf_new_row.eq(2).removeClass().addClass("formerror formerror-f_namaproduct-"+ index);
             }
 
             if(mdf_new_row.eq(3).hasClass("has-error")){
                 mdf_new_row.eq(3).removeClass().addClass("has-error formerror formerror-f_unitproduct-"+ index);
             }else{
                 mdf_new_row.eq(3).removeClass().addClass("formerror formerror-f_unitproduct-"+ index);
-            }
+            }           
 
             if(mdf_new_row.eq(4).hasClass("has-error")){
-                mdf_new_row.eq(4).removeClass().addClass("has-error formerror formerror-f_gambar-"+ index);
+                mdf_new_row.eq(4).removeClass().addClass("has-error formerror formerror-f_serialproduct-"+ index);
             }else{
-                mdf_new_row.eq(4).removeClass().addClass("formerror formerror-f_gambar-"+ index);
+                mdf_new_row.eq(4).removeClass().addClass("formerror formerror-f_serialproduct-"+ index);
+            }
+
+            if(mdf_new_row.eq(5).hasClass("has-error")){
+                mdf_new_row.eq(5).removeClass().addClass("has-error formerror formerror-f_manufactureproduct-"+ index);
+            }else{
+                mdf_new_row.eq(5).removeClass().addClass("formerror formerror-f_manufactureproduct-"+ index);
+            }
+
+            if(mdf_new_row.eq(6).hasClass("has-error")){
+                mdf_new_row.eq(6).removeClass().addClass("has-error formerror formerror-f_gambar-"+ index);
+            }else{
+                mdf_new_row.eq(6).removeClass().addClass("formerror formerror-f_gambar-"+ index);
             }
 
             $(this).find('.error-f_idcategory').removeClass().addClass("error error-f_idcategory error-f_idcategory-"+ index);
             $(this).find('.error-f_kodeproduct').removeClass().addClass("error error-f_kodeproduct error-f_kodeproduct-"+ index);
-            $(this).find('.error-f_ketproduct').removeClass().addClass("error error-f_ketproduct error-f_ketproduct-"+ index);
+            $(this).find('.error-f_namaproduct').removeClass().addClass("error error-f_namaproduct error-f_namaproduct-"+ index);
             $(this).find('.error-f_unitproduct').removeClass().addClass("error error-f_unitproduct error-f_unitproduct-"+ index);
             $(this).find('.error-f_gambar').removeClass().addClass("error error-f_gambar error-f_gambar-"+ index);
+
+            $(this).find('.error-f_serialproduct').removeClass().addClass("error error-f_serialproduct error-f_serialproduct-"+ index);
+            $(this).find('.error-f_manufactureproduct').removeClass().addClass("error error-f_gambar error-f_manufactureproduct-"+ index);
+
 
         });        
     }
@@ -508,7 +534,7 @@ if(isset($kategori->id)){
     }
 
     $(function(){
-        var new_row = $(template_add('','','','')).clone(true);
+        var new_row = $(template_add('','','','','','')).clone(true);
         $(".table-test").append(new_row);
         var input_new_row = new_row.find('td');
         

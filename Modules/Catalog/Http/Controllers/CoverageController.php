@@ -51,7 +51,7 @@ class CoverageController extends Controller
     public function get_coverage(Request $request){
         $search = trim($request->q);
         $data = CatalogCoverage::selectRaw('id as id, nama_coverage as text')
-                ->where('id_group_coverage',$request->id_group_coverage);
+                ->where('group_coverage_id',$request->id_group_coverage);
 
         if(!empty($search)){
           $data->where(function($q) use ($search) {
@@ -66,9 +66,9 @@ class CoverageController extends Controller
 
     public function index_coverage_datatables(Request $request){
         $data=DB::table('catalog_coverage as a')
-                    ->join('catalog_group_coverage as b','b.id','=','a.id_group_coverage')
+                    ->join('catalog_group_coverage as b','b.id','=','a.group_coverage_id')
                     ->selectRaw("a.*, b.nama_group_coverage")
-                    ->orderby('a.id_group_coverage')
+                    ->orderby('a.group_coverage_id')
                     ->get();
 
         return Datatables::of($data)
@@ -102,8 +102,8 @@ class CoverageController extends Controller
               ));
         }else{
             $proses = new CatalogCoverage();
-            $proses->nama_coverage = $request['f_namacoverage'];
-            $proses->id_group_coverage = $request['f_nogroupcoverage'];
+            $proses->nama_coverage      = $request['f_namacoverage'];
+            $proses->group_coverage_id  = $request['f_nogroupcoverage'];
             $proses->save();   
             
             $request->session()->flash('alert-success', 'Data berhasil disimpan');
@@ -138,7 +138,7 @@ class CoverageController extends Controller
         else{
             $proses                     = CatalogCoverage::where('id',$request->f_id)->first();
             $proses->nama_coverage      = $request->f_namacoverage;
-            $proses->id_group_coverage  = $request->f_nogroupcoverage;
+            $proses->group_coverage_id  = $request->f_nogroupcoverage;
             $proses->save();
 
             return Response::json (array(

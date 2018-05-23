@@ -95,7 +95,7 @@ class GroupCoverageController extends Controller
     }
 
     public function delete(Request $request){
-        $cek_satuan=CatalogCoverage::where("id_group_coverage",$request->id)->count();
+        $cek_satuan=CatalogCoverage::where("group_coverage_id",$request->id)->count();
         if($cek_satuan==0){
             $proses=CatalogGroupCoverage::where('id',$request->id)->delete();
             return 1;

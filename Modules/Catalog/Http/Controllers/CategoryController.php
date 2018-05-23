@@ -30,7 +30,7 @@ class CategoryController extends Controller
         
         foreach($request->f_kode as $key => $val){
             $rules['f_kode.'.$key]          = 'required|max:20|min:5|regex:/^[a-z0-9 .\-]+$/i';
-            $rules['f_nama.'.$key]          = 'required|max:500|min:5|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_nama.'.$key]          = 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i';
         }
 
         $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
@@ -147,19 +147,18 @@ class CategoryController extends Controller
                         $count_kode=CatalogCategory::where('code',$data[$i]['kode'])->count();
                         if($count_kode!=0){
                             $hasil[$i]['error_kode']  = "Kode ini sudah digunakan";
-                        }
-                        
+                        }                        
                     }
 
                     return Response::json(['status'=>true,'csrf_token'=>csrf_token(),'data'=>$hasil]);
                 }else{
-                    return Response::json(['status'=>false]);
+                    return Response::json(['status'=>false,'test'=>1]);
                 }
             }else{
-                return Response::json(['status'=>false]);
+                return Response::json(['status'=>false,'test'=>2]);
             }
         }else{
-            return Response::json(['status'=>false]);
+            return Response::json(['status'=>false,'test'=>3]);
         }
     }
 
@@ -270,8 +269,8 @@ class CategoryController extends Controller
 
     public function proses(Request $request){
         $rules = array (
-            'f_kodekategori' => 'required|min:5|max:10|regex:/^[a-z0-9]+$/i',
-            'f_namakategori' => 'required|min:5|max:250|regex:/^[a-z0-9 .\-]+$/i',
+            'f_kodekategori' => 'required|min:5|max:20|regex:/^[a-z0-9]+$/i',
+            'f_namakategori' => 'required|min:1|max:250|regex:/^[a-z0-9 .\-]+$/i',
             'f_deskripsikategori' => 'required|min:5|max:500|regex:/^[a-z0-9 .\-]+$/i',
         );
 

@@ -112,6 +112,7 @@ function create_table_coverage(){
             location.reload();
         }
     }).DataTable({
+        scrollX   : true,
         processing: true,
         serverSide: true,
         autoWidth : false,
@@ -181,7 +182,7 @@ formModal.on('show.bs.modal', function (event) {
         modal.find('.modal-body input#f_namacoverage').val(data.nama_coverage);
         
         select_group_coverage(modal.find('.modal-body .select_group_coverage'));
-        set_select2(modal.find('.modal-body .select_group_coverage'),data.nama_group_coverage,data.id_group_coverage);
+        set_select2(modal.find('.modal-body .select_group_coverage'),data.nama_group_coverage,data.group_coverage_id);
 
         modal.find('form').attr('action',"{{ route('catalog.coverage.edit') }}")
 
@@ -317,6 +318,8 @@ function select_group_coverage(input){
 }
 
 function set_select2(attr_obj,text,id) {
+    console.log(text);
+    console.log(id);
     attr_obj.find('option').remove();
     var newOption = new Option(text, id, false, true);
     attr_obj.append(newOption);

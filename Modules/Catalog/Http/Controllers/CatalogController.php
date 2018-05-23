@@ -97,7 +97,7 @@ class CatalogController extends Controller
                         if(Auth::user()->hasPermission('katalog-item-price-proses')){
                         $act .='<a href="'. route('catalog.product.logistic') .'?id_product='.$data->id.'" class="btn btn-success btn-xs btn-price-add"><i class="glyphicon glyphicon-plus"></i> Price</a>';
                         }
-                        $act .='<a data-id="'. $data->id .'" data-kode="'. $data->kode_product .'" data-ket="'. $data->keterangan_product .'" class="btn btn-primary btn-xs detail_price"><i class="glyphicon glyphicon-edit"></i> Detail</a>';
+                        $act .='<a data-id="'. $data->id .'" data-kode="'. $data->kode_product .'" data-ket="'. $data->nama_product .'" class="btn btn-primary btn-xs detail_price"><i class="glyphicon glyphicon-edit"></i> Detail</a>';
                     $act .='</div>';
                     return $act;
                 })
@@ -115,10 +115,10 @@ class CatalogController extends Controller
             $masteritem=CatalogProductMaster::where('id',$data['no_product'])->first();
 
             $data['kode_product']      = $masteritem->kode_product;
-            $data['ket_product']       = $masteritem->keterangan_product;
+            $data['nama_product']       = $masteritem->nama_product;
         }else{
             $data['kode_product']      = "";
-            $data['ket_product']       = "";
+            $data['nama_product']       = "";
         }
         
         return view('catalog::list_product_logistic')->with($data);
@@ -280,12 +280,13 @@ class CatalogController extends Controller
         $data=DB::table('catalog_product_logistic as a')
                 ->join('catalog_coverage as b','b.id','=','a.coverage_id')
                 ->leftjoin('documents as c','c.id','=','a.referensi_logistic')
+                ->leftjoin('supplier as h','h.id','=','c.supplier_id')
                 ->join('catalog_group_coverage as d','d.id','=','a.group_coverage_id')
                 ->join('catalog_product_master as e','e.id','=','a.product_master_id')
                 ->join('catalog_satuan as f','f.id','=','e.satuan_id')
                 ->join('catalog_category as g','g.id','=','e.catalog_category_id')
 
-                ->selectRaw("a.*, b.nama_coverage, d.nama_group_coverage, c.doc_no, f.nama_satuan, concat(e.kode_product,' - ',e.keterangan_product) as nama_product, concat(g.code,' - ',g.display_name) as taxonomy, e.image_product ")
+                ->selectRaw("a.*, b.nama_coverage, d.nama_group_coverage, c.doc_no, f.nama_satuan, e.kode_product, e.nama_product, concat(g.code,' - ',g.display_name) as taxonomy, e.image_product, concat(h.bdn_usaha,'.',h.nm_vendor) as nama_supplier, c.doc_startdate, c.doc_enddate, c.doc_type")
                 ->orderbyRaw("(CASE WHEN a.user_id = $pengguna THEN 1 ELSE 2 END)");
         
         if($request->f_caritext!=""){
@@ -294,26 +295,29 @@ class CatalogController extends Controller
                       ->orwhere('a.referensi_logistic', 'like' , '%'.$request->f_caritext.'%')
 
                       ->orwhere('e.kode_product', 'like' , '%'.$request->f_caritext.'%')
-                      ->orwhere('e.keterangan_product', 'like' , '%'.$request->f_caritext.'%')
+                      ->orwhere('e.nama_product', 'like' , '%'.$request->f_caritext.'%')
 
                       ->orwhere('g.code', 'like' , '%'.$request->f_caritext.'%')
                       ->orwhere('g.display_name', 'like' , '%'.$request->f_caritext.'%')
 
-                      ->orwhere('b.nama_coverage', 'like' , '%'.$request->f_caritext.'%')
-                      ->orwhere('d.nama_group_coverage', 'like' , '%'.$request->f_caritext.'%');
+                      ->orwhere('f.nama_satuan', 'like' , '%'.$request->f_caritext.'%');
             });
         }
 
         if($request->f_nokategori!=""){
-            $data->where('e.catalog_category_id',$request->f_nokategori);
+            $data->whereIn('e.catalog_category_id', $this->get_category($request->f_nokategori,0));
         }
 
-        if($request->f_hargatertinggi!=""){
-            $data->where('a.harga_barang_logistic','<=',Helpers::input_rupiah($request->f_hargatertinggi));
+        if($request->f_nogroupcoverage!=""){
+            $data->where('a.group_coverage_id',$request->f_nogroupcoverage);
         }
 
-        if($request->f_hargaterendah!=""){
-            $data->where('a.harga_barang_logistic','>=',Helpers::input_rupiah($request->f_hargaterendah));
+        if($request->f_nocoverage!=""){
+            $data->where('a.coverage_id',$request->f_nocoverage);
+        }
+
+        if($request->f_nosupplier!=""){
+            $data->where('h.id',$request->f_nosupplier);
         }
 
         if($request->divisi!=""){
@@ -331,32 +335,42 @@ class CatalogController extends Controller
         $data->get();
         
         return Datatables::of($data)
-                ->addIndexColumn()
-                ->addColumn('flag', function ($data) {
-                    $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
-                    if($data->jenis_referensi==1){
-                        $doc=Documents::where('id',$data->referensi_logistic)->first();
-                        if($doc->doc_type=="khs"){
-                            $act="KHS";    
-                        }else{
-                            $act='';
-                        }
+            ->addIndexColumn()
+            ->addColumn('flag', function ($data) {
+                $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
+                if($data->jenis_referensi==1){
+                    $doc=Documents::where('id',$data->referensi_logistic)->first();
+                    if($doc->doc_type=="khs"){
+                        $act="KHS";    
                     }else{
                         $act='';
                     }
-                    return $act;
-                })
-                ->editColumn('referensi_fix', function($data) {
-                    $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
+                }else{
+                    $act='';
+                }
+                return $act;
+            })
+            /*
+            ->editColumn('referensi_fix', function($data) {
+                $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
 
-                    if($data->jenis_referensi==2){
-                        $act=$data->referensi_logistic;
-                    }else{
-                        $act=$data->doc_no;
-                    }
-                    return $act;
-                })
-                ->make(true);
+                if($data->jenis_referensi==2){
+                    $act=$data->referensi_logistic;
+                }else{
+                    $act=$data->doc_no;
+                }
+                return $act;
+            })
+            */
+
+            ->addColumn('action', function ($data) {
+                $dataAttr = htmlspecialchars(json_encode($data), ENT_QUOTES, 'UTF-8');
+                $act    = '<div class="btn-group">';
+                $act    .='<button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#form-modal-detail"  data-title="Detail" data-data="'.$dataAttr.'"><i class="glyphicon glyphicon-edit"></i> Detail</button>';
+                $act   .= '</div>';
+                return $act;
+            })
+            ->make(true);
     }
 
     public function index_kontrak_datatables(Request $request){
@@ -396,7 +410,7 @@ class CatalogController extends Controller
 
     public function index_product_kontrak(Request $request){
         //$data['category']=CatalogCategory::get();
-        $data['page_title'] = 'List Kontrak';
+        $data['page_title'] = 'List Item Kontrak';
         $data['user'] = User::get_user_pegawai();
         
         return view('catalog::list_product_kontrak')->with($data);

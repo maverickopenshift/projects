@@ -63,21 +63,7 @@ class ProductMasterController extends Controller
         $data = $data->paginate(30);
         return \Response::json($data);
     }
-    /*
-    public function get_select_category(Request $request){
-        $search = trim($request->q);
-        $data = CatalogCategory::selectRaw('id as id, concat(code," - ",display_name) as text');
 
-        if(!empty($search)){
-          $data->where(function($q) use ($search) {
-              $q->orWhere('display_name', 'like', '%'.$search.'%');
-          });
-        }
-        
-        $data = $data->paginate(30);
-        return \Response::json($data);
-    }
-    */
     public function get_select_category(Request $request){
         $search = trim($request->q);
         $data = CatalogCategory::selectRaw('id as id, concat(code," - ",display_name) as text');
@@ -98,8 +84,10 @@ class ProductMasterController extends Controller
 
         foreach($request->f_kodeproduct as $key => $val){
             $rules['f_kodeproduct.'.$key]   = 'required|max:20|min:1|regex:/^[a-z0-9 .\-]+$/i';
-            $rules['f_ketproduct.'.$key]    = 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_namaproduct.'.$key]   = 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i';
             $rules['f_unitproduct.'.$key]   = 'required';
+            $rules['f_serialproduct.'.$key]   = 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_manufactureproduct.'.$key]   = 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i';
         }
 
         $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
@@ -133,8 +121,11 @@ class ProductMasterController extends Controller
                         $proses->user_id                = Auth::id();
                         $proses->catalog_category_id    = $request['f_parentid'];
                         $proses->kode_product           = $request['f_kodeproduct'][$key];
-                        $proses->keterangan_product     = $request['f_ketproduct'][$key];
+                        $proses->nama_product           = $request['f_namaproduct'][$key];
                         $proses->satuan_id              = $request['f_unitproduct'][$key];
+
+                        $proses->serial_product         = $request['f_serialproduct'][$key];
+                        $proses->manufacture_product    = $request['f_manufactureproduct'][$key];
 
                         $proses->divisi                 = $pegawai->divisi;
                         $proses->unit_bisnis            = $pegawai->unit_bisnis;
@@ -174,10 +165,12 @@ class ProductMasterController extends Controller
         $rules = array();
 
         foreach($request->f_kodeproduct as $key => $val){
-            $rules['f_idcategory.'.$key]    = 'required';
-            $rules['f_kodeproduct.'.$key]   = 'required|max:20|min:1|regex:/^[a-z0-9 .\-]+$/i';
-            $rules['f_ketproduct.'.$key]    = 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i';
-            $rules['f_unitproduct.'.$key]   = 'required';
+            $rules['f_idcategory.'.$key]            = 'required';
+            $rules['f_kodeproduct.'.$key]           = 'required|max:20|min:1|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_namaproduct.'.$key]           = 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_unitproduct.'.$key]           = 'required';
+            $rules['f_serialproduct.'.$key]         = 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i';
+            $rules['f_manufactureproduct.'.$key]    = 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i';
         }
 
         $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
@@ -210,8 +203,12 @@ class ProductMasterController extends Controller
                         $proses->user_id                = Auth::id();
                         $proses->catalog_category_id    = $request['f_idcategory'][$key];
                         $proses->kode_product           = $request['f_kodeproduct'][$key];
-                        $proses->keterangan_product     = $request['f_ketproduct'][$key];
+                        $proses->nama_product           = $request['f_namaproduct'][$key];
                         $proses->satuan_id              = $request['f_unitproduct'][$key];
+
+                        $proses->serial_product         = $request['f_serialproduct'][$key];
+                        $proses->manufacture_product    = $request['f_manufactureproduct'][$key];
+
 
                         $proses->divisi                 = $pegawai->divisi;
                         $proses->unit_bisnis            = $pegawai->unit_bisnis;
@@ -248,9 +245,11 @@ class ProductMasterController extends Controller
     
     public function edit(Request $request){
         $rules = array (
-            'f_kodeproduct' => 'required|max:20|min:1|regex:/^[a-z0-9 .\-]+$/i',
-            'f_ketproduct'  => 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i',
-            'f_unitproduct' => 'required',
+            'f_kodeproduct'         => 'required|max:20|min:1|regex:/^[a-z0-9 .\-]+$/i',
+            'f_namaproduct'         => 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i',
+            'f_unitproduct'         => 'required',
+            'f_serialproduct'       => 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i',
+            'f_manufactureproduct'  => 'required|max:500|min:1|regex:/^[a-z0-9 .\-]+$/i',
         );
 
         $validator = Validator::make($request->all(), $rules, \App\Helpers\CustomErrors::catalog());
@@ -276,17 +275,20 @@ class ProductMasterController extends Controller
             $proses->user_id                = Auth::id();
             $proses->catalog_category_id    = $request->f_produk_parent;
             $proses->kode_product           = $request->f_kodeproduct;
-            $proses->keterangan_product     = $request->f_ketproduct;
+            $proses->nama_product           = $request->f_namaproduct;
             $proses->satuan_id              = $request->f_unitproduct;
 
+            $proses->serial_product         = $request->f_serialproduct;
+            $proses->manufacture_product    = $request->f_manufactureproduct;
+
             $proses->divisi                 = $pegawai->divisi;
-                        $proses->unit_bisnis            = $pegawai->unit_bisnis;
-                        $proses->unit_kerja             = $pegawai->unit_kerja;
+            $proses->unit_bisnis            = $pegawai->unit_bisnis;
+            $proses->unit_kerja             = $pegawai->unit_kerja;
 
             if(isset($request['f_gambar'])){
                 $file = $request['f_gambar'];
                 $extension = $file->getClientOriginalExtension();
-                $filename=str_slug('master_item_'. strtolower($request->f_kodeproduct)).'_'.time().'_'.str_random(5).'.'.$extension;                            
+                $filename=str_slug('master_item_'. strtolower($request->f_kodeproduct)).'_'.time().'_'.str_random(5).'.'.$extension;
 
                 $image_resize = Image::make($file->getRealPath());              
                 $image_resize->resize(null, 300, function ($constraint) {
@@ -318,8 +320,8 @@ class ProductMasterController extends Controller
     public function upload(Request $request){
         if ($request->ajax()) {
             $data = Excel::load($request->file('upload-product-master')->getRealPath(), function ($reader) {})->get();
-            $header = ['kode','keterangan','satuan'];
-            $jml_header = '3';
+            $header = ['kode','nama_item','satuan','serial','manufacture'];
+            $jml_header = '5';
 
             if(!empty($data) && $data->first() != null ){
                 $colomn = $data->first()->keys()->toArray();
@@ -329,8 +331,12 @@ class ProductMasterController extends Controller
 
                     for($i=0;$i<count($data);$i++){
                         $hasil[$i]['kode']          = $data[$i]['kode'];
-                        $hasil[$i]['keterangan']    = $data[$i]['keterangan'];
+                        $hasil[$i]['nama_item']     = $data[$i]['nama_item'];
                         $hasil[$i]['satuan']        = $data[$i]['satuan'];
+                        $hasil[$i]['error_satuan']  = '';
+
+                        $hasil[$i]['serial']        = $data[$i]['serial'];
+                        $hasil[$i]['manufacture']   = $data[$i]['manufacture'];
 
                         $count_satuan=CatalogSatuan::where('nama_satuan',$data[$i]['satuan'])->count();
                         if($count_satuan!=0){
@@ -338,6 +344,7 @@ class ProductMasterController extends Controller
                             $hasil[$i]['no_satuan']=$satuan->id;
                         }else{
                             $hasil[$i]['no_satuan']=0;
+                            $hasil[$i]['error_satuan']  = 'Data Satuan tidak ditemukan';
                         }
                     }
 
@@ -356,8 +363,8 @@ class ProductMasterController extends Controller
     public function upload_bulk(Request $request){
         if ($request->ajax()) {
             $data = Excel::load($request->file('upload-product-master')->getRealPath(), function ($reader) {})->get();
-            $header = ['kode_kategori','kode','keterangan','satuan'];
-            $jml_header = '4';
+            $header = ['kode_kategori','kode','nama_item','satuan','serial','manufacture'];
+            $jml_header = '6';
 
             if(!empty($data) && $data->first() != null ){
                 $colomn = $data->first()->keys()->toArray();
@@ -369,8 +376,10 @@ class ProductMasterController extends Controller
                         $hasil[$i]['id_kategori']   = 0;
                         $hasil[$i]['kode_kategori'] = $data[$i]['kode_kategori'];
                         $hasil[$i]['kode']          = $data[$i]['kode'];
-                        $hasil[$i]['keterangan']    = $data[$i]['keterangan'];
+                        $hasil[$i]['nama_item']     = $data[$i]['nama_item'];
                         $hasil[$i]['satuan']        = $data[$i]['satuan'];
+                        $hasil[$i]['serial']        = $data[$i]['serial'];
+                        $hasil[$i]['manufacture']   = $data[$i]['manufacture'];
                         $hasil[$i]['error_kategori']= "";
                         $hasil[$i]['error_satuan']  = "";
 

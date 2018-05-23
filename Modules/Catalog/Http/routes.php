@@ -66,31 +66,12 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'catalog', 'namespace'
 
         return $response;
     });
-    /*
-    Route::get('product_master/image_thumb/{filename}', function ($filename)
-    {
-        $path = storage_path('app/master_item/' . $filename);
-
-        $image_resize = Image::make($path->getRealPath());              
-        $image_resize->resize(null, 150, function ($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
-
-        $file = File::get($path);
-        $type = File::mimeType($path);
-
-        $response = Response::make($file, 200);
-        $response->header("Content-Type", $type);
-
-        return $response;
-    });
-    */
 
     /////////////////////
 
     Route::get('/product_logistic',                     ['middleware' => ['permission:katalog-item-price'],'uses' => 'ProductLogisticController@index'])->name('catalog.product.logistic');
     Route::get('/product_logistic/get_kode',            ['middleware' => ['permission:katalog-item-price'],'uses' => 'ProductLogisticController@get_kode_product_master'])->name('catalog.product_logistic.get_kode_product_master');
+    Route::get('/product_logistic/get_supplier',            ['middleware' => ['permission:katalog-item-price'],'uses' => 'ProductLogisticController@get_supplier'])->name('catalog.product_logistic.get_supplier');
     Route::get('/product_logistic/get_kontrak_cari',    ['middleware' => ['permission:katalog-item-price'],'uses' => 'ProductLogisticController@get_kontrak_cari'])->name('catalog.product_logistic.get_kontrak_cari');
     Route::get('/product_logistic/get_kode_normal',     ['middleware' => ['permission:katalog-item-price'],'uses' => 'ProductLogisticController@get_kode_product_master_normal'])->name('catalog.product_logistic.get_kode_product_master_normal');
     Route::post('/product_logistic/upload',             ['middleware' => ['permission:katalog-item-price-proses'],'uses' => 'ProductLogisticController@upload'])->name('catalog.product_logistic.upload');
@@ -107,7 +88,8 @@ Route::group(['middleware' => ['web','auth'], 'prefix' => 'catalog', 'namespace'
     Route::post('/product_kontrak/add_ajax',           ['middleware' => ['permission:katalog-item-price-proses'],'uses' => 'ProductKontrakController@add_ajax'])->name('catalog.product_kontrak.add_ajax');
     //Route::post('/product_kontrak/edit',               ['middleware' => ['permission:katalog-item-price-proses'],'uses' => 'ProductKontrakController@edit'])->name('catalog.product_kontrak.edit');
     //Route::delete('/product_kontrak/delete',           ['middleware' => ['permission:katalog-item-price-proses'],'uses' => 'ProductKontrakController@delete'])->name('catalog.product_kontrak.delete');
-    ////////////
+
+    //////////////
 
     Route::get('/list_product_master',                  ['middleware' => ['permission:katalog-master-item'],'uses' => 'CatalogController@index_product_master'])->name('catalog.list.product_master');
     Route::post('/list_product_master/datatables',      ['middleware' => ['permission:katalog-master-item'],'uses' => 'CatalogController@index_product_master_datatables'])->name('catalog.list.product_master.datatables');

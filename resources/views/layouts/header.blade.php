@@ -32,8 +32,13 @@
                         <i class="fa fa-user"></i>
                         <!-- hidden-xs hides the username on small devices so only the image appears. -->
                         <span class="hidden-xs">{{ Auth::user()->name }}  </span>
-                        <i>{{ Auth::user()->username }} ({{ Auth::user()->roles[0]->name }})</i>
-                        
+                        <i>/ {{ session('nik') }} / {{ session('posisi') }} as 
+                          @if(Auth::user()->roles[0]->name=="vendor")
+                            (Supplier)
+                          @else
+                            ({{ Auth::user()->roles[0]->name }})
+                          @endif
+                           </i>
                     </a>
                 </li>
                 <li class="dropdown user user-menu">

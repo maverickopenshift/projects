@@ -58,6 +58,8 @@
                             <th>Kode</th>
                             <th>Keterangan</th>
                             <th>Satuan</th>
+                            <th>Serial</th>
+                            <th>Manufacture</th>
                             @permission('katalog-master-item-proses')
                             <th width="25%">Aksi</th>
                             @endpermission
@@ -82,34 +84,46 @@
                     <input type="hidden" id="f_id" name="f_id">
                     <input type="hidden" id="f_parentid" name="f_parentid">
 
-                    <div class="form-group formerror-f_produk_parentid">
+                    <div class="form-group formerror formerror-f_produk_parentid">
                         <label>Induk Kategori</label>
                         <select class="form-control select2" id="f_produk_parent" name="f_produk_parent" style="width: 100%;" required>
                         </select>
-                        <div class="error-f_produk_parentid"></div>
+                        <div class="error error-f_produk_parentid"></div>
                     </div>
 
-                    <div class="form-group formerror-f_kodeproduct">
+                    <div class="form-group formerror formerror-f_kodeproduct">
                         <label>Kode Produk</label>
                         <input type="text" class="form-control" id="f_kodeproduct" name="f_kodeproduct" placeholder="Kode Produk ...">
-                        <div class="error-f_kodeproduct"></div>
+                        <div class="error error-f_kodeproduct"></div>
                     </div>
 
-                    <div class="form-group formerror-f_ketproduct">
-                        <label>Keterangan Produk</label>
-                        <input type="text" class="form-control" id="f_ketproduct" name="f_ketproduct"  placeholder="Keterangan Produk ...">
-                        <div class="error-f_ketproduct"></div>
+                    <div class="form-group formerror formerror-f_namaproduct">
+                        <label>Nama Produk</label>
+                        <input type="text" class="form-control" id="f_namaproduct" name="f_namaproduct"  placeholder="Nama Produk ...">
+                        <div class="error error-f_namaproduct"></div>
                     </div>
 
-                    <div class="form-group formerror-f_unitproduct">
+                    <div class="form-group formerror formerror-f_unitproduct">
                         <label>Satuan Produk</label>
                         <select class="form-control select_satuan" name="f_unitproduct" style="width: 100%;">
                             <option value=""></option>
                         </select>
-                        <div class="error-f_unitproduct"></div>
+                        <div class="error error-f_unitproduct"></div>
+                    </div>
+
+                    <div class="form-group formerror formerror-f_serialproduct">
+                        <label>Serial Produk</label>
+                        <input type="text" class="form-control" id="f_serialproduct" name="f_serialproduct"  placeholder="Serial Produk ...">
+                        <div class="error error-f_serialproduct"></div>
+                    </div>
+
+                    <div class="form-group formerror formerror-f_manufactureproduct">
+                        <label>Manufacture Produk</label>
+                        <input type="text" class="form-control" id="f_manufactureproduct" name="f_manufactureproduct"  placeholder="Manufacture Produk ...">
+                        <div class="error error-f_manufactureproduct"></div>
                     </div>
                     
-                    <div class="form-group formerror-f_gambar">
+                    <div class="form-group">
                         <label>Gambar Produk</label>
                         <div class="input-group">
                             <input type="file" name="f_gambar" accept=".jpg" class="f_gambar hide">
@@ -196,15 +210,18 @@ function create_table(no_kategori){
             { data: 'image_product',
                 render: function( data, type, full, meta ) {
                     if(data!=''){
-                        return "<img src=\"product_master/image/" + data + "\" height=\"50\"/>";
+                        return "<img src='product_master/image/" + data + "' height='50'/>"
                     }else{
-                        return "";
+                        var url = "{{asset('/images/no_image.png')}}";
+                        return "<img src='"+ url +"' height='60'>";
                     }
                 }
             },
             { data: 'kode_product'},
-            { data: 'keterangan_product'},
+            { data: 'nama_product'},
             { data: 'nama_satuan'},
+            { data: 'serial_product'},
+            { data: 'manufacture_product'},
             { data: 'action', name: 'action',orderable:false,searchable:false}];
     }else{
         var coloumx=[
@@ -219,8 +236,10 @@ function create_table(no_kategori){
                 }
             },
             { data: 'kode_product'},
-            { data: 'keterangan_product'},
-            { data: 'nama_satuan'}];
+            { data: 'nama_product'},
+            { data: 'nama_satuan'},
+            { data: 'serial_product'},
+            { data: 'manufacture_product'}];
     }
 
     table_product = $('#daftar_product').on('xhr.dt', function ( e, settings, json, xhr ) {
@@ -228,6 +247,7 @@ function create_table(no_kategori){
             location.reload();
         }
     }).DataTable({
+        scrollX   : true,
         processing: true,
         serverSide: true,
         autoWidth : false,
@@ -351,13 +371,20 @@ formModal.on('show.bs.modal', function (event) {
 
     var data = button.data('data');
 
+    $(".formerror").removeClass("has-error");
+    $(".error").html('');
+
     get_produk_induk(data.catalog_category_id);
 
     modal.find('.modal-body input#f_id').val(data.id);
     modal.find('.modal-body input#f_parentid').val(data.catalog_category_id);
 
     modal.find('.modal-body input#f_kodeproduct').val(data.kode_product);
-    modal.find('.modal-body input#f_ketproduct').val(data.keterangan_product);
+    modal.find('.modal-body input#f_namaproduct').val(data.nama_product);
+
+    modal.find('.modal-body input#f_serialproduct').val(data.serial_product);
+    modal.find('.modal-body input#f_manufactureproduct').val(data.manufacture_product);
+
 
     modal.find('.modal-body .f_gambar').val('');
     modal.find('.modal-body .f_gambar_text').val('');
@@ -368,20 +395,10 @@ formModal.on('show.bs.modal', function (event) {
 
 $(document).on('submit','#form-me-product',function (event) {
     event.preventDefault();
-
     var formMe = $(this)
-
-    var attError_f_kodeproduct = formMe.find('.error-f_kodeproduct')
-    var attError_f_ketproduct = formMe.find('.error-f_ketproduct')
-    var attError_f_unitproduct = formMe.find('.error-f_unitproduct')
-
-    formMe.find('.formerror-f_kodeproduct').removeClass("has-error");
-    formMe.find('.formerror-f_ketproduct').removeClass("has-error");
-    formMe.find('.formerror-f_unitproduct').removeClass("has-error");
-
-    attError_f_kodeproduct.html('');
-    attError_f_ketproduct.html('');
-    attError_f_unitproduct.html('');
+    
+    $(".formerror").removeClass("has-error");
+    $(".error").html('');
 
     var btnSave = formMe.find('.btn-simpan')
     //btnSave.button('loading')
@@ -397,19 +414,17 @@ $(document).on('submit','#form-me-product',function (event) {
             if(response.errors){
                 alertBS_2('Something Wrong','danger');
 
-                if(response.errors.f_kodeproduct){
-                    attError_f_kodeproduct.html('<span class="help-block">'+response.errors.f_kodeproduct+'</span>');
-                    formMe.find('.formerror-f_kodeproduct').addClass("has-error");
-                }
-                if(response.errors.f_ketproduct){
-                    attError_f_ketproduct.html('<span class="help-block">'+response.errors.f_ketproduct+'</span>');
-                    formMe.find('.formerror-f_ketproduct').addClass("has-error");
-                }
-                if(response.errors.f_unitproduct){
-                    attError_f_unitproduk.html('<span class="help-block">'+response.errors.f_unitproduct+'</span>');
-                    formMe.find('.formerror-f_unitproduct').addClass("has-error");
-                }
+                $.each(response.errors, function(index, value){
+                    if (value.length !== 0){
+                      index = index.replace(".", "-");
+                      $(".formerror-"+ index).removeClass("has-error");
+                      $(".error-"+ index).html('');
 
+                      $(".formerror-"+ index).addClass("has-error");
+                      $(".error-"+ index).html('<span class="help-block">'+ value +'</span>');
+                    }
+                });
+                
                 btnSave.button('reset');
             }
             else{

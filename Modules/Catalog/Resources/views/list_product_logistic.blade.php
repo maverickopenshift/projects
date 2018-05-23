@@ -48,13 +48,15 @@
 
                 <input type="hidden" class="f_noproduct_origin" value="{{$no_product}}">
                 <input type="hidden" class="f_kodeproduct_origin" value="{{$kode_product}}">
-                <input type="hidden" class="f_ketproduct_origin" value="{{$ket_product}}">
+                <input type="hidden" class="f_namaproduct_origin" value="{{$nama_product}}">
                 <table class="table table-striped" id="daftar_product_master">
                     <thead>
                         <tr>
                             <th>Kode</th>
-                            <th>Keterangan</th>
+                            <th>Nama Item</th>
                             <th>Satuan</th>
+                            <th>Serial</th>
+                            <th>Manufacture</th>
                             <th width="20%">Aksi</th>
                         </tr>
                     </thead>
@@ -280,6 +282,7 @@ function create_table_master(no_kategori){
             location.reload();
         }
     }).DataTable({
+        scrollX   : true,
         processing: true,
         serverSide: true,
         autoWidth : false,
@@ -293,8 +296,10 @@ function create_table_master(no_kategori){
         },
         columns: [
             { data: 'kode_product'},
-            { data: 'keterangan_product'},
+            { data: 'nama_product'},
             { data: 'nama_satuan'},
+            { data: 'serial_product'},
+            { data: 'manufacture_product'},
             { data: 'action', name: 'action',orderable:false,searchable:false},
         ]
     });
@@ -305,8 +310,14 @@ function create_table_price(no_product, divisi, unit_bisnis, unit_kerja, f_carit
         { data: 'DT_Row_Index',orderable:false,searchable:false},
         { data: 'nama_group_coverage', name: 'a.nama_group_coverage'},
         { data: 'nama_coverage', name: 'a.nama_coverage'},
-        { data: 'harga_barang_logistic', name: 'a.harga_barang_logistic'},
-        { data: 'harga_jasa_logistic', name: 'a.harga_jasa_logistic'},
+        {
+            data: 'harga_barang_logistic', name: 'a.harga_barang_logistic',
+            render: $.fn.dataTable.render.number( ',', '.')
+        },
+        {
+            data: 'harga_jasa_logistic', name: 'a.harga_jasa_logistic',
+            render: $.fn.dataTable.render.number( ',', '.')
+        },
         { data: 'referensi_fix', name: 'c.doc_no'},
         { data: 'flag', searchable:false},
         { data: 'action', name: 'action',orderable:false,searchable:false }];
@@ -316,6 +327,7 @@ function create_table_price(no_product, divisi, unit_bisnis, unit_kerja, f_carit
             location.reload();
         }
     }).DataTable({
+        scrollX   : true,
         processing: true,
         serverSide: true,
         autoWidth : false,
@@ -338,6 +350,7 @@ function create_table_kontrak(text_cari_kontrak){
             location.reload();
         }
     }).DataTable({
+        scrollX   : true,
         processing: true,
         serverSide: true,
         autoWidth : false,

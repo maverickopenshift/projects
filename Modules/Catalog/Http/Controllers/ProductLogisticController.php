@@ -26,11 +26,62 @@ class ProductLogisticController extends Controller
         $data['product']=\DB::table('catalog_product_master as a')
                         ->join('catalog_category as b','b.id','=','a.catalog_category_id')
                         ->join('catalog_satuan as c','c.id','=','a.satuan_id')
-                        ->selectRaw('a.*,b.display_name as category_name,  c.nama_satuan as nama_satuan')
+                        ->selectRaw('a.*,b.parent_id as category_parent_id, b.code as category_code, b.display_name as category_name,  c.nama_satuan as nama_satuan')
                         ->where('a.id',$request->id_product)
                         ->first();
-        $data['page_title'] = 'Item Price';
+
+        $tree_kategori=array();
+        $x=0;
+        $tree_kategori[$x]=$data['product']->category_code .' - '. $data['product']->category_name;
+
+        $count_result1=CatalogCategory::where('id',$data['product']->category_parent_id)->count();
+        if($count_result1!=0){
+            $result1=CatalogCategory::where('id',$data['product']->category_parent_id)->first();
+            $x++;
+            $tree_kategori[$x]=$result1->code .' - '. $result1->display_name;
+
+            $count_result2=CatalogCategory::where('id',$result1->parent_id)->count();
+            if($count_result2!=0){
+                $result2=CatalogCategory::where('id',$result1->parent_id)->first();
+                $x++;
+                $tree_kategori[$x]=$result2->code .' - '. $result2->display_name;
+
+                $count_result3=CatalogCategory::where('id',$result2->parent_id)->count();
+                if($count_result3!=0){
+                    $result3=CatalogCategory::where('id',$result2->parent_id)->first();
+                    $x++;
+                    $tree_kategori[$x]=$result3->code .' - '. $result3->display_name;
+
+                    $count_result4=CatalogCategory::where('id',$result3->parent_id)->count();
+                    if($count_result4!=0){
+                        $result4=CatalogCategory::where('id',$result3->parent_id)->first();
+                        $x++;
+                        $tree_kategori[$x]=$result4->code .' - '. $result4->display_name;
+
+                        $count_result5=CatalogCategory::where('id',$result4->parent_id)->count();
+                        if($count_result5!=0){
+                            $result5=CatalogCategory::where('id',$result4->parent_id)->first();
+                            $x++;
+                            $tree_kategori[$x]=$result5->code .' - '. $result5->display_name;
+                        }
+                    }
+                }
+            }
+        }
+
+        $tree_kategori_reserve=array_reverse($tree_kategori);
+        $tree="";
+        $tree_kategori_fix=array();        
+        for($i=0;$i<count($tree_kategori);$i++){
+            $tree_kategori_fix[]=$tree ." ". $tree_kategori_reserve[$i];
+            $tree.="&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+
+        }
+
+        $data['tree_kategori'] = $tree_kategori_fix;
+        $data['page_title'] = 'Item Price';        
         $data['pegawai'] = User::get_user_pegawai();
+
         
         return view('catalog::product_logistic')->with($data);
     }
@@ -43,6 +94,25 @@ class ProductLogisticController extends Controller
         if(!empty($search)){
           $data->where(function($q) use ($search) {
               $q->orWhere('doc_no', 'like', '%'.$search.'%');
+          });
+        }
+        
+        $data = $data->paginate(30);
+        return \Response::json($data);
+    }
+
+    public function get_supplier(Request $request){
+        $search = trim($request->q);
+
+        $data=DB::table('catalog_product_logistic as a')
+                ->selectRaw("c.id as id, concat(c.bdn_usaha,'.',c.nm_vendor) as text")
+                ->join('documents as b','b.id','=','a.referensi_logistic')
+                ->join('supplier as c','c.id','=','b.supplier_id')
+                ->where('a.jenis_referensi',1);
+
+        if(!empty($search)){
+          $data->where(function($q) use ($search) {
+              $q->orWhere('c.nm_vendor', 'like', '%'.$search.'%');
           });
         }
         
@@ -151,8 +221,8 @@ class ProductLogisticController extends Controller
             $proses->group_coverage_id      = $request->f_nogroupcoverage;
             $proses->coverage_id            = $request->f_nocoverage;
 
-            $proses->harga_barang_logistic  = $request->f_hargabarang;
-            $proses->harga_jasa_logistic    = $request->f_hargajasa;
+            $proses->harga_barang_logistic  = Helpers::input_rupiah($request->f_hargabarang);
+            $proses->harga_jasa_logistic    = Helpers::input_rupiah($request->f_hargajasa);
             $proses->jenis_referensi        = $request->f_jenis;
             $proses->referensi_logistic     = $request->f_referensi;
             $proses->save();   

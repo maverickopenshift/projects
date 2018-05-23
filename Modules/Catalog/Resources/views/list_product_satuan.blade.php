@@ -104,6 +104,7 @@ function create_table_satuan(){
             location.reload();
         }
     }).DataTable({
+        scrollX   : true,
         processing: true,
         serverSide: true,
         autoWidth : false,

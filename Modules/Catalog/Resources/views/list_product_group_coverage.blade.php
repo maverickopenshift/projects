@@ -104,6 +104,7 @@ function create_table_group_coverage(){
             location.reload();
         }
     }).DataTable({
+        scrollX   : true,
         processing: true,
         serverSide: true,
         autoWidth : false,

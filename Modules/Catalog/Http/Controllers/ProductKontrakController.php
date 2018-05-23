@@ -23,7 +23,7 @@ use Excel;
 class ProductKontrakController extends Controller
 {
     public function index(Request $request){
-        $data['page_title'] = 'Item Price';
+        $data['page_title'] = 'Item Kontrak';
         $data['pegawai'] = User::get_user_pegawai();
 
         return view('catalog::product_kontrak')->with($data);

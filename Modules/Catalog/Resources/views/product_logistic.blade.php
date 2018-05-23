@@ -34,7 +34,7 @@
                 <i class="fa fa-cogs"></i>
                 <h3 class="box-title f_parentname">Tambah Item Price</h3>
                 <div class="pull-right">
-                    <div class="col-sm-12">                        
+                    <div class="col-sm-12">
                         <a class="btn btn-primary upload-product-price-btn" type="button"><i class="fa fa-upload"></i> Upload</a>
                         <a href="{{route('doc.tmp.download',['filename'=>'product_price'])}}" class="btn btn-info">
                             <i class="glyphicon glyphicon-download-alt"></i> Download Template
@@ -43,8 +43,7 @@
                     </div>
                 </div>
             </div>
-
-            
+                        
                 <div class="box-body form-horizontal">
                     <div class="flash-message" id="alertBS">
                         @foreach (['danger', 'warning', 'success', 'info'] as $msg)
@@ -54,53 +53,49 @@
                         @endforeach
                     </div>
                     <div class="col-md-6">
+
                         <div class="form-group ">
                             <label class="col-sm-4 control-label">Taxonomy </label>
-                            <div class="col-sm-8 text-me">{{$product->category_name}}</div>
+                            <div class="col-sm-8 text-me">
+                                @foreach ($tree_kategori as $tree_kategori)
+
+                                    <p>{{ $tree_kategori }}</p>
+                                @endforeach
+                            </div>
                         </div>
 
                         <div class="form-group ">
-                            <label class="col-sm-4 control-label">Kode Master Item </label>
-                            <div class="col-sm-8 text-me">{{$product->kode_product}}</div>
+                            <label class="col-sm-4 control-label">Master Item </label>
+                            <div class="col-sm-8 text-me">{{$product->kode_product}} - {{$product->nama_product}}</div>
                         </div>
 
-                        <div class="form-group ">
-                            <label class="col-sm-4 control-label">Keterangan </label>
-                            <div class="col-sm-8 text-me">{{$product->keterangan_product}}</div>
-                        </div>
 
                         <div class="form-group ">
                             <label class="col-sm-4 control-label">Satuan </label>
                             <div class="col-sm-8 text-me">{{$product->nama_satuan}}</div>
                         </div>
 
-                        <br>
+                        <div class="form-group ">
+                            <label class="col-sm-4 control-label">Serial </label>
+                            <div class="col-sm-8 text-me">{{$product->serial_product}}</div>
+                        </div>
 
                         <div class="form-group ">
-                            <label class="col-sm-4 control-label">Nama </label>
-                            <div class="col-sm-8 text-me">{{$pegawai->v_nama_karyawan}} <i>({{$pegawai->n_nik}})</i></div>
+                            <label class="col-sm-4 control-label">Manufacture </label>
+                            <div class="col-sm-8 text-me">{{$product->manufacture_product}}</div>
                         </div>
-                        <div class="form-group ">
-                            <label class="col-sm-4 control-label">Divisi </label>
-                            <div class="col-sm-8 text-me">{{$pegawai->divisi}}</div>
-                        </div>
-                        <div class="form-group ">
-                            <label class="col-sm-4 control-label">Unit Bisnis </label>
-                            <div class="col-sm-8 text-me">{{$pegawai->unit_bisnis}}</div>
-                        </div>
-                        <div class="form-group ">
-                            <label class="col-sm-4 control-label">Unit Kerja </label>
-                            <div class="col-sm-8 text-me">{{$pegawai->unit_kerja}}</div>
-                        </div>
-                        <div class="form-group ">
-                            <label class="col-sm-4 control-label">Jabatan </label>
-                            <div class="col-sm-8 text-me">{{$pegawai->v_short_posisi}}</div>
-                        </div>
+                        <br>
                     </div>
 
                      <div class="col-md-6">
                         <div class="form-group ">
-                            <img src='product_master/image/{{$product->image_product}}'></img>
+                            @if($product->image_product!="")
+                                <img src='product_master/image/{{$product->image_product}}'></img>
+                            @else
+                                <img src="{{asset('images/no_image.png')}}" alt="Consys" style="width: 40%; height: 40%">
+                            @endif
+                            
+                            
                         </div>
                     </div>
 

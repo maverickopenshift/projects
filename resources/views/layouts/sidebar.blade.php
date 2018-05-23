@@ -145,9 +145,11 @@
                 @endpermission
 
                 @permission('katalog-item-price-proses|katalog-item-price')
+                @if(!Laratrust::hasRole('katalog-user'))
                 <li class="{{Request::is('catalog/catalog_list/product_logistic') ?'active':''}}"><a href="{{route('catalog.list.product_logistic')}}">List Item Price</a></li>
+                @endif
                 <li class="{{Request::is('catalog/catalog_list/product_logistic_view') ?'active':''}}"><a href="{{route('catalog.list.product_logistic_view')}}">List Item</a></li>
-                <li class="{{Request::is('catalog/catalog_list/product_kontrak') ?'active':''}}"><a href="{{route('catalog.list.product_kontrak')}}">Bulk Entry</a></li>                
+                <li class="{{Request::is('catalog/catalog_list/product_kontrak') ?'active':''}}"><a href="{{route('catalog.list.product_kontrak')}}">List Item Kontrak</a></li>                
                 @endpermission
 
                 @permission('katalog-satuan-proses')

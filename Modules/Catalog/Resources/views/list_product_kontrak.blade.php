@@ -18,11 +18,11 @@
         <div class="box box-danger">
             <div class="box-header with-border">
                 <i class="fa fa-cogs"></i>
-                <h3 class="box-title f_parentname_product">Daftar Kontrak Item</h3>
+                <h3 class="box-title f_parentname_product">Daftar Item Kontrak</h3>
                 <div class="pull-right">
                     @permission('katalog-item-price-proses')
                     <div class="col-sm-12">
-                        <a class="btn btn-danger btn-additem" href="{{route('catalog.product.kontrak')}}" type="button"><i class="fa fa-plus"></i> Tambah Kontrak Item</a>
+                        <a class="btn btn-danger btn-additem" href="{{route('catalog.product.kontrak')}}" type="button"><i class="fa fa-plus"></i> Tambah Item Kontrak</a>
                     </div>
                     @endpermission
                 </div>
@@ -68,23 +68,7 @@
                             <div class="form-group top10">
                                 <input type="text" class="form-control" id="f_caritext" name="f_caritext"  placeholder="Pencarian ...">
                             </div>
-
-                            <div class="form-group top10">
-                                {!!Helper::select_all_divisi('divisi')!!}
-                            </div>
-
-                            <div class="form-group top10">
-                                <select class="form-control" name="unit_bisnis" id="unit_bisnis">
-                                    <option value="">Pilih Unit Bisnis</option>
-                                </select>
-                            </div>
-                            <div class="form-group top10">
-                                <select class="form-control" name="unit_kerja" id="unit_kerja">
-                                    <option value="">Pilih Unit Kerja</option>
-                                </select>
-                            </div>
-
-                                <button type="submit" class="btn btn-success search top10">Cari</button>
+                            <button type="submit" class="btn btn-success search top10">Cari</button>
                         </form>
                     </div>
 
@@ -117,6 +101,7 @@ function create_table_kontrak(){
             location.reload();
         }
     }).DataTable({
+        scrollX   : true,
         processing: true,
         serverSide: true,
         autoWidth : false,
@@ -141,27 +126,34 @@ function create_table_kontrak(){
     });
 }
 
-function create_table_price(id_doc, divisi, unit_bisnis, unit_kerja, f_caritext){
+function create_table_price(id_doc, f_caritext){
 
     var coloumx=[
             { data: 'DT_Row_Index',orderable:false,searchable:false},
             { data: 'nama_group_coverage'},
             { data: 'nama_coverage'},
-            { data: 'harga_barang_logistic'},
-            { data: 'harga_jasa_logistic'}];
+            {
+                data: 'harga_barang_logistic',
+                render: $.fn.dataTable.render.number( ',', '.')
+            },
+            {
+                data: 'harga_jasa_logistic',
+                render: $.fn.dataTable.render.number( ',', '.')
+            }];
     
     table_price = $('#daftar_product_price').on('xhr.dt', function ( e, settings, json, xhr ) {
         if(xhr.responseText=='Unauthorized.'){
             location.reload();
         }
     }).DataTable({
+        scrollX   : true,
         processing: true,
         serverSide: true,
         autoWidth : false,
         searching : false,
         pageLength: 50,
         ajax: {
-            "url": "{!! route('catalog.list.product_kontrak_logistic.datatables') !!}?id="+ id_doc + "&divisi=" + divisi + "&unit_bisnis=" + unit_bisnis + "&unit_kerja=" + unit_kerja  + "&f_caritext=" + f_caritext,
+            "url": "{!! route('catalog.list.product_kontrak_logistic.datatables') !!}?id="+ id_doc + "&f_caritext=" + f_caritext,
             "type": "POST",
             'headers': {
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -176,87 +168,30 @@ function refresh_product_kontrak(){
     create_table_master()
 }
 
-function refresh_product_price(no_product, divisi, unit_bisnis, unit_kerja, f_caritext){
+function refresh_product_price(no_product, f_caritext){
     table_price.destroy();
-    create_table_price(no_product, divisi, unit_bisnis, unit_kerja, f_caritext);
+    create_table_price(no_product, f_caritext);
 }
 
 $(document).on('click', '.detail_price', function(event) {
     event.preventDefault();
     var id=$(this).attr('data-id');
-    refresh_product_price(id,'','','','');
+    refresh_product_price(id,'');
     $("#f_id_doc").val(id);
     $(".parent_product_price").show();
-});
-
-$(document).on('change', '#divisi', function(event) {
-    event.preventDefault();
-    var divisi = this.value;
-
-    $('#unit_bisnis').find('option').not('option[value=""]').remove();
-    var t_awal = $('#unit_bisnis').find('option[value=""]').text();
-    $('#unit_bisnis').find('option[value=""]').text('Please wait.....');
-    $('#unit_kerja').find('option').not('option[value=""]').remove();
-
-    $.ajax({
-        url: '{!!route('doc.get-unit-bisnis')!!}',
-        type: 'GET',
-        cache: false,
-        dataType: 'json',
-        data: {divisi: encodeURIComponent(divisi)}
-    })
-    .done(function(data) {
-        console.log("test");
-        if(data.length>0){
-            $.each(data,function(index, el) {
-                $('#unit_bisnis').append('<option value="'+this.id+'">'+this.title+'</option>');
-            });
-            $('#unit_bisnis').find('option[value=""]').text('Pilih Unit Bisnis');
-        }else{
-            $('#unit_bisnis').find('option[value=""]').text('Pilih Unit Bisnis');
-        }
-    });
-});
-
-$(document).on('change', '#unit_bisnis', function(event) {
-    event.preventDefault();
-    var unit_bisnis = this.value;
-    $('#unit_kerja').find('option').not('option[value=""]').remove();
-    var t_awal = $('#unit_kerja').find('option[value=""]').text();
-    $('#unit_kerja').find('option[value=""]').text('Please wait.....');
-        $.ajax({
-            url: '{!!route('doc.get-unit-kerja')!!}',
-            type: 'GET',
-            cache: false,
-            dataType: 'json',
-            data: {unit_bisnis: encodeURIComponent(unit_bisnis)}
-        })
-        .done(function(data) {
-            if(data.length>0){
-                $.each(data,function(index, el) {
-                    $('#unit_kerja').append('<option value="'+this.id+'">'+this.title+'</option>');
-                });
-                $('#unit_kerja').find('option[value=""]').text('Pilih Unit Kerja');
-            }else{
-                $('#unit_kerja').find('option[value=""]').text('Pilih Unit Kerja');
-            }
-        });
 });
 
 $(document).on('submit','#form_me_cari',function (event) {
     event.preventDefault();
     var id_doc = $("#f_id_doc").val();
-    var divisi = $("#divisi").val();
-    var unit_bisnis = $("#unit_bisnis").val();
-    var unit_kerja = $("#unit_kerja").val();
     var f_caritext = $("#f_caritext").val();
 
-    refresh_product_price(id_doc, divisi , unit_bisnis, unit_kerja, f_caritext);
+    refresh_product_price(id_doc, f_caritext);
 });
 
 $(function() {
     create_table_kontrak();
-    create_table_price(0,'','','','');
+    create_table_price(0,'');
     $(".parent_product_price").hide();
 
     $('#unit_bisnis').change();

@@ -256,10 +256,12 @@ function create_table_price(divisi, unit_bisnis, unit_kerja, f_caritext, f_nokat
         { data: 'nama_coverage'},
         {
             data: 'harga_barang_logistic',
+            className : 'text-right',
             render: $.fn.dataTable.render.number( ',', '.')
         },
         {
             data: 'harga_jasa_logistic',
+            className : 'text-right',
             render: $.fn.dataTable.render.number( ',', '.')
         },
         { data: 'flag', orderable:false, searchable:false},

@@ -134,10 +134,12 @@ function create_table_price(id_doc, f_caritext){
             { data: 'nama_coverage'},
             {
                 data: 'harga_barang_logistic',
+                className : 'text-right',
                 render: $.fn.dataTable.render.number( ',', '.')
             },
             {
                 data: 'harga_jasa_logistic',
+                className : 'text-right',
                 render: $.fn.dataTable.render.number( ',', '.')
             }];
     

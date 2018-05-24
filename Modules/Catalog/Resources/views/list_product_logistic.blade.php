@@ -312,10 +312,12 @@ function create_table_price(no_product, divisi, unit_bisnis, unit_kerja, f_carit
         { data: 'nama_coverage', name: 'a.nama_coverage'},
         {
             data: 'harga_barang_logistic', name: 'a.harga_barang_logistic',
+            className : 'text-right',
             render: $.fn.dataTable.render.number( ',', '.')
         },
         {
             data: 'harga_jasa_logistic', name: 'a.harga_jasa_logistic',
+            className : 'text-right',
             render: $.fn.dataTable.render.number( ',', '.')
         },
         { data: 'referensi_fix', name: 'c.doc_no'},

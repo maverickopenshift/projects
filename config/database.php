@@ -43,7 +43,7 @@ return [
             'driver' => 'mysql',
             'host' => env('DB_HOST', getenv('MAVERICSDB_SERVICE_HOST')),
             'port' => env('DB_PORT', getenv('MAVERICSDB_SERVICE_PORT')),
-            'database' => env('DB_DATABASE',  'maverics'),
+            'database' => env('DB_DATABASE',  'mavericsdb'),
             'username' => env('DB_USERNAME',  'maverics'),
             'password' => env('DB_PASSWORD',  'maverics2018!'),
             'unix_socket' => env('DB_SOCKET', ''),

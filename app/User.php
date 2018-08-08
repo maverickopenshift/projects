@@ -41,10 +41,6 @@ class User extends Authenticatable
                 
       $data->whereNotNull('divisi');
       $data->where('divisi','!=',"");
-      $data->whereNotNull('unit_bisnis');
-      $data->where('unit_bisnis','!=',"");
-      $data->whereNotNull('unit_kerja');
-      $data->where('unit_kerja','!=',"");
       $data->where('v_employee_group','!=',"Non Aktif");
       if(!empty($key)){
         $data->where(function($q) use ($key) {
